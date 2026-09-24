@@ -1,10 +1,13 @@
 "use client";
 
+import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 
 type FeedActionRailProps = {
   feedKey: string;
   posterUrl: string;
+  profileHref?: string | null;
+  profileLabel?: string;
   isActive: boolean;
   muted: boolean;
   onToggleMute: () => void;
@@ -13,6 +16,8 @@ type FeedActionRailProps = {
 export function FeedActionRail({
   feedKey,
   posterUrl,
+  profileHref,
+  profileLabel = "Ver perfil",
   isActive,
   muted,
   onToggleMute,
@@ -32,13 +37,27 @@ export function FeedActionRail({
         </button>
 
         <div className="relative mb-1">
-          <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-pink-500 bg-black p-0.5 shadow-lg shadow-pink-500/30">
-            <FeedPoster
-              feedKey={`${feedKey}-avatar`}
-              posterUrl={posterUrl}
-              className="h-full w-full rounded-full object-cover"
-            />
-          </div>
+          {profileHref ? (
+            <FeedPerformerLink
+              href={profileHref}
+              ariaLabel={`Ver perfil de ${profileLabel}`}
+              className="block h-12 w-12 overflow-hidden rounded-full border-2 border-pink-500 bg-black p-0.5 shadow-lg shadow-pink-500/30 transition active:scale-95"
+            >
+              <FeedPoster
+                feedKey={`${feedKey}-avatar`}
+                posterUrl={posterUrl}
+                className="h-full w-full rounded-full object-cover"
+              />
+            </FeedPerformerLink>
+          ) : (
+            <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-pink-500 bg-black p-0.5 shadow-lg shadow-pink-500/30">
+              <FeedPoster
+                feedKey={`${feedKey}-avatar`}
+                posterUrl={posterUrl}
+                className="h-full w-full rounded-full object-cover"
+              />
+            </div>
+          )}
           <button
             type="button"
             className="absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-600 text-xs font-black text-white shadow-md"

@@ -4,6 +4,7 @@ import {
   pickCoverUrl,
 } from "@/lib/crackrevenue/api";
 import { resolveWidgetLandingId } from "@/lib/crackrevenue/config";
+import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 const FALLBACK_AVATAR =
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&q=80";
@@ -25,17 +26,11 @@ export type ModelProfileView = {
   performer?: CrackPerformer;
 };
 
-function slugifyHandle(raw: string): string {
-  return decodeURIComponent(raw)
-    .trim()
-    .replace(/^@+/, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "");
-}
-
 function performerSlug(p: CrackPerformer): string {
-  const base = p.nameClean || p.name || "";
-  return base.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  return (
+    performerProfileSlug(p.nameClean || p.name) ??
+    (p.nameClean || p.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "")
+  );
 }
 
 function displayName(p: CrackPerformer): string {
@@ -121,7 +116,7 @@ function toViewModel(
 export async function resolveModelProfile(
   handleParam: string,
 ): Promise<ModelProfileView | null> {
-  const slug = slugifyHandle(handleParam);
+  const slug = performerProfileSlug(handleParam) ?? "";
   if (!slug) return null;
 
   const liveRes = await fetchStreamatePerformers({
