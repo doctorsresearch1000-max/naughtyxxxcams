@@ -5,8 +5,7 @@ import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { LiveEmbed } from "./LiveEmbed";
 
-const CARD_HEIGHT =
-  "h-[calc(100dvh-var(--app-header-height)-4rem)]";
+const CARD_HEIGHT = "h-[calc(100dvh-4rem)]";
 
 function performerLabel(p: FeedPerformer): string {
   const name = p.nameClean || p.name;

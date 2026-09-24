@@ -14,8 +14,12 @@ export function ConditionalSiteChrome({
   const pathname = usePathname();
   const showFooter = FOOTER_ROUTES.has(pathname);
 
+  const isHome = pathname === "/";
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div
+      className={`flex min-h-0 flex-1 flex-col ${isHome ? "" : "pt-[var(--app-header-height)]"}`}
+    >
       {children}
       {showFooter ? <Footer /> : null}
     </div>

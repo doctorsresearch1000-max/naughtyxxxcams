@@ -7,8 +7,7 @@ import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
 
-const SHELL_HEIGHT =
-  "h-[calc(100dvh-var(--app-header-height)-4rem)] min-h-0";
+const SHELL_HEIGHT = "h-[calc(100dvh-4rem)] min-h-0";
 
 const FALLBACK_FEED: FeedPerformer[] = [
   {
