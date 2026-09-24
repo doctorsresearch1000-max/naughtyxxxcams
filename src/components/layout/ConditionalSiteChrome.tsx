@@ -2,27 +2,22 @@
 
 import { usePathname } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 
-const CHROME_ROUTES = new Set(["/explore", "/following", "/profile"]);
+const FOOTER_ROUTES = new Set(["/explore", "/following", "/profile"]);
 
+/** Footer SEO solo en rutas secundarias; el header va en el layout raíz. */
 export function ConditionalSiteChrome({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const showChrome = CHROME_ROUTES.has(pathname);
-
-  if (!showChrome) {
-    return <>{children}</>;
-  }
+  const showFooter = FOOTER_ROUTES.has(pathname);
 
   return (
-    <>
-      <Header />
+    <div className="flex min-h-0 flex-1 flex-col">
       {children}
-      <Footer />
-    </>
+      {showFooter ? <Footer /> : null}
+    </div>
   );
 }
