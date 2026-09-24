@@ -1,0 +1,15 @@
+{
+  "name": "naughtyxxxcams-mini-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mini App ultra-rápida de NaughtyXxxCams.com — SEO técnico y Core Web Vitals",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "npx --yes serve public -l 8787",
+    "build": "node scripts/generate-seo.mjs",
+    "preview": "npm run build && npm run dev"
+  }
+}

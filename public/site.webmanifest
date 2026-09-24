@@ -1,0 +1,17 @@
+{
+  "name": "NaughtyXxxCams",
+  "short_name": "NXCams",
+  "description": "Live cam streaming via TeleHub — fast, mobile-ready access.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#0B0F19",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

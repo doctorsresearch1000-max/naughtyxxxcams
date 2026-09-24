@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0B0F19" />
+
+    <title>NaughtyXxxCams — Live Cam Girls & Private Shows 24/7</title>
+    <meta name="description" content="Watch live cam models streaming in HD. Free chat, private shows, and instant access to top performers. Join via TeleHub — fast, discreet, mobile-ready." />
+    <meta name="keywords" content="live cams, cam girls, adult webcam, private shows, HD streams, TeleHub" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://naughtyxxxcams.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NaughtyXxxCams" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://naughtyxxxcams.com/" />
+    <meta property="og:title" content="NaughtyXxxCams — Live Cam Girls & Private Shows 24/7" />
+    <meta property="og:description" content="Watch live cam models streaming in HD. Free chat, private shows, and instant access to top performers. Join via TeleHub — fast, discreet, mobile-ready." />
+    <meta property="og:image" content="https://naughtyxxxcams.com/assets/og-cover.jpg" />
+    <meta property="og:image:alt" content="NaughtyXxxCams — live cam streaming" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@NaughtyXxxCams" />
+    <meta name="twitter:title" content="NaughtyXxxCams — Live Cam Girls & Private Shows 24/7" />
+    <meta name="twitter:description" content="Watch live cam models streaming in HD. Free chat, private shows, and instant access to top performers. Join via TeleHub — fast, discreet, mobile-ready." />
+    <meta name="twitter:image" content="https://naughtyxxxcams.com/assets/og-cover.jpg" />
+
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <link rel="preconnect" href="https://telehub.link/naughtyxxxcams" crossorigin />
+    <link rel="dns-prefetch" href="https://telehub.link/naughtyxxxcams" />
+
+    <style>
+      :root {
+        --bg: #0b0f19;
+        --surface: #121826;
+        --text: #e8edf7;
+        --muted: #9aa6bf;
+        --magenta: #ff007f;
+        --cyan: #00f0ff;
+        --live: #ff2d55;
+        --radius: 14px;
+        --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .glow-bg {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse 80% 50% at 20% -10%, rgba(255, 0, 127, 0.22), transparent 55%),
+          radial-gradient(ellipse 70% 45% at 90% 10%, rgba(0, 240, 255, 0.16), transparent 50%),
+          var(--bg);
+        z-index: -1;
+      }
+      .wrap {
+        width: min(1120px, 100% - 2rem);
+        margin-inline: auto;
+        padding-block: 1.25rem 3rem;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 0.5rem 1.5rem;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        text-decoration: none;
+        color: inherit;
+      }
+      .brand svg {
+        display: block;
+        width: 2.5rem;
+        height: auto;
+        flex-shrink: 0;
+      }
+      .brand-text {
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+      }
+      .brand-text span {
+        color: var(--magenta);
+      }
+      .live-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: rgba(255, 45, 85, 0.12);
+        border: 1px solid rgba(255, 45, 85, 0.45);
+        color: #ffb3c1;
+      }
+      .live-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--live);
+        box-shadow: 0 0 12px var(--live);
+        animation: pulse 1.4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.65;
+          transform: scale(0.92);
+        }
+      }
+      .hero {
+        display: grid;
+        gap: 1.75rem;
+        padding-block: 1rem 2rem;
+      }
+      @media (min-width: 768px) {
+        .hero {
+          grid-template-columns: 1.1fr 0.9fr;
+          align-items: center;
+        }
+      }
+      h1 {
+        margin: 0 0 0.75rem;
+        font-size: clamp(1.85rem, 4vw, 2.75rem);
+        line-height: 1.12;
+        font-weight: 900;
+      }
+      h1 em {
+        font-style: normal;
+        background: linear-gradient(90deg, var(--magenta), var(--cyan));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .lead {
+        margin: 0 0 1.25rem;
+        color: var(--muted);
+        font-size: 1.05rem;
+        max-width: 38ch;
+      }
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1.35rem;
+        border-radius: var(--radius);
+        font-weight: 800;
+        font-size: 0.95rem;
+        text-decoration: none;
+        border: 1px solid transparent;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .btn:focus-visible {
+        outline: 2px solid var(--cyan);
+        outline-offset: 3px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--magenta), #c4006a);
+        color: #fff;
+        box-shadow: 0 0 24px rgba(255, 0, 127, 0.35);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0 32px rgba(255, 0, 127, 0.5);
+      }
+      .btn-ghost {
+        background: rgba(0, 240, 255, 0.08);
+        border-color: rgba(0, 240, 255, 0.45);
+        color: var(--cyan);
+      }
+      .btn-ghost:hover {
+        transform: translateY(-1px);
+        background: rgba(0, 240, 255, 0.14);
+      }
+      .card {
+        background: linear-gradient(160deg, rgba(18, 24, 38, 0.95), rgba(11, 15, 25, 0.98));
+        border: 1px solid rgba(0, 240, 255, 0.18);
+        border-radius: calc(var(--radius) + 4px);
+        padding: 1.25rem;
+        box-shadow: 0 0 40px rgba(0, 240, 255, 0.06);
+      }
+      .card h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1rem;
+        color: var(--cyan);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .card ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .card li {
+        margin-bottom: 0.45rem;
+      }
+      .trust {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      footer {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(154, 166, 191, 0.2);
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-align: center;
+      }
+      footer a {
+        color: var(--cyan);
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "NaughtyXxxCams",
+        "url": "https://naughtyxxxcams.com/",
+        "description": "Watch live cam models streaming in HD. Free chat, private shows, and instant access to top performers. Join via TeleHub — fast, discreet, mobile-ready.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://naughtyxxxcams.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="glow-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <header>
+        <a class="brand" href="/" aria-label="NaughtyXxxCams home">
+          <svg viewBox="0 0 48 48" role="img" aria-label="NaughtyXxxCams logo">
+            <defs>
+              <linearGradient id="nx-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FF007F" />
+                <stop offset="100%" stop-color="#00F0FF" />
+              </linearGradient>
+            </defs>
+            <rect x="4" y="8" width="40" height="32" rx="10" fill="#121826" stroke="url(#nx-logo)" stroke-width="2" />
+            <circle cx="38" cy="12" r="5" fill="#FF2D55" stroke="#0B0F19" stroke-width="2" />
+            <path d="M14 30 L22 18 L28 26 L34 16" fill="none" stroke="url(#nx-logo)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="brand-text">Naughty<span>Xxx</span>Cams</span>
+        </a>
+        <span class="live-pill" role="status">
+          <span class="live-dot" aria-hidden="true"></span>
+          Live now
+        </span>
+      </header>
+
+      <main id="main">
+        <section class="hero" aria-labelledby="hero-title">
+          <div>
+            <h1 id="hero-title">
+              HD <em>live cam</em> streams — instant access on TeleHub
+            </h1>
+            <p class="lead">
+              Free public chat, private shows, and mobile-friendly streams. Tap below to enter the
+              TeleHub lobby — no heavy app install required.
+            </p>
+            <div class="cta-row">
+              <a
+                class="btn btn-primary"
+                id="cta-telehub-primary"
+                href="https://telehub.link/naughtyxxxcams"
+                rel="noopener sponsored"
+                data-telehub-cta="primary"
+              >
+                Enter TeleHub — Watch Live
+              </a>
+              <a
+                class="btn btn-ghost"
+                id="cta-telehub-secondary"
+                href="https://telehub.link/naughtyxxxcams"
+                rel="noopener sponsored"
+                data-telehub-cta="secondary"
+              >
+                Private shows
+              </a>
+            </div>
+            <div class="trust">
+              <span>18+ only</span>
+              <span>Encrypted checkout on TeleHub</span>
+              <span>Optimized for mobile</span>
+            </div>
+          </div>
+          <aside class="card" aria-label="Why TeleHub">
+            <h2>Why TeleHub</h2>
+            <ul>
+              <li>Low-latency streams tuned for global CDN delivery</li>
+              <li>One-tap entry from search and social previews</li>
+              <li>Discreet billing and creator-friendly payouts</li>
+            </ul>
+            <p style="margin: 1rem 0 0; font-size: 0.85rem; color: var(--muted)">
+              Primary destination:
+              <a href="https://telehub.link/naughtyxxxcams" rel="noopener sponsored" style="color: var(--magenta)">TeleHub link</a>
+            </p>
+          </aside>
+        </section>
+      </main>
+
+      <footer>
+        <p>
+          © 2026 NaughtyXxxCams. All rights reserved.
+          <a href="/robots.txt">Robots</a>
+          ·
+          <a href="/sitemap.xml">Sitemap</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
