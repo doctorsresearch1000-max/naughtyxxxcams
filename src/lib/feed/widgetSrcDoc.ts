@@ -150,56 +150,18 @@ const AFFILIATE_GUARD = `
 
 const AUDIO_BRIDGE = `
 (function () {
-  function getWidgetFrame() {
-    return document.getElementById('cr-widget-frame');
-  }
-  function setWidgetMutedFlag(muted) {
-    var widgetFrame = getWidgetFrame();
-    if (!widgetFrame || !widgetFrame.src) return;
-    try {
-      var url = new URL(widgetFrame.src, window.location.href);
-      var next = muted ? '1' : '0';
-      if (url.searchParams.get('muted') === next) return;
-      url.searchParams.set('muted', next);
-      widgetFrame.src = url.toString();
-    } catch (e) {}
-  }
-  function unmuteAllVideos() {
-    document.querySelectorAll('video').forEach(function (v) {
-      try {
-        v.muted = false;
-        v.volume = 1;
-        var p = v.play();
-        if (p && typeof p.catch === 'function') p.catch(function () {});
-      } catch (e) {}
-    });
-  }
   function muteAllVideos() {
     document.querySelectorAll('video').forEach(function (v) {
       try { v.muted = true; } catch (e) {}
     });
   }
-  function forwardToWidget(data) {
-    var widgetFrame = getWidgetFrame();
-    if (widgetFrame && widgetFrame.contentWindow) {
-      try { widgetFrame.contentWindow.postMessage(data, '*'); } catch (e) {}
-    }
-  }
   window.addEventListener('message', function (event) {
     if (!event.data || event.data.source !== 'naughty-feed') return;
     if (event.data.action === 'session-audio-unlock') {
-      setWidgetMutedFlag(false);
-      unmuteAllVideos();
-      forwardToWidget(event.data);
-      window.setTimeout(function () {
-        unmuteAllVideos();
-        forwardToWidget(event.data);
-      }, 400);
+      return;
     }
     if (event.data.action === 'session-audio-mute') {
-      setWidgetMutedFlag(true);
       muteAllVideos();
-      forwardToWidget(event.data);
     }
   });
 })();
@@ -210,6 +172,7 @@ export function buildWidgetSrcDoc(
   options?: {
     blockAffiliateNavigation?: boolean;
     embedInstanceId?: string;
+    widgetMuted?: number;
   },
 ): string {
   const guard = options?.blockAffiliateNavigation ? AFFILIATE_GUARD : "";
@@ -251,13 +214,13 @@ export function buildWidgetSrcDoc(
       }
     </style>
   </head>
-  <body data-embed-instance="${options?.embedInstanceId ?? ""}">
+  <body data-embed-instance="${options?.embedInstanceId ?? ""}" data-widget-muted="${options?.widgetMuted ?? 1}">
     <div id="widget-shell">
       <iframe
         id="cr-widget-frame"
         src="${safeFrameSrc}"
         title="CrackRevenue live widget"
-        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        allow="autoplay *; encrypted-media *; fullscreen *; picture-in-picture *"
         referrerpolicy="strict-origin-when-cross-origin"
       ></iframe>
     </div>

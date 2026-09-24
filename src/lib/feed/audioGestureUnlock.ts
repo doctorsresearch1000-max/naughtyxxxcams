@@ -1,38 +1,21 @@
-/**
- * Cross-origin widget audio requires the embed navigation to start inside the
- * user-gesture turn. React state updates that remount or change iframe `key`
- * fire a second load without gesture and keep the stream muted.
- */
-let activeFeedIframe: HTMLIFrameElement | null = null;
+import {
+  getActiveFeedAudioHandle,
+  navigateActiveFeedEmbedMuted,
+} from "@/lib/feed/feedAudioRegistry";
 
-export function setActiveFeedIframeElement(
-  iframe: HTMLIFrameElement | null,
-): void {
-  activeFeedIframe = iframe;
-}
-
-function applyMutedToIframe(
-  iframe: HTMLIFrameElement,
-  wantSound: boolean,
-): void {
-  const mutedParam = wantSound ? "0" : "1";
-  const rawSrc = iframe.src || iframe.getAttribute("src") || "";
-  if (!rawSrc) return;
-
-  try {
-    const url = new URL(rawSrc, window.location.origin);
-    if (url.searchParams.get("muted") === mutedParam) return;
-    url.searchParams.set("muted", mutedParam);
-    const next = url.toString();
-    iframe.src = next;
-  } catch {
-    /* ignore malformed src */
-  }
+/** @deprecated use navigateActiveFeedEmbedMuted */
+export function setActiveFeedIframeElement(_iframe: HTMLIFrameElement | null): void {
+  /* kept for transitional imports — registration is via registerFeedAudioHandle */
 }
 
 export function syncReloadFeedIframesForAudio(wantSound: boolean): void {
-  if (activeFeedIframe) {
-    applyMutedToIframe(activeFeedIframe, wantSound);
+  if (navigateActiveFeedEmbedMuted(wantSound)) {
+    return;
+  }
+
+  const handle = getActiveFeedAudioHandle();
+  if (handle?.iframe) {
+    navigateActiveFeedEmbedMuted(wantSound);
     return;
   }
 
@@ -40,6 +23,16 @@ export function syncReloadFeedIframesForAudio(wantSound: boolean): void {
     .querySelectorAll<HTMLIFrameElement>('iframe[data-naughty-feed-embed="true"]')
     .forEach((iframe) => {
       if (iframe.dataset.naughtyActiveAudio !== "true") return;
-      applyMutedToIframe(iframe, wantSound);
+      const mutedParam = wantSound ? "0" : "1";
+      const raw = iframe.src || iframe.getAttribute("src") || "";
+      if (!raw) return;
+      try {
+        const url = new URL(raw, window.location.origin);
+        if (url.searchParams.get("muted") === mutedParam) return;
+        url.searchParams.set("muted", mutedParam);
+        iframe.src = url.toString();
+      } catch {
+        /* ignore */
+      }
     });
 }

@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
-import { setActiveFeedIframeElement } from "@/lib/feed/audioGestureUnlock";
+import {
+  registerFeedAudioHandle,
+} from "@/lib/feed/feedAudioRegistry";
 import {
   WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
@@ -19,8 +27,11 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-/** If the widget never signals stream, do not block the poster forever. */
 const POSTER_FALLBACK_MS = 6_000;
+
+function embedMutedFromSession(unlocked: boolean, muted: boolean): number {
+  return !unlocked || muted ? 1 : 0;
+}
 
 export function LiveEmbed({
   embedKey,
@@ -31,7 +42,7 @@ export function LiveEmbed({
   onIframeWindow,
 }: LiveEmbedProps) {
   const { muted, unlocked } = useSessionAudio();
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const streamMuted = !unlocked || muted;
   const [frameLoaded, setFrameLoaded] = useState(false);
   const [streamActive, setStreamActive] = useState(false);
@@ -46,10 +57,33 @@ export function LiveEmbed({
         ratio: 0.5625,
         useFeed: 0,
         performerNameClean,
-        muted: streamMuted ? 1 : 0,
+        muted: embedMutedFromSession(unlocked, muted),
       }),
-    [embedKey, performerNameClean, streamMuted],
+    [embedKey, performerNameClean, unlocked, muted],
   );
+
+  const bindIframeRef = useCallback(
+    (node: HTMLIFrameElement | null) => {
+      iframeRef.current = node;
+      if (node && isActive && isArmed) {
+        registerFeedAudioHandle({ iframe: node, embedKey });
+      } else if (!isActive) {
+        registerFeedAudioHandle(null);
+      }
+    },
+    [isActive, isArmed, embedKey],
+  );
+
+  useEffect(() => {
+    if (!isActive) {
+      registerFeedAudioHandle(null);
+    } else if (iframeRef.current && isArmed) {
+      registerFeedAudioHandle({ iframe: iframeRef.current, embedKey });
+    }
+    return () => {
+      if (isActive) registerFeedAudioHandle(null);
+    };
+  }, [isActive, isArmed, embedKey, frameLoaded]);
 
   useEffect(() => {
     setFrameLoaded(false);
@@ -58,29 +92,14 @@ export function LiveEmbed({
   }, [embedKey, isActive]);
 
   useEffect(() => {
-    if (!isActive || !frameLoaded) return;
+    if (!isActive || !frameLoaded || streamMuted) return;
     const win = iframeRef.current?.contentWindow;
     if (!win) return;
     win.postMessage(
-      {
-        source: "naughty-feed",
-        action: streamMuted ? "session-audio-mute" : "session-audio-unlock",
-      },
+      { source: "naughty-feed", action: "session-audio-unlock" },
       "*",
     );
   }, [streamMuted, isActive, frameLoaded]);
-
-  useEffect(() => {
-    const el = iframeRef.current;
-    if (isActive && isArmed && el) {
-      setActiveFeedIframeElement(el);
-    } else if (!isActive) {
-      setActiveFeedIframeElement(null);
-    }
-    return () => {
-      if (isActive) setActiveFeedIframeElement(null);
-    };
-  }, [isActive, isArmed, frameLoaded]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -122,6 +141,7 @@ export function LiveEmbed({
   const mountIframe = isActive && isArmed;
   const hidePoster =
     isActive && frameLoaded && (streamActive || posterFallback);
+  const allowPlayerInteraction = !streamMuted;
 
   if (!isArmed) {
     return (
@@ -139,13 +159,15 @@ export function LiveEmbed({
       {mountIframe && (
         <iframe
           key={embedKey}
-          ref={iframeRef}
+          ref={bindIframeRef}
           src={embedSrc}
           title={`Live stream ${embedKey}`}
           data-touch-blocked="true"
           data-naughty-feed-embed="true"
           data-naughty-active-audio={isActive ? "true" : "false"}
-          className="pointer-events-none absolute inset-0 z-[12] h-full w-full border-0"
+          className={`absolute inset-0 z-[12] h-full w-full border-0 ${
+            allowPlayerInteraction ? "pointer-events-auto" : "pointer-events-none"
+          }`}
           allow={WIDGET_IFRAME_ALLOW_COMBINED}
           sandbox={WIDGET_IFRAME_SANDBOX}
           referrerPolicy="strict-origin-when-cross-origin"
@@ -162,7 +184,7 @@ export function LiveEmbed({
         }`}
       />
 
-      {mountIframe && (
+      {mountIframe && streamMuted && (
         <div
           className="pointer-events-none absolute inset-0 z-[25] touch-none"
           aria-hidden

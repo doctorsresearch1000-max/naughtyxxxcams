@@ -37,6 +37,7 @@ export async function GET(request: Request) {
   const html = buildWidgetSrcDoc(frameSrc, {
     blockAffiliateNavigation: true,
     embedInstanceId: instance,
+    widgetMuted: muted,
   });
 
   const headers: Record<string, string> = {

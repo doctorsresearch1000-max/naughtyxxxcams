@@ -4,11 +4,12 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+import { flushSync } from "react-dom";
+import { isActiveEmbedUnmuted } from "@/lib/feed/feedAudioRegistry";
 import { syncReloadFeedIframesForAudio } from "@/lib/feed/audioGestureUnlock";
 import { SessionAudioOverlay } from "./SessionAudioOverlay";
 
@@ -41,76 +42,60 @@ export function SessionAudioProvider({
   const [unlocked, setUnlocked] = useState(false);
   const [muted, setMuted] = useState(true);
   const [overlayGate, setOverlayGate] = useState(false);
-  const unlockedRef = useRef(unlocked);
-  const mutedRef = useRef(muted);
+  const unlockedRef = useRef(false);
+  const mutedRef = useRef(true);
   const activeIframeWindowRef = useRef<Window | null>(null);
 
-  useEffect(() => {
-    unlockedRef.current = unlocked;
-  }, [unlocked]);
+  const applyUnmuteFromGesture = useCallback(() => {
+    unlockedRef.current = true;
+    mutedRef.current = false;
+    syncReloadFeedIframesForAudio(true);
+    flushSync(() => {
+      setUnlocked(true);
+      setMuted(false);
+    });
+  }, []);
 
-  useEffect(() => {
-    mutedRef.current = muted;
-  }, [muted]);
+  const applyMuteFromGesture = useCallback(() => {
+    mutedRef.current = true;
+    syncReloadFeedIframesForAudio(false);
+    flushSync(() => {
+      setMuted(true);
+    });
+  }, []);
 
   const postToIframe = useCallback(
     (action: "session-audio-unlock" | "session-audio-mute") => {
+      if (action === "session-audio-mute" && isActiveEmbedUnmuted()) {
+        return;
+      }
       const payload = { source: "naughty-feed", action };
       const target = activeIframeWindowRef.current;
       if (target) {
         target.postMessage(payload, "*");
       }
-      document.querySelectorAll("iframe").forEach((frame) => {
-        try {
-          frame.contentWindow?.postMessage(payload, "*");
-        } catch {
-          /* cross-origin */
-        }
-      });
     },
     [],
   );
 
-  const registerActiveIframe = useCallback(
-    (win: Window | null) => {
-      activeIframeWindowRef.current = win;
-      if (!win) return;
-      if (unlockedRef.current && !mutedRef.current) {
-        postToIframe("session-audio-unlock");
-      }
-      if (mutedRef.current) {
-        postToIframe("session-audio-mute");
-      }
-    },
-    [postToIframe],
-  );
+  const registerActiveIframe = useCallback((win: Window | null) => {
+    activeIframeWindowRef.current = win;
+  }, []);
 
   const unlockSession = useCallback(() => {
-    syncReloadFeedIframesForAudio(true);
-    unlockedRef.current = true;
-    mutedRef.current = false;
-    setUnlocked(true);
-    setMuted(false);
+    applyUnmuteFromGesture();
     postToIframe("session-audio-unlock");
-  }, [postToIframe]);
+  }, [applyUnmuteFromGesture, postToIframe]);
 
   const toggleMuted = useCallback(() => {
-    setMuted((prev) => {
-      const next = !prev;
-      if (!next) {
-        syncReloadFeedIframesForAudio(true);
-        setUnlocked(true);
-        unlockedRef.current = true;
-        mutedRef.current = false;
-        postToIframe("session-audio-unlock");
-      } else {
-        syncReloadFeedIframesForAudio(false);
-        mutedRef.current = true;
-        postToIframe("session-audio-mute");
-      }
-      return next;
-    });
-  }, [postToIframe]);
+    if (mutedRef.current) {
+      applyUnmuteFromGesture();
+      postToIframe("session-audio-unlock");
+    } else {
+      applyMuteFromGesture();
+      postToIframe("session-audio-mute");
+    }
+  }, [applyUnmuteFromGesture, applyMuteFromGesture, postToIframe]);
 
   const value = useMemo(
     () => ({
