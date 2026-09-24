@@ -1,16 +1,15 @@
 import type { WidgetEmbedOptions } from "@/lib/feed/widgetSrcDoc";
 
-/**
- * Permisos delegados al documento del iframe y a iframes anidados del widget.
- * Sin `allow="autoplay; encrypted-media"` el vídeo no arranca (política del navegador).
- */
+/** Permisos explícitos para autoplay y media en el iframe y frames anidados del widget. */
 export const WIDGET_IFRAME_ALLOW =
+  "autoplay; encrypted-media; fullscreen; picture-in-picture";
+
+/** Permisos delegados a orígenes del widget (Streamate / popin anidados). */
+export const WIDGET_IFRAME_ALLOW_FEATURES =
   "autoplay *; encrypted-media *; fullscreen *; picture-in-picture *";
 
-/**
- * Sandbox mínimo para script del partner + mismo origen en /api/embed/cams.
- * Sin allow-popups en feed para reducir saltos de afiliado (el widget suele anidar su propio frame).
- */
+export const WIDGET_IFRAME_ALLOW_COMBINED = `${WIDGET_IFRAME_ALLOW}; ${WIDGET_IFRAME_ALLOW_FEATURES}`;
+
 export const WIDGET_IFRAME_SANDBOX =
   "allow-scripts allow-same-origin allow-presentation";
 

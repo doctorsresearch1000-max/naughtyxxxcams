@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
-  WIDGET_IFRAME_ALLOW,
+  WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
   buildCamsEmbedUrl,
 } from "@/lib/feed/embedFrame";
@@ -16,7 +16,8 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-const SETTLE_MS = 80;
+/** Si el widget no notifica stream, no bloquear el póster indefinidamente. */
+const POSTER_FALLBACK_MS = 12_000;
 
 export function LiveEmbed({
   embedKey,
@@ -27,7 +28,8 @@ export function LiveEmbed({
 }: LiveEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [frameLoaded, setFrameLoaded] = useState(false);
-  const [settled, setSettled] = useState(false);
+  const [streamActive, setStreamActive] = useState(false);
+  const [posterFallback, setPosterFallback] = useState(false);
 
   const embedSrc = useMemo(
     () =>
@@ -43,17 +45,36 @@ export function LiveEmbed({
 
   useEffect(() => {
     setFrameLoaded(false);
-    setSettled(false);
-  }, [embedKey]);
+    setStreamActive(false);
+    setPosterFallback(false);
+  }, [embedKey, isActive]);
 
   useEffect(() => {
-    if (!isActive || !frameLoaded) {
-      setSettled(false);
-      return;
-    }
-    const t = window.setTimeout(() => setSettled(true), SETTLE_MS);
-    return () => window.clearTimeout(t);
+    if (!isActive || !frameLoaded) return;
+
+    const fallbackTimer = window.setTimeout(() => {
+      setPosterFallback(true);
+    }, POSTER_FALLBACK_MS);
+
+    return () => window.clearTimeout(fallbackTimer);
   }, [isActive, frameLoaded, embedKey]);
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      const data = event.data;
+      if (!data || data.source !== "naughty-embed") return;
+      if (data.action !== "stream-active") return;
+      if (data.instance && data.instance !== embedKey) return;
+
+      const iframeWin = iframeRef.current?.contentWindow;
+      if (iframeWin && event.source !== iframeWin) return;
+
+      setStreamActive(true);
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [embedKey]);
 
   useEffect(() => {
     if (!isActive) {
@@ -64,12 +85,9 @@ export function LiveEmbed({
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
-  /**
-   * Solo la tarjeta activa monta iframe (evita contextos 1×1 que no inicializan media).
-   * URL same-origin (/api/embed/cams) en lugar de srcDoc opaco.
-   */
   const mountIframe = isActive && isArmed;
-  const hidePoster = isActive && frameLoaded && settled;
+  const hidePoster =
+    isActive && frameLoaded && (streamActive || posterFallback);
 
   if (!isArmed) {
     return (
@@ -91,7 +109,7 @@ export function LiveEmbed({
           title={`Live stream ${embedKey}`}
           data-touch-blocked="true"
           className="pointer-events-none absolute inset-0 z-[12] h-full w-full border-0"
-          allow={WIDGET_IFRAME_ALLOW}
+          allow={WIDGET_IFRAME_ALLOW_COMBINED}
           sandbox={WIDGET_IFRAME_SANDBOX}
           referrerPolicy="strict-origin-when-cross-origin"
           onLoad={() => setFrameLoaded(true)}
@@ -102,7 +120,7 @@ export function LiveEmbed({
         feedKey={embedKey}
         posterUrl={posterUrl}
         priority={isActive}
-        className={`pointer-events-none absolute inset-0 z-[20] h-full w-full object-cover transition-opacity duration-300 ${
+        className={`pointer-events-none absolute inset-0 z-[20] h-full w-full object-cover transition-opacity duration-500 ${
           hidePoster ? "opacity-0" : "opacity-100"
         }`}
       />

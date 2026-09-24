@@ -23,6 +23,7 @@ export async function GET(request: Request) {
   const html = buildWidgetSrcDoc(scriptSrc, {
     blockAffiliateNavigation: true,
     enableAutoplayKickstart: true,
+    embedInstanceId: instance,
   });
 
   return new Response(html, {
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
       "X-Frame-Options": "SAMEORIGIN",
+      "Permissions-Policy": "autoplay=(self), encrypted-media=(self)",
     },
   });
 }

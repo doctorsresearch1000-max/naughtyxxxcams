@@ -17,7 +17,6 @@ export type WidgetEmbedOptions = {
   embedInstanceId?: string;
 };
 
-/** URL del script — `muted=1` permite autoplay bajo políticas modernas. */
 export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
   const brands = resolveWidgetBrands();
   const landingId = resolveWidgetLandingId();
@@ -44,6 +43,8 @@ export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
     AuxiliaryCSS: "\n",
     lang: "es",
     muted: "1",
+    autoplay: "1",
+    autoPlay: "1",
     token: CRACKREVENUE_TOKEN,
     api_key: CRACKREVENUE_API_KEY,
   });
@@ -53,6 +54,62 @@ export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
   }
 
   return `${WIDGET_SCRIPT_BASE}?${params.toString()}`;
+}
+
+function buildStreamNotifierScript(instanceId: string): string {
+  const safeInstance = JSON.stringify(instanceId);
+  return `
+(function () {
+  var instance = ${safeInstance};
+  var sent = false;
+  function notify() {
+    if (sent) return;
+    sent = true;
+    try {
+      window.parent.postMessage(
+        { source: "naughty-embed", action: "stream-active", instance: instance },
+        "*"
+      );
+    } catch (e) {}
+  }
+  function probe() {
+    var videos = document.querySelectorAll("video");
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (v.readyState >= 2 && (v.videoWidth > 0 || v.currentTime > 0)) {
+        notify();
+        return;
+      }
+      if (!v.paused && v.currentTime > 0) {
+        notify();
+        return;
+      }
+    }
+  }
+  document.addEventListener(
+    "playing",
+    function (e) {
+      if (e.target && e.target.tagName === "VIDEO") notify();
+    },
+    true
+  );
+  document.addEventListener(
+    "loadeddata",
+    function (e) {
+      if (e.target && e.target.tagName === "VIDEO") probe();
+    },
+    true
+  );
+  window.addEventListener("load", probe);
+  setInterval(probe, 350);
+  try {
+    new MutationObserver(probe).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  } catch (e) {}
+})();
+`;
 }
 
 const AFFILIATE_GUARD = `
@@ -100,7 +157,8 @@ const AUTOPLAY_KICKSTART = `
       try {
         v.setAttribute('playsinline', '');
         v.setAttribute('webkit-playsinline', '');
-        if (!v.muted) v.muted = true;
+        v.muted = true;
+        v.autoplay = true;
         var p = v.play();
         if (p && typeof p.catch === 'function') p.catch(function () {});
       } catch (e) {}
@@ -115,7 +173,7 @@ const AUTOPLAY_KICKSTART = `
       subtree: true,
     });
   } catch (e) {}
-  setInterval(kick, 2500);
+  setInterval(kick, 2000);
 })();
 `;
 
@@ -124,36 +182,43 @@ export function buildWidgetSrcDoc(
   options?: {
     blockAffiliateNavigation?: boolean;
     enableAutoplayKickstart?: boolean;
+    embedInstanceId?: string;
   },
 ): string {
   const guard = options?.blockAffiliateNavigation ? AFFILIATE_GUARD : "";
   const kick = options?.enableAutoplayKickstart ? AUTOPLAY_KICKSTART : "";
+  const notifier = buildStreamNotifierScript(options?.embedInstanceId ?? "");
 
   return `<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Permissions-Policy" content="autoplay=(self), encrypted-media=(self)">
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       html, body {
         width: 100%;
         height: 100%;
+        min-height: 100%;
         background: #000;
         overflow: hidden;
       }
-      iframe, div, object, video {
+      #cams-widget-root, iframe, div, object, video {
         width: 100% !important;
         max-width: 100% !important;
+        min-height: 100%;
       }
       video {
         object-fit: cover;
       }
     </style>
   </head>
-  <body>
+  <body data-embed-instance="${options?.embedInstanceId ?? ""}">
+    <div id="cams-widget-root"></div>
     <script>${AUDIO_BRIDGE}</script>
     <script>${guard}</script>
+    <script>${notifier}</script>
     <script src="${scriptSrc}"></script>
     <script>${kick}</script>
   </body>

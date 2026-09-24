@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import {
-  WIDGET_IFRAME_ALLOW,
+  WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
   buildCamsEmbedUrl,
 } from "@/lib/feed/embedFrame";
@@ -87,7 +87,7 @@ export default function CrackWidget({
               ? "pointer-events-auto block h-full w-full max-h-full border-0"
               : "pointer-events-none block h-full w-full max-h-full touch-none border-0"
           }
-          allow={WIDGET_IFRAME_ALLOW}
+          allow={WIDGET_IFRAME_ALLOW_COMBINED}
           sandbox={`${WIDGET_IFRAME_SANDBOX} allow-popups allow-forms`}
           referrerPolicy="strict-origin-when-cross-origin"
           onLoad={() => setLoaded(true)}
