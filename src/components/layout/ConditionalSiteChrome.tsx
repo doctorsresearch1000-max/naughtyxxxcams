@@ -12,7 +12,8 @@ export function ConditionalSiteChrome({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const showFooter = FOOTER_ROUTES.has(pathname);
+  const showFooter =
+    FOOTER_ROUTES.has(pathname) || pathname.startsWith("/profile/");
 
   const isHome = pathname === "/";
 
