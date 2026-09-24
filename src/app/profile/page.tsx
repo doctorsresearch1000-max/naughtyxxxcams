@@ -2,14 +2,11 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 import Image from "next/image";
-import { NaughtyLogo } from "@/components/brand/NaughtyLogo";
 import { continueWatching, profileUser } from "@/data/mock";
 
 export default function ProfilePage() {
   return (
-    <main className="mx-auto min-h-screen w-full max-w-md bg-black px-4 pb-20 pt-4 text-white">
-      <NaughtyLogo size="sm" className="mb-5" />
-
+    <main className="mx-auto min-h-screen w-full max-w-md bg-black px-4 pb-8 pt-4 text-white">
       <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
         PERFIL
       </span>

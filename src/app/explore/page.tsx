@@ -20,14 +20,7 @@ export default async function ExplorePage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-black px-4 pb-20 pt-4 text-white [-webkit-overflow-scrolling:touch]">
-      <div className="mb-4 flex items-center gap-1 text-base font-black tracking-wider text-pink-500">
-        <span>Naughty</span>
-        <span className="rounded-md bg-pink-600 px-1.5 py-0.5 text-xs text-white">
-          XXX
-        </span>
-      </div>
-
+    <main className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-black px-4 pb-8 pt-4 text-white [-webkit-overflow-scrolling:touch]">
       <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
         EXPLORA
       </span>

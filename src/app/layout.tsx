@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AppChrome } from "@/components/layout/AppChrome";
+import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="min-h-dvh bg-black">
         <div className="relative mx-auto min-h-dvh max-w-md bg-black pb-16 [touch-action:pan-y]">
-          {children}
+          <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
         </div>
         <AppChrome />
       </body>
