@@ -11,6 +11,7 @@ import {
   performerDisplayHandle,
   performerProfilePath,
 } from "@/lib/profile/performerHandle";
+import { LiveStreamBadge } from "@/components/feed/LiveStreamBadge";
 import { LiveEmbed } from "./LiveEmbed";
 
 const CARD_HEIGHT = "h-[calc(100dvh-4rem)]";
@@ -58,6 +59,12 @@ export function LiveFeedCard({
         onIframeWindow={isActive ? onRegisterIframe : undefined}
       />
 
+      <LiveStreamBadge
+        performer={performer}
+        feedKey={performer.feedKey}
+        visible={isActive}
+      />
+
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
 
       <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[78%] flex flex-col gap-2">
@@ -85,9 +92,11 @@ export function LiveFeedCard({
           affiliateUrl={affiliateUrl}
           visible={isActive && conversionReady}
         />
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-[#39FF14]/90">
-          {isActive ? "Live · Streamate" : "Swipe · next model"}
-        </span>
+        {!isActive ? (
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+            Swipe · next model
+          </span>
+        ) : null}
       </div>
 
       <FeedActionRail
