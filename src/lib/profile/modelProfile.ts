@@ -124,11 +124,12 @@ export async function resolveModelProfile(
   const slug = slugifyHandle(handleParam);
   if (!slug) return null;
 
-  const { performers } = await fetchStreamatePerformers({
+  const liveRes = await fetchStreamatePerformers({
     live: true,
     size: 100,
     page: 1,
   });
+  const performers = liveRes.performers ?? [];
 
   let match =
     performers.find((p) => performerSlug(p) === slug) ??
@@ -141,7 +142,7 @@ export async function resolveModelProfile(
       size: 100,
       page: 1,
     });
-    const pool = offline.performers;
+    const pool = offline.performers ?? [];
     match =
       pool.find((p) => performerSlug(p) === slug) ??
       pool.find((p) => performerSlug(p).includes(slug)) ??
