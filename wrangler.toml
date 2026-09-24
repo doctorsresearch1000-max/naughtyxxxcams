@@ -8,12 +8,14 @@ compatibility_flags = [ "nodejs_compat" ]
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
+run_worker_first = [ "/api/*", "/sitemap.xml", "/robots.txt", "/profile/*" ]
 
 [[kv_namespaces]]
 binding = "NEXT_CACHE_WORKERS_KV"
 id = "c7a39ac66ad54a34b760cc323472ddf2"
 
 [vars]
+NEXT_PUBLIC_SITE_URL = "https://naughtyxxxcams.com"
 CRACKREVENUE_USER_AGENT = "NaughtyXxxCams/1.0 (+https://naughtyxxxcams.com)"
 CRACKREVENUE_WIDGET_SCRIPT_URL = "https://widget-ext.crxcr2.com/script"
 CRAK_API_KEY = "fdea1df92de2f1f1136fc0f92c35d85ce84c15ad70443277875a1996752c9992"
