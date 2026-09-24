@@ -1,17 +1,7 @@
 import type { MetadataRoute } from "next";
+import { EXPLORE_CATEGORY_SLUGS } from "@/lib/explore/categorySlugs";
 import { collectPerformerProfileSlugs } from "@/lib/sitemap/performerSlugs";
 import { getSiteUrl } from "@/lib/sitemap/siteUrl";
-
-const EXPLORE_CATEGORY_SLUGS = [
-  "latinas",
-  "verified",
-  "milf",
-  "petite",
-  "cosplay",
-  "couples",
-  "trans",
-  "alt",
-] as const;
 
 export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl();

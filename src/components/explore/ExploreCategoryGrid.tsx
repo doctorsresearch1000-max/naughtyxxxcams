@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 
 const GRADIENTS = [
@@ -13,6 +14,23 @@ const GRADIENTS = [
 type ExploreCategoryGridProps = {
   categories: ExploreCategory[];
 };
+
+function categoryQueryFromExploreCategory(cat: ExploreCategory): string {
+  const value = encodeURIComponent(cat.filterValue);
+  if (cat.filterType === "ethnicity" && cat.filterValue === "hispanic") {
+    return "cat=latinas";
+  }
+  if (cat.filterType === "tag" && cat.filterValue === "milf") {
+    return "cat=milf";
+  }
+  if (cat.filterType === "tag" && cat.filterValue === "petite") {
+    return "cat=petite";
+  }
+  if (cat.filterType === "tag") {
+    return `cat=${encodeURIComponent(cat.filterValue.replace(/\s+/g, ""))}`;
+  }
+  return `cat=${value}`;
+}
 
 export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
   const safeCategories = Array.isArray(categories) ? categories : [];
@@ -29,10 +47,10 @@ export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
   return (
     <div className="grid grid-cols-2 gap-3">
       {safeCategories.map((cat, index) => (
-        <button
+        <Link
           key={cat?.id ?? `category-${index}`}
-          type="button"
-          className="group relative h-28 w-full overflow-hidden rounded-2xl border border-zinc-800/80 shadow-md transition-all active:scale-95"
+          href={`/explore?${categoryQueryFromExploreCategory(cat)}`}
+          className="group relative block h-28 w-full overflow-hidden rounded-2xl border border-zinc-800/80 shadow-md transition-all active:scale-95"
         >
           {cat.coverUrl ? (
             <Image
@@ -56,7 +74,7 @@ export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
               {cat?.liveCount ?? 0} Live
             </span>
           </div>
-        </button>
+        </Link>
       ))}
     </div>
   );
