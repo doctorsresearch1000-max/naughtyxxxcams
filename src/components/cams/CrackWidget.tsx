@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { FeedTouchLayer } from "@/components/feed/FeedTouchLayer";
 import {
   CRACKREVENUE_API_KEY,
   CRACKREVENUE_TOKEN,
@@ -18,12 +19,18 @@ interface CrackWidgetProps {
   smoothAnimation?: number;
   className?: string;
   height?: string;
-  /** Si true: no montar iframe (evita captura de toques hasta desbloquear sonido). */
+  /** @deprecated Usar captureScrollGestures + soundGateOpen en el feed. */
   blockPointerEvents?: boolean;
   providers?: string;
   soundEnabled?: boolean;
-  enableVerticalScroll?: boolean;
+  /** Feed home: capa superior para scroll del padre (iframe sin pointer-events). */
+  captureScrollGestures?: boolean;
+  scrollRootRef?: React.RefObject<HTMLElement | null>;
+  /** Tras pulsar el CTA de sonido: permite tap para exponer iframe al gesto nativo. */
+  soundGateOpen?: boolean;
 }
+
+const IFRAME_EXPOSE_MS = 2800;
 
 export default function CrackWidget({
   cols = 1,
@@ -38,12 +45,21 @@ export default function CrackWidget({
   blockPointerEvents = false,
   providers = STREAMATE_BRAND,
   soundEnabled = false,
+  captureScrollGestures = false,
+  scrollRootRef,
+  soundGateOpen = false,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
+  const [iframeExposed, setIframeExposed] = useState(false);
 
   const cleanCols = Number(cols) || 1;
   const cleanRows = Number(rows) || 1;
   const cleanNumber = Number(number) || 10;
+
+  const exposeIframeForUserGesture = useCallback(() => {
+    setIframeExposed(true);
+    window.setTimeout(() => setIframeExposed(false), IFRAME_EXPOSE_MS);
+  }, []);
 
   const scriptSrc = useMemo(() => {
     const params = new URLSearchParams({
@@ -98,10 +114,8 @@ export default function CrackWidget({
             height: 100%;
             background-color: #000;
             color: #fff;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain;
-            touch-action: pan-y;
+            overflow: hidden;
+            touch-action: none;
           }
           iframe, div, object {
             width: 100% !important;
@@ -117,8 +131,16 @@ export default function CrackWidget({
     [scriptSrc],
   );
 
-  const showIframe = !blockPointerEvents;
-  const iframeInteractive = showIframe;
+  const legacyBlock = blockPointerEvents && !captureScrollGestures;
+  const showIframe = !legacyBlock;
+
+  const shieldActive =
+    captureScrollGestures && scrollRootRef && !iframeExposed;
+
+  const iframeReceivesTouches =
+    !captureScrollGestures && !legacyBlock
+      ? true
+      : iframeExposed;
 
   return (
     <div
@@ -135,7 +157,7 @@ export default function CrackWidget({
         </div>
       )}
 
-      {blockPointerEvents && (
+      {legacyBlock && (
         <div
           className="pointer-events-none absolute inset-0 z-[1] bg-black"
           aria-hidden
@@ -144,17 +166,24 @@ export default function CrackWidget({
 
       {showIframe && (
         <iframe
-          key={soundEnabled ? "sound-on" : "sound-off"}
           srcDoc={srcDoc}
-          data-touch-blocked={iframeInteractive ? "false" : "true"}
+          data-touch-blocked={iframeReceivesTouches ? "false" : "true"}
           className={
-            iframeInteractive
-              ? "pointer-events-auto block h-full w-full max-h-full touch-pan-y border-0"
+            iframeReceivesTouches
+              ? "pointer-events-auto block h-full w-full max-h-full border-0"
               : "pointer-events-none block h-full w-full max-h-full touch-none border-0"
           }
           onLoad={() => setLoaded(true)}
           sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           title="NaughtyXXX Streamate Feed"
+        />
+      )}
+
+      {shieldActive && (
+        <FeedTouchLayer
+          scrollRootRef={scrollRootRef}
+          soundGateOpen={soundGateOpen}
+          onExposeIframe={exposeIframeForUserGesture}
         />
       )}
     </div>
