@@ -3,7 +3,11 @@ import {
   API_ETHNICITY_SLUGS,
   API_TAG_SLUGS,
 } from "./config";
-import { fetchStreamatePerformers, pickCoverUrl } from "./api";
+import {
+  fetchStreamatePerformers,
+  getPerformerKey,
+  pickCoverUrl,
+} from "./api";
 
 export type ExploreCategory = {
   id: string;
@@ -11,6 +15,11 @@ export type ExploreCategory = {
   coverUrl: string | null;
   liveCount: number;
   filterType: "tag" | "ethnicity" | "age";
+  filterValue: string;
+};
+
+type CategoryDefinition = {
+  filterType: ExploreCategory["filterType"];
   filterValue: string;
 };
 
@@ -32,59 +41,134 @@ function formatTitle(value: string): string {
     .join(" ");
 }
 
+function normalizeTitle(title: string): string {
+  return title.trim().toUpperCase();
+}
+
+type UniqueRegistry = {
+  usedCovers: Set<string>;
+  usedPerformers: Set<string>;
+};
+
+async function pickUniqueCover(
+  def: CategoryDefinition,
+  registry: UniqueRegistry,
+): Promise<string | null> {
+  const baseParams =
+    def.filterType === "tag"
+      ? { tags: def.filterValue }
+      : def.filterType === "ethnicity"
+        ? { ethnicities: def.filterValue }
+        : { ages: def.filterValue };
+
+  for (let page = 1; page <= 4; page += 1) {
+    const data = await fetchStreamatePerformers({
+      ...baseParams,
+      page,
+      size: 20,
+    });
+
+    for (const performer of data.performers ?? []) {
+      const cover = pickCoverUrl(performer);
+      const performerKey = getPerformerKey(performer);
+      if (!cover) continue;
+      if (registry.usedCovers.has(cover)) continue;
+      if (registry.usedPerformers.has(performerKey)) continue;
+
+      registry.usedCovers.add(cover);
+      registry.usedPerformers.add(performerKey);
+      return cover;
+    }
+  }
+
+  return null;
+}
+
 async function resolveCategory(
-  filterType: ExploreCategory["filterType"],
-  filterValue: string,
-): Promise<ExploreCategory> {
+  def: CategoryDefinition,
+  registry: UniqueRegistry,
+): Promise<ExploreCategory | null> {
   const params =
-    filterType === "tag"
-      ? { tags: filterValue, size: 1 }
-      : filterType === "ethnicity"
-        ? { ethnicities: filterValue, size: 1 }
-        : { ages: filterValue, size: 1 };
+    def.filterType === "tag"
+      ? { tags: def.filterValue, size: 1 }
+      : def.filterType === "ethnicity"
+        ? { ethnicities: def.filterValue, size: 1 }
+        : { ages: def.filterValue, size: 1 };
 
   const data = await fetchStreamatePerformers(params);
-  const performer = data.performers?.[0];
+  const coverUrl = await pickUniqueCover(def, registry);
 
-  return {
-    id: `${filterType}:${filterValue}`,
-    title: formatTitle(filterValue).toUpperCase(),
-    coverUrl: pickCoverUrl(performer),
+  const category: ExploreCategory = {
+    id: `${def.filterType}:${def.filterValue}`,
+    title: formatTitle(def.filterValue).toUpperCase(),
+    coverUrl,
     liveCount: data.count ?? 0,
-    filterType,
-    filterValue,
+    filterType: def.filterType,
+    filterValue: def.filterValue,
   };
-}
 
-async function mapInChunks<T, R>(
-  items: readonly T[],
-  mapper: (item: T) => Promise<R>,
-  chunkSize = 8,
-): Promise<R[]> {
-  const results: R[] = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    const chunk = items.slice(i, i + chunkSize);
-    const chunkResults = await Promise.all(chunk.map(mapper));
-    results.push(...chunkResults);
+  if (category.liveCount <= 0 && !category.coverUrl) {
+    return null;
   }
-  return results;
+
+  return category;
 }
 
-/** Carga todas las categorías oficiales de la API (tags, etnias, edades) con portada CTR. */
+function dedupeCategories(categories: ExploreCategory[]): ExploreCategory[] {
+  const byId = new Map<string, ExploreCategory>();
+  const byTitle = new Map<string, ExploreCategory>();
+  const coverGuard = new Set<string>();
+
+  const sorted = [...categories].sort((a, b) => b.liveCount - a.liveCount);
+
+  for (const cat of sorted) {
+    if (byId.has(cat.id)) continue;
+
+    const titleKey = normalizeTitle(cat.title);
+    const existingByTitle = byTitle.get(titleKey);
+    if (existingByTitle && existingByTitle.id !== cat.id) {
+      continue;
+    }
+
+    if (cat.coverUrl) {
+      if (coverGuard.has(cat.coverUrl)) continue;
+      coverGuard.add(cat.coverUrl);
+    }
+
+    byId.set(cat.id, cat);
+    byTitle.set(titleKey, cat);
+  }
+
+  return Array.from(byId.values()).sort((a, b) => b.liveCount - a.liveCount);
+}
+
+/** Carga categorías oficiales de la API sin duplicados y con portadas únicas. */
 export async function fetchAllExploreCategories(): Promise<ExploreCategory[]> {
-  const tagCategories = await mapInChunks(API_TAG_SLUGS, (tag) =>
-    resolveCategory("tag", tag),
-  );
-  const ethnicityCategories = await mapInChunks(API_ETHNICITY_SLUGS, (eth) =>
-    resolveCategory("ethnicity", eth),
-  );
-  const ageCategories = await mapInChunks(API_AGE_SLUGS, (age) =>
-    resolveCategory("age", age),
-  );
+  const definitions: CategoryDefinition[] = [
+    ...API_TAG_SLUGS.map((value) => ({
+      filterType: "tag" as const,
+      filterValue: value,
+    })),
+    ...API_ETHNICITY_SLUGS.map((value) => ({
+      filterType: "ethnicity" as const,
+      filterValue: value,
+    })),
+    ...API_AGE_SLUGS.map((value) => ({
+      filterType: "age" as const,
+      filterValue: value,
+    })),
+  ];
 
-  const merged = [...tagCategories, ...ethnicityCategories, ...ageCategories];
+  const registry: UniqueRegistry = {
+    usedCovers: new Set<string>(),
+    usedPerformers: new Set<string>(),
+  };
 
-  return merged
-    .filter((cat) => cat.liveCount > 0 || cat.coverUrl)
-    .sort((a, b) => b.liveCount - a.liveCount);
+  const resolved: ExploreCategory[] = [];
+  for (const def of definitions) {
+    const category = await resolveCategory(def, registry);
+    if (category) resolved.push(category);
+  }
+
+  return dedupeCategories(resolved);
 }

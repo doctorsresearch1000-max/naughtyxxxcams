@@ -8,6 +8,9 @@ import { fetchAllExploreCategories } from "@/lib/crackrevenue/categories";
 
 export default async function ExplorePage() {
   const categories = await fetchAllExploreCategories();
+  const uniqueCategories = Array.from(
+    new Map(categories.map((cat) => [cat.id, cat])).values(),
+  );
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-black px-4 pb-20 pt-4 text-white [-webkit-overflow-scrolling:touch]">
@@ -52,11 +55,11 @@ export default async function ExplorePage() {
             Categorías Populares
           </h2>
           <span className="text-xs font-semibold text-pink-500">
-            {categories.length} activas
+            {uniqueCategories.length} activas
           </span>
         </div>
 
-        <ExploreCategoryGrid categories={categories} />
+        <ExploreCategoryGrid categories={uniqueCategories} />
       </section>
 
       <section className="mb-6">

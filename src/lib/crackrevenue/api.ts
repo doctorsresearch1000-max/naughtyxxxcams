@@ -10,6 +10,7 @@ const API_BASE = "https://performersext-api.pcvdaa.com/performers-ext";
 export type CrackPerformer = {
   name?: string;
   nameClean?: string;
+  itemId?: string;
   live?: boolean;
   thumbnailUrl?: string;
   liveSnapshotURL?: string;
@@ -72,4 +73,14 @@ export async function fetchStreamatePerformers(
 export function pickCoverUrl(performer?: CrackPerformer): string | null {
   if (!performer) return null;
   return performer.liveSnapshotURL || performer.thumbnailUrl || null;
+}
+
+export function getPerformerKey(performer: CrackPerformer): string {
+  return (
+    performer.itemId ||
+    performer.nameClean ||
+    performer.name ||
+    pickCoverUrl(performer) ||
+    "unknown"
+  );
 }

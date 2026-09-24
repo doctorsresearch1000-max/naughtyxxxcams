@@ -18,10 +18,10 @@ interface CrackWidgetProps {
   smoothAnimation?: number;
   className?: string;
   height?: string;
-  /** Bloquea clics en el iframe (p. ej. hasta activar sonido en Home). */
   blockPointerEvents?: boolean;
-  /** Proveedor del widget (Streamate por defecto, estable en TeleHub). */
   providers?: string;
+  /** Habilita scroll vertical nativo en el contenedor del feed (Home TikTok). */
+  enableVerticalScroll?: boolean;
 }
 
 export default function CrackWidget({
@@ -36,6 +36,7 @@ export default function CrackWidget({
   height = "h-full",
   blockPointerEvents = false,
   providers = STREAMATE_BRAND,
+  enableVerticalScroll = false,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -110,9 +111,13 @@ export default function CrackWidget({
     </html>
   `;
 
+  const shellClass = enableVerticalScroll
+    ? "touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
+    : "overflow-hidden";
+
   return (
     <div
-      className={`relative w-full overflow-hidden bg-black ${height} ${className}`}
+      className={`relative w-full bg-black ${height} ${shellClass} ${className}`}
     >
       {!loaded && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-zinc-400">
@@ -122,7 +127,7 @@ export default function CrackWidget({
       )}
       <iframe
         srcDoc={srcDoc}
-        className={`block h-full w-full border-0 ${
+        className={`block h-full min-h-full w-full border-0 touch-pan-y ${
           blockPointerEvents ? "pointer-events-none" : "pointer-events-auto"
         }`}
         onLoad={() => setLoaded(true)}
