@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FeedTouchLayer } from "@/components/feed/FeedTouchLayer";
 import {
   CRACKREVENUE_API_KEY,
   CRACKREVENUE_TOKEN,
@@ -22,12 +21,10 @@ interface CrackWidgetProps {
   blockPointerEvents?: boolean;
   providers?: string;
   soundEnabled?: boolean;
-  /** Feed home: iframe sin pointer-events + capa de tap para audio. */
-  captureScrollGestures?: boolean;
-  soundGateOpen?: boolean;
-  /** Ventana breve de interacción con el iframe (gesto nativo de sonido). */
-  allowIframeInteraction?: boolean;
-  onRequestIframeInteraction?: () => void;
+  /** Feed vertical interno del widget (Streamate useFeed). */
+  internalVerticalFeed?: boolean;
+  /** Si false, el iframe no recibe toques (scroll del padre). */
+  interactive?: boolean;
 }
 
 export default function CrackWidget({
@@ -43,10 +40,8 @@ export default function CrackWidget({
   blockPointerEvents = false,
   providers = STREAMATE_BRAND,
   soundEnabled = false,
-  captureScrollGestures = false,
-  soundGateOpen = false,
-  allowIframeInteraction = false,
-  onRequestIframeInteraction,
+  internalVerticalFeed = false,
+  interactive = true,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -93,8 +88,16 @@ export default function CrackWidget({
     soundEnabled,
   ]);
 
-  const srcDoc = useMemo(
-    () => `
+  const srcDoc = useMemo(() => {
+    const bodyTouch = internalVerticalFeed
+      ? `overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            touch-action: pan-y;`
+      : `overflow: hidden;
+            touch-action: manipulation;`;
+
+    return `
     <!DOCTYPE html>
     <html lang="es">
       <head>
@@ -107,9 +110,7 @@ export default function CrackWidget({
             height: 100%;
             background-color: #000;
             color: #fff;
-            overflow: hidden;
-            touch-action: none;
-            pointer-events: none;
+            ${bodyTouch}
           }
           iframe, div, object {
             width: 100% !important;
@@ -121,23 +122,15 @@ export default function CrackWidget({
         <script src="${scriptSrc}"></script>
       </body>
     </html>
-  `,
-    [scriptSrc],
-  );
+  `;
+  }, [scriptSrc, internalVerticalFeed]);
 
-  const legacyBlock = blockPointerEvents && !captureScrollGestures;
-  const showIframe = !legacyBlock;
-
-  const feedMode = captureScrollGestures;
-  const iframeReceivesTouches =
-    feedMode ? allowIframeInteraction : !legacyBlock;
-
-  const showTapShield =
-    feedMode && !allowIframeInteraction && Boolean(onRequestIframeInteraction);
+  const showIframe = !blockPointerEvents;
+  const iframeReceivesTouches = interactive && !blockPointerEvents;
 
   return (
     <div
-      className={`pointer-events-none relative w-full max-h-full overflow-hidden bg-black ${height} ${className}`}
+      className={`relative w-full max-h-full overflow-hidden bg-black ${height} ${className}`}
     >
       {!loaded && showIframe && (
         <div
@@ -149,32 +142,18 @@ export default function CrackWidget({
         </div>
       )}
 
-      {legacyBlock && (
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] bg-black"
-          aria-hidden
-        />
-      )}
-
       {showIframe && (
         <iframe
           srcDoc={srcDoc}
           data-touch-blocked={iframeReceivesTouches ? "false" : "true"}
           className={
             iframeReceivesTouches
-              ? "pointer-events-auto block h-full w-full max-h-full border-0"
+              ? "pointer-events-auto block h-full w-full max-h-full touch-pan-y border-0"
               : "pointer-events-none block h-full w-full max-h-full touch-none border-0"
           }
           onLoad={() => setLoaded(true)}
           sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           title="NaughtyXXX Streamate Feed"
-        />
-      )}
-
-      {showTapShield && (
-        <FeedTouchLayer
-          soundGateOpen={soundGateOpen}
-          onExposeIframe={() => onRequestIframeInteraction?.()}
         />
       )}
     </div>

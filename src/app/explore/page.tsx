@@ -82,7 +82,7 @@ export default async function ExplorePage() {
           </span>
         </div>
 
-        <div className="pointer-events-none relative isolate overflow-hidden rounded-2xl">
+        <div className="relative isolate overflow-hidden rounded-2xl">
           <CrackWidget
             cols={2}
             rows={4}
@@ -92,7 +92,6 @@ export default async function ExplorePage() {
             animateFeed={0}
             height="min-h-[500px]"
             providers="streamate"
-            className="pointer-events-none"
           />
         </div>
       </section>
