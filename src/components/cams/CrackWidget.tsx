@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import {
-  buildWidgetScriptSrc,
-  buildWidgetSrcDoc,
-} from "@/lib/feed/widgetSrcDoc";
-import { STREAMATE_BRAND } from "@/lib/crackrevenue/config";
+  WIDGET_IFRAME_ALLOW,
+  WIDGET_IFRAME_SANDBOX,
+  buildCamsEmbedUrl,
+} from "@/lib/feed/embedFrame";
 
 interface CrackWidgetProps {
   cols?: number;
@@ -18,8 +18,8 @@ interface CrackWidgetProps {
   className?: string;
   height?: string;
   blockPointerEvents?: boolean;
-  providers?: string;
   interactive?: boolean;
+  embedInstanceId?: string;
 }
 
 export default function CrackWidget({
@@ -33,13 +33,24 @@ export default function CrackWidget({
   className = "",
   height = "h-full",
   blockPointerEvents = false,
-  providers: _providers = STREAMATE_BRAND,
   interactive = true,
+  embedInstanceId = "explore-grid",
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
-  const srcDoc = useMemo(() => {
-    const scriptSrc = buildWidgetScriptSrc({
+  const embedSrc = useMemo(
+    () =>
+      buildCamsEmbedUrl(embedInstanceId, {
+        cols,
+        rows,
+        number,
+        ratio,
+        useFeed,
+        animateFeed,
+        smoothAnimation,
+      }),
+    [
+      embedInstanceId,
       cols,
       rows,
       number,
@@ -47,9 +58,8 @@ export default function CrackWidget({
       useFeed,
       animateFeed,
       smoothAnimation,
-    });
-    return buildWidgetSrcDoc(scriptSrc, { blockAffiliateNavigation: false });
-  }, [cols, rows, number, ratio, useFeed, animateFeed, smoothAnimation]);
+    ],
+  );
 
   const showIframe = !blockPointerEvents;
   const iframeReceivesTouches = interactive && !blockPointerEvents;
@@ -70,15 +80,17 @@ export default function CrackWidget({
 
       {showIframe && (
         <iframe
-          srcDoc={srcDoc}
+          src={embedSrc}
           data-touch-blocked={iframeReceivesTouches ? "false" : "true"}
           className={
             iframeReceivesTouches
               ? "pointer-events-auto block h-full w-full max-h-full border-0"
               : "pointer-events-none block h-full w-full max-h-full touch-none border-0"
           }
+          allow={WIDGET_IFRAME_ALLOW}
+          sandbox={`${WIDGET_IFRAME_SANDBOX} allow-popups allow-forms`}
+          referrerPolicy="strict-origin-when-cross-origin"
           onLoad={() => setLoaded(true)}
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           title="NaughtyXXX Streamate Feed"
         />
       )}

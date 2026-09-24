@@ -91,7 +91,6 @@ export default async function ExplorePage() {
             useFeed={0}
             animateFeed={0}
             height="min-h-[500px]"
-            providers="streamate"
           />
         </div>
       </section>

@@ -3,18 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
-  buildWidgetScriptSrc,
-  buildWidgetSrcDoc,
-} from "@/lib/feed/widgetSrcDoc";
-
-export const parkedIframeStyle: React.CSSProperties = {
-  visibility: "hidden",
-  position: "absolute",
-  width: 1,
-  height: 1,
-  overflow: "hidden",
-  pointerEvents: "none",
-};
+  WIDGET_IFRAME_ALLOW,
+  WIDGET_IFRAME_SANDBOX,
+  buildCamsEmbedUrl,
+} from "@/lib/feed/embedFrame";
 
 type LiveEmbedProps = {
   embedKey: string;
@@ -37,17 +29,17 @@ export function LiveEmbed({
   const [frameLoaded, setFrameLoaded] = useState(false);
   const [settled, setSettled] = useState(false);
 
-  const srcDoc = useMemo(() => {
-    const scriptSrc = buildWidgetScriptSrc({
-      cols: 1,
-      rows: 1,
-      number: 1,
-      ratio: 0.5625,
-      useFeed: 0,
-      embedInstanceId: embedKey,
-    });
-    return buildWidgetSrcDoc(scriptSrc, { blockAffiliateNavigation: true });
-  }, [embedKey]);
+  const embedSrc = useMemo(
+    () =>
+      buildCamsEmbedUrl(embedKey, {
+        cols: 1,
+        rows: 1,
+        number: 1,
+        ratio: 0.5625,
+        useFeed: 0,
+      }),
+    [embedKey],
+  );
 
   useEffect(() => {
     setFrameLoaded(false);
@@ -72,9 +64,11 @@ export function LiveEmbed({
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
-  const mountIframe = isArmed;
-  /** Tarjeta activa: iframe siempre visible (nunca clip/park). Vecinos: preload oculto. */
-  const iframeVisible = isActive && isArmed;
+  /**
+   * Solo la tarjeta activa monta iframe (evita contextos 1×1 que no inicializan media).
+   * URL same-origin (/api/embed/cams) en lugar de srcDoc opaco.
+   */
+  const mountIframe = isActive && isArmed;
   const hidePoster = isActive && frameLoaded && settled;
 
   if (!isArmed) {
@@ -93,17 +87,14 @@ export function LiveEmbed({
       {mountIframe && (
         <iframe
           ref={iframeRef}
-          srcDoc={srcDoc}
+          src={embedSrc}
           title={`Live stream ${embedKey}`}
           data-touch-blocked="true"
-          className={
-            iframeVisible
-              ? "pointer-events-none absolute inset-0 z-[12] h-full w-full border-0"
-              : "pointer-events-none absolute inset-0 z-[12] h-full w-full touch-none border-0"
-          }
-          style={iframeVisible ? undefined : parkedIframeStyle}
+          className="pointer-events-none absolute inset-0 z-[12] h-full w-full border-0"
+          allow={WIDGET_IFRAME_ALLOW}
+          sandbox={WIDGET_IFRAME_SANDBOX}
+          referrerPolicy="strict-origin-when-cross-origin"
           onLoad={() => setFrameLoaded(true)}
-          sandbox="allow-scripts allow-same-origin"
         />
       )}
 
@@ -116,7 +107,7 @@ export function LiveEmbed({
         }`}
       />
 
-      {iframeVisible && (
+      {mountIframe && (
         <div
           className="pointer-events-none absolute inset-0 z-[25] touch-none"
           aria-hidden

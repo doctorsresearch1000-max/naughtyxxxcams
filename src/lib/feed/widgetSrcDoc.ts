@@ -13,11 +13,10 @@ export type WidgetEmbedOptions = {
   useFeed?: number;
   animateFeed?: number;
   smoothAnimation?: number;
-  /** Identificador estable por tarjeta (no cambia mute/volumen). */
   embedInstanceId?: string;
 };
 
-/** URL del script — `muted=1` fijo: sin remount por audio. */
+/** URL del script — `muted=1` permite autoplay bajo políticas modernas. */
 export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
   const params = new URLSearchParams({
     landing_id: "{offer_url_id}",
@@ -53,50 +52,79 @@ export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
 }
 
 const AFFILIATE_GUARD = `
-      (function () {
-        var isOffSite = function (href) {
-          if (!href || href === '#' || href.indexOf('javascript:') === 0) return false;
-          try {
-            var u = new URL(href, window.location.href);
-            return u.origin !== window.location.origin;
-          } catch (e) { return true; }
-        };
-        var block = function (e) {
-          var t = e.target;
-          if (!t || !t.closest) return;
-          var a = t.closest('a[href]');
-          if (a && isOffSite(a.getAttribute('href'))) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        };
-        document.addEventListener('click', block, true);
-        document.addEventListener('touchend', block, true);
-        window.open = function () { return null; };
-      })();
+(function () {
+  var isOffSite = function (href) {
+    if (!href || href === '#' || href.indexOf('javascript:') === 0) return false;
+    try {
+      var u = new URL(href, window.location.href);
+      return u.host && u.host !== window.location.host;
+    } catch (e) { return true; }
+  };
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var a = t.closest('a[href]');
+    if (a && isOffSite(a.getAttribute('href'))) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  }, true);
+  window.open = function () { return null; };
+})();
 `;
 
 const AUDIO_BRIDGE = `
-      window.addEventListener('message', function (event) {
-        if (!event.data || event.data.source !== 'naughty-feed') return;
-        if (event.data.action === 'session-audio-unlock') {
-          document.querySelectorAll('video').forEach(function (v) {
-            try { v.muted = false; v.volume = 1; v.play().catch(function () {}); } catch (e) {}
-          });
-        }
-        if (event.data.action === 'session-audio-mute') {
-          document.querySelectorAll('video').forEach(function (v) {
-            try { v.muted = true; } catch (e) {}
-          });
-        }
-      });
+window.addEventListener('message', function (event) {
+  if (!event.data || event.data.source !== 'naughty-feed') return;
+  if (event.data.action === 'session-audio-unlock') {
+    document.querySelectorAll('video').forEach(function (v) {
+      try { v.muted = false; v.volume = 1; v.play().catch(function () {}); } catch (e) {}
+    });
+  }
+  if (event.data.action === 'session-audio-mute') {
+    document.querySelectorAll('video').forEach(function (v) {
+      try { v.muted = true; } catch (e) {}
+    });
+  }
+});
+`;
+
+/** Intenta play() en vídeos que el script del widget inyecta dinámicamente. */
+const AUTOPLAY_KICKSTART = `
+(function () {
+  function kick() {
+    document.querySelectorAll('video').forEach(function (v) {
+      try {
+        v.setAttribute('playsinline', '');
+        v.setAttribute('webkit-playsinline', '');
+        if (!v.muted) v.muted = true;
+        var p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      } catch (e) {}
+    });
+  }
+  kick();
+  window.addEventListener('load', kick);
+  document.addEventListener('DOMContentLoaded', kick);
+  try {
+    new MutationObserver(kick).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+  } catch (e) {}
+  setInterval(kick, 2500);
+})();
 `;
 
 export function buildWidgetSrcDoc(
   scriptSrc: string,
-  options?: { blockAffiliateNavigation?: boolean },
+  options?: {
+    blockAffiliateNavigation?: boolean;
+    enableAutoplayKickstart?: boolean;
+  },
 ): string {
   const guard = options?.blockAffiliateNavigation ? AFFILIATE_GUARD : "";
+  const kick = options?.enableAutoplayKickstart ? AUTOPLAY_KICKSTART : "";
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -110,12 +138,13 @@ export function buildWidgetSrcDoc(
         height: 100%;
         background: #000;
         overflow: hidden;
-        touch-action: none;
       }
-      a, a * { pointer-events: none !important; cursor: default !important; }
-      iframe, div, object {
+      iframe, div, object, video {
         width: 100% !important;
         max-width: 100% !important;
+      }
+      video {
+        object-fit: cover;
       }
     </style>
   </head>
@@ -123,6 +152,7 @@ export function buildWidgetSrcDoc(
     <script>${AUDIO_BRIDGE}</script>
     <script>${guard}</script>
     <script src="${scriptSrc}"></script>
+    <script>${kick}</script>
   </body>
 </html>`;
 }
