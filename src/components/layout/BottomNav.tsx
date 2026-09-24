@@ -15,7 +15,8 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-16 max-w-md items-center justify-around border-t border-white/10 bg-black/90 backdrop-blur-md"
+      className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[100] isolate mx-auto flex h-16 max-w-md items-center justify-around border-t border-white/10 bg-black/95 backdrop-blur-md"
+      style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       aria-label="Primary"
     >
       {navItems.map((item) => {
@@ -27,7 +28,7 @@ export default function BottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex h-full w-full flex-col items-center justify-center text-xs transition-colors hover:text-white ${
+            className={`pointer-events-auto flex h-full w-full flex-col items-center justify-center text-xs transition-colors hover:text-white ${
               isActive ? "font-bold text-[#ec4899]" : "text-gray-400"
             }`}
           >

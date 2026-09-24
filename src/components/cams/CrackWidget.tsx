@@ -20,7 +20,8 @@ interface CrackWidgetProps {
   height?: string;
   blockPointerEvents?: boolean;
   providers?: string;
-  /** Habilita scroll vertical nativo en el contenedor del feed (Home TikTok). */
+  /** Cuando true, solicita reproducción con audio al widget Streamate. */
+  soundEnabled?: boolean;
   enableVerticalScroll?: boolean;
 }
 
@@ -36,6 +37,7 @@ export default function CrackWidget({
   height = "h-full",
   blockPointerEvents = false,
   providers = STREAMATE_BRAND,
+  soundEnabled = false,
   enableVerticalScroll = false,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
@@ -66,6 +68,7 @@ export default function CrackWidget({
       colorFilterStrength: "0",
       AuxiliaryCSS: "\n",
       lang: "es",
+      muted: soundEnabled ? "0" : "1",
       token: CRACKREVENUE_TOKEN,
       api_key: CRACKREVENUE_API_KEY,
     });
@@ -79,9 +82,11 @@ export default function CrackWidget({
     animateFeed,
     smoothAnimation,
     ratio,
+    soundEnabled,
   ]);
 
-  const srcDoc = `
+  const srcDoc = useMemo(
+    () => `
     <!DOCTYPE html>
     <html lang="es">
       <head>
@@ -109,26 +114,32 @@ export default function CrackWidget({
         <script src="${scriptSrc}"></script>
       </body>
     </html>
-  `;
+  `,
+    [scriptSrc],
+  );
 
-  const shellClass = enableVerticalScroll
-    ? "touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
-    : "overflow-hidden";
+  const iframeInteractive = !blockPointerEvents;
 
   return (
     <div
-      className={`relative w-full bg-black ${height} ${shellClass} ${className}`}
+      className={`pointer-events-none relative w-full max-h-full bg-black ${
+        enableVerticalScroll ? "overflow-hidden" : "overflow-hidden"
+      } ${height} ${className}`}
     >
       {!loaded && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-zinc-400">
+        <div
+          className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-zinc-400"
+          aria-hidden
+        >
           <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent" />
           <p className="text-xs font-medium">Cargando transmisiones Streamate...</p>
         </div>
       )}
       <iframe
+        key={soundEnabled ? "sound-on" : "sound-off"}
         srcDoc={srcDoc}
-        className={`block h-full min-h-full w-full border-0 touch-pan-y ${
-          blockPointerEvents ? "pointer-events-none" : "pointer-events-auto"
+        className={`block h-full w-full max-h-full border-0 ${
+          iframeInteractive ? "pointer-events-auto touch-pan-y" : "pointer-events-none"
         }`}
         onLoad={() => setLoaded(true)}
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
