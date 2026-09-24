@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { fetchExploreBootstrap } from "@/lib/explore/exploreClientCache";
+import { preloadLiveCommentPools } from "@/lib/engagement/liveCommentEngine";
 import {
   IconHeartFilled,
   IconHeartOutline,
@@ -15,7 +16,7 @@ import {
 const NAV_ITEMS = [
   { label: "Home", href: "/", icon: "home" as const },
   { label: "Explore", href: "/explore", icon: "explore" as const },
-  { label: "Following", href: "/following", icon: "following" as const },
+  { label: "Following", href: "/following", icon: "heart" as const },
   { label: "Profile", href: "/profile", icon: "profile" as const },
 ];
 
@@ -26,31 +27,48 @@ function NavGlyph({
   kind: (typeof NAV_ITEMS)[number]["icon"];
   active: boolean;
 }) {
-  const className = "block";
   const size = 26;
   const stroke = 1.65;
+  const activeClass = "text-[#39FF14]";
+  const inactiveClass = "text-neutral-200";
 
   if (kind === "home") {
     return active ? (
-      <IconHomeFilled className={className} size={size} />
+      <IconHomeFilled className={activeClass} size={size} />
     ) : (
-      <IconHomeOutline className={className} size={size} strokeWidth={stroke} />
+      <IconHomeOutline
+        className={inactiveClass}
+        size={size}
+        strokeWidth={stroke}
+      />
     );
   }
   if (kind === "explore") {
     return (
-      <IconSearchOutline className={className} size={size} strokeWidth={stroke} />
+      <IconSearchOutline
+        className={active ? activeClass : inactiveClass}
+        size={size}
+        strokeWidth={stroke}
+      />
     );
   }
-  if (kind === "following") {
+  if (kind === "heart") {
     return active ? (
-      <IconHeartFilled className={className} size={size} />
+      <IconHeartFilled className={activeClass} size={size} />
     ) : (
-      <IconHeartOutline className={className} size={size} strokeWidth={stroke} />
+      <IconHeartOutline
+        className={inactiveClass}
+        size={size}
+        strokeWidth={stroke}
+      />
     );
   }
   return (
-    <IconProfileOutline className={className} size={size} strokeWidth={stroke} />
+    <IconProfileOutline
+      className={active ? activeClass : inactiveClass}
+      size={size}
+      strokeWidth={stroke}
+    />
   );
 }
 
@@ -71,6 +89,7 @@ export default function BottomNav() {
 
   useEffect(() => {
     void fetchExploreBootstrap().catch(() => {});
+    preloadLiveCommentPools();
   }, []);
 
   const navigate = useCallback(
@@ -89,6 +108,7 @@ export default function BottomNav() {
   return (
     <nav
       className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[99999] mx-auto w-full max-w-md"
+      data-bottom-nav="v2-heart"
       style={{
         paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))",
         touchAction: "manipulation",
@@ -110,12 +130,9 @@ export default function BottomNav() {
               className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1"
               style={{ touchAction: "manipulation" }}
               aria-current={isActive ? "page" : undefined}
+              aria-label={item.label}
             >
-              <span
-                className={`flex h-7 items-center justify-center transition-colors duration-100 ${
-                  isActive ? "text-[#39FF14]" : "text-neutral-200"
-                }`}
-              >
+              <span className="flex h-7 items-center justify-center">
                 <NavGlyph kind={item.icon} active={isActive} />
               </span>
               <span

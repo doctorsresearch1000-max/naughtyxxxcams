@@ -94,9 +94,9 @@ export function LiveFeedCard({
         visible={isActive}
       />
 
-      <LiveCommentTicker performer={performer} isActive={isActive} />
-
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
+
+      <LiveCommentTicker performer={performer} isActive={isActive} />
 
       <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[78%] flex flex-col gap-2">
         {profileHref ? (

@@ -21,8 +21,11 @@ def main() -> None:
     en = load_lines(EN_BLOCK)
     es = load_lines(ES_BLOCK)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"en": en, "es": es}, ensure_ascii=False), encoding="utf-8")
-    print(f"Wrote {len(en)} EN / {len(es)} ES -> {OUT}")
+    payload = json.dumps({"en": en, "es": es}, ensure_ascii=False)
+    OUT.write_text(payload, encoding="utf-8")
+    src_out = ROOT / "src" / "data" / "live-comment-pools.json"
+    src_out.write_text(payload, encoding="utf-8")
+    print(f"Wrote {len(en)} EN / {len(es)} ES -> {OUT} and {src_out}")
 
 if __name__ == "__main__":
     main()

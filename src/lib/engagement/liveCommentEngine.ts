@@ -1,4 +1,5 @@
 import type { CommentLocale } from "@/lib/engagement/streamCommentLocale";
+import bundledPools from "@/data/live-comment-pools.json";
 
 export type LiveCommentKind = "chat" | "tip" | "private";
 
@@ -65,14 +66,49 @@ const MASKED_USERS_ES = [
   "amigo_hot",
 ];
 
+const BUNDLED: LiveCommentPools = {
+  en: Array.isArray(bundledPools.en) ? bundledPools.en : [],
+  es: Array.isArray(bundledPools.es) ? bundledPools.es : [],
+};
+
 let poolsCache: LiveCommentPools | null = null;
 
+/** Synchronous access — always available (bundled JSON). */
+export function getLiveCommentPoolsSync(): LiveCommentPools {
+  return poolsCache ?? BUNDLED;
+}
+
+/** Prefer bundled pools; optionally refresh from /public in the background. */
 export async function loadLiveCommentPools(): Promise<LiveCommentPools> {
   if (poolsCache) return poolsCache;
-  const res = await fetch("/data/live-comment-pools.json", { cache: "force-cache" });
-  if (!res.ok) throw new Error("comment pools unavailable");
-  poolsCache = (await res.json()) as LiveCommentPools;
+  poolsCache = BUNDLED;
+
+  if (typeof window === "undefined") return poolsCache;
+
+  try {
+    const res = await fetch("/data/live-comment-pools.json", {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const remote = (await res.json()) as LiveCommentPools;
+      if (
+        Array.isArray(remote.en) &&
+        remote.en.length > 0 &&
+        Array.isArray(remote.es) &&
+        remote.es.length > 0
+      ) {
+        poolsCache = remote;
+      }
+    }
+  } catch {
+    /* keep bundled */
+  }
+
   return poolsCache;
+}
+
+export function preloadLiveCommentPools(): void {
+  void loadLiveCommentPools();
 }
 
 function pick<T>(arr: T[]): T {
@@ -100,8 +136,8 @@ export class LiveCommentScheduler {
 
   constructor(pools: LiveCommentPools, primary: CommentLocale) {
     this.primary = primary;
-    this.en = pools.en;
-    this.es = pools.es;
+    this.en = pools.en.length > 0 ? pools.en : BUNDLED.en;
+    this.es = pools.es.length > 0 ? pools.es : BUNDLED.es;
     this.enOrder = shuffleCursor(this.en.length);
     this.esOrder = shuffleCursor(this.es.length);
   }
@@ -118,15 +154,15 @@ export class LiveCommentScheduler {
     }
 
     const crossLang = Math.random() < 0.12;
-    const locale: CommentLocale =
-      crossLang
-        ? this.primary === "en"
-          ? "es"
-          : "en"
-        : this.primary;
+    const locale: CommentLocale = crossLang
+      ? this.primary === "en"
+        ? "es"
+        : "en"
+      : this.primary;
 
     const body = locale === "es" ? this.nextEs() : this.nextEn();
-    const user = locale === "es" ? pick(MASKED_USERS_ES) : pick(MASKED_USERS_EN);
+    const user =
+      locale === "es" ? pick(MASKED_USERS_ES) : pick(MASKED_USERS_EN);
 
     return {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -137,25 +173,30 @@ export class LiveCommentScheduler {
   }
 
   private nextEn(): string {
+    if (this.en.length === 0) return "…";
     const idx = this.enOrder[this.enPtr % this.enOrder.length];
     this.enPtr += 1;
-    return this.en[idx] ?? this.en[0] ?? "…";
+    return this.en[idx] ?? this.en[0];
   }
 
   private nextEs(): string {
+    if (this.es.length === 0) return "…";
     const idx = this.esOrder[this.esPtr % this.esOrder.length];
     this.esPtr += 1;
-    return this.es[idx] ?? this.es[0] ?? "…";
+    return this.es[idx] ?? this.es[0];
   }
 
   private makeSpecial(kind: "tip" | "private"): LiveCommentItem {
     const locale = this.primary;
-    const user = locale === "es" ? pick(MASKED_USERS_ES) : pick(MASKED_USERS_EN);
+    const user =
+      locale === "es" ? pick(MASKED_USERS_ES) : pick(MASKED_USERS_EN);
     let snippet: string;
     if (kind === "tip") {
-      snippet = locale === "es" ? pick(TIP_SNIPPETS_ES) : pick(TIP_SNIPPETS_EN);
+      snippet =
+        locale === "es" ? pick(TIP_SNIPPETS_ES) : pick(TIP_SNIPPETS_EN);
     } else {
-      snippet = locale === "es" ? pick(PRIVATE_CTA_ES) : pick(PRIVATE_CTA_EN);
+      snippet =
+        locale === "es" ? pick(PRIVATE_CTA_ES) : pick(PRIVATE_CTA_EN);
     }
     return {
       id: `${Date.now()}-${kind}-${Math.random().toString(36).slice(2, 8)}`,
