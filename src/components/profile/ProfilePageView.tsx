@@ -2,12 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { ContinueWatchingCard } from "@/components/profile/ContinueWatchingCard";
-import { ProfileLibrarySection } from "@/components/profile/ProfileLibrarySection";
+import {
+  ProfileInteractionTabs,
+  type ProfileInteractionTab,
+} from "@/components/profile/ProfileInteractionTabs";
+import { ProfileTabPanel } from "@/components/profile/ProfileTabPanel";
 import {
   useBookmarkedModels,
+  useHistoryEntries,
   useLikedModels,
   usePlaylists,
 } from "@/hooks/useUserLibrary";
@@ -22,7 +27,9 @@ export function ProfilePageView() {
   const { user, isAuthenticated, login, logout } = useTelegramAuth();
   const likes = useLikedModels();
   const bookmarks = useBookmarkedModels();
+  const history = useHistoryEntries();
   const playlists = usePlaylists();
+  const [libraryTab, setLibraryTab] = useState<ProfileInteractionTab>("saved");
 
   const displayName = user?.first_name ?? "Guest";
   const handle = user?.username ? `@${user.username}` : "Not synced";
@@ -37,12 +44,12 @@ export function ProfilePageView() {
       login();
       return;
     }
-    const name = window.prompt("Playlist name", "Favorites");
+    const name = window.prompt("Collection name", "Favorites");
     if (name) createPlaylist(name);
   };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-md bg-[#0A0A0A] px-4 pb-24 pt-4 text-white">
+    <main className="mx-auto min-h-screen w-full max-w-md bg-black px-4 pb-24 pt-4 text-white">
       <span className="text-[10px] font-black uppercase tracking-widest text-[#39FF14]">
         Profile
       </span>
@@ -90,8 +97,7 @@ export function ProfilePageView() {
         ) : (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-zinc-400">
-              Connect Telegram to save likes, bookmarks, and custom playlists
-              across devices.
+              Connect Telegram to save likes, bookmarks, and collections.
             </p>
             <button
               type="button"
@@ -122,65 +128,29 @@ export function ProfilePageView() {
         </Link>
       </section>
 
-      <section className="mt-6" aria-labelledby="activity-heading">
+      <section className="mt-8" aria-labelledby="activity-heading">
         <span className="text-[10px] font-black uppercase tracking-widest text-[#39FF14]">
           Your activity
         </span>
-        <h2 id="activity-heading" className="mt-1 text-lg font-black">
-          Continue watching
+        <h2 id="activity-heading" className="mt-1 text-2xl font-black tracking-tight">
+          Continue Watching
         </h2>
-        <p className="mb-3 text-xs text-zinc-400">
-          Pick up right where you left off
+        <p className="mb-4 text-sm text-zinc-500">
+          Pick up exactly where you left off.
         </p>
         <ContinueWatchingCard />
       </section>
 
-      <ProfileLibrarySection title="Liked" items={likes} emptyLabel="No likes yet — tap the heart on a live stream." />
-      <ProfileLibrarySection
-        title="Saved"
-        items={bookmarks}
-        emptyLabel="No bookmarks yet — tap Save on a live stream."
-      />
-
-      <section className="mt-8" aria-labelledby="playlists-heading">
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#39FF14]">
-              Playlists
-            </span>
-            <h2 id="playlists-heading" className="mt-1 text-lg font-black">
-              Custom collections
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onCreatePlaylist}
-            className="rounded-full border border-[#39FF14]/40 px-3 py-1.5 text-xs font-bold text-[#39FF14]"
-          >
-            + New
-          </button>
-        </div>
-        {playlists.length === 0 ? (
-          <p className="mt-3 text-xs text-zinc-500">
-            Create a playlist after signing in with Telegram.
-          </p>
-        ) : (
-          <ul className="mt-3 space-y-2">
-            {playlists.map((pl) => (
-              <li key={pl.id}>
-                <Link
-                  href={`/profile/playlists/${pl.id}`}
-                  className="flex items-center justify-between rounded-xl border border-white/10 bg-[#1C1C1E] px-3 py-3 text-sm font-semibold"
-                >
-                  <span>{pl.name}</span>
-                  <span className="text-xs text-zinc-500">
-                    {pl.items.length} models
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+      <section className="mt-8" aria-label="Library">
+        <ProfileInteractionTabs active={libraryTab} onChange={setLibraryTab} />
+        <ProfileTabPanel
+          tab={libraryTab}
+          bookmarks={bookmarks}
+          likes={likes}
+          history={history}
+          playlists={playlists}
+          onNewCollection={onCreatePlaylist}
+        />
       </section>
     </main>
   );

@@ -31,59 +31,66 @@ export function ContinueWatchingCard() {
 
   if (!hydrated) {
     return (
-      <div className="h-52 animate-pulse rounded-2xl bg-[#1C1C1E]" aria-hidden />
+      <div className="space-y-3" aria-hidden>
+        <div className="h-[4.5rem] animate-pulse rounded-2xl bg-[#1C1C1E]" />
+        <div className="h-11 animate-pulse rounded-full bg-[#1C1C1E]" />
+      </div>
     );
   }
 
   if (!entry) {
     return (
-      <article
-        className="rounded-2xl border border-dashed border-white/15 bg-[#1C1C1E] p-6 text-center"
-      >
-        <p className="text-sm text-zinc-400">
-          No recent live streams yet. Browse the home feed and we&apos;ll save
-          your last room here.
-        </p>
+      <div className="space-y-3">
+        <article
+          className="rounded-2xl border border-dashed border-white/10 bg-[#141414] px-4 py-5 text-center"
+        >
+          <p className="text-sm text-zinc-500">
+            No recent streams. Watch live on Home and we&apos;ll remember your
+            last room here.
+          </p>
+        </article>
         <Link
           href="/"
-          className="mt-4 inline-flex rounded-full bg-[#39FF14] px-5 py-2.5 text-sm font-extrabold text-black transition active:scale-[0.98]"
+          className="flex w-full items-center justify-center rounded-full bg-[#2A2A2E] py-3.5 text-sm font-semibold text-white transition active:scale-[0.99]"
         >
           Go to live feed
         </Link>
-      </article>
+      </div>
     );
   }
 
   const handle = performerDisplayHandle(entry.nameClean || entry.name);
+  const handleWithAt = handle.startsWith("@") ? handle : `@${handle.replace(/^@+/, "")}`;
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-white/10 bg-[#1C1C1E]">
-      <div className="relative h-36 w-full">
-        <Image
-          src={entry.posterUrl}
-          alt={handle}
-          fill
-          sizes="(max-width: 448px) 100vw, 400px"
-          className="object-cover"
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-        <div className="absolute bottom-3 left-3">
-          <p className="font-bold">{handle}</p>
-          <p className="text-[11px] text-zinc-300">
+    <div className="space-y-3">
+      <article
+        className="flex items-center gap-3 rounded-2xl bg-[#1C1C1E] px-3 py-3"
+      >
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-1 ring-white/10">
+          <Image
+            src={entry.posterUrl}
+            alt={handle}
+            fill
+            sizes="56px"
+            className="object-cover"
+            unoptimized
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-bold text-white">{handleWithAt}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">
             Last watched {formatLastWatchedLabel(entry.watchedAt)}
           </p>
         </div>
-      </div>
-      <div className="p-3">
-        <button
-          type="button"
-          onClick={handleResume}
-          className="w-full rounded-full bg-[#39FF14] py-3 text-sm font-extrabold text-black transition active:scale-[0.98]"
-        >
-          Resume watching
-        </button>
-      </div>
-    </article>
+      </article>
+      <button
+        type="button"
+        onClick={handleResume}
+        className="w-full rounded-full bg-[#2A2A2E] py-3.5 text-sm font-semibold text-white transition active:scale-[0.99]"
+      >
+        Resume Watching
+      </button>
+    </div>
   );
 }

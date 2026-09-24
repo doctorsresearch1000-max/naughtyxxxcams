@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   readUserLibrary,
+  type HistoryEntry,
   type Playlist,
   type SavedModelRef,
   type UserLibrary,
@@ -37,6 +38,11 @@ export function useBookmarkedModels(): SavedModelRef[] {
   return Object.values(library.bookmarks).sort(
     (a, b) => (b.savedAt ?? 0) - (a.savedAt ?? 0),
   );
+}
+
+export function useHistoryEntries(): HistoryEntry[] {
+  const { library } = useUserLibrary();
+  return library.history;
 }
 
 export function usePlaylists(): Playlist[] {

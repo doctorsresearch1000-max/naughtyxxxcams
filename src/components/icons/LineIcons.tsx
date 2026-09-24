@@ -261,6 +261,38 @@ export function IconShareOutline({
   );
 }
 
+export function IconClockOutline({
+  className = "",
+  size = defaults.size,
+  strokeWidth = defaults.strokeWidth,
+}: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      className={className}
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="7.25"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d="M12 8.25V12l2.5 2.5"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function IconBookmarkOutline({
   className = "",
   size = defaults.size,
