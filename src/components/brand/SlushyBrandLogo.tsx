@@ -26,8 +26,8 @@ export function SlushyBrandLogo({
       width={width}
       height={height}
       priority={isHeader}
-      className={`h-auto w-auto max-w-[min(100%,14.5rem)] object-contain object-left ${
-        isHeader ? "max-h-9 sm:max-h-10" : "max-h-7"
+      className={`h-auto w-auto max-w-full object-contain object-left ${
+        isHeader ? "max-h-9 sm:max-h-10" : "max-h-8 sm:max-w-[11rem]"
       } ${className}`}
     />
   );

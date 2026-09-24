@@ -1,206 +1,126 @@
 import Link from "next/link";
 import { SlushyBrandLogo } from "@/components/brand/SlushyBrandLogo";
 
+type FooterLink = { href: string; label: string };
+
+type FooterColumnProps = {
+  title: string;
+  links: FooterLink[];
+};
+
+function FooterColumn({ title, links }: FooterColumnProps) {
+  return (
+    <div className="min-w-0 break-words">
+      <h3 className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+        {title}
+      </h3>
+      <ul className="flex flex-col gap-2.5">
+        {links.map((link) => (
+          <li key={link.href + link.label}>
+            <Link
+              href={link.href}
+              className="inline-block text-xs leading-snug text-neutral-400 transition-colors hover:text-[#39FF14]"
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const LIVE_CATEGORIES: FooterLink[] = [
+  { href: "/explore?cat=latinas", label: "Latina Models" },
+  { href: "/explore?cat=verified", label: "Verified 18+" },
+  { href: "/explore?cat=milf", label: "MILF & Mature" },
+  { href: "/explore?cat=petite", label: "Petite & E-girls" },
+  { href: "/explore?cat=cosplay", label: "Cosplay" },
+  { href: "/explore?cat=couples", label: "Couples" },
+  { href: "/explore?cat=trans", label: "Trans Models" },
+  { href: "/explore?cat=alt", label: "Alt & Goth" },
+];
+
+const SHOW_TYPES: FooterLink[] = [
+  { href: "/explore?show=private", label: "Private 1-on-1" },
+  { href: "/explore?show=lovense", label: "Interactive Toys" },
+  { href: "/explore?show=vip", label: "VIP & Lingerie" },
+  { href: "/explore?show=asmr", label: "Live ASMR" },
+  { href: "/explore?show=gaming", label: "Gaming Streams" },
+  { href: "/explore?show=debut", label: "New Model Debuts" },
+];
+
+const EXPLORE_LINKS: FooterLink[] = [
+  { href: "/", label: "Home Feed" },
+  { href: "/explore", label: "Discover Models" },
+  { href: "/following", label: "Following" },
+  { href: "/explore?filter=free", label: "Free Cams" },
+  { href: "/telegram", label: "Telegram Mini App" },
+  { href: "/guides", label: "Guides & Tips" },
+];
+
+const LEGAL_LINKS: FooterLink[] = [
+  { href: "/terms", label: "Terms of Service" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/dmca", label: "DMCA Notice" },
+  { href: "/usc-2257", label: "18 U.S.C. 2257" },
+  { href: "/report", label: "Report Content" },
+  { href: "/contact", label: "Contact" },
+  { href: "/affiliates", label: "Affiliate Disclosure" },
+];
+
 export function Footer() {
   return (
     <footer
-      className="relative z-0 mt-10 shrink-0 border-t border-white/10 bg-[#0A0A0A] px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-10 text-sm text-neutral-400 md:px-8"
+      className="relative isolate z-0 mt-12 shrink-0 overflow-hidden border-t border-white/10 bg-[#0A0A0A] text-sm text-neutral-400"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-5 lg:gap-6">
-        <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <SlushyBrandLogo variant="compact" href="/" />
-            <span className="rounded bg-red-600 px-2 py-0.5 text-xs font-bold text-white">
-              18+
-            </span>
+      <div className="mx-auto max-w-7xl px-4 py-12 md:px-8 lg:px-10">
+        <div
+          className="grid grid-cols-1 gap-y-12 gap-x-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-x-10 lg:gap-y-0"
+        >
+          {/* Column 1 — Brand (full row on mobile, dedicated column on desktop) */}
+          <div className="flex min-w-0 flex-col gap-4 sm:col-span-2 lg:col-span-1 lg:max-w-[240px]">
+            <div className="flex flex-col items-start gap-3">
+              <SlushyBrandLogo variant="compact" href="/" className="max-w-full" />
+              <span
+                className="inline-flex rounded-md bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white"
+              >
+                18+ Adults Only
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed text-neutral-400">
+              Naughty XXX Cams is a mobile-first live webcam directory powered by
+              verified Streamate performers in HD. Browse trending rooms, save
+              favorites, and jump into chat in seconds.
+            </p>
           </div>
-          <p className="max-w-md text-xs leading-relaxed text-neutral-400">
-            NaughtyXXXCams is a mobile-first live webcam directory powered by
-            verified Streamate performers in HD. Browse trending rooms, save
-            favorites, and jump into chat in seconds. All models are verified
-            adults 18+.
+
+          <FooterColumn title="Live Categories" links={LIVE_CATEGORIES} />
+          <FooterColumn title="Show Types" links={SHOW_TYPES} />
+          <FooterColumn title="Explore" links={EXPLORE_LINKS} />
+          <FooterColumn title="Legal & Support" links={LEGAL_LINKS} />
+        </div>
+
+        <div className="mt-12 border-t border-white/10 pt-8">
+          <p className="max-w-4xl text-xs leading-relaxed text-neutral-500">
+            © 2026 Naughty XXX Cams. All rights reserved. All models were 18
+            years of age or older at the time of depiction. Trademarks belong to
+            their respective owners. This site contains affiliate links (
+            <Link
+              href="/affiliates"
+              className="text-neutral-400 underline underline-offset-2 hover:text-[#39FF14]"
+            >
+              learn more
+            </Link>
+            ); we may earn a commission at no extra cost to you.
           </p>
         </div>
-
-        <div className="min-w-0 space-y-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
-            Live Categories
-          </h3>
-          <ul className="grid grid-cols-1 gap-2 text-xs sm:gap-2">
-            <li>
-              <Link href="/explore?cat=latinas" className="hover:text-white">
-                Latina Models
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=verified" className="hover:text-white">
-                Verified 18+
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=milf" className="hover:text-white">
-                MILF & Mature
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=petite" className="hover:text-white">
-                Petite & E-girls
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=cosplay" className="hover:text-white">
-                Cosplay
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=couples" className="hover:text-white">
-                Couples
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=trans" className="hover:text-white">
-                Trans Models
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?cat=alt" className="hover:text-white">
-                Alt & Goth
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div className="min-w-0 space-y-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
-            Show Types
-          </h3>
-          <ul className="grid grid-cols-1 gap-2 text-xs">
-            <li>
-              <Link href="/explore?show=private" className="hover:text-white">
-                Private 1-on-1
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?show=lovense" className="hover:text-white">
-                Interactive Toys
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?show=vip" className="hover:text-white">
-                VIP & Lingerie
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?show=asmr" className="hover:text-white">
-                Live ASMR
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?show=gaming" className="hover:text-white">
-                Gaming Streams
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?show=debut" className="hover:text-white">
-                New Model Debuts
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div className="min-w-0 space-y-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
-            Explore
-          </h3>
-          <ul className="grid grid-cols-1 gap-2 text-xs">
-            <li>
-              <Link href="/" className="hover:text-white">
-                Home Feed
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore" className="hover:text-white">
-                Discover Models
-              </Link>
-            </li>
-            <li>
-              <Link href="/following" className="hover:text-white">
-                Following
-              </Link>
-            </li>
-            <li>
-              <Link href="/explore?filter=free" className="hover:text-white">
-                Free Cams
-              </Link>
-            </li>
-            <li>
-              <Link href="/telegram" className="hover:text-white">
-                Telegram Mini App
-              </Link>
-            </li>
-            <li>
-              <Link href="/guides" className="hover:text-white">
-                Guides & Tips
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div className="min-w-0 space-y-3 sm:col-span-2 lg:col-span-1">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
-            Legal & Support
-          </h3>
-          <ul className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-1">
-            <li>
-              <Link href="/terms" className="hover:text-white">
-                Terms of Service
-              </Link>
-            </li>
-            <li>
-              <Link href="/privacy" className="hover:text-white">
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/dmca" className="hover:text-white">
-                DMCA Notice
-              </Link>
-            </li>
-            <li>
-              <Link href="/usc-2257" className="hover:text-white">
-                18 U.S.C. 2257
-              </Link>
-            </li>
-            <li>
-              <Link href="/report" className="hover:text-white">
-                Report Content
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-white">
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/affiliates" className="hover:text-white">
-                Affiliate Disclosure
-              </Link>
-            </li>
-          </ul>
-        </div>
       </div>
 
-      <div className="mx-auto mt-10 max-w-7xl border-t border-white/10 pt-6 text-xs leading-relaxed text-neutral-500">
-        <p>
-          © 2026 NaughtyXXXCams. All rights reserved. All models were 18 years
-          of age or older at the time of depiction. Trademarks belong to their
-          respective owners. This site contains affiliate links (
-          <Link href="/affiliates" className="underline hover:text-neutral-300">
-            learn more
-          </Link>
-          ); we may earn a commission at no extra cost to you.
-        </p>
-      </div>
+      <div
+        className="h-[calc(4.5rem+env(safe-area-inset-bottom,0px))]"
+        aria-hidden
+      />
     </footer>
   );
 }
