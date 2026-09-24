@@ -4,7 +4,6 @@ import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { fetchExploreMasterPool } from "@/lib/explore/fetchCategoryPerformers";
 import {
-  performerProfilePath,
   performerProfilePathFromPerformer,
 } from "@/lib/profile/performerHandle";
 
@@ -32,63 +31,40 @@ export type FollowingOfflineItem = {
   profilePath: string | null;
 };
 
-const NEARBY_SEEDS: { label: string; fallbackImage: string }[] = [
-  {
-    label: "Angela",
-    fallbackImage:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
-  },
-  {
-    label: "Selena",
-    fallbackImage:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150",
-  },
-  {
-    label: "Gaia",
-    fallbackImage:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150",
-  },
-  {
-    label: "Violetta",
-    fallbackImage:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-  },
-  {
-    label: "Zara",
-    fallbackImage:
-      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150",
-  },
-];
-
-const LIVE_FOLLOWED_USERNAMES = ["Bonny_Brok", "BonnyBrok", "bonny_brok"];
-
-const OFFLINE_USERNAMES = ["404hotfound", "404HotFound"];
-
-function normalizeKey(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
-function findPerformer(
-  pool: CrackPerformer[],
-  hints: string[],
-): CrackPerformer | undefined {
-  const keys = new Set(hints.map(normalizeKey).filter(Boolean));
-  return pool.find((p) => {
-    const candidates = [p.nameClean, p.name, p.itemId].filter(Boolean) as string[];
-    return candidates.some((c) => keys.has(normalizeKey(c)));
-  });
-}
-
-function findByLabel(pool: CrackPerformer[], label: string): CrackPerformer | undefined {
-  const key = normalizeKey(label);
-  return pool.find((p) => {
-    const name = normalizeKey(p.nameClean || p.name || "");
-    return name.includes(key) || key.includes(name.slice(0, 4));
-  });
-}
+const NEARBY_STORY_COUNT = 18;
+const LIVE_CARD_COUNT = 6;
+const OFFLINE_COUNT = 8;
 
 function performerImage(p: CrackPerformer): string {
   return pickCoverUrl(p) || "";
+}
+
+function storyLabel(p: CrackPerformer): string {
+  const raw = p.nameClean || p.name || "Model";
+  const first = raw.split(/[_\s-]+/)[0] ?? raw;
+  return first.length > 12 ? `${first.slice(0, 11)}…` : first;
+}
+
+function takeUniquePerformers(
+  pool: CrackPerformer[],
+  limit: number,
+  usedPerformerKeys: Set<string>,
+  usedImageBases: Set<string>,
+): CrackPerformer[] {
+  const out: CrackPerformer[] = [];
+  for (const p of pool) {
+    if (out.length >= limit) break;
+    const key = getPerformerKey(p);
+    if (usedPerformerKeys.has(key)) continue;
+    const img = performerImage(p);
+    if (!img) continue;
+    const base = imageUrlBaseKey(img);
+    if (usedImageBases.has(base)) continue;
+    usedPerformerKeys.add(key);
+    usedImageBases.add(base);
+    out.push(p);
+  }
+  return out;
 }
 
 export type FollowingPageData = {
@@ -102,100 +78,68 @@ export type FollowingPageData = {
 export async function getFollowingPageData(): Promise<FollowingPageData> {
   let pool: CrackPerformer[] = [];
   try {
-    pool = await fetchExploreMasterPool(2);
+    pool = await fetchExploreMasterPool(3);
   } catch {
     pool = [];
   }
 
-  const livePool = pool.filter((p) => p.live !== false);
+  const livePool = pool
+    .filter((p) => p.live !== false)
+    .sort((a, b) => (b.systemScore ?? 0) - (a.systemScore ?? 0));
+  const offlinePool = pool
+    .filter((p) => p.live === false)
+    .sort((a, b) => (b.systemScore ?? 0) - (a.systemScore ?? 0));
+
   const usedPerformerKeys = new Set<string>();
   const usedImageBases = new Set<string>();
 
-  const nearby: FollowingNearbyItem[] = NEARBY_SEEDS.map((seed) => {
-    let match =
-      findByLabel(
-        livePool.filter((p) => !usedPerformerKeys.has(getPerformerKey(p))),
-        seed.label,
-      ) ?? null;
+  const nearbyPerformers = takeUniquePerformers(
+    livePool,
+    NEARBY_STORY_COUNT,
+    usedPerformerKeys,
+    usedImageBases,
+  );
 
-    if (!match) {
-      match =
-        livePool.find((p) => {
-          const key = getPerformerKey(p);
-          if (usedPerformerKeys.has(key)) return false;
-          const img = performerImage(p);
-          if (!img) return false;
-          const base = imageUrlBaseKey(img);
-          if (usedImageBases.has(base)) return false;
-          return true;
-        }) ?? null;
-    }
+  const nearby: FollowingNearbyItem[] = nearbyPerformers.map((match) => ({
+    id: `nearby-${getPerformerKey(match)}`,
+    label: storyLabel(match),
+    image: performerImage(match),
+    isLive: true,
+    profilePath: performerProfilePathFromPerformer(match),
+    affiliateUrl: buildModelAffiliateUrl(match),
+  }));
 
-    if (match) {
-      usedPerformerKeys.add(getPerformerKey(match));
-      const img = performerImage(match);
-      if (img) usedImageBases.add(imageUrlBaseKey(img));
-    }
+  const livePerformers = takeUniquePerformers(
+    livePool,
+    LIVE_CARD_COUNT,
+    usedPerformerKeys,
+    usedImageBases,
+  );
 
-    const performer = match ?? ({ name: seed.label } as CrackPerformer);
-    const image = match ? performerImage(match) : seed.fallbackImage;
-    if (!match) usedImageBases.add(imageUrlBaseKey(image));
+  const liveCards: FollowingLiveCard[] = livePerformers.map((p) => ({
+    id: getPerformerKey(p),
+    username: p.nameClean || p.name || "Model",
+    image: performerImage(p),
+    affiliateUrl: buildModelAffiliateUrl(p),
+    profilePath: performerProfilePathFromPerformer(p),
+  }));
 
-    return {
-      id: `nearby-${seed.label}`,
-      label: seed.label,
-      image,
-      isLive: match?.live !== false,
-      profilePath: match
-        ? performerProfilePathFromPerformer(match)
-        : performerProfilePath(seed.label),
-      affiliateUrl: buildModelAffiliateUrl(performer),
-    };
-  });
+  const offlineSource =
+    offlinePool.length > 0 ? offlinePool : pool.filter((p) => p.live === false);
 
-  let liveCards: FollowingLiveCard[] = [];
-  const bonny =
-    findPerformer(pool, LIVE_FOLLOWED_USERNAMES) ??
-    livePool.sort((a, b) => (b.systemScore ?? 0) - (a.systemScore ?? 0))[0];
+  const offlinePerformers = takeUniquePerformers(
+    offlineSource,
+    OFFLINE_COUNT,
+    usedPerformerKeys,
+    usedImageBases,
+  );
 
-  if (bonny) {
-    liveCards = [
-      {
-        id: bonny.itemId || bonny.nameClean || "bonny",
-        username: bonny.nameClean || bonny.name || "Bonny_Brok",
-        image:
-          performerImage(bonny) ||
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
-        affiliateUrl: buildModelAffiliateUrl(bonny),
-        profilePath: performerProfilePathFromPerformer(bonny),
-      },
-    ];
-  } else {
-    liveCards = [
-      {
-        id: "bonny-mock",
-        username: "Bonny_Brok",
-        image:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
-        affiliateUrl: buildModelAffiliateUrl({ nameClean: "Bonny_Brok" }),
-        profilePath: performerProfilePath("Bonny_Brok"),
-      },
-    ];
-  }
-
-  const offlineMatch = findPerformer(pool, OFFLINE_USERNAMES);
-  const offline: FollowingOfflineItem[] = [
-    {
-      id: "offline-404",
-      username: offlineMatch?.nameClean || offlineMatch?.name || "404hotfound",
-      avatar:
-        (offlineMatch && performerImage(offlineMatch)) ||
-        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100",
-      profilePath: offlineMatch
-        ? performerProfilePathFromPerformer(offlineMatch)
-        : performerProfilePath("404hotfound"),
-    },
-  ];
+  const offline: FollowingOfflineItem[] = offlinePerformers.map((p) => ({
+    id: `offline-${getPerformerKey(p)}`,
+    username: p.nameClean || p.name || "Model",
+    avatar: performerImage(p),
+    profilePath: performerProfilePathFromPerformer(p),
+  }));
 
   const followedTotal = liveCards.length + offline.length;
 

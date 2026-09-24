@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 
 type NavIconProps = {
   active: boolean;
 };
+
+const iconClass = (active: boolean) =>
+  `transition-transform duration-150 ${active ? "scale-110" : "scale-100"}`;
+
+const stroke = (active: boolean) => (active ? 2.25 : 1.85);
 
 function NavIconHome({ active }: NavIconProps) {
   return (
@@ -17,15 +20,13 @@ function NavIconHome({ active }: NavIconProps) {
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
-      className={`transition-all duration-200 ${active ? "scale-110" : "scale-100"}`}
+      className={iconClass(active)}
     >
       <path
         d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
         strokeLinejoin="round"
-        fill={active ? "currentColor" : "none"}
-        fillOpacity={active ? 0.15 : 0}
       />
     </svg>
   );
@@ -39,19 +40,19 @@ function NavIconExplore({ active }: NavIconProps) {
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
-      className={`transition-all duration-200 ${active ? "scale-110" : "scale-100"}`}
+      className={iconClass(active)}
     >
       <circle
         cx="11"
         cy="11"
         r="7"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
       />
       <path
         d="M20 20l-4-4"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
         strokeLinecap="round"
       />
     </svg>
@@ -66,12 +67,12 @@ function NavIconFollowing({ active }: NavIconProps) {
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
-      className={`transition-all duration-200 ${active ? "scale-110" : "scale-100"}`}
+      className={iconClass(active)}
     >
       <path
         d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
         strokeLinecap="round"
       />
       <circle
@@ -79,12 +80,12 @@ function NavIconFollowing({ active }: NavIconProps) {
         cy="7"
         r="3.5"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
       />
       <path
         d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
         strokeLinecap="round"
       />
     </svg>
@@ -99,19 +100,19 @@ function NavIconProfile({ active }: NavIconProps) {
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden
-      className={`transition-all duration-200 ${active ? "scale-110" : "scale-100"}`}
+      className={iconClass(active)}
     >
       <circle
         cx="12"
         cy="8"
         r="3.5"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
       />
       <path
         d="M5 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5"
         stroke="currentColor"
-        strokeWidth={active ? 2.25 : 1.75}
+        strokeWidth={stroke(active)}
         strokeLinecap="round"
       />
     </svg>
@@ -125,15 +126,13 @@ const NAV_ITEMS = [
   { label: "Profile", href: "/profile", Icon: NavIconProfile },
 ] as const;
 
+const inactiveText = "text-neutral-400 group-active:text-neutral-200";
+const activeText = "text-[#39FF14]";
+
 export default function BottomNav() {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const nav = (
+  return (
     <nav
       className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[99999] mx-auto w-full max-w-md"
       style={{
@@ -157,29 +156,27 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              prefetch
-              className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors duration-200"
+              prefetch={false}
+              className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 transition-colors duration-150"
               style={{ touchAction: "manipulation" }}
               aria-current={isActive ? "page" : undefined}
             >
               <span
-                className={`flex h-7 items-center justify-center transition-colors duration-200 ${
-                  isActive ? "text-[#39FF14]" : "text-zinc-500 group-active:text-zinc-300"
+                className={`flex h-7 items-center justify-center ${
+                  isActive ? activeText : inactiveText
                 }`}
               >
                 <Icon active={isActive} />
               </span>
               <span
-                className={`text-[10px] font-semibold tracking-wide transition-all duration-200 ${
-                  isActive
-                    ? "text-[#39FF14]"
-                    : "text-zinc-500 group-active:text-zinc-400"
+                className={`text-[10px] font-semibold tracking-wide ${
+                  isActive ? activeText : inactiveText
                 }`}
               >
                 {item.label}
               </span>
               <span
-                className={`absolute -bottom-0.5 h-0.5 w-5 rounded-full bg-[#39FF14] transition-all duration-300 ${
+                className={`absolute -bottom-0.5 h-0.5 w-5 rounded-full bg-[#39FF14] transition-all duration-200 ${
                   isActive ? "scale-100 opacity-100" : "scale-50 opacity-0"
                 }`}
                 aria-hidden
@@ -190,7 +187,4 @@ export default function BottomNav() {
       </div>
     </nav>
   );
-
-  if (!mounted) return null;
-  return createPortal(nav, document.body);
 }

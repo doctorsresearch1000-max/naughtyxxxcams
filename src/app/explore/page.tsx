@@ -61,11 +61,28 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     uniqueCategories = [];
   }
 
-  const masterPool = await fetchExploreMasterPool(3);
-  const { performers, total } = await fetchCategoryPerformers(category, {
-    size: 48,
-    masterPool,
-  });
+  let masterPool: Awaited<ReturnType<typeof fetchExploreMasterPool>> = [];
+  try {
+    masterPool = await fetchExploreMasterPool(3);
+  } catch {
+    masterPool = [];
+  }
+
+  let performers: Awaited<
+    ReturnType<typeof fetchCategoryPerformers>
+  >["performers"] = [];
+  let total = 0;
+  try {
+    const result = await fetchCategoryPerformers(category, {
+      size: 48,
+      masterPool,
+    });
+    performers = result.performers;
+    total = result.total;
+  } catch {
+    performers = [];
+    total = 0;
+  }
 
   return (
     <main

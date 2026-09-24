@@ -9,7 +9,12 @@ export async function fetchRecommendedProfiles(
   excludeSlug: string,
   limit = 6,
 ): Promise<RecommendedProfile[]> {
-  const pool = await fetchExploreMasterPool(2);
+  let pool: Awaited<ReturnType<typeof fetchExploreMasterPool>> = [];
+  try {
+    pool = await fetchExploreMasterPool(2);
+  } catch {
+    return [];
+  }
   const out: RecommendedProfile[] = [];
   const seenAvatars = new Set<string>();
 

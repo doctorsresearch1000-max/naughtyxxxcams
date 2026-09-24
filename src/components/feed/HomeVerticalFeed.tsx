@@ -9,36 +9,23 @@ import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
 
 const SHELL_HEIGHT = "h-[calc(100dvh-4rem)] min-h-0";
 
-const FALLBACK_FEED: FeedPerformer[] = [
-  {
-    feedKey: "fallback-1",
-    posterUrl:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80&nx_feed=f1",
-    name: "ElhaSky",
-    nameClean: "ElhaSky",
-    live: true,
-  },
-  {
-    feedKey: "fallback-2",
-    posterUrl:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80&nx_feed=f2",
-    name: "LunaRose",
-    nameClean: "LunaRose",
-    live: true,
-  },
-  {
-    feedKey: "fallback-3",
-    posterUrl:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80&nx_feed=f3",
-    name: "MiaVelvet",
-    nameClean: "MiaVelvet",
-    live: true,
-  },
-];
+function FeedLoadingShell() {
+  return (
+    <div className="flex h-full w-full snap-start snap-always items-center justify-center bg-black">
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
+        <p className="text-xs font-medium text-neutral-400">Loading live models…</p>
+      </div>
+    </div>
+  );
+}
 
 export function HomeVerticalFeed() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [slides, setSlides] = useState<FeedPerformer[]>(FALLBACK_FEED);
+  const [slides, setSlides] = useState<FeedPerformer[]>([]);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
+    "loading",
+  );
   const { registerActiveIframe, setOverlayGate, unlocked } = useSessionAudio();
 
   useEffect(() => {
@@ -49,9 +36,14 @@ export function HomeVerticalFeed() {
         const json = (await res.json()) as { performers?: FeedPerformer[] };
         if (cancelled) return;
         const list = Array.isArray(json.performers) ? json.performers : [];
-        if (list.length > 0) setSlides(list);
+        if (list.length > 0) {
+          setSlides(list);
+          setLoadState("ready");
+        } else {
+          setLoadState("empty");
+        }
       } catch {
-        /* fallback */
+        setLoadState("empty");
       }
     })();
     return () => {
@@ -59,8 +51,9 @@ export function HomeVerticalFeed() {
     };
   }, []);
 
-  const { activeIndex } = useFeedActiveIndex(scrollRef, slides.length);
-  const { isArmed } = useVideoFeedBuffer(activeIndex, slides.length, 2);
+  const slideCount = slides.length > 0 ? slides.length : 1;
+  const { activeIndex } = useFeedActiveIndex(scrollRef, slideCount);
+  const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 2);
 
   useEffect(() => {
     if (!unlocked) {
@@ -83,6 +76,15 @@ export function HomeVerticalFeed() {
         ref={scrollRef}
         className="tele-scroll hide-scrollbar h-full w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
       >
+        {loadState === "loading" ? <FeedLoadingShell /> : null}
+        {loadState === "empty" ? (
+          <div className="flex h-full snap-start items-center justify-center px-6 text-center">
+            <p className="text-sm text-neutral-400">
+              Live performers are temporarily unavailable. Try again in a moment
+              or open Discover.
+            </p>
+          </div>
+        ) : null}
         {slides.map((performer, index) => (
           <LiveFeedCard
             key={performer.feedKey}

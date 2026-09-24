@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ApiAvatar } from "@/components/media/ApiAvatar";
 import { useMemo, useState } from "react";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
@@ -103,15 +104,17 @@ export function ModelProfileSlushyView({
       <div className="mx-auto max-w-md">
         <section className="relative">
           <div className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10">
-            <Image
-              src={model.bannerUrl}
-              alt={model.displayName}
-              fill
-              priority
-              unoptimized
-              sizes="100vw"
-              className="object-cover"
-            />
+            {model.bannerUrl?.trim() ? (
+              <Image
+                src={model.bannerUrl}
+                alt={model.displayName}
+                fill
+                priority
+                unoptimized
+                sizes="100vw"
+                className="object-cover"
+              />
+            ) : null}
             <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-[#0A0A0A]" />
 
             {isLive && (
@@ -138,12 +141,11 @@ export function ModelProfileSlushyView({
 
           <div className="relative z-10 -mt-14 flex justify-center">
             <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#0A0A0A] ring-2 ring-[#39FF14]/40">
-              <Image
+              <ApiAvatar
                 src={model.avatar}
                 alt={model.name}
                 fill
                 className="object-cover"
-                unoptimized
                 sizes="112px"
               />
             </div>
@@ -342,13 +344,12 @@ export function ModelProfileSlushyView({
 
         <section className="px-4 pt-12 text-center">
           <div className="mx-auto mb-4 h-16 w-12 overflow-hidden rounded-xl bg-[#1C1C1E] ring-1 ring-white/10">
-            <Image
+            <ApiAvatar
               src={model.avatar}
-              alt=""
+              alt={model.name}
               width={48}
               height={64}
               className="h-full w-full object-cover"
-              unoptimized
             />
           </div>
           <h3 className="text-sm font-black tracking-[0.15em]">

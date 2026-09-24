@@ -8,11 +8,12 @@ type FollowingLiveGridProps = {
 };
 
 export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
-  if (cards.length === 0) return null;
+  const visible = cards.filter((c) => c.image?.trim());
+  if (visible.length === 0) return null;
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
-      {cards.map((card) => {
+      {visible.map((card) => {
         const handle = performerDisplayHandle(card.username);
         return (
           <article

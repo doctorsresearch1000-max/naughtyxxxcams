@@ -85,6 +85,8 @@ export function SessionAudioProvider({
   );
 
   const unlockSession = useCallback(() => {
+    unlockedRef.current = true;
+    mutedRef.current = false;
     setUnlocked(true);
     setMuted(false);
     postToIframe("session-audio-unlock");
@@ -95,13 +97,21 @@ export function SessionAudioProvider({
       const next = !prev;
       if (!next) {
         setUnlocked(true);
+        unlockedRef.current = true;
+        mutedRef.current = false;
         postToIframe("session-audio-unlock");
       } else {
+        mutedRef.current = true;
         postToIframe("session-audio-mute");
       }
       return next;
     });
   }, [postToIframe]);
+
+  useEffect(() => {
+    if (!unlocked) return;
+    postToIframe(muted ? "session-audio-mute" : "session-audio-unlock");
+  }, [unlocked, muted, postToIframe]);
 
   const value = useMemo(
     () => ({

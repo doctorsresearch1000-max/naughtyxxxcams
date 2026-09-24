@@ -12,7 +12,18 @@ export const metadata: Metadata = {
 };
 
 export default async function FollowingPage() {
-  const data = await getFollowingPageData();
+  let data: Awaited<ReturnType<typeof getFollowingPageData>>;
+  try {
+    data = await getFollowingPageData();
+  } catch {
+    data = {
+      nearby: [],
+      liveCards: [],
+      offline: [],
+      liveCount: 0,
+      followedTotal: 0,
+    };
+  }
 
   return (
     <main

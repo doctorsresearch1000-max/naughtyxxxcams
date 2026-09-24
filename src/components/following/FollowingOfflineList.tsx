@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ApiAvatar } from "@/components/media/ApiAvatar";
 import type { FollowingOfflineItem } from "@/lib/following/followingPageData";
 import { performerDisplayHandle } from "@/lib/profile/performerHandle";
 
@@ -8,11 +8,12 @@ type FollowingOfflineListProps = {
 };
 
 export function FollowingOfflineList({ items }: FollowingOfflineListProps) {
-  if (items.length === 0) return null;
+  const visible = items.filter((item) => item.avatar?.trim());
+  if (visible.length === 0) return null;
 
   return (
     <ul className="mt-2 space-y-2">
-      {items.map((item) => {
+      {visible.map((item) => {
         const handle = performerDisplayHandle(item.username);
         const profileHref = item.profilePath ?? "/explore";
 
@@ -23,13 +24,12 @@ export function FollowingOfflineList({ items }: FollowingOfflineListProps) {
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-zinc-800 ring-1 ring-white/10">
-                <Image
+                <ApiAvatar
                   src={item.avatar}
                   alt={handle}
                   fill
                   sizes="44px"
                   className="object-cover opacity-80"
-                  unoptimized
                 />
               </div>
               <div className="min-w-0">

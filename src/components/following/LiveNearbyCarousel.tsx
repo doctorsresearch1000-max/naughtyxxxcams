@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ApiAvatar } from "@/components/media/ApiAvatar";
 import type { FollowingNearbyItem } from "@/lib/following/followingPageData";
 
 type LiveNearbyCarouselProps = {
@@ -7,11 +7,21 @@ type LiveNearbyCarouselProps = {
 };
 
 export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
+  const visible = items.filter((item) => item.image?.trim());
+
+  if (visible.length === 0) {
+    return (
+      <p className="text-xs text-neutral-500">
+        No live story previews right now — check back shortly.
+      </p>
+    );
+  }
+
   return (
     <div
-      className="hide-scrollbar -mx-0.5 flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="hide-scrollbar -mx-1 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth pb-2 pl-0.5 pr-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
-      {items.map((item) => {
+      {visible.map((item) => {
         const href = item.profilePath ?? item.affiliateUrl;
         const external = !item.profilePath;
 
@@ -23,14 +33,13 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
                 : "bg-zinc-700/80"
             }`}
           >
-            <div className="relative h-14 w-14 overflow-hidden rounded-full border-2 border-[#0A0A0A] bg-[#1C1C1E]">
-              <Image
+            <div className="relative h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border-2 border-[#0A0A0A] bg-[#1C1C1E]">
+              <ApiAvatar
                 src={item.image}
                 alt={item.label}
                 fill
-                sizes="56px"
+                sizes="60px"
                 className="object-cover"
-                unoptimized
               />
             </div>
             {item.isLive && (

@@ -51,7 +51,7 @@ export function FollowingPageView({
     <>
       <section className="mb-6">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#39FF14]">
-          Nearby streams
+          Following stories
         </span>
         <div className="mt-2">
           <LiveNearbyCarousel items={nearby} />

@@ -17,9 +17,6 @@ import {
 import { dedupeImageUrls } from "@/lib/media/imageDedupe";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
-const FALLBACK_AVATAR =
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&q=80";
-
 export type ModelProfileView = {
   name: string;
   displayName: string;
@@ -95,7 +92,7 @@ function toViewModel(
 ): ModelProfileView {
   const name = displayName(p);
   const traits = collectTraits(p);
-  const avatar = pickCoverUrl(p) ?? FALLBACK_AVATAR;
+  const avatar = pickCoverUrl(p) ?? "";
   const bannerUrl = pickProfileBannerUrl(p) ?? avatar;
   const thumb = p.thumbnailUrl?.trim();
   const snap = p.liveSnapshotURL?.trim();

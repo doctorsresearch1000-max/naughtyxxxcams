@@ -14,6 +14,16 @@ export function FeedPoster({
   priority = false,
   className = "",
 }: FeedPosterProps) {
+  if (!posterUrl?.trim()) {
+    return (
+      <div
+        className={`bg-zinc-900 ${className}`}
+        data-feed-key={feedKey}
+        aria-hidden
+      />
+    );
+  }
+
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img

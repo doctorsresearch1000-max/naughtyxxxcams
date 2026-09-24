@@ -51,18 +51,20 @@ export default async function ModelProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const [seoContent, recommended] = await Promise.all([
-    Promise.resolve(
-      generateUniqueSEOContent({
-        name: modelData.name,
-        handle: modelData.handle,
-        traits: modelData.traits,
-        language: modelData.language,
-        bodyType: modelData.bodyType,
-      }),
-    ),
-    fetchRecommendedProfiles(modelData.profileSlug, 8),
-  ]);
+  const seoContent = generateUniqueSEOContent({
+    name: modelData.name,
+    handle: modelData.handle,
+    traits: modelData.traits,
+    language: modelData.language,
+    bodyType: modelData.bodyType,
+  });
+
+  let recommended: Awaited<ReturnType<typeof fetchRecommendedProfiles>> = [];
+  try {
+    recommended = await fetchRecommendedProfiles(modelData.profileSlug, 8);
+  } catch {
+    recommended = [];
+  }
 
   return (
     <ModelProfileSlushyView
