@@ -39,8 +39,7 @@ const FALLBACK_FEED: FeedPerformer[] = [
 export function HomeVerticalFeed() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [slides, setSlides] = useState<FeedPerformer[]>(FALLBACK_FEED);
-  const [revealedKey, setRevealedKey] = useState<string | null>(null);
-  const { registerActiveIframe, setOverlayGate } = useSessionAudio();
+  const { registerActiveIframe, setOverlayGate, unlocked } = useSessionAudio();
 
   useEffect(() => {
     let cancelled = false;
@@ -66,19 +65,14 @@ export function HomeVerticalFeed() {
   );
   const { isArmed } = useVideoFeedBuffer(activeIndex, slides.length, 2);
 
-  const activePerformer = slides[activeIndex];
+  const isPlaying = (index: number) =>
+    index === activeIndex && !isScrolling;
 
   useEffect(() => {
-    if (isScrolling) {
-      setRevealedKey(null);
-      setOverlayGate(false);
+    if (!isScrolling && !unlocked) {
+      setOverlayGate(true);
     }
-  }, [isScrolling, setOverlayGate]);
-
-  useEffect(() => {
-    setRevealedKey(null);
-    setOverlayGate(false);
-  }, [activePerformer?.feedKey, setOverlayGate]);
+  }, [activeIndex, isScrolling, unlocked, setOverlayGate]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {
@@ -86,11 +80,6 @@ export function HomeVerticalFeed() {
     },
     [registerActiveIframe],
   );
-
-  const handleRevealStream = useCallback(() => {
-    if (!activePerformer) return;
-    setRevealedKey(activePerformer.feedKey);
-  }, [activePerformer]);
 
   return (
     <main
@@ -124,8 +113,7 @@ export function HomeVerticalFeed() {
             index={index}
             isActive={index === activeIndex}
             isArmed={isArmed(index)}
-            streamRevealed={revealedKey === performer.feedKey}
-            onRevealStream={handleRevealStream}
+            isPlaying={isPlaying(index)}
             onRegisterIframe={handleRegisterIframe}
           />
         ))}

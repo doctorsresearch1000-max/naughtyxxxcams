@@ -18,18 +18,19 @@ type LiveEmbedProps = {
   posterUrl: string;
   isActive: boolean;
   isArmed: boolean;
-  streamRevealed: boolean;
+  /** Tarjeta en viewport y scroll detenido → mostrar stream. */
+  isPlaying: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
-const SETTLE_MS = 400;
+const SETTLE_MS = 350;
 
 export function LiveEmbed({
   embedKey,
   posterUrl,
   isActive,
   isArmed,
-  streamRevealed,
+  isPlaying,
   onIframeWindow,
 }: LiveEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -56,26 +57,26 @@ export function LiveEmbed({
   }, [isArmed]);
 
   useEffect(() => {
-    if (!frameLoaded || !isActive || !streamRevealed) {
+    if (!frameLoaded || !isPlaying) {
       setSettled(false);
       return;
     }
     const t = window.setTimeout(() => setSettled(true), SETTLE_MS);
     return () => window.clearTimeout(t);
-  }, [frameLoaded, isActive, streamRevealed, embedKey]);
+  }, [frameLoaded, isPlaying, embedKey]);
 
   useEffect(() => {
-    if (!isActive || !streamRevealed) {
+    if (!isPlaying) {
       onIframeWindow?.(null);
       return;
     }
     const win = iframeRef.current?.contentWindow ?? null;
     onIframeWindow?.(win);
-  }, [isActive, streamRevealed, frameLoaded, onIframeWindow]);
+  }, [isPlaying, frameLoaded, onIframeWindow]);
 
-  const revealStream = isActive && isArmed && streamRevealed;
-  const hidePoster =
-    revealStream && frameLoaded && settled;
+  const mountIframe = isArmed;
+  const revealStream = isPlaying && isArmed;
+  const hidePoster = revealStream && frameLoaded && settled;
 
   if (!isArmed) {
     return (
@@ -90,9 +91,10 @@ export function LiveEmbed({
 
   return (
     <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
-      {revealStream && (
+      {mountIframe && (
         <iframe
           ref={iframeRef}
+          key={embedKey}
           srcDoc={srcDoc}
           title={`Live stream ${embedKey}`}
           data-touch-blocked="true"

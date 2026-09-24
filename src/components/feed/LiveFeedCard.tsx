@@ -2,7 +2,7 @@
 
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
-import { FeedPoster } from "@/components/feed/FeedPoster";
+import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { LiveEmbed } from "./LiveEmbed";
 
 const CARD_HEIGHT = "h-[calc(100dvh-4rem)]";
@@ -17,8 +17,7 @@ type LiveFeedCardProps = {
   index: number;
   isActive: boolean;
   isArmed: boolean;
-  streamRevealed: boolean;
-  onRevealStream: () => void;
+  isPlaying: boolean;
   onRegisterIframe: (win: Window | null) => void;
 };
 
@@ -27,16 +26,10 @@ export function LiveFeedCard({
   index,
   isActive,
   isArmed,
-  streamRevealed,
-  onRevealStream,
+  isPlaying,
   onRegisterIframe,
 }: LiveFeedCardProps) {
-  const { muted, toggleMuted, setOverlayGate } = useSessionAudio();
-
-  const handleReveal = () => {
-    onRevealStream();
-    setOverlayGate(true);
-  };
+  const { muted, toggleMuted } = useSessionAudio();
 
   return (
     <article
@@ -50,55 +43,34 @@ export function LiveFeedCard({
         posterUrl={performer.posterUrl}
         isActive={isActive}
         isArmed={isArmed}
-        streamRevealed={streamRevealed}
-        onIframeWindow={isActive && streamRevealed ? onRegisterIframe : undefined}
+        isPlaying={isPlaying}
+        onIframeWindow={isPlaying ? onRegisterIframe : undefined}
       />
 
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
 
-      <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[70%] flex flex-col gap-1">
+      <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[72%] flex flex-col gap-1">
+        {isActive && (
+          <div className="mb-1 flex max-w-[220px] items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs text-zinc-200 backdrop-blur-md">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="truncate">deep_tipper: Estás hecha una diosa</span>
+          </div>
+        )}
         <span className="text-sm font-extrabold text-white drop-shadow-md">
           {performerLabel(performer)}
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-widest text-pink-400">
-          {streamRevealed && isActive
-            ? "Vista previa · Streamate"
-            : "Desliza · siguiente modelo"}
+          {isPlaying ? "En vivo · Streamate" : "Desliza · siguiente modelo"}
         </span>
       </div>
 
-      <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-[40] w-[5rem]">
-        <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-3">
-          <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-pink-500 bg-black p-0.5 shadow-lg shadow-pink-500/30">
-            <FeedPoster
-              feedKey={`${performer.feedKey}-avatar`}
-              posterUrl={performer.posterUrl}
-              className="h-full w-full rounded-full object-cover"
-            />
-          </div>
-
-          {isActive && !streamRevealed && (
-            <button
-              type="button"
-              onClick={handleReveal}
-              className="rounded-full bg-gradient-to-r from-pink-600 to-rose-600 px-2.5 py-2 text-[10px] font-black uppercase tracking-wide text-white shadow-lg shadow-pink-600/40"
-            >
-              Ver LIVE
-            </button>
-          )}
-
-          {isActive && streamRevealed && (
-            <button
-              type="button"
-              onClick={toggleMuted}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/75 text-lg shadow-lg backdrop-blur-sm"
-              aria-label={muted ? "Activar sonido" : "Silenciar"}
-            >
-              {muted ? "🔇" : "🔊"}
-            </button>
-          )}
-        </div>
-      </div>
+      <FeedActionRail
+        feedKey={performer.feedKey}
+        posterUrl={performer.posterUrl}
+        isActive={isActive}
+        muted={muted}
+        onToggleMute={toggleMuted}
+      />
     </article>
   );
 }

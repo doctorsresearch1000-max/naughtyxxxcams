@@ -54,20 +54,25 @@ export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
 
 const AFFILIATE_GUARD = `
       (function () {
+        var isOffSite = function (href) {
+          if (!href || href === '#' || href.indexOf('javascript:') === 0) return false;
+          try {
+            var u = new URL(href, window.location.href);
+            return u.origin !== window.location.origin;
+          } catch (e) { return true; }
+        };
         var block = function (e) {
           var t = e.target;
-          if (t && t.closest && t.closest('a[href]')) {
+          if (!t || !t.closest) return;
+          var a = t.closest('a[href]');
+          if (a && isOffSite(a.getAttribute('href'))) {
             e.preventDefault();
             e.stopPropagation();
           }
         };
         document.addEventListener('click', block, true);
         document.addEventListener('touchend', block, true);
-        var _open = window.open;
         window.open = function () { return null; };
-        try {
-          Object.defineProperty(window, 'open', { value: function () { return null; } });
-        } catch (e) {}
       })();
 `;
 
