@@ -9,13 +9,14 @@ import {
 } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
+import { buildStableFeedEmbedSrc } from "@/lib/feed/iframeSrc";
 import {
-  registerFeedAudioHandle,
-} from "@/lib/feed/feedAudioRegistry";
+  postLiveIframeAudio,
+  registerActiveFeedAudioTarget,
+} from "@/lib/feed/liveIframeAudio";
 import {
   WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
-  buildCamsEmbedUrl,
 } from "@/lib/feed/embedFrame";
 
 type LiveEmbedProps = {
@@ -29,10 +30,6 @@ type LiveEmbedProps = {
 
 const POSTER_FALLBACK_MS = 6_000;
 
-function embedMutedFromSession(unlocked: boolean, muted: boolean): number {
-  return !unlocked || muted ? 1 : 0;
-}
-
 export function LiveEmbed({
   embedKey,
   posterUrl,
@@ -41,65 +38,64 @@ export function LiveEmbed({
   isArmed,
   onIframeWindow,
 }: LiveEmbedProps) {
-  const { muted, unlocked } = useSessionAudio();
+  const { muted, isAudioUnlocked } = useSessionAudio();
+  const cardRootRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const streamMuted = !unlocked || muted;
+  const streamMuted = !isAudioUnlocked || muted;
   const [frameLoaded, setFrameLoaded] = useState(false);
   const [streamActive, setStreamActive] = useState(false);
   const [posterFallback, setPosterFallback] = useState(false);
 
   const embedSrc = useMemo(
     () =>
-      buildCamsEmbedUrl(embedKey, {
-        cols: 1,
-        rows: 1,
-        number: 1,
-        ratio: 0.5625,
-        useFeed: 0,
+      buildStableFeedEmbedSrc(embedKey, {
         performerNameClean,
-        muted: embedMutedFromSession(unlocked, muted),
+        useFeed: 0,
       }),
-    [embedKey, performerNameClean, unlocked, muted],
+    [embedKey, performerNameClean],
   );
+
+  const syncActiveAudioTarget = useCallback(() => {
+    if (!isActive || !isArmed || !iframeRef.current || !cardRootRef.current) {
+      if (!isActive) registerActiveFeedAudioTarget(null);
+      return;
+    }
+    registerActiveFeedAudioTarget({
+      iframe: iframeRef.current,
+      cardRoot: cardRootRef.current,
+      contentWindow: iframeRef.current.contentWindow,
+      embedKey,
+    });
+  }, [isActive, isArmed, embedKey]);
 
   const bindIframeRef = useCallback(
     (node: HTMLIFrameElement | null) => {
       iframeRef.current = node;
-      if (node && isActive && isArmed) {
-        registerFeedAudioHandle({ iframe: node, embedKey });
-      } else if (!isActive) {
-        registerFeedAudioHandle(null);
-      }
+      syncActiveAudioTarget();
     },
-    [isActive, isArmed, embedKey],
+    [syncActiveAudioTarget],
+  );
+
+  const bindCardRootRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      cardRootRef.current = node;
+      syncActiveAudioTarget();
+    },
+    [syncActiveAudioTarget],
   );
 
   useEffect(() => {
-    if (!isActive) {
-      registerFeedAudioHandle(null);
-    } else if (iframeRef.current && isArmed) {
-      registerFeedAudioHandle({ iframe: iframeRef.current, embedKey });
-    }
+    syncActiveAudioTarget();
     return () => {
-      if (isActive) registerFeedAudioHandle(null);
+      if (isActive) registerActiveFeedAudioTarget(null);
     };
-  }, [isActive, isArmed, embedKey, frameLoaded]);
+  }, [isActive, isArmed, frameLoaded, syncActiveAudioTarget]);
 
   useEffect(() => {
     setFrameLoaded(false);
     setStreamActive(false);
     setPosterFallback(false);
   }, [embedKey, isActive]);
-
-  useEffect(() => {
-    if (!isActive || !frameLoaded || streamMuted) return;
-    const win = iframeRef.current?.contentWindow;
-    if (!win) return;
-    win.postMessage(
-      { source: "naughty-feed", action: "session-audio-unlock" },
-      "*",
-    );
-  }, [streamMuted, isActive, frameLoaded]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -139,9 +135,16 @@ export function LiveEmbed({
   }, [isActive, frameLoaded, onIframeWindow]);
 
   const mountIframe = isActive && isArmed;
-  const hidePoster =
+  const streamRevealed =
     isActive && frameLoaded && (streamActive || posterFallback);
-  const allowPlayerInteraction = !streamMuted;
+  const hidePoster = streamRevealed;
+  const allowPlayerInteraction = isAudioUnlocked && !muted;
+
+  useEffect(() => {
+    if (!isActive || !frameLoaded || !streamRevealed) return;
+    if (!isAudioUnlocked) return;
+    postLiveIframeAudio(!streamMuted);
+  }, [streamMuted, streamRevealed, isActive, frameLoaded, isAudioUnlocked]);
 
   if (!isArmed) {
     return (
@@ -155,7 +158,13 @@ export function LiveEmbed({
   }
 
   return (
-    <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
+    <div
+      ref={bindCardRootRef}
+      className="absolute inset-0 z-[10] overflow-hidden bg-black"
+      data-feed-card-root="true"
+      data-stream-revealed={streamRevealed ? "1" : "0"}
+      data-feed-key={embedKey}
+    >
       {mountIframe && (
         <iframe
           key={embedKey}
@@ -171,7 +180,10 @@ export function LiveEmbed({
           allow={WIDGET_IFRAME_ALLOW_COMBINED}
           sandbox={WIDGET_IFRAME_SANDBOX}
           referrerPolicy="strict-origin-when-cross-origin"
-          onLoad={() => setFrameLoaded(true)}
+          onLoad={() => {
+            setFrameLoaded(true);
+            syncActiveAudioTarget();
+          }}
         />
       )}
 

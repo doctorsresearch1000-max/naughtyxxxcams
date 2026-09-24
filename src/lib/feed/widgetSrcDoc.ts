@@ -150,18 +150,53 @@ const AFFILIATE_GUARD = `
 
 const AUDIO_BRIDGE = `
 (function () {
+  var RETRY_MS = [0, 120, 480];
+  function getWidgetFrame() {
+    return document.getElementById('cr-widget-frame');
+  }
+  function unmuteAllVideos() {
+    document.querySelectorAll('video').forEach(function (v) {
+      try {
+        v.muted = false;
+        v.volume = 1;
+        var p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      } catch (e) {}
+    });
+  }
   function muteAllVideos() {
     document.querySelectorAll('video').forEach(function (v) {
       try { v.muted = true; } catch (e) {}
     });
   }
+  function forwardToWidget(data) {
+    var widgetFrame = getWidgetFrame();
+    if (widgetFrame && widgetFrame.contentWindow) {
+      try { widgetFrame.contentWindow.postMessage(data, '*'); } catch (e) {}
+    }
+  }
+  function applyUnlock(data) {
+    unmuteAllVideos();
+    forwardToWidget(data);
+  }
+  function applyMute() {
+    muteAllVideos();
+    forwardToWidget({ source: 'naughty-feed', action: 'session-audio-mute' });
+  }
+  function scheduleUnlock(data) {
+    RETRY_MS.forEach(function (ms) {
+      window.setTimeout(function () {
+        applyUnlock(data);
+      }, ms);
+    });
+  }
   window.addEventListener('message', function (event) {
     if (!event.data || event.data.source !== 'naughty-feed') return;
     if (event.data.action === 'session-audio-unlock') {
-      return;
+      scheduleUnlock(event.data);
     }
     if (event.data.action === 'session-audio-mute') {
-      muteAllVideos();
+      applyMute();
     }
   });
 })();

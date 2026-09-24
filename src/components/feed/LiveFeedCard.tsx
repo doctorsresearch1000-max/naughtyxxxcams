@@ -33,7 +33,7 @@ export function LiveFeedCard({
   isArmed,
   onRegisterIframe,
 }: LiveFeedCardProps) {
-  const { muted, toggleMuted } = useSessionAudio();
+  const { muted, toggleMutedFromPointerDown } = useSessionAudio();
   const conversionReady = useDelayedConversionCta(isActive, 15_000);
   const handleLabel = performerDisplayHandle(
     performer.nameClean || performer.name,
@@ -127,7 +127,7 @@ export function LiveFeedCard({
         conversionReady={conversionReady}
         isActive={isActive}
         muted={muted}
-        onToggleMute={toggleMuted}
+        onToggleMute={toggleMutedFromPointerDown}
       />
     </article>
   );

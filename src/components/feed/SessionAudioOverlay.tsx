@@ -6,12 +6,12 @@ import { IconVolumeOff } from "@/components/icons/LineIcons";
 
 type SessionAudioOverlayProps = {
   visible: boolean;
-  onUnlock: () => void;
+  onUnlockPointerDown: () => void;
 };
 
 export function SessionAudioOverlay({
   visible,
-  onUnlock,
+  onUnlockPointerDown,
 }: SessionAudioOverlayProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -27,7 +27,7 @@ export function SessionAudioOverlay({
       onPointerDown={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        onUnlock();
+        onUnlockPointerDown();
       }}
       className="pointer-events-auto fixed left-1/2 top-[40%] z-[8000] max-w-[90vw] -translate-x-1/2 touch-manipulation active:scale-[0.98]"
       style={{ touchAction: "manipulation" }}

@@ -10,17 +10,24 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import { flushSync } from "react-dom";
-import { isActiveEmbedUnmuted } from "@/lib/feed/feedAudioRegistry";
-import { syncReloadFeedIframesForAudio } from "@/lib/feed/audioGestureUnlock";
+import {
+  resumeBrowserAudioContext,
+  setFeedCardAudio,
+} from "@/lib/feed/liveIframeAudio";
 import { SessionAudioOverlay } from "./SessionAudioOverlay";
 
 type SessionAudioContextValue = {
-  unlocked: boolean;
+  /** Session latch: first gesture enables audio for the whole visit. */
+  isAudioUnlocked: boolean;
   muted: boolean;
-  unlockSession: () => void;
-  toggleMuted: () => void;
+  unlockFromPointerDown: () => void;
+  toggleMutedFromPointerDown: () => void;
   registerActiveIframe: (win: Window | null) => void;
   setOverlayGate: (visible: boolean) => void;
+  /** @deprecated use isAudioUnlocked */
+  unlocked: boolean;
+  unlockSession: () => void;
+  toggleMuted: () => void;
 };
 
 const SessionAudioContext = createContext<SessionAudioContextValue | null>(
@@ -40,83 +47,79 @@ export function SessionAudioProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [unlocked, setUnlocked] = useState(false);
+  const [isAudioUnlocked, setIsAudioUnlocked] = useState(false);
   const [muted, setMuted] = useState(true);
   const [overlayGate, setOverlayGate] = useState(false);
-  const unlockedRef = useRef(false);
+  const isAudioUnlockedRef = useRef(false);
   const mutedRef = useRef(true);
   const activeIframeWindowRef = useRef<Window | null>(null);
-
-  const applyUnmuteFromGesture = useCallback(() => {
-    unlockedRef.current = true;
-    mutedRef.current = false;
-    syncReloadFeedIframesForAudio(true);
-    flushSync(() => {
-      setUnlocked(true);
-      setMuted(false);
-    });
-  }, []);
-
-  const applyMuteFromGesture = useCallback(() => {
-    mutedRef.current = true;
-    syncReloadFeedIframesForAudio(false);
-    flushSync(() => {
-      setMuted(true);
-    });
-  }, []);
-
-  const postToIframe = useCallback(
-    (action: "session-audio-unlock" | "session-audio-mute") => {
-      if (action === "session-audio-mute" && isActiveEmbedUnmuted()) {
-        return;
-      }
-      const payload = { source: "naughty-feed", action };
-      const target = activeIframeWindowRef.current;
-      if (target) {
-        target.postMessage(payload, "*");
-      }
-    },
-    [],
-  );
 
   const registerActiveIframe = useCallback((win: Window | null) => {
     activeIframeWindowRef.current = win;
   }, []);
 
-  const unlockSession = useCallback(() => {
-    applyUnmuteFromGesture();
-    postToIframe("session-audio-unlock");
-  }, [applyUnmuteFromGesture, postToIframe]);
+  const unlockFromPointerDown = useCallback(() => {
+    isAudioUnlockedRef.current = true;
+    mutedRef.current = false;
 
-  const toggleMuted = useCallback(() => {
-    if (mutedRef.current) {
-      applyUnmuteFromGesture();
-      postToIframe("session-audio-unlock");
-    } else {
-      applyMuteFromGesture();
-      postToIframe("session-audio-mute");
+    resumeBrowserAudioContext();
+    setFeedCardAudio(true, true);
+
+    flushSync(() => {
+      setIsAudioUnlocked(true);
+      setMuted(false);
+    });
+  }, []);
+
+  const toggleMutedFromPointerDown = useCallback(() => {
+    if (!isAudioUnlockedRef.current || mutedRef.current) {
+      unlockFromPointerDown();
+      return;
     }
-  }, [applyUnmuteFromGesture, applyMuteFromGesture, postToIframe]);
+
+    mutedRef.current = true;
+    setFeedCardAudio(false, true);
+    flushSync(() => {
+      setMuted(true);
+    });
+  }, [unlockFromPointerDown]);
+
+  const unlockSession = unlockFromPointerDown;
+  const toggleMuted = toggleMutedFromPointerDown;
 
   const value = useMemo(
     () => ({
-      unlocked,
+      isAudioUnlocked,
       muted,
-      unlockSession,
-      toggleMuted,
+      unlockFromPointerDown,
+      toggleMutedFromPointerDown,
       registerActiveIframe,
       setOverlayGate,
+      unlocked: isAudioUnlocked,
+      unlockSession,
+      toggleMuted,
     }),
-    [unlocked, muted, unlockSession, toggleMuted, registerActiveIframe],
+    [
+      isAudioUnlocked,
+      muted,
+      unlockFromPointerDown,
+      toggleMutedFromPointerDown,
+      registerActiveIframe,
+      unlockSession,
+      toggleMuted,
+    ],
   );
 
   const pathname = usePathname();
-  const showOverlay = overlayGate && !unlocked && pathname === "/";
+  const showOverlay = overlayGate && !isAudioUnlocked && pathname === "/";
 
   return (
     <SessionAudioContext.Provider value={value}>
       {children}
-      <SessionAudioOverlay visible={showOverlay} onUnlock={unlockSession} />
+      <SessionAudioOverlay
+        visible={showOverlay}
+        onUnlockPointerDown={unlockFromPointerDown}
+      />
     </SessionAudioContext.Provider>
   );
 }

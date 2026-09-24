@@ -33,7 +33,8 @@ export function HomeVerticalFeed() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const resumeFeedKey = searchParams.get(RESUME_FEED_QUERY);
-  const { registerActiveIframe, setOverlayGate, unlocked } = useSessionAudio();
+  const { registerActiveIframe, setOverlayGate, isAudioUnlocked } =
+    useSessionAudio();
 
   useEffect(() => {
     let cancelled = false;
@@ -96,10 +97,10 @@ export function HomeVerticalFeed() {
       setOverlayGate(false);
       return;
     }
-    if (!unlocked) {
+    if (!isAudioUnlocked) {
       setOverlayGate(true);
     }
-  }, [activeIndex, unlocked, setOverlayGate, onHome]);
+  }, [activeIndex, isAudioUnlocked, setOverlayGate, onHome]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {
