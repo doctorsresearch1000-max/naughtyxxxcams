@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { EXPLORE_CATEGORY_SLUGS } from "@/lib/explore/categorySlugs";
 import { collectPerformerProfileSlugs } from "@/lib/sitemap/performerSlugs";
+import { LEGAL_PAGE_PATHS } from "@/lib/site/legalContact";
 import { getSiteUrl } from "@/lib/sitemap/siteUrl";
 
 export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
@@ -38,6 +39,12 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    ...LEGAL_PAGE_PATHS.map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    })),
   ];
 
   const categoryRoutes: MetadataRoute.Sitemap = EXPLORE_CATEGORY_SLUGS.map(

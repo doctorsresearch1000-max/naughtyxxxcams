@@ -2,8 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
+import { LEGAL_PAGE_PATHS } from "@/lib/site/legalContact";
 
 const FOOTER_ROUTES = new Set(["/explore", "/following", "/profile"]);
+const LEGAL_ROUTES = new Set<string>(LEGAL_PAGE_PATHS);
 
 /** Footer SEO solo en rutas secundarias; el header va en el layout raíz. */
 export function ConditionalSiteChrome({
@@ -13,7 +15,9 @@ export function ConditionalSiteChrome({
 }) {
   const pathname = usePathname();
   const showFooter =
-    FOOTER_ROUTES.has(pathname) || pathname.startsWith("/profile/");
+    FOOTER_ROUTES.has(pathname) ||
+    pathname.startsWith("/profile/") ||
+    LEGAL_ROUTES.has(pathname);
 
   const isHome = pathname === "/";
 
