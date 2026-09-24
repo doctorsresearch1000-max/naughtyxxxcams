@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  CRACKREVENUE_API_KEY,
+  CRACKREVENUE_TOKEN,
+  STREAMATE_BRAND,
+  WIDGET_SCRIPT_BASE,
+} from "@/lib/crackrevenue/config";
 
 interface CrackWidgetProps {
   cols?: number;
@@ -14,6 +20,8 @@ interface CrackWidgetProps {
   height?: string;
   /** Bloquea clics en el iframe (p. ej. hasta activar sonido en Home). */
   blockPointerEvents?: boolean;
+  /** Proveedor del widget (Streamate por defecto, estable en TeleHub). */
+  providers?: string;
 }
 
 export default function CrackWidget({
@@ -27,12 +35,50 @@ export default function CrackWidget({
   className = "",
   height = "h-full",
   blockPointerEvents = false,
+  providers = STREAMATE_BRAND,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
   const cleanCols = Number(cols) || 1;
   const cleanRows = Number(rows) || 1;
   const cleanNumber = Number(number) || 10;
+
+  const scriptSrc = useMemo(() => {
+    const params = new URLSearchParams({
+      landing_id: "{offer_url_id}",
+      genders: "f",
+      providers,
+      brands: STREAMATE_BRAND,
+      skin: "1",
+      containerAlignment: "center",
+      cols: String(cleanCols),
+      rows: String(cleanRows),
+      number: String(cleanNumber),
+      background: "transparent",
+      useFeed: String(useFeed),
+      animateFeed: String(animateFeed),
+      smoothAnimation: String(smoothAnimation),
+      ratio: String(ratio),
+      verticalSpace: "8px",
+      horizontalSpace: "8px",
+      colorFilter: "0",
+      colorFilterStrength: "0",
+      AuxiliaryCSS: "\n",
+      lang: "es",
+      token: CRACKREVENUE_TOKEN,
+      api_key: CRACKREVENUE_API_KEY,
+    });
+    return `${WIDGET_SCRIPT_BASE}?${params.toString()}`;
+  }, [
+    providers,
+    cleanCols,
+    cleanRows,
+    cleanNumber,
+    useFeed,
+    animateFeed,
+    smoothAnimation,
+    ratio,
+  ]);
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -50,6 +96,7 @@ export default function CrackWidget({
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
+            touch-action: pan-y;
           }
           iframe, div, object {
             width: 100% !important;
@@ -58,7 +105,7 @@ export default function CrackWidget({
         </style>
       </head>
       <body>
-        <script src="https://crxcra.com/cams-widget-ext/script?landing_id=%7Boffer_url_id%7D&genders=f&providers=bongacash%2Ccam4%2Ccamsoda%2Cimlive%2Cstreamate%2Cawempire%2Cstripchat%2Cxlovecam%2Cchaturbate&skin=1&containerAlignment=center&cols=${cleanCols}&rows=${cleanRows}&number=${cleanNumber}&background=transparent&useFeed=${useFeed}&animateFeed=${animateFeed}&smoothAnimation=${smoothAnimation}&ratio=${ratio}&verticalSpace=8px&horizontalSpace=8px&colorFilter=0&colorFilterStrength=0&AuxiliaryCSS=%0A&lang=es&token=2c2ecfb0-b7f2-11f1-8697-29ba0a54b9b9&api_key=fdea1df92de2f1f1136fc0f92c35d85ce84c15ad70443277875a1996752c9992"></script>
+        <script src="${scriptSrc}"></script>
       </body>
     </html>
   `;
@@ -70,7 +117,7 @@ export default function CrackWidget({
       {!loaded && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-zinc-400">
           <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent" />
-          <p className="text-xs font-medium">Cargando transmisiones...</p>
+          <p className="text-xs font-medium">Cargando transmisiones Streamate...</p>
         </div>
       )}
       <iframe
@@ -80,7 +127,7 @@ export default function CrackWidget({
         }`}
         onLoad={() => setLoaded(true)}
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-        title="NaughtyXXX Feed"
+        title="NaughtyXXX Streamate Feed"
       />
     </div>
   );

@@ -31,6 +31,7 @@ export default function HomePage() {
     const distance = Math.hypot(dx, dy);
 
     if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 48) {
+      e.preventDefault();
       const container = feedRef.current;
       if (container) {
         const step = container.clientHeight;
@@ -43,6 +44,7 @@ export default function HomePage() {
     }
 
     if (distance < 14 && elapsed < 350 && isMuted) {
+      e.preventDefault();
       setIsMuted(false);
     }
   };
@@ -81,6 +83,7 @@ export default function HomePage() {
             smoothAnimation={1}
             height="h-full min-h-[calc(100dvh-4rem)]"
             blockPointerEvents={isMuted}
+            providers="streamate"
           />
 
           {isMuted && (
@@ -104,10 +107,18 @@ export default function HomePage() {
             aria-hidden={!isMuted}
             onTouchStart={isMuted ? handleTouchStart : undefined}
             onTouchEnd={isMuted ? handleTouchEnd : undefined}
+            onTouchMove={
+              isMuted
+                ? (e) => {
+                    if (e.touches.length === 1) e.preventDefault();
+                  }
+                : undefined
+            }
             onClick={
               isMuted
                 ? (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     toggleSound();
                   }
                 : undefined
