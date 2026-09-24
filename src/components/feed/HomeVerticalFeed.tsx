@@ -53,7 +53,7 @@ export function HomeVerticalFeed() {
 
   const slideCount = slides.length > 0 ? slides.length : 1;
   const { activeIndex } = useFeedActiveIndex(scrollRef, slideCount);
-  const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 2);
+  const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 1);
 
   useEffect(() => {
     if (!unlocked) {

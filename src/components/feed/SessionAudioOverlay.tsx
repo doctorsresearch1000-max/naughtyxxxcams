@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { IconVolumeOff } from "@/components/icons/LineIcons";
 
 type SessionAudioOverlayProps = {
   visible: boolean;
@@ -23,7 +24,7 @@ export function SessionAudioOverlay({
   return createPortal(
     <button
       type="button"
-      onPointerUp={(e) => {
+      onPointerDown={(e) => {
         e.preventDefault();
         e.stopPropagation();
         onUnlock();
@@ -33,8 +34,10 @@ export function SessionAudioOverlay({
       aria-label="Tap screen for sound"
     >
       <div className="rounded-2xl border border-pink-500/40 bg-black/90 px-6 py-3 text-center text-sm font-bold text-white shadow-2xl shadow-pink-900/50 backdrop-blur-md">
-        <span className="mb-1 block text-lg">🔇</span>
-        Tap screen for sound
+        <span className="mb-2 flex justify-center text-white">
+          <IconVolumeOff size={28} strokeWidth={1.65} />
+        </span>
+        Tap for sound
       </div>
     </button>,
     document.body,

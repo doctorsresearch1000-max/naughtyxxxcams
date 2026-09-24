@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { AppChrome } from "@/components/layout/AppChrome";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/layout/Header";
+import { PersistedHomeFeed } from "@/components/layout/PersistedHomeFeed";
+import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,7 +28,10 @@ export default function RootLayout({
       <body className="min-h-dvh bg-black">
         <div className="relative mx-auto flex min-h-dvh max-w-md flex-col bg-black pb-16 [touch-action:pan-y]">
           <Header />
-          <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
+          <ConditionalSiteChrome>
+            <PersistedHomeFeed />
+            <SecondaryPageLayer>{children}</SecondaryPageLayer>
+          </ConditionalSiteChrome>
         </div>
         <AppChrome />
       </body>

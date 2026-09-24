@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
 import { FeedPoster } from "@/components/feed/FeedPoster";
+import {
+  IconBookmarkOutline,
+  IconCommentOutline,
+  IconShareOutline,
+  IconVolumeOff,
+  IconVolumeOn,
+} from "@/components/icons/LineIcons";
 
 type FeedActionRailProps = {
   feedKey: string;
@@ -32,6 +39,7 @@ export function FeedActionRail({
   onToggleMute,
 }: FeedActionRailProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   if (!isActive) return null;
 
@@ -56,10 +64,16 @@ export function FeedActionRail({
           <button
             type="button"
             onClick={onToggleMute}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/70 text-base shadow-lg backdrop-blur-sm"
+            className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/70 shadow-lg backdrop-blur-sm transition-colors active:scale-95 ${
+              muted ? "text-white" : "text-[#39FF14]"
+            }`}
             aria-label={muted ? "Unmute" : "Mute"}
           >
-            {muted ? "🔇" : "🔊"}
+            {muted ? (
+              <IconVolumeOff size={22} strokeWidth={1.65} />
+            ) : (
+              <IconVolumeOn size={22} strokeWidth={1.65} />
+            )}
           </button>
 
           <div className="relative mb-1">
@@ -86,7 +100,7 @@ export function FeedActionRail({
             )}
             <button
               type="button"
-              className="absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-[#39FF14] to-[#00FF7F] text-xs font-black text-black shadow-md"
+              className="absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full bg-[#39FF14] text-xs font-black text-black shadow-md"
               aria-label="Follow model"
             >
               +
@@ -94,25 +108,43 @@ export function FeedActionRail({
           </div>
 
           <LikeActionButton feedKey={feedKey} />
-          <ActionButton icon="💬" label="Chat" onClick={onChatAttempt} />
-          <ActionButton icon="⭐" label="Save" />
-          <ActionButton icon="🚀" label="Share" variant="circle" />
+          <RailAction
+            label="Chat"
+            onClick={onChatAttempt}
+            icon={<IconCommentOutline size={26} strokeWidth={1.65} />}
+          />
+          <RailAction
+            label="Save"
+            onClick={() => setSaved((s) => !s)}
+            active={saved}
+            icon={
+              <IconBookmarkOutline
+                size={26}
+                strokeWidth={1.65}
+                className={saved ? "text-[#39FF14]" : "text-white"}
+              />
+            }
+          />
+          <RailAction
+            label="Share"
+            icon={<IconShareOutline size={24} strokeWidth={1.65} />}
+          />
         </div>
       </div>
     </>
   );
 }
 
-function ActionButton({
-  icon,
+function RailAction({
   label,
   onClick,
-  variant = "default",
+  icon,
+  active = false,
 }: {
-  icon: string;
   label: string;
   onClick?: () => void;
-  variant?: "default" | "circle";
+  icon: ReactNode;
+  active?: boolean;
 }) {
   return (
     <button
@@ -120,14 +152,18 @@ function ActionButton({
       onClick={onClick}
       className="flex flex-col items-center gap-0.5 text-[10px] font-medium text-white transition-transform active:scale-90"
     >
-      {variant === "circle" ? (
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-[#39FF14] to-[#00FF7F] text-base text-black shadow-lg shadow-[#39FF14]/30">
-          {icon}
-        </div>
-      ) : (
-        <span className="text-2xl">{icon}</span>
-      )}
-      <span className="font-bold text-zinc-300">{label}</span>
+      <span
+        className={`flex h-8 w-8 items-center justify-center ${
+          active ? "text-[#39FF14]" : "text-white"
+        }`}
+      >
+        {icon}
+      </span>
+      <span
+        className={`font-bold ${active ? "text-[#39FF14]" : "text-zinc-200"}`}
+      >
+        {label}
+      </span>
     </button>
   );
 }

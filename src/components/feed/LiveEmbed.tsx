@@ -36,7 +36,8 @@ export function LiveEmbed({
   const [streamActive, setStreamActive] = useState(false);
   const [posterFallback, setPosterFallback] = useState(false);
 
-  /** Stable embed URL — mute/unmute via postMessage only (no iframe reload). */
+  const embedMuted = streamMuted ? 1 : 0;
+
   const embedSrc = useMemo(
     () =>
       buildCamsEmbedUrl(embedKey, {
@@ -46,16 +47,16 @@ export function LiveEmbed({
         ratio: 0.5625,
         useFeed: 0,
         performerNameClean,
-        muted: 1,
+        muted: embedMuted,
       }),
-    [embedKey, performerNameClean],
+    [embedKey, performerNameClean, embedMuted],
   );
 
   useEffect(() => {
     setFrameLoaded(false);
     setStreamActive(false);
     setPosterFallback(false);
-  }, [embedKey, isActive]);
+  }, [embedKey, isActive, embedMuted]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -126,11 +127,13 @@ export function LiveEmbed({
     <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
       {mountIframe && (
         <iframe
-          key={embedKey}
+          key={`${embedKey}-m${embedMuted}`}
           ref={iframeRef}
           src={embedSrc}
           title={`Live stream ${embedKey}`}
           data-touch-blocked="true"
+          data-naughty-feed-embed="true"
+          data-naughty-active-audio={isActive ? "true" : "false"}
           className="pointer-events-none absolute inset-0 z-[12] h-full w-full border-0"
           allow={WIDGET_IFRAME_ALLOW_COMBINED}
           sandbox={WIDGET_IFRAME_SANDBOX}

@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { syncReloadFeedIframesForAudio } from "@/lib/feed/audioGestureUnlock";
 import { SessionAudioOverlay } from "./SessionAudioOverlay";
 
 type SessionAudioContextValue = {
@@ -85,6 +86,7 @@ export function SessionAudioProvider({
   );
 
   const unlockSession = useCallback(() => {
+    syncReloadFeedIframesForAudio(true);
     unlockedRef.current = true;
     mutedRef.current = false;
     setUnlocked(true);
@@ -96,22 +98,19 @@ export function SessionAudioProvider({
     setMuted((prev) => {
       const next = !prev;
       if (!next) {
+        syncReloadFeedIframesForAudio(true);
         setUnlocked(true);
         unlockedRef.current = true;
         mutedRef.current = false;
         postToIframe("session-audio-unlock");
       } else {
+        syncReloadFeedIframesForAudio(false);
         mutedRef.current = true;
         postToIframe("session-audio-mute");
       }
       return next;
     });
   }, [postToIframe]);
-
-  useEffect(() => {
-    if (!unlocked) return;
-    postToIframe(muted ? "session-audio-mute" : "session-audio-unlock");
-  }, [unlocked, muted, postToIframe]);
 
   const value = useMemo(
     () => ({

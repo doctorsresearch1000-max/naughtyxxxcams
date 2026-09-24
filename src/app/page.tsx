@@ -1,10 +1,4 @@
-import { HomeVerticalFeed } from "@/components/feed/HomeVerticalFeed";
-import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
-
+/** Home feed is rendered by {@link PersistedHomeFeed} in the root layout. */
 export default function HomePage() {
-  return (
-    <SessionAudioProvider>
-      <HomeVerticalFeed />
-    </SessionAudioProvider>
-  );
+  return null;
 }
