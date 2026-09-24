@@ -1,0 +1,4 @@
+# Copia a `.dev.vars` para `wrangler dev` / `npm run preview` (no subir a git).
+CRACKREVENUE_TOKEN=tu-token-uuid-de-crackrevenue
+CRACKREVENUE_API_KEY=tu-api-key-de-crackrevenue
+CRACKREVENUE_USER_AGENT=NaughtyXxxCams/1.0 (+https://naughtyxxxcams.com)
