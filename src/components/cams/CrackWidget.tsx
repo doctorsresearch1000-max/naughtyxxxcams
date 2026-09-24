@@ -11,17 +11,19 @@ interface CrackWidgetProps {
   animateFeed?: number;
   smoothAnimation?: number;
   className?: string;
+  height?: string;
 }
 
 export default function CrackWidget({
-  cols = 4,
+  cols = 1,
   rows = 1,
-  number = 4,
-  ratio = 1,
+  number = 10,
+  ratio = 0.5625,
   useFeed = 1,
   animateFeed = 1,
   smoothAnimation = 1,
   className = "",
+  height = "h-[calc(100vh-64px)]",
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -30,18 +32,21 @@ export default function CrackWidget({
     <html lang="en">
       <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <style>
+          * { box-sizing: border-box; }
           html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background: transparent;
+            background-color: #000;
+            color: #fff;
             overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow-y: auto;
+          }
+          iframe, div, object {
+            max-width: 100% !important;
           }
         </style>
       </head>
@@ -53,20 +58,20 @@ export default function CrackWidget({
 
   return (
     <div
-      className={`relative flex min-h-[85vh] w-full items-center justify-center bg-black ${className}`}
+      className={`relative w-full overflow-hidden bg-black ${height} ${className}`}
     >
       {!loaded && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-gray-400">
           <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent" />
-          <p className="text-sm font-medium">Cargando modelos en vivo...</p>
+          <p className="text-sm font-medium">Cargando transmisores en vivo...</p>
         </div>
       )}
       <iframe
         srcDoc={srcDoc}
-        className="h-full min-h-[85vh] w-full border-0"
+        className="block h-full w-full border-0"
         onLoad={() => setLoaded(true)}
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-        title="CrackRevenue Live Cams"
+        title="Live Cams Feed"
       />
     </div>
   );

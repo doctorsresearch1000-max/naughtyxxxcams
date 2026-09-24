@@ -9,7 +9,15 @@ export function StoriesBar({ className = "" }: { className?: string }) {
       className={`overflow-hidden ${className}`}
       aria-label="Live stories"
     >
-      <CrackWidget cols={10} rows={1} number={10} className="min-h-[6.5rem]" />
+      <CrackWidget
+        cols={10}
+        rows={1}
+        number={10}
+        ratio={1}
+        useFeed={0}
+        animateFeed={0}
+        height="h-24"
+      />
     </section>
   );
 }

@@ -8,9 +8,9 @@ import { CategoryPills } from "@/components/explore/CategoryPills";
 
 export default function ExplorePage() {
   return (
-    <main className="min-h-dvh bg-night px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))]">
-      <header className="space-y-4">
-        <h1 className="text-2xl font-black tracking-tight">
+    <main className="min-h-screen w-full bg-black p-2 pb-24 pt-[max(1rem,env(safe-area-inset-top))]">
+      <header className="space-y-4 px-2">
+        <h1 className="text-2xl font-black tracking-tight text-white">
           Explore <span className="text-magenta">Live</span>
         </h1>
         <label className="relative block">
@@ -29,11 +29,19 @@ export default function ExplorePage() {
         <CategoryPills />
       </header>
 
-      <section className="mt-8" aria-labelledby="trending-heading">
-        <h2 id="trending-heading" className="mb-4 text-lg font-extrabold">
+      <section className="mt-4" aria-labelledby="trending-heading">
+        <h2 id="trending-heading" className="mb-3 px-2 text-lg font-extrabold text-white">
           Trending Now
         </h2>
-        <CrackWidget cols={4} rows={3} number={12} className="min-h-[28rem]" />
+        <CrackWidget
+          cols={4}
+          rows={3}
+          number={12}
+          ratio={1}
+          useFeed={0}
+          animateFeed={0}
+          height="min-h-screen"
+        />
       </section>
     </main>
   );
