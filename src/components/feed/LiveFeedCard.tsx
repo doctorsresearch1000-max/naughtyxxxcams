@@ -17,7 +17,6 @@ type LiveFeedCardProps = {
   index: number;
   isActive: boolean;
   isArmed: boolean;
-  isPlaying: boolean;
   onRegisterIframe: (win: Window | null) => void;
 };
 
@@ -26,7 +25,6 @@ export function LiveFeedCard({
   index,
   isActive,
   isArmed,
-  isPlaying,
   onRegisterIframe,
 }: LiveFeedCardProps) {
   const { muted, toggleMuted } = useSessionAudio();
@@ -34,7 +32,7 @@ export function LiveFeedCard({
   return (
     <article
       className={`tele-card relative w-full shrink-0 snap-start overflow-hidden bg-black ${CARD_HEIGHT}`}
-      data-index={index}
+      data-slide-index={index}
       data-feed-key={performer.feedKey}
       aria-label={performerLabel(performer)}
     >
@@ -43,8 +41,7 @@ export function LiveFeedCard({
         posterUrl={performer.posterUrl}
         isActive={isActive}
         isArmed={isArmed}
-        isPlaying={isPlaying}
-        onIframeWindow={isPlaying ? onRegisterIframe : undefined}
+        onIframeWindow={isActive ? onRegisterIframe : undefined}
       />
 
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
@@ -60,7 +57,7 @@ export function LiveFeedCard({
           {performerLabel(performer)}
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-widest text-pink-400">
-          {isPlaying ? "En vivo · Streamate" : "Desliza · siguiente modelo"}
+          {isActive ? "En vivo · Streamate" : "Desliza · siguiente modelo"}
         </span>
       </div>
 

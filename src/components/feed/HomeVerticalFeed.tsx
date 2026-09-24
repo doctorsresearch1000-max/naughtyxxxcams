@@ -59,20 +59,14 @@ export function HomeVerticalFeed() {
     };
   }, []);
 
-  const { activeIndex, isScrolling } = useFeedActiveIndex(
-    scrollRef,
-    slides.length,
-  );
+  const { activeIndex } = useFeedActiveIndex(scrollRef, slides.length);
   const { isArmed } = useVideoFeedBuffer(activeIndex, slides.length, 2);
 
-  const isPlaying = (index: number) =>
-    index === activeIndex && !isScrolling;
-
   useEffect(() => {
-    if (!isScrolling && !unlocked) {
+    if (!unlocked) {
       setOverlayGate(true);
     }
-  }, [activeIndex, isScrolling, unlocked, setOverlayGate]);
+  }, [activeIndex, unlocked, setOverlayGate]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {
@@ -113,7 +107,6 @@ export function HomeVerticalFeed() {
             index={index}
             isActive={index === activeIndex}
             isArmed={isArmed(index)}
-            isPlaying={isPlaying(index)}
             onRegisterIframe={handleRegisterIframe}
           />
         ))}

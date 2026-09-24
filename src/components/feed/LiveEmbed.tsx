@@ -8,8 +8,11 @@ import {
 } from "@/lib/feed/widgetSrcDoc";
 
 export const parkedIframeStyle: React.CSSProperties = {
-  clipPath: "inset(100%)",
-  clip: "rect(0, 0, 0, 0)",
+  visibility: "hidden",
+  position: "absolute",
+  width: 1,
+  height: 1,
+  overflow: "hidden",
   pointerEvents: "none",
 };
 
@@ -18,19 +21,16 @@ type LiveEmbedProps = {
   posterUrl: string;
   isActive: boolean;
   isArmed: boolean;
-  /** Tarjeta en viewport y scroll detenido → mostrar stream. */
-  isPlaying: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
-const SETTLE_MS = 350;
+const SETTLE_MS = 280;
 
 export function LiveEmbed({
   embedKey,
   posterUrl,
   isActive,
   isArmed,
-  isPlaying,
   onIframeWindow,
 }: LiveEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -50,33 +50,32 @@ export function LiveEmbed({
   }, [embedKey]);
 
   useEffect(() => {
-    if (!isArmed) {
-      setFrameLoaded(false);
-      setSettled(false);
-    }
-  }, [isArmed]);
+    setFrameLoaded(false);
+    setSettled(false);
+  }, [embedKey]);
 
   useEffect(() => {
-    if (!frameLoaded || !isPlaying) {
+    if (!isActive || !frameLoaded) {
       setSettled(false);
       return;
     }
     const t = window.setTimeout(() => setSettled(true), SETTLE_MS);
     return () => window.clearTimeout(t);
-  }, [frameLoaded, isPlaying, embedKey]);
+  }, [isActive, frameLoaded, embedKey]);
 
   useEffect(() => {
-    if (!isPlaying) {
+    if (!isActive) {
       onIframeWindow?.(null);
       return;
     }
-    const win = iframeRef.current?.contentWindow ?? null;
-    onIframeWindow?.(win);
-  }, [isPlaying, frameLoaded, onIframeWindow]);
+    if (!frameLoaded) return;
+    onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
+  }, [isActive, frameLoaded, onIframeWindow]);
 
   const mountIframe = isArmed;
-  const revealStream = isPlaying && isArmed;
-  const hidePoster = revealStream && frameLoaded && settled;
+  /** Tarjeta activa: iframe siempre visible (nunca clip/park). Vecinos: preload oculto. */
+  const iframeVisible = isActive && isArmed;
+  const hidePoster = isActive && frameLoaded && settled;
 
   if (!isArmed) {
     return (
@@ -94,12 +93,15 @@ export function LiveEmbed({
       {mountIframe && (
         <iframe
           ref={iframeRef}
-          key={embedKey}
           srcDoc={srcDoc}
           title={`Live stream ${embedKey}`}
           data-touch-blocked="true"
-          className="pointer-events-none absolute inset-0 h-full w-full touch-none border-0"
-          style={revealStream ? undefined : parkedIframeStyle}
+          className={
+            iframeVisible
+              ? "pointer-events-none absolute inset-0 z-[12] h-full w-full border-0"
+              : "pointer-events-none absolute inset-0 z-[12] h-full w-full touch-none border-0"
+          }
+          style={iframeVisible ? undefined : parkedIframeStyle}
           onLoad={() => setFrameLoaded(true)}
           sandbox="allow-scripts allow-same-origin"
         />
@@ -109,12 +111,12 @@ export function LiveEmbed({
         feedKey={embedKey}
         posterUrl={posterUrl}
         priority={isActive}
-        className={`pointer-events-none absolute inset-0 z-[20] h-full w-full object-cover transition-opacity duration-500 ${
+        className={`pointer-events-none absolute inset-0 z-[20] h-full w-full object-cover transition-opacity duration-300 ${
           hidePoster ? "opacity-0" : "opacity-100"
         }`}
       />
 
-      {revealStream && (
+      {iframeVisible && (
         <div
           className="pointer-events-none absolute inset-0 z-[25] touch-none"
           aria-hidden
