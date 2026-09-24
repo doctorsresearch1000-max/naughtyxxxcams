@@ -13,9 +13,11 @@ export type WidgetEmbedOptions = {
   useFeed?: number;
   animateFeed?: number;
   smoothAnimation?: number;
+  /** Identificador estable por tarjeta (no cambia mute/volumen). */
+  embedInstanceId?: string;
 };
 
-/** URL del script — `muted=1` fijo: no remount por audio. */
+/** URL del script — `muted=1` fijo: sin remount por audio. */
 export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
   const params = new URLSearchParams({
     landing_id: "{offer_url_id}",
@@ -42,10 +44,55 @@ export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
     token: CRACKREVENUE_TOKEN,
     api_key: CRACKREVENUE_API_KEY,
   });
+
+  if (options.embedInstanceId) {
+    params.set("sub_id", options.embedInstanceId.slice(0, 64));
+  }
+
   return `${WIDGET_SCRIPT_BASE}?${params.toString()}`;
 }
 
-export function buildWidgetSrcDoc(scriptSrc: string): string {
+const AFFILIATE_GUARD = `
+      (function () {
+        var block = function (e) {
+          var t = e.target;
+          if (t && t.closest && t.closest('a[href]')) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        };
+        document.addEventListener('click', block, true);
+        document.addEventListener('touchend', block, true);
+        var _open = window.open;
+        window.open = function () { return null; };
+        try {
+          Object.defineProperty(window, 'open', { value: function () { return null; } });
+        } catch (e) {}
+      })();
+`;
+
+const AUDIO_BRIDGE = `
+      window.addEventListener('message', function (event) {
+        if (!event.data || event.data.source !== 'naughty-feed') return;
+        if (event.data.action === 'session-audio-unlock') {
+          document.querySelectorAll('video').forEach(function (v) {
+            try { v.muted = false; v.volume = 1; v.play().catch(function () {}); } catch (e) {}
+          });
+        }
+        if (event.data.action === 'session-audio-mute') {
+          document.querySelectorAll('video').forEach(function (v) {
+            try { v.muted = true; } catch (e) {}
+          });
+        }
+      });
+`;
+
+export function buildWidgetSrcDoc(
+  scriptSrc: string,
+  options?: { blockAffiliateNavigation?: boolean },
+): string {
+  const guard = options?.blockAffiliateNavigation ? AFFILIATE_GUARD : "";
+
   return `<!DOCTYPE html>
 <html lang="es">
   <head>
@@ -60,6 +107,7 @@ export function buildWidgetSrcDoc(scriptSrc: string): string {
         overflow: hidden;
         touch-action: none;
       }
+      a, a * { pointer-events: none !important; cursor: default !important; }
       iframe, div, object {
         width: 100% !important;
         max-width: 100% !important;
@@ -67,16 +115,8 @@ export function buildWidgetSrcDoc(scriptSrc: string): string {
     </style>
   </head>
   <body>
-    <script>
-      window.addEventListener('message', function (event) {
-        if (!event.data || event.data.source !== 'naughty-feed') return;
-        if (event.data.action === 'session-audio-unlock') {
-          document.querySelectorAll('video').forEach(function (v) {
-            try { v.muted = false; v.play().catch(function () {}); } catch (e) {}
-          });
-        }
-      });
-    </script>
+    <script>${AUDIO_BRIDGE}</script>
+    <script>${guard}</script>
     <script src="${scriptSrc}"></script>
   </body>
 </html>`;

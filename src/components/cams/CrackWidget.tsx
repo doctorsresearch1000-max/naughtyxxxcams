@@ -48,7 +48,7 @@ export default function CrackWidget({
       animateFeed,
       smoothAnimation,
     });
-    return buildWidgetSrcDoc(scriptSrc);
+    return buildWidgetSrcDoc(scriptSrc, { blockAffiliateNavigation: false });
   }, [cols, rows, number, ratio, useFeed, animateFeed, smoothAnimation]);
 
   const showIframe = !blockPointerEvents;

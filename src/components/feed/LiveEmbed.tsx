@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
   buildWidgetScriptSrc,
   buildWidgetSrcDoc,
@@ -14,11 +15,10 @@ export const parkedIframeStyle: React.CSSProperties = {
 
 type LiveEmbedProps = {
   embedKey: string;
+  posterUrl: string;
   isActive: boolean;
   isArmed: boolean;
-  audioUnlocked: boolean;
-  isScrolling: boolean;
-  posterUrl: string;
+  streamRevealed: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
@@ -26,11 +26,10 @@ const SETTLE_MS = 400;
 
 export function LiveEmbed({
   embedKey,
+  posterUrl,
   isActive,
   isArmed,
-  audioUnlocked,
-  isScrolling,
-  posterUrl,
+  streamRevealed,
   onIframeWindow,
 }: LiveEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -44,10 +43,10 @@ export function LiveEmbed({
       number: 1,
       ratio: 0.5625,
       useFeed: 0,
+      embedInstanceId: embedKey,
     });
-    return buildWidgetSrcDoc(scriptSrc);
-    // embedKey: iframe estable por modelo; sin remount por mute/volumen
-  }, []);
+    return buildWidgetSrcDoc(scriptSrc, { blockAffiliateNavigation: true });
+  }, [embedKey]);
 
   useEffect(() => {
     if (!isArmed) {
@@ -57,69 +56,68 @@ export function LiveEmbed({
   }, [isArmed]);
 
   useEffect(() => {
-    if (!frameLoaded || !isActive) {
+    if (!frameLoaded || !isActive || !streamRevealed) {
       setSettled(false);
       return;
     }
     const t = window.setTimeout(() => setSettled(true), SETTLE_MS);
     return () => window.clearTimeout(t);
-  }, [frameLoaded, isActive, embedKey]);
+  }, [frameLoaded, isActive, streamRevealed, embedKey]);
 
   useEffect(() => {
-    if (!isActive) {
+    if (!isActive || !streamRevealed) {
       onIframeWindow?.(null);
       return;
     }
     const win = iframeRef.current?.contentWindow ?? null;
     onIframeWindow?.(win);
-  }, [isActive, frameLoaded, onIframeWindow]);
+  }, [isActive, streamRevealed, frameLoaded, onIframeWindow]);
 
-  const revealStream = isActive && isArmed;
-  const showPoster =
-    !revealStream || !settled || !frameLoaded;
-
-  const pointerInteractive =
-    isActive && audioUnlocked && !isScrolling && revealStream;
+  const revealStream = isActive && isArmed && streamRevealed;
+  const hidePoster =
+    revealStream && frameLoaded && settled;
 
   if (!isArmed) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={posterUrl}
-        alt=""
+      <FeedPoster
+        feedKey={embedKey}
+        posterUrl={posterUrl}
+        priority={isActive}
         className="absolute inset-0 z-[10] h-full w-full object-cover"
-        loading="lazy"
       />
     );
   }
 
   return (
     <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
-      <iframe
-        ref={iframeRef}
-        key={embedKey}
-        srcDoc={srcDoc}
-        title={`Live stream ${embedKey}`}
-        data-touch-blocked={pointerInteractive ? "false" : "true"}
-        className={
-          pointerInteractive
-            ? "absolute inset-0 h-full w-full border-0"
-            : "pointer-events-none absolute inset-0 h-full w-full touch-none border-0"
-        }
-        style={revealStream ? undefined : parkedIframeStyle}
-        onLoad={() => setFrameLoaded(true)}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+      {revealStream && (
+        <iframe
+          ref={iframeRef}
+          srcDoc={srcDoc}
+          title={`Live stream ${embedKey}`}
+          data-touch-blocked="true"
+          className="pointer-events-none absolute inset-0 h-full w-full touch-none border-0"
+          style={revealStream ? undefined : parkedIframeStyle}
+          onLoad={() => setFrameLoaded(true)}
+          sandbox="allow-scripts allow-same-origin"
+        />
+      )}
+
+      <FeedPoster
+        feedKey={embedKey}
+        posterUrl={posterUrl}
+        priority={isActive}
+        className={`pointer-events-none absolute inset-0 z-[20] h-full w-full object-cover transition-opacity duration-500 ${
+          hidePoster ? "opacity-0" : "opacity-100"
+        }`}
       />
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={posterUrl}
-        alt=""
-        className={`pointer-events-none absolute inset-0 z-[20] h-full w-full object-cover transition-opacity duration-300 ${
-          showPoster ? "opacity-100" : "opacity-0"
-        }`}
-        loading={isActive ? "eager" : "lazy"}
-      />
+      {revealStream && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[25] touch-none"
+          aria-hidden
+        />
+      )}
     </div>
   );
 }
