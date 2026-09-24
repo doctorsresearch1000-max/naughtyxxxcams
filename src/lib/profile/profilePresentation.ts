@@ -94,18 +94,18 @@ export function buildAboutCards(
   const zodiac = findZodiac(traits);
 
   const grid: AboutCard[] = [
-    { label: "Intereses", value: interests || "Live cam, chat privado", span: "full" },
-    { label: "Idiomas", value: languages, span: "full" },
-    { label: "Altura", value: formatHeight(c?.height), span: "half" },
-    { label: "Zodiaco", value: zodiac ? capitalize(zodiac) : "—", span: "half" },
-    { label: "Tipo de cuerpo", value: c?.bodyTypes?.[0] ?? "—", span: "half" },
+    { label: "Interests", value: interests || "Live cam, private chat", span: "full" },
+    { label: "Languages", value: languages, span: "full" },
+    { label: "Height", value: formatHeight(c?.height), span: "half" },
+    { label: "Zodiac", value: zodiac ? capitalize(zodiac) : "—", span: "half" },
+    { label: "Body type", value: c?.bodyTypes?.[0] ?? "—", span: "half" },
     {
-      label: "Tamaño de pecho",
+      label: "Bust",
       value: c?.bustSize ?? "—",
       span: "half",
     },
-    { label: "Etnicidad", value: c?.ethnicities?.[0] ?? "—", span: "half" },
-    { label: "Rango de edad", value: ageRange(c?.age), span: "half" },
+    { label: "Ethnicity", value: c?.ethnicities?.[0] ?? "—", span: "half" },
+    { label: "Age range", value: ageRange(c?.age), span: "half" },
   ];
 
   return grid;

@@ -11,7 +11,7 @@ import {
 import type { StreamItem } from "@/data/mock";
 import { formatViewers } from "@/data/mock";
 import { SlushyBrandLogo } from "@/components/brand/SlushyBrandLogo";
-import { useFeedLikes } from "@/hooks/useFeedLikes";
+import { LikeActionButton } from "@/components/feed/LikeActionButton";
 
 type StreamSlideProps = {
   stream: StreamItem;
@@ -20,8 +20,6 @@ type StreamSlideProps = {
 
 export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
   const doubledComments = [...stream.comments, ...stream.comments];
-  const { liked, label, toggleLike } = useFeedLikes(stream.id);
-
   return (
     <article
       className="relative h-[100dvh] w-full shrink-0 snap-slide overflow-hidden bg-night"
@@ -78,12 +76,9 @@ export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
             <Plus className="h-4 w-4" strokeWidth={3} />
           </button>
         </div>
-        <ActionIcon
-          icon={Heart}
-          label={label}
-          active={liked}
-          onClick={toggleLike}
-        />
+        <div className="flex flex-col items-center">
+          <LikeActionButton feedKey={stream.id} />
+        </div>
         <ActionIcon icon={MessageCircle} label="Chat" />
         <ActionIcon icon={Bookmark} label="Save" />
         <ActionIcon icon={Share2} label="Share" />

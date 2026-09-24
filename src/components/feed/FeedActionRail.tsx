@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ConversionGateDialog } from "@/components/conversion/ConversionGateDialog";
+import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
+import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
 import { FeedPoster } from "@/components/feed/FeedPoster";
-import { useFeedLikes } from "@/hooks/useFeedLikes";
 
 type FeedActionRailProps = {
   feedKey: string;
@@ -31,8 +31,7 @@ export function FeedActionRail({
   muted,
   onToggleMute,
 }: FeedActionRailProps) {
-  const { liked, label, toggleLike } = useFeedLikes(feedKey);
-  const [gateOpen, setGateOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   if (!isActive) return null;
 
@@ -41,16 +40,16 @@ export function FeedActionRail({
       window.open(affiliateUrl, "_blank", "noopener,noreferrer");
       return;
     }
-    setGateOpen(true);
+    setSheetOpen(true);
   };
 
   return (
     <>
-      <ConversionGateDialog
-        open={gateOpen}
+      <ConversionSlideSheet
+        open={sheetOpen}
         modelName={modelName}
         affiliateUrl={affiliateUrl}
-        onClose={() => setGateOpen(false)}
+        onClose={() => setSheetOpen(false)}
       />
       <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-[45] w-[4.75rem]">
         <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-4">
@@ -94,12 +93,7 @@ export function FeedActionRail({
             </button>
           </div>
 
-          <ActionButton
-            icon={liked ? "❤️" : "🤍"}
-            label={label}
-            active={liked}
-            onClick={toggleLike}
-          />
+          <LikeActionButton feedKey={feedKey} />
           <ActionButton icon="💬" label="Chat" onClick={onChatAttempt} />
           <ActionButton icon="⭐" label="Save" />
           <ActionButton icon="🚀" label="Share" variant="circle" />
@@ -113,22 +107,18 @@ function ActionButton({
   icon,
   label,
   onClick,
-  active = false,
   variant = "default",
 }: {
   icon: string;
   label: string;
   onClick?: () => void;
-  active?: boolean;
   variant?: "default" | "circle";
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 text-[10px] font-medium text-white transition-transform active:scale-90 ${
-        active ? "text-[#39FF14]" : ""
-      }`}
+      className="flex flex-col items-center gap-0.5 text-[10px] font-medium text-white transition-transform active:scale-90"
     >
       {variant === "circle" ? (
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-[#39FF14] to-[#00FF7F] text-base text-black shadow-lg shadow-[#39FF14]/30">

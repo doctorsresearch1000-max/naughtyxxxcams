@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
-import { ConversionGateDialog } from "@/components/conversion/ConversionGateDialog";
+import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
+import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
@@ -38,9 +39,9 @@ function PrimaryCta({
         href={href}
         target="_blank"
         rel="nofollow noopener"
-        className="flex w-full items-center justify-between rounded-full border border-white/20 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 transition active:scale-[0.99]"
+        className="flex w-full items-center justify-between rounded-full border border-white/15 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 ring-1 ring-white/5 transition active:scale-[0.99]"
       >
-        <span>Avísame cuando esté en vivo</span>
+        <span>Notify me when she&apos;s live</span>
         <span aria-hidden>🔔</span>
       </a>
     );
@@ -66,9 +67,10 @@ export function ModelProfileSlushyView({
 }: ModelProfileSlushyViewProps) {
   const isLive = model.status === "live";
   const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [gateOpen, setGateOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const conversionReady = useDelayedConversionCta(true, 15_000);
   const chatCtaLabel = `Chat with ${model.displayName}`;
+  const likeKey = `profile-${model.profileSlug}`;
 
   const galleryTags = useMemo(() => {
     const set = new Set<string>();
@@ -88,18 +90,19 @@ export function ModelProfileSlushyView({
     recommended[0]?.profilePath ??
     "/explore";
 
+  const openSheet = () => setSheetOpen(true);
+
   return (
     <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white">
-      <ConversionGateDialog
-        open={gateOpen}
+      <ConversionSlideSheet
+        open={sheetOpen}
         modelName={model.displayName}
         affiliateUrl={model.affiliateUrl}
-        onClose={() => setGateOpen(false)}
+        onClose={() => setSheetOpen(false)}
       />
       <div className="mx-auto max-w-md">
-        {/* Hero */}
         <section className="relative">
-          <div className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E]">
+          <div className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10">
             <Image
               src={model.bannerUrl}
               alt={model.displayName}
@@ -109,10 +112,10 @@ export function ModelProfileSlushyView({
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-[#0A0A0A]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-[#0A0A0A]" />
 
             {isLive && (
-              <span className="absolute left-4 top-4 rounded-full bg-pink-600 px-3 py-1 text-[11px] font-black tracking-wide text-white shadow-lg">
+              <span className="absolute left-4 top-4 rounded-full bg-[#39FF14] px-3 py-1 text-[11px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
                 • LIVE
               </span>
             )}
@@ -124,7 +127,7 @@ export function ModelProfileSlushyView({
                   className={`rotate-2 rounded-xl px-3 py-1.5 text-[10px] font-black tracking-wide text-black shadow-lg ${
                     badge.includes("BEST")
                       ? "bg-orange-400"
-                      : "bg-fuchsia-400"
+                      : "bg-[#39FF14]"
                   }`}
                 >
                   {badge}
@@ -133,54 +136,56 @@ export function ModelProfileSlushyView({
             </div>
           </div>
 
-          <div className="relative z-10 -mt-12 flex justify-center">
-            <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-[#0A0A0A] ring-2 ring-white/10">
+          <div className="relative z-10 -mt-14 flex justify-center">
+            <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#0A0A0A] ring-2 ring-[#39FF14]/40">
               <Image
                 src={model.avatar}
                 alt={model.name}
                 fill
                 className="object-cover"
                 unoptimized
-                sizes="96px"
+                sizes="112px"
               />
             </div>
           </div>
         </section>
 
-        {/* Identity */}
-        <section className="px-4 pt-3 text-center">
-          <h1 className="text-2xl font-black tracking-tight">
+        <section className="px-5 pt-4 text-center">
+          <h1 className="text-3xl font-black tracking-tight">
             {model.displayName}
           </h1>
           <p className="mt-1 text-sm font-semibold text-zinc-400">
             {model.handle.startsWith("@") ? model.handle : `@${model.handle}`}
           </p>
-          <div className="mt-3 flex justify-center">
+
+          <div className="mt-4 flex justify-center">
+            <LikeActionButton feedKey={likeKey} />
+          </div>
+
+          <div className="mt-4 flex justify-center">
             <ChatWithModelCta
               modelName={model.displayName}
               affiliateUrl={model.affiliateUrl}
               visible={conversionReady}
             />
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            {model.bio}
-          </p>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-300">{model.bio}</p>
           <p className="mt-2 line-clamp-3 text-xs text-zinc-500">{seoIntro}</p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-zinc-300">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="text-sky-400">👤</span>
-              {model.followersLabel} Seguidores
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-5 text-xs text-zinc-300">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 ring-1 ring-white/5">
+              <span className="text-[#39FF14]">👤</span>
+              {model.followersLabel} followers
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="text-violet-400">🛡️</span>
-              Identidad verificada
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 ring-1 ring-white/5">
+              <span className="text-[#39FF14]">🛡️</span>
+              Verified identity
             </span>
           </div>
         </section>
 
-        {/* CTAs */}
-        <section className="space-y-3 px-4 pt-6">
+        <section className="space-y-3 px-4 pt-8">
           {conversionReady ? (
             <PrimaryCta
               href={model.affiliateUrl}
@@ -190,8 +195,8 @@ export function ModelProfileSlushyView({
           ) : (
             <button
               type="button"
-              onClick={() => setGateOpen(true)}
-              className="flex w-full items-center justify-between rounded-full border border-[#39FF14]/30 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-300 transition active:scale-[0.99]"
+              onClick={openSheet}
+              className="flex w-full items-center justify-between rounded-full border border-[#39FF14]/35 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 ring-1 ring-white/5 transition active:scale-[0.99]"
             >
               <span>Chat unlocks in a moment…</span>
               <span aria-hidden>💬</span>
@@ -199,28 +204,29 @@ export function ModelProfileSlushyView({
           )}
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-full border border-white/15 bg-[#1C1C1E] px-5 py-4 text-sm font-semibold text-white"
+            className="flex w-full items-center justify-between rounded-full border border-white/10 bg-[#1C1C1E] px-5 py-4 text-sm font-semibold text-white ring-1 ring-white/5"
           >
-            <span>Guardar en favoritos</span>
+            <span>Save to favorites</span>
             <span aria-hidden>🔖</span>
           </button>
         </section>
 
-        {/* About */}
         <section className="px-4 pt-10">
-          <h2 className="mb-4 text-center text-sm font-black tracking-[0.2em] text-white">
-            ACERCA DE {model.displayName}
+          <h2 className="mb-4 text-center text-xs font-black tracking-[0.25em] text-[#39FF14]">
+            ABOUT {model.displayName.toUpperCase()}
           </h2>
           <div className="grid grid-cols-2 gap-3">
             {model.aboutCards.map((card) => (
               <div
                 key={card.label}
-                className={`rounded-2xl bg-[#1C1C1E] p-4 ${
+                className={`rounded-2xl bg-[#1C1C1E] p-4 ring-1 ring-white/5 ${
                   card.span === "full" ? "col-span-2" : ""
                 }`}
               >
-                <p className="text-xs text-zinc-500">{card.label}</p>
-                <p className="mt-1 text-sm font-semibold text-white">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                  {card.label}
+                </p>
+                <p className="mt-1.5 text-sm font-semibold text-white">
                   {card.value}
                 </p>
               </div>
@@ -228,14 +234,13 @@ export function ModelProfileSlushyView({
           </div>
         </section>
 
-        {/* Private gallery */}
         <section className="px-4 pt-10">
-          <h2 className="text-center text-sm font-black tracking-[0.2em]">
-            GALERÍA PRIVADA
+          <h2 className="text-center text-xs font-black tracking-[0.25em] text-white">
+            PRIVATE GALLERY
           </h2>
           <p className="mt-2 text-center text-xs text-zinc-500">
-            {model.galleryItems.length} publicaciones ·{" "}
-            {model.galleryItems.filter((g) => g.locked).length} bloqueadas
+            {model.galleryItems.length} posts ·{" "}
+            {model.galleryItems.filter((g) => g.locked).length} locked
           </p>
 
           <div className="hide-scrollbar mt-4 flex gap-2 overflow-x-auto pb-2">
@@ -244,21 +249,21 @@ export function ModelProfileSlushyView({
               onClick={() => setActiveTag(null)}
               className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold ${
                 activeTag === null
-                  ? "bg-white text-black"
-                  : "bg-[#1C1C1E] text-zinc-300"
+                  ? "bg-[#39FF14] text-black"
+                  : "bg-[#1C1C1E] text-zinc-300 ring-1 ring-white/10"
               }`}
             >
-              Todas
+              All
             </button>
             {galleryTags.map((tag) => (
               <button
                 key={tag}
                 type="button"
                 onClick={() => setActiveTag(tag)}
-                className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold ${
+                className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold capitalize ${
                   activeTag === tag
-                    ? "bg-white text-black"
-                    : "bg-[#1C1C1E] text-zinc-300"
+                    ? "bg-[#39FF14] text-black"
+                    : "bg-[#1C1C1E] text-zinc-300 ring-1 ring-white/10"
                 }`}
               >
                 {tag}
@@ -268,9 +273,11 @@ export function ModelProfileSlushyView({
 
           <div className="mt-4 grid grid-cols-3 gap-2">
             {filteredGallery.map((item) => (
-              <div
+              <button
                 key={item.id}
-                className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#1C1C1E]"
+                type="button"
+                onClick={() => item.locked && openSheet()}
+                className="relative aspect-[3/4] overflow-hidden rounded-[18px] bg-[#1C1C1E] ring-1 ring-white/5"
               >
                 <Image
                   src={item.src}
@@ -289,23 +296,22 @@ export function ModelProfileSlushyView({
                   <span aria-hidden>👁</span>
                   {item.viewsLabel}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </section>
 
-        {/* Recommended */}
         {recommended.length > 0 && (
           <section className="px-4 pt-10">
-            <h2 className="text-center text-sm font-black tracking-[0.2em]">
-              OTROS DIRECTOS
+            <h2 className="text-center text-xs font-black tracking-[0.25em] text-white">
+              MORE LIVE NOW
             </h2>
             <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
               {recommended.map((friend) => (
                 <Link
                   key={friend.slug}
                   href={friend.profilePath}
-                  className="relative w-36 shrink-0 overflow-hidden rounded-3xl bg-[#1C1C1E]"
+                  className="relative w-36 shrink-0 overflow-hidden rounded-3xl bg-[#1C1C1E] ring-1 ring-white/5"
                 >
                   <div className="relative aspect-[3/4] w-full">
                     <Image
@@ -317,7 +323,7 @@ export function ModelProfileSlushyView({
                       sizes="144px"
                     />
                     {friend.live && (
-                      <span className="absolute left-2 top-2 rounded-full bg-pink-600 px-2 py-0.5 text-[9px] font-black">
+                      <span className="absolute left-2 top-2 rounded-full bg-[#39FF14] px-2 py-0.5 text-[9px] font-black text-black">
                         LIVE
                       </span>
                     )}
@@ -334,9 +340,8 @@ export function ModelProfileSlushyView({
           </section>
         )}
 
-        {/* Closure */}
         <section className="px-4 pt-12 text-center">
-          <div className="mx-auto mb-4 h-16 w-12 overflow-hidden rounded-xl bg-[#1C1C1E]">
+          <div className="mx-auto mb-4 h-16 w-12 overflow-hidden rounded-xl bg-[#1C1C1E] ring-1 ring-white/10">
             <Image
               src={model.avatar}
               alt=""
@@ -347,11 +352,11 @@ export function ModelProfileSlushyView({
             />
           </div>
           <h3 className="text-sm font-black tracking-[0.15em]">
-            ESO ES TODO DE {model.displayName}
+            YOU&apos;VE SEEN ALL OF {model.displayName}
           </h3>
           <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-            Si {model.name} te interesó, entra al chat en vivo o descubre la
-            siguiente modelo recomendada.
+            Liked {model.name}? Jump into her live chat or explore the next
+            recommended model.
           </p>
 
           <div className="mt-6 space-y-3">
@@ -362,9 +367,9 @@ export function ModelProfileSlushyView({
             />
             <Link
               href={nextProfilePath}
-              className="flex w-full items-center justify-between rounded-full border border-white/20 bg-transparent px-5 py-4 text-sm font-bold text-white transition hover:bg-white/5"
+              className="flex w-full items-center justify-between rounded-full border border-white/15 bg-transparent px-5 py-4 text-sm font-bold text-white transition hover:bg-white/5"
             >
-              <span>Siguiente perfil</span>
+              <span>Next profile</span>
               <span aria-hidden>→</span>
             </Link>
           </div>

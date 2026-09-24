@@ -18,7 +18,7 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-/** Si el widget no notifica stream, no bloquear el póster indefinidamente. */
+/** If the widget never signals stream, do not block the poster forever. */
 const POSTER_FALLBACK_MS = 6_000;
 
 export function LiveEmbed({
@@ -36,6 +36,7 @@ export function LiveEmbed({
   const [streamActive, setStreamActive] = useState(false);
   const [posterFallback, setPosterFallback] = useState(false);
 
+  /** Stable embed URL — mute/unmute via postMessage only (no iframe reload). */
   const embedSrc = useMemo(
     () =>
       buildCamsEmbedUrl(embedKey, {
@@ -45,9 +46,9 @@ export function LiveEmbed({
         ratio: 0.5625,
         useFeed: 0,
         performerNameClean,
-        muted: streamMuted ? 1 : 0,
+        muted: 1,
       }),
-    [embedKey, performerNameClean, streamMuted],
+    [embedKey, performerNameClean],
   );
 
   useEffect(() => {
@@ -67,7 +68,7 @@ export function LiveEmbed({
       },
       "*",
     );
-  }, [streamMuted, isActive, frameLoaded, embedSrc]);
+  }, [streamMuted, isActive, frameLoaded]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -125,7 +126,7 @@ export function LiveEmbed({
     <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
       {mountIframe && (
         <iframe
-          key={`${embedKey}-${streamMuted ? "m" : "a"}`}
+          key={embedKey}
           ref={iframeRef}
           src={embedSrc}
           title={`Live stream ${embedKey}`}

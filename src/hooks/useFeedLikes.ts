@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const STORAGE_PREFIX = "nx_like_";
 
@@ -25,6 +25,8 @@ export function useFeedLikes(feedKey: string) {
   const baseCount = useMemo(() => seedLikes(feedKey), [feedKey]);
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(baseCount);
+  const [popping, setPopping] = useState(false);
+  const popTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     try {
@@ -52,12 +54,23 @@ export function useFeedLikes(feedKey: string) {
       }
       return next;
     });
+
+    setPopping(true);
+    if (popTimerRef.current) window.clearTimeout(popTimerRef.current);
+    popTimerRef.current = window.setTimeout(() => setPopping(false), 320);
   }, [feedKey, baseCount]);
+
+  useEffect(() => {
+    return () => {
+      if (popTimerRef.current) window.clearTimeout(popTimerRef.current);
+    };
+  }, []);
 
   return {
     liked,
     count,
     label: formatLikes(count),
     toggleLike,
+    popping,
   };
 }
