@@ -15,12 +15,18 @@ export type CrackPerformer = {
   live?: boolean;
   thumbnailUrl?: string;
   liveSnapshotURL?: string;
+  roomUrl?: string;
+  iframeFeedURL?: string;
   systemScore?: number;
   characteristicsTags?: string[];
   autoTags?: string[];
   customTags?: string[];
   characteristic?: {
     ethnicities?: string[];
+    country?: string;
+    languages?: string[];
+    age?: number;
+    bodyTypes?: string[];
   };
 };
 
@@ -121,6 +127,18 @@ export function pickCoverUrl(performer?: CrackPerformer | null): string | null {
   if (typeof snapshot === "string" && snapshot.length > 0) return snapshot;
   if (typeof thumb === "string" && thumb.length > 0) return thumb;
   return null;
+}
+
+/** Banner ancho de perfil (prioriza snapshot en vivo). */
+export function pickProfileBannerUrl(
+  performer?: CrackPerformer | null,
+): string | null {
+  if (!performer) return null;
+  const snap = performer.liveSnapshotURL?.trim();
+  const thumb = performer.thumbnailUrl?.trim();
+  if (snap) return snap;
+  if (thumb) return thumb;
+  return pickCoverUrl(performer);
 }
 
 export function getPerformerKey(performer: CrackPerformer): string {

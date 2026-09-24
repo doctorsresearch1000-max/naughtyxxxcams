@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
+import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import {
   WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
@@ -28,7 +29,9 @@ export function LiveEmbed({
   isArmed,
   onIframeWindow,
 }: LiveEmbedProps) {
+  const { muted, unlocked } = useSessionAudio();
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const streamMuted = !unlocked || muted;
   const [frameLoaded, setFrameLoaded] = useState(false);
   const [streamActive, setStreamActive] = useState(false);
   const [posterFallback, setPosterFallback] = useState(false);
@@ -42,8 +45,9 @@ export function LiveEmbed({
         ratio: 0.5625,
         useFeed: 0,
         performerNameClean,
+        muted: streamMuted ? 1 : 0,
       }),
-    [embedKey, performerNameClean],
+    [embedKey, performerNameClean, streamMuted],
   );
 
   useEffect(() => {
@@ -51,6 +55,19 @@ export function LiveEmbed({
     setStreamActive(false);
     setPosterFallback(false);
   }, [embedKey, isActive]);
+
+  useEffect(() => {
+    if (!isActive || !frameLoaded) return;
+    const win = iframeRef.current?.contentWindow;
+    if (!win) return;
+    win.postMessage(
+      {
+        source: "naughty-feed",
+        action: streamMuted ? "session-audio-mute" : "session-audio-unlock",
+      },
+      "*",
+    );
+  }, [streamMuted, isActive, frameLoaded, embedSrc]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -108,6 +125,7 @@ export function LiveEmbed({
     <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
       {mountIframe && (
         <iframe
+          key={`${embedKey}-${streamMuted ? "m" : "a"}`}
           ref={iframeRef}
           src={embedSrc}
           title={`Live stream ${embedKey}`}

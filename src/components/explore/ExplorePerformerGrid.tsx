@@ -5,7 +5,7 @@ import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import {
   performerDisplayHandle,
-  performerProfilePath,
+  performerProfilePathFromPerformer,
 } from "@/lib/profile/performerHandle";
 
 type ExplorePerformerGridProps = {
@@ -30,9 +30,7 @@ export function ExplorePerformerGrid({
   return (
     <div className="grid grid-cols-2 gap-3">
       {cards.map((performer) => {
-        const profilePath = performerProfilePath(
-          performer.nameClean || performer.name,
-        );
+        const profilePath = performerProfilePathFromPerformer(performer);
         const handle = performerDisplayHandle(
           performer.nameClean || performer.name,
         );

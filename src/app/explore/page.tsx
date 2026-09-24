@@ -10,7 +10,10 @@ import {
   getDefaultExploreSeo,
   resolveExploreCategory,
 } from "@/lib/explore/categorySlugs";
-import { fetchCategoryPerformers } from "@/lib/explore/fetchCategoryPerformers";
+import {
+  fetchCategoryPerformers,
+  fetchExploreMasterPool,
+} from "@/lib/explore/fetchCategoryPerformers";
 import {
   dedupeCategories,
   fetchAllExploreCategories,
@@ -59,8 +62,10 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     uniqueCategories = [];
   }
 
+  const masterPool = await fetchExploreMasterPool(3);
   const { performers, total } = await fetchCategoryPerformers(category, {
     size: 24,
+    masterPool,
   });
 
   return (
@@ -82,6 +87,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           initialCat={initialCat}
           initialPerformers={performers}
           initialTotal={total}
+          masterPool={masterPool}
           popularCategories={uniqueCategories}
         />
       </Suspense>

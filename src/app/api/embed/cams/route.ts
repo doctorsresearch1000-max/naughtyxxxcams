@@ -17,6 +17,10 @@ export async function GET(request: Request) {
     searchParams.get("performerNameClean") ??
     "";
 
+  const mutedParam = searchParams.get("muted");
+  const muted =
+    mutedParam === "0" || mutedParam === "false" ? 0 : 1;
+
   const frameSrc = buildWidgetFrameSrc({
     cols: Number(searchParams.get("cols")) || 1,
     rows: Number(searchParams.get("rows")) || 1,
@@ -27,6 +31,7 @@ export async function GET(request: Request) {
     smoothAnimation: Number(searchParams.get("smoothAnimation")) || 0,
     embedInstanceId: instance,
     performerNameClean: performer || undefined,
+    muted,
   });
 
   const html = buildWidgetSrcDoc(frameSrc, {

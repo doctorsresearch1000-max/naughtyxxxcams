@@ -18,6 +18,8 @@ export type WidgetEmbedOptions = {
   embedInstanceId?: string;
   /** Filtra el widget a un modelo concreto (Streamate nameClean). */
   performerNameClean?: string;
+  /** 1 = mute (autoplay), 0 = audio tras gesto del usuario */
+  muted?: number;
 };
 
 function buildWidgetSearchParams(
@@ -47,7 +49,7 @@ function buildWidgetSearchParams(
     colorFilterStrength: "0",
     AuxiliaryCSS: "\n",
     lang: "es",
-    muted: "1",
+    muted: String(options.muted ?? 1),
     autoplay: "1",
     autoPlay: "1",
     token: CRACKREVENUE_TOKEN,
@@ -149,15 +151,23 @@ const AFFILIATE_GUARD = `
 const AUDIO_BRIDGE = `
 window.addEventListener('message', function (event) {
   if (!event.data || event.data.source !== 'naughty-feed') return;
+  var widgetFrame = document.getElementById('cr-widget-frame');
+  function forwardToWidget() {
+    if (widgetFrame && widgetFrame.contentWindow) {
+      try { widgetFrame.contentWindow.postMessage(event.data, '*'); } catch (e) {}
+    }
+  }
   if (event.data.action === 'session-audio-unlock') {
     document.querySelectorAll('video').forEach(function (v) {
       try { v.muted = false; v.volume = 1; v.play().catch(function () {}); } catch (e) {}
     });
+    forwardToWidget();
   }
   if (event.data.action === 'session-audio-mute') {
     document.querySelectorAll('video').forEach(function (v) {
       try { v.muted = true; } catch (e) {}
     });
+    forwardToWidget();
   }
 });
 `;

@@ -1,8 +1,10 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import {
-  fetchStreamatePerformers,
   pickCoverUrl,
+  pickProfileBannerUrl,
 } from "@/lib/crackrevenue/api";
+import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
+import { findPerformerByProfileSlug } from "@/lib/crackrevenue/performerLookup";
 import { resolveWidgetLandingId } from "@/lib/crackrevenue/config";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
@@ -19,19 +21,13 @@ export type ModelProfileView = {
   language: string;
   country: string;
   avatar: string;
+  bannerUrl: string;
   gallery: string[];
   traits: string[];
   crakLandingId: string;
   affiliateUrl: string;
   performer?: CrackPerformer;
 };
-
-function performerSlug(p: CrackPerformer): string {
-  return (
-    performerProfileSlug(p.nameClean || p.name) ??
-    (p.nameClean || p.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "")
-  );
-}
 
 function displayName(p: CrackPerformer): string {
   if (p.nameClean?.trim()) return p.nameClean.trim();
@@ -59,7 +55,10 @@ function collectTraits(p: CrackPerformer): string[] {
   return out.length > 0 ? out : ["live cam", "verified", "streamate"];
 }
 
-function inferBodyType(traits: string[]): string {
+function inferBodyType(p: CrackPerformer, traits: string[]): string {
+  const fromApi = p.characteristic?.bodyTypes?.[0];
+  if (fromApi?.trim()) return fromApi.trim();
+
   const lower = traits.map((t) => t.toLowerCase());
   if (lower.some((t) => t.includes("curvy") || t.includes("bbw"))) {
     return "Curvaceous";
@@ -73,10 +72,6 @@ function inferBodyType(traits: string[]): string {
   return "Alluring";
 }
 
-function buildAffiliateUrl(landingId: string): string {
-  return `https://go.crakrevenue.com/?landing_id=${encodeURIComponent(landingId)}`;
-}
-
 function toViewModel(
   p: CrackPerformer,
   handleSlug: string,
@@ -84,31 +79,38 @@ function toViewModel(
   const name = displayName(p);
   const traits = collectTraits(p);
   const avatar = pickCoverUrl(p) ?? FALLBACK_AVATAR;
+  const bannerUrl = pickProfileBannerUrl(p) ?? avatar;
   const thumb = p.thumbnailUrl?.trim();
   const snap = p.liveSnapshotURL?.trim();
   const gallery = Array.from(
     new Set(
-      [avatar, thumb, snap].filter(
+      [bannerUrl, avatar, thumb, snap].filter(
         (url): url is string => typeof url === "string" && url.length > 0,
       ),
     ),
   );
 
   const landingId = resolveWidgetLandingId();
+  const slug =
+    handleSlug ||
+    performerProfileSlug(p.nameClean || p.name) ||
+    name.toLowerCase().replace(/[^a-z0-9]+/g, "");
 
   return {
     name,
-    handle: `@${handleSlug || performerSlug(p)}`,
+    handle: `@${slug}`,
     status: p.live === false ? "offline" : "live",
     platform: "streamate",
-    bodyType: inferBodyType(traits),
-    language: "English",
-    country: "INT",
+    age: p.characteristic?.age,
+    bodyType: inferBodyType(p, traits),
+    language: p.characteristic?.languages?.[0] ?? "English",
+    country: p.characteristic?.country ?? "INT",
     avatar,
+    bannerUrl,
     gallery: gallery.length > 0 ? gallery : [avatar],
     traits,
     crakLandingId: landingId,
-    affiliateUrl: buildAffiliateUrl(landingId),
+    affiliateUrl: buildModelAffiliateUrl(p),
     performer: p,
   };
 }
@@ -119,31 +121,7 @@ export async function resolveModelProfile(
   const slug = performerProfileSlug(handleParam) ?? "";
   if (!slug) return null;
 
-  const liveRes = await fetchStreamatePerformers({
-    live: true,
-    size: 100,
-    page: 1,
-  });
-  const performers = liveRes.performers ?? [];
-
-  let match =
-    performers.find((p) => performerSlug(p) === slug) ??
-    performers.find((p) => performerSlug(p).includes(slug)) ??
-    performers.find((p) => slug.includes(performerSlug(p)));
-
-  if (!match) {
-    const offline = await fetchStreamatePerformers({
-      live: false,
-      size: 100,
-      page: 1,
-    });
-    const pool = offline.performers ?? [];
-    match =
-      pool.find((p) => performerSlug(p) === slug) ??
-      pool.find((p) => performerSlug(p).includes(slug)) ??
-      pool.find((p) => slug.includes(performerSlug(p)));
-  }
-
+  const match = await findPerformerByProfileSlug(slug);
   if (!match) return null;
 
   return toViewModel(match, slug);

@@ -63,6 +63,24 @@ export default async function ModelProfilePage({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-neutral-950 px-4 pb-16 pt-4 text-white md:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
+        <div className="relative h-44 overflow-hidden rounded-2xl border border-white/10 md:h-52">
+          <Image
+            src={modelData.bannerUrl}
+            alt={`${modelData.name} live banner`}
+            fill
+            sizes="(max-width: 768px) 100vw, 896px"
+            className="object-cover"
+            priority
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/30 to-transparent" />
+          {isLive && (
+            <span className="absolute left-3 top-3 rounded-full bg-red-600 px-2.5 py-1 text-xs font-bold text-white shadow-lg">
+              • EN VIVO
+            </span>
+          )}
+        </div>
+
         <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-neutral-900/60 p-4 backdrop-blur-md">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-pink-500">
             <Image

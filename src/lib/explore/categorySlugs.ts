@@ -46,8 +46,8 @@ export const EXPLORE_CATEGORY_MAP: Record<ExploreCategorySlug, ExploreCategoryCo
       seoTitle: "Chicas 18+ Verificadas en Vivo — Webcams HD | NaughtyXXXCams",
       seoDescription:
         "Directorio de modelos adultas verificadas mayores de 18 años. Transmisiones en vivo, perfiles oficiales y alertas cuando tu favorita conecta.",
-      api: { ages: "gc_18_19" },
-      clientMatch: ["18", "verified", "young"],
+      api: {},
+      clientMatch: ["gc_18_19", "gc_20_29", "young", "verified"],
     },
     milf: {
       slug: "milf",

@@ -54,9 +54,18 @@ export function SessionAudioProvider({
 
   const postToIframe = useCallback(
     (action: "session-audio-unlock" | "session-audio-mute") => {
+      const payload = { source: "naughty-feed", action };
       const target = activeIframeWindowRef.current;
-      if (!target) return;
-      target.postMessage({ source: "naughty-feed", action }, "*");
+      if (target) {
+        target.postMessage(payload, "*");
+      }
+      document.querySelectorAll("iframe").forEach((frame) => {
+        try {
+          frame.contentWindow?.postMessage(payload, "*");
+        } catch {
+          /* cross-origin */
+        }
+      });
     },
     [],
   );

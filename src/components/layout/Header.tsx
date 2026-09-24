@@ -51,9 +51,9 @@ export function Header() {
         <Image
           src="/logo.png"
           alt="NaughtyXXXCams Logo"
-          width={132}
-          height={36}
-          className="h-8 w-auto max-w-[10.5rem] object-contain object-left transition-transform group-hover:scale-[1.02] md:h-8"
+          width={200}
+          height={52}
+          className="h-11 w-auto max-w-[13.5rem] object-contain object-left transition-transform group-hover:scale-[1.02] md:h-12 md:max-w-[14.5rem]"
           priority
         />
       </Link>

@@ -26,6 +26,7 @@ export function buildCamsEmbedUrl(
     useFeed: String(options?.useFeed ?? 0),
     animateFeed: String(options?.animateFeed ?? 0),
     smoothAnimation: String(options?.smoothAnimation ?? 0),
+    muted: String(options?.muted ?? 1),
   });
 
   const performer = options?.performerNameClean?.trim();

@@ -14,6 +14,21 @@ export function performerProfilePath(raw?: string | null): string | null {
   return slug ? `/profile/${slug}` : null;
 }
 
+/** Prioriza nameClean (slug Streamate) frente a itemId/feedKey. */
+export function performerProfilePathFromPerformer(
+  performer: {
+    nameClean?: string;
+    name?: string;
+    itemId?: string;
+  },
+): string | null {
+  const fromName = performerProfilePath(
+    performer.nameClean || performer.name,
+  );
+  if (fromName) return fromName;
+  return performerProfilePath(performer.itemId);
+}
+
 export function performerDisplayHandle(raw?: string | null): string {
   const name = raw?.trim();
   if (!name) return "@modelo";
