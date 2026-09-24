@@ -14,6 +14,8 @@ import {
   performerProfilePath,
 } from "@/lib/profile/performerHandle";
 import { LiveStreamBadge } from "@/components/feed/LiveStreamBadge";
+import { LiveCommentTicker } from "@/components/feed/LiveCommentTicker";
+import { recordView } from "@/lib/user/userLibrary";
 import { LiveEmbed } from "./LiveEmbed";
 
 const CARD_HEIGHT = "h-[calc(100dvh-4rem)]";
@@ -44,6 +46,14 @@ export function LiveFeedCard({
     performer.nameClean || performer.name,
   );
   const affiliateUrl = buildModelAffiliateUrl(performer);
+  const modelRef = {
+    feedKey: performer.feedKey,
+    nameClean: performer.nameClean,
+    name: performer.name,
+    posterUrl: performer.posterUrl,
+    profilePath: profileHref,
+    savedAt: Date.now(),
+  };
 
   useEffect(() => {
     if (!isActive) return;
@@ -53,6 +63,7 @@ export function LiveFeedCard({
       name: performer.name,
       posterUrl: performer.posterUrl,
     });
+    recordView(modelRef);
   }, [
     isActive,
     performer.feedKey,
@@ -83,15 +94,11 @@ export function LiveFeedCard({
         visible={isActive}
       />
 
+      <LiveCommentTicker performer={performer} isActive={isActive} />
+
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
 
       <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[78%] flex flex-col gap-2">
-        {isActive && (
-          <div className="mb-0.5 flex max-w-[220px] items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs text-zinc-200 backdrop-blur-md">
-            <span className="h-2 w-2 rounded-full bg-[#39FF14]" />
-            <span className="truncate">deep_tipper: you look amazing tonight</span>
-          </div>
-        )}
         {profileHref ? (
           <FeedPerformerLink
             href={profileHref}
@@ -119,6 +126,7 @@ export function LiveFeedCard({
 
       <FeedActionRail
         feedKey={performer.feedKey}
+        modelRef={modelRef}
         posterUrl={performer.posterUrl}
         profileHref={profileHref}
         profileLabel={handleLabel}

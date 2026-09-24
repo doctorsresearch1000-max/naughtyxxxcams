@@ -2,14 +2,20 @@
 
 import { IconHeartFilled, IconHeartOutline } from "@/components/icons/LineIcons";
 import { useFeedLikes } from "@/hooks/useFeedLikes";
+import type { SavedModelRef } from "@/lib/user/userLibrary";
 
 type LikeActionButtonProps = {
   feedKey: string;
+  modelRef?: SavedModelRef;
   className?: string;
 };
 
-export function LikeActionButton({ feedKey, className = "" }: LikeActionButtonProps) {
-  const { liked, label, toggleLike, popping } = useFeedLikes(feedKey);
+export function LikeActionButton({
+  feedKey,
+  modelRef,
+  className = "",
+}: LikeActionButtonProps) {
+  const { liked, label, toggleLike, popping } = useFeedLikes(feedKey, modelRef);
 
   return (
     <button

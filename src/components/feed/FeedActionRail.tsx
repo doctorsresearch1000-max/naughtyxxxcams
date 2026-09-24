@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
@@ -12,9 +13,15 @@ import {
   IconVolumeOff,
   IconVolumeOn,
 } from "@/components/icons/LineIcons";
+import {
+  isBookmarked,
+  toggleBookmark,
+  type SavedModelRef,
+} from "@/lib/user/userLibrary";
 
 type FeedActionRailProps = {
   feedKey: string;
+  modelRef: SavedModelRef;
   posterUrl: string;
   profileHref?: string | null;
   profileLabel?: string;
@@ -28,6 +35,7 @@ type FeedActionRailProps = {
 
 export function FeedActionRail({
   feedKey,
+  modelRef,
   posterUrl,
   profileHref,
   profileLabel = "View profile",
@@ -38,10 +46,31 @@ export function FeedActionRail({
   muted,
   onToggleMute,
 }: FeedActionRailProps) {
+  const { requireAuth, isAuthenticated } = useTelegramAuth();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      setSaved(isBookmarked(feedKey));
+    }
+  }, [feedKey, isAuthenticated]);
+
+  useEffect(() => {
+    const onLib = () => {
+      if (isAuthenticated) setSaved(isBookmarked(feedKey));
+    };
+    window.addEventListener("nx-library-update", onLib);
+    return () => window.removeEventListener("nx-library-update", onLib);
+  }, [feedKey, isAuthenticated]);
+
   if (!isActive) return null;
+
+  const onToggleSave = () => {
+    if (!requireAuth("Sign in with Telegram to bookmark models")) return;
+    const next = toggleBookmark(modelRef);
+    setSaved(next);
+  };
 
   const onChatAttempt = () => {
     if (conversionReady) {
@@ -111,7 +140,7 @@ export function FeedActionRail({
             </button>
           </div>
 
-          <LikeActionButton feedKey={feedKey} />
+          <LikeActionButton feedKey={feedKey} modelRef={modelRef} />
           <RailAction
             label="Chat"
             onClick={onChatAttempt}
@@ -119,7 +148,7 @@ export function FeedActionRail({
           />
           <RailAction
             label="Save"
-            onClick={() => setSaved((s) => !s)}
+            onClick={onToggleSave}
             active={saved}
             icon={
               <IconBookmarkOutline

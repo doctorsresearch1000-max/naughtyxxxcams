@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AppChrome } from "@/components/layout/AppChrome";
+import { AppProviders } from "@/components/layout/AppProviders";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/layout/Header";
 import { ExploreBootstrapWarm } from "@/components/explore/ExploreBootstrapWarm";
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="min-h-dvh bg-black">
+        <AppProviders>
         <div className="relative mx-auto flex min-h-dvh max-w-md flex-col bg-black pb-16 [touch-action:pan-y]">
           <ExploreBootstrapWarm />
           <Header />
@@ -36,6 +38,7 @@ export default function RootLayout({
           </ConditionalSiteChrome>
         </div>
         <AppChrome />
+        </AppProviders>
       </body>
     </html>
   );

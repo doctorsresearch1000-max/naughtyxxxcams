@@ -4,7 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { fetchExploreBootstrap } from "@/lib/explore/exploreClientCache";
 import {
-  IconFollowingOutline,
+  IconHeartFilled,
+  IconHeartOutline,
   IconHomeFilled,
   IconHomeOutline,
   IconProfileOutline,
@@ -42,12 +43,10 @@ function NavGlyph({
     );
   }
   if (kind === "following") {
-    return (
-      <IconFollowingOutline
-        className={className}
-        size={size}
-        strokeWidth={stroke}
-      />
+    return active ? (
+      <IconHeartFilled className={className} size={size} />
+    ) : (
+      <IconHeartOutline className={className} size={size} strokeWidth={stroke} />
     );
   }
   return (
