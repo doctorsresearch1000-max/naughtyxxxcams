@@ -33,6 +33,13 @@ npm run build
 npm start
 ```
 
+Las vistas principales exportan `dynamic = 'force-dynamic'` y `fetchCache = 'force-no-store'` para evitar prerender estático en Cloudflare/OpenNext.
+
+## Cloudflare (OpenNext + Wrangler)
+
+- `wrangler.jsonc` apunta a `.open-next/worker.js` y define `NEXT_CACHE_WORKERS_KV` (sustituye `cache_placeholder` por el ID real del namespace en tu cuenta).
+- Tras `opennextjs-cloudflare build`, despliega con Wrangler usando ese manifiesto.
+
 ## Estructura de componentes
 
 ```

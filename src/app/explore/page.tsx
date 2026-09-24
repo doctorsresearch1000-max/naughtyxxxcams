@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 import { Search } from "lucide-react";
 import { CategoryPills } from "@/components/explore/CategoryPills";
 import { TrendingCard } from "@/components/explore/TrendingCard";

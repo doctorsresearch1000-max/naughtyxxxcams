@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 import { StreamFeed } from "@/components/feed/StreamFeed";
 
 export default function HomePage() {

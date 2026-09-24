@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 import { LiveNearbyCarousel } from "@/components/following/LiveNearbyCarousel";
 import { ModelListItem } from "@/components/following/ModelListItem";
 import { yourModels } from "@/data/mock";

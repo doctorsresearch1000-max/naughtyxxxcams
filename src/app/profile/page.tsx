@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 import Image from "next/image";
 import { continueWatching, profileUser } from "@/data/mock";
 
