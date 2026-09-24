@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 import { Search } from "lucide-react";
-import { CrackWidget } from "@/components/cams/CrackWidget";
+import CrackWidget from "@/components/cams/CrackWidget";
 import { StoriesBar } from "@/components/cams/StoriesBar";
 import { CategoryPills } from "@/components/explore/CategoryPills";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { CrackWidget } from "./CrackWidget";
+import CrackWidget from "./CrackWidget";
 
 /** Fila horizontal tipo historias con modelos en vivo (CrakRevenue). */
 export function StoriesBar({ className = "" }: { className?: string }) {

@@ -1,16 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useState } from "react";
 
-const CRACK_TOKEN = "2c2ecfb0-b7f2-11f1-8697-29ba0a54b9b9";
-const CRACK_API_KEY =
-  "fdea1df92de2f1f1136fc0f92c35d85ce84c15ad70443277875a1996752c9992";
-const CRACK_PROVIDERS =
-  "bongacash,cam4,camsoda,imlive,streamate,awempire,stripchat,xlovecam,chaturbate";
-
-const WIDGET_SCRIPT_BASE = "https://www.camiocw.com/script/js.ejs";
-
-export type CrackWidgetProps = {
+interface CrackWidgetProps {
   cols?: number;
   rows?: number;
   number?: number;
@@ -19,101 +11,63 @@ export type CrackWidgetProps = {
   animateFeed?: number;
   smoothAnimation?: number;
   className?: string;
-};
-
-function buildWidgetScriptUrl({
-  cols = 2,
-  rows = 2,
-  number = 4,
-  ratio = 1,
-  useFeed = 0,
-  animateFeed = 0,
-  smoothAnimation = 0,
-}: CrackWidgetProps): string {
-  const params = new URLSearchParams({
-    token: CRACK_TOKEN,
-    apikey: CRACK_API_KEY,
-    providers: CRACK_PROVIDERS,
-    cols: String(cols),
-    rows: String(rows),
-    number: String(number),
-    ratio: String(ratio),
-    useFeed: String(useFeed),
-    animateFeed: String(animateFeed),
-    smoothAnimation: String(smoothAnimation),
-    generator: "camswidget",
-    referer:
-      typeof window !== "undefined"
-        ? window.location.hostname
-        : "naughtyxxxcams.com",
-    background: "transparent",
-    showOnline: "true",
-  });
-
-  return `${WIDGET_SCRIPT_BASE}?${params.toString()}`;
 }
 
-export function CrackWidget({
-  cols,
-  rows,
-  number,
-  ratio,
-  useFeed,
-  animateFeed,
-  smoothAnimation,
+export default function CrackWidget({
+  cols = 4,
+  rows = 1,
+  number = 4,
+  ratio = 1,
+  useFeed = 1,
+  animateFeed = 1,
+  smoothAnimation = 1,
   className = "",
 }: CrackWidgetProps) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const reactId = useId().replace(/:/g, "");
-  const containerId = `crack-widget-${reactId}`;
-  const scriptDomId = `crack-widget-script-${reactId}`;
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-
-    host.id = containerId;
-    host.setAttribute("data-cams-widget", containerId);
-
-    const script = document.createElement("script");
-    script.id = scriptDomId;
-    script.type = "text/javascript";
-    script.async = true;
-    script.charset = "utf-8";
-    script.src = buildWidgetScriptUrl({
-      cols,
-      rows,
-      number,
-      ratio,
-      useFeed,
-      animateFeed,
-      smoothAnimation,
-    });
-    script.setAttribute("data-crack-widget-host", containerId);
-
-    host.appendChild(script);
-
-    return () => {
-      script.remove();
-      host.replaceChildren();
-    };
-  }, [
-    cols,
-    rows,
-    number,
-    ratio,
-    useFeed,
-    animateFeed,
-    smoothAnimation,
-    containerId,
-    scriptDomId,
-  ]);
+  const srcDoc = `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        </style>
+      </head>
+      <body>
+        <script src="https://crxcra.com/cams-widget-ext/script?landing_id=%7Boffer_url_id%7D&genders=f&providers=bongacash%2Ccam4%2Ccamsoda%2Cimlive%2Cstreamate%2Cawempire%2Cstripchat%2Cxlovecam%2Cchaturbate&skin=1&containerAlignment=center&cols=${cols}&rows=${rows}&number=${number}&background=transparent&useFeed=${useFeed}&animateFeed=${animateFeed}&smoothAnimation=${smoothAnimation}&ratio=${ratio}&verticalSpace=10px&horizontalSpace=10px&colorFilter=0&colorFilterStrength=0&AuxiliaryCSS=%0A&lang=en&token=2c2ecfb0-b7f2-11f1-8697-29ba0a54b9b9&api_key=fdea1df92de2f1f1136fc0f92c35d85ce84c15ad70443277875a1996752c9992"></script>
+      </body>
+    </html>
+  `;
 
   return (
     <div
-      ref={hostRef}
-      className={`crack-widget-host w-full min-h-0 ${className}`}
-      aria-label="CrakRevenue live cams"
-    />
+      className={`relative flex min-h-[85vh] w-full items-center justify-center bg-black ${className}`}
+    >
+      {!loaded && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-gray-400">
+          <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent" />
+          <p className="text-sm font-medium">Cargando modelos en vivo...</p>
+        </div>
+      )}
+      <iframe
+        srcDoc={srcDoc}
+        className="h-full min-h-[85vh] w-full border-0"
+        onLoad={() => setLoaded(true)}
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        title="CrackRevenue Live Cams"
+      />
+    </div>
   );
 }

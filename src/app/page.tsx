@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
-import { CrackWidget } from "@/components/cams/CrackWidget";
+import CrackWidget from "@/components/cams/CrackWidget";
 
 export default function HomePage() {
   return (
