@@ -2,11 +2,10 @@
 
 import { useMemo, useState } from "react";
 import {
-  CRACKREVENUE_API_KEY,
-  CRACKREVENUE_TOKEN,
-  STREAMATE_BRAND,
-  WIDGET_SCRIPT_BASE,
-} from "@/lib/crackrevenue/config";
+  buildWidgetScriptSrc,
+  buildWidgetSrcDoc,
+} from "@/lib/feed/widgetSrcDoc";
+import { STREAMATE_BRAND } from "@/lib/crackrevenue/config";
 
 interface CrackWidgetProps {
   cols?: number;
@@ -20,10 +19,6 @@ interface CrackWidgetProps {
   height?: string;
   blockPointerEvents?: boolean;
   providers?: string;
-  soundEnabled?: boolean;
-  /** Feed vertical interno del widget (Streamate useFeed). */
-  internalVerticalFeed?: boolean;
-  /** Si false, el iframe no recibe toques (scroll del padre). */
   interactive?: boolean;
 }
 
@@ -38,92 +33,23 @@ export default function CrackWidget({
   className = "",
   height = "h-full",
   blockPointerEvents = false,
-  providers = STREAMATE_BRAND,
-  soundEnabled = false,
-  internalVerticalFeed = false,
+  providers: _providers = STREAMATE_BRAND,
   interactive = true,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
-  const cleanCols = Number(cols) || 1;
-  const cleanRows = Number(rows) || 1;
-  const cleanNumber = Number(number) || 10;
-
-  const scriptSrc = useMemo(() => {
-    const params = new URLSearchParams({
-      landing_id: "{offer_url_id}",
-      genders: "f",
-      providers,
-      brands: STREAMATE_BRAND,
-      skin: "1",
-      containerAlignment: "center",
-      cols: String(cleanCols),
-      rows: String(cleanRows),
-      number: String(cleanNumber),
-      background: "transparent",
-      useFeed: String(useFeed),
-      animateFeed: String(animateFeed),
-      smoothAnimation: String(smoothAnimation),
-      ratio: String(ratio),
-      verticalSpace: "8px",
-      horizontalSpace: "8px",
-      colorFilter: "0",
-      colorFilterStrength: "0",
-      AuxiliaryCSS: "\n",
-      lang: "es",
-      muted: soundEnabled ? "0" : "1",
-      token: CRACKREVENUE_TOKEN,
-      api_key: CRACKREVENUE_API_KEY,
-    });
-    return `${WIDGET_SCRIPT_BASE}?${params.toString()}`;
-  }, [
-    providers,
-    cleanCols,
-    cleanRows,
-    cleanNumber,
-    useFeed,
-    animateFeed,
-    smoothAnimation,
-    ratio,
-    soundEnabled,
-  ]);
-
   const srcDoc = useMemo(() => {
-    const bodyTouch = internalVerticalFeed
-      ? `overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain;
-            touch-action: pan-y;`
-      : `overflow: hidden;
-            touch-action: manipulation;`;
-
-    return `
-    <!DOCTYPE html>
-    <html lang="es">
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <style>
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          html, body {
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            color: #fff;
-            ${bodyTouch}
-          }
-          iframe, div, object {
-            width: 100% !important;
-            max-width: 100% !important;
-          }
-        </style>
-      </head>
-      <body>
-        <script src="${scriptSrc}"></script>
-      </body>
-    </html>
-  `;
-  }, [scriptSrc, internalVerticalFeed]);
+    const scriptSrc = buildWidgetScriptSrc({
+      cols,
+      rows,
+      number,
+      ratio,
+      useFeed,
+      animateFeed,
+      smoothAnimation,
+    });
+    return buildWidgetSrcDoc(scriptSrc);
+  }, [cols, rows, number, ratio, useFeed, animateFeed, smoothAnimation]);
 
   const showIframe = !blockPointerEvents;
   const iframeReceivesTouches = interactive && !blockPointerEvents;
@@ -148,7 +74,7 @@ export default function CrackWidget({
           data-touch-blocked={iframeReceivesTouches ? "false" : "true"}
           className={
             iframeReceivesTouches
-              ? "pointer-events-auto block h-full w-full max-h-full touch-pan-y border-0"
+              ? "pointer-events-auto block h-full w-full max-h-full border-0"
               : "pointer-events-none block h-full w-full max-h-full touch-none border-0"
           }
           onLoad={() => setLoaded(true)}
