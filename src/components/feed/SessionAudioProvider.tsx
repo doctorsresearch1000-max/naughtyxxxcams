@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import { flushSync } from "react-dom";
 import { isActiveEmbedUnmuted } from "@/lib/feed/feedAudioRegistry";
 import { syncReloadFeedIframesForAudio } from "@/lib/feed/audioGestureUnlock";
@@ -109,7 +110,8 @@ export function SessionAudioProvider({
     [unlocked, muted, unlockSession, toggleMuted, registerActiveIframe],
   );
 
-  const showOverlay = overlayGate && !unlocked;
+  const pathname = usePathname();
+  const showOverlay = overlayGate && !unlocked && pathname === "/";
 
   return (
     <SessionAudioContext.Provider value={value}>

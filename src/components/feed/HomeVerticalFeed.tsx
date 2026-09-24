@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
@@ -26,6 +27,8 @@ export function HomeVerticalFeed() {
   const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
     "loading",
   );
+  const pathname = usePathname();
+  const onHome = pathname === "/";
   const { registerActiveIframe, setOverlayGate, unlocked } = useSessionAudio();
 
   useEffect(() => {
@@ -56,10 +59,14 @@ export function HomeVerticalFeed() {
   const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 1);
 
   useEffect(() => {
+    if (!onHome) {
+      setOverlayGate(false);
+      return;
+    }
     if (!unlocked) {
       setOverlayGate(true);
     }
-  }, [activeIndex, unlocked, setOverlayGate]);
+  }, [activeIndex, unlocked, setOverlayGate, onHome]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {

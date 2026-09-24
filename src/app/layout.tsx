@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { AppChrome } from "@/components/layout/AppChrome";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/layout/Header";
+import { ExploreBootstrapWarm } from "@/components/explore/ExploreBootstrapWarm";
 import { PersistedHomeFeed } from "@/components/layout/PersistedHomeFeed";
 import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
 import "./globals.css";
@@ -27,6 +28,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="min-h-dvh bg-black">
         <div className="relative mx-auto flex min-h-dvh max-w-md flex-col bg-black pb-16 [touch-action:pan-y]">
+          <ExploreBootstrapWarm />
           <Header />
           <ConditionalSiteChrome>
             <PersistedHomeFeed />

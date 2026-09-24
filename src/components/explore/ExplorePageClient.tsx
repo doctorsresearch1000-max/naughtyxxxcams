@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreSlushyDiscover } from "@/components/explore/ExploreSlushyDiscover";
-import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
+import {
+  fetchExploreBootstrap,
+  readExploreBootstrapCache,
+} from "@/lib/explore/exploreClientCache";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 import {
   resolveExploreCategory,
@@ -25,42 +28,45 @@ function sliceForCategory(
   };
 }
 
+function initialFromCache(): {
+  masterPool: CrackPerformer[];
+  popularCategories: ExploreCategory[];
+  ready: boolean;
+} {
+  const cached = readExploreBootstrapCache();
+  if (cached?.masterPool.length) {
+    return {
+      masterPool: cached.masterPool,
+      popularCategories: cached.popularCategories,
+      ready: true,
+    };
+  }
+  return { masterPool: [], popularCategories: [], ready: false };
+}
+
 export function ExplorePageClient() {
   const searchParams = useSearchParams();
   const catParam = searchParams.get("cat");
   const category = resolveExploreCategory(catParam);
   const initialCat = category?.slug ?? null;
 
-  const [masterPool, setMasterPool] = useState<CrackPerformer[]>([]);
+  const [boot] = useState(initialFromCache);
+  const [masterPool, setMasterPool] = useState<CrackPerformer[]>(boot.masterPool);
   const [popularCategories, setPopularCategories] = useState<ExploreCategory[]>(
-    [],
+    boot.popularCategories,
   );
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(boot.ready);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const res = await fetch("/api/explore/bootstrap", {
-          cache: "no-store",
-        });
-        const json = (await res.json()) as {
-          masterPool?: CrackPerformer[];
-          popularCategories?: ExploreCategory[];
-        };
+        const payload = await fetchExploreBootstrap();
         if (cancelled) return;
-        setMasterPool(
-          Array.isArray(json.masterPool) ? json.masterPool : [],
-        );
-        setPopularCategories(
-          Array.isArray(json.popularCategories) ? json.popularCategories : [],
-        );
+        setMasterPool(payload.masterPool);
+        setPopularCategories(payload.popularCategories);
+        setReady(true);
       } catch {
-        if (!cancelled) {
-          setMasterPool([]);
-          setPopularCategories([]);
-        }
-      } finally {
         if (!cancelled) setReady(true);
       }
     })();
@@ -71,15 +77,6 @@ export function ExplorePageClient() {
 
   const { performers, total } = sliceForCategory(masterPool, category);
 
-  if (!ready) {
-    return (
-      <>
-        <div className="mb-4 h-11 w-full animate-pulse rounded-full bg-[#1C1C1E]" />
-        <ExplorePerformerGridSkeleton count={12} columns={3} />
-      </>
-    );
-  }
-
   return (
     <ExploreSlushyDiscover
       key={initialCat ?? "all"}
@@ -88,6 +85,7 @@ export function ExplorePageClient() {
       initialTotal={total}
       masterPool={masterPool}
       popularCategories={popularCategories}
+      poolLoading={!ready && masterPool.length === 0}
     />
   );
 }

@@ -1,27 +1,20 @@
 import { NextResponse } from "next/server";
-import {
-  dedupeCategories,
-  fetchAllExploreCategories,
-} from "@/lib/crackrevenue/categories";
 import { fetchExploreMasterPool } from "@/lib/explore/fetchCategoryPerformers";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const [masterPool, categories] = await Promise.all([
-      fetchExploreMasterPool(1),
-      fetchAllExploreCategories().catch(() => []),
-    ]);
+    const masterPool = await fetchExploreMasterPool(1);
 
     return NextResponse.json(
       {
         masterPool,
-        popularCategories: dedupeCategories(categories),
+        popularCategories: [],
       },
       {
         headers: {
-          "Cache-Control": "private, max-age=30, stale-while-revalidate=120",
+          "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
         },
       },
     );

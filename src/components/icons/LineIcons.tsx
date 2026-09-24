@@ -100,21 +100,28 @@ export function IconFollowingOutline({
       aria-hidden
       className={className}
     >
+      <circle
+        cx="9"
+        cy="9"
+        r="2.75"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
+      <circle
+        cx="16"
+        cy="10"
+        r="2.5"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
       <path
-        d="M7.5 19.25v-1.5a4 4 0 0 1 4-4h1a4 4 0 0 1 4 4v1.5"
+        d="M4.5 19.5v-.75c0-2.2 1.8-3.75 4-3.75s4 1.55 4 3.75v.75"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
-      <circle
-        cx="12"
-        cy="8.25"
-        r="3.25"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-      />
       <path
-        d="M5.25 8.75a2.75 2.75 0 0 1 5 0M18.75 8.75a2.75 2.75 0 0 0-5 0"
+        d="M14.5 18.75v-.5c0-1.65 1.35-2.75 2.75-2.75.85 0 1.6.35 2.1.9"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"

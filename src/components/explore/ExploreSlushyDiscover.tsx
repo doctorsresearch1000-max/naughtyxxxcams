@@ -101,6 +101,7 @@ type ExploreSlushyDiscoverProps = {
   initialTotal: number;
   masterPool: CrackPerformer[];
   popularCategories: ExploreCategory[];
+  poolLoading?: boolean;
 };
 
 export function ExploreSlushyDiscover({
@@ -108,6 +109,7 @@ export function ExploreSlushyDiscover({
   initialPerformers,
   initialTotal,
   masterPool,
+  poolLoading = false,
 }: ExploreSlushyDiscoverProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -205,7 +207,7 @@ export function ExploreSlushyDiscover({
   const promoUrl = promoModel ? buildModelAffiliateUrl(promoModel) : "/";
   const promoImage = promoModel ? pickCoverUrl(promoModel) : null;
 
-  const showSkeleton = loading;
+  const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
 
   const onSortChip = (id: ExploreSortMode | "filter") => {

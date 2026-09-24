@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { ExplorePageClient } from "@/components/explore/ExplorePageClient";
-import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
   getDefaultExploreSeo,
   resolveExploreCategory,
@@ -40,16 +38,7 @@ export default function ExplorePage() {
     <main
       className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-[#0A0A0A] px-3 pb-24 pt-2 text-white [-webkit-overflow-scrolling:touch]"
     >
-      <Suspense
-        fallback={
-          <>
-            <div className="mb-4 h-11 w-full animate-pulse rounded-full bg-[#1C1C1E]" />
-            <ExplorePerformerGridSkeleton count={12} columns={3} />
-          </>
-        }
-      >
-        <ExplorePageClient />
-      </Suspense>
+      <ExplorePageClient />
     </main>
   );
 }

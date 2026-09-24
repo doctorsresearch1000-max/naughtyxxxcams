@@ -25,8 +25,13 @@ export function PersistedHomeFeed() {
 
   return (
     <div
-      className={visible ? "relative z-20 min-h-0 flex-1" : "hidden"}
+      className={
+        visible
+          ? "relative z-20 min-h-0 flex-1"
+          : "pointer-events-none invisible fixed -left-[9999px] top-0 h-0 w-0 overflow-hidden"
+      }
       aria-hidden={!visible}
+      {...(!visible ? { inert: true as const } : {})}
     >
       <SessionAudioProvider>
         <HomeVerticalFeed />

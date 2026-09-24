@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
+import { fetchExploreBootstrap } from "@/lib/explore/exploreClientCache";
 import {
   IconFollowingOutline,
   IconHomeFilled,
@@ -68,6 +69,10 @@ export default function BottomNav() {
   useEffect(() => {
     setPendingPath(null);
   }, [pathname]);
+
+  useEffect(() => {
+    void fetchExploreBootstrap().catch(() => {});
+  }, []);
 
   const navigate = useCallback(
     (href: string) => {
