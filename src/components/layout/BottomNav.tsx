@@ -28,7 +28,7 @@ export default function BottomNav() {
             key={item.href}
             href={item.href}
             className={`flex h-full w-full flex-col items-center justify-center text-xs transition-colors hover:text-white ${
-              isActive ? "font-bold text-pink-500" : "text-gray-400"
+              isActive ? "font-bold text-[#ec4899]" : "text-gray-400"
             }`}
           >
             <span className="mb-0.5 text-lg">{item.icon}</span>

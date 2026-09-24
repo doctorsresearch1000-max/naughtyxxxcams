@@ -2,14 +2,21 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 import Image from "next/image";
+import { NaughtyLogo } from "@/components/brand/NaughtyLogo";
+import BottomNav from "@/components/layout/BottomNav";
 import { continueWatching, profileUser } from "@/data/mock";
 
 export default function ProfilePage() {
   return (
-    <main className="min-h-dvh bg-night px-4 pb-24 pt-[max(1rem,env(safe-area-inset-top))]">
-      <header className="flex items-start justify-between gap-4">
+    <main className="mx-auto min-h-screen w-full max-w-md bg-black px-4 pb-20 pt-4 text-white">
+      <NaughtyLogo size="sm" className="mb-5" />
+
+      <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
+        PERFIL
+      </span>
+      <header className="mt-1 flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-16 w-16 overflow-hidden rounded-full ring-2 ring-cyan/40">
+          <div className="h-16 w-16 overflow-hidden rounded-full ring-2 ring-pink-500/50">
             <Image
               src={profileUser.avatar}
               alt={profileUser.name}
@@ -20,70 +27,93 @@ export default function ProfilePage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold">{profileUser.name}</h1>
-            <p className="text-sm text-slate-400">{profileUser.handle}</p>
-            <p className="mt-1 text-xs text-cyan/90">Signed in with Telegram</p>
+            <p className="text-sm text-zinc-400">{profileUser.handle}</p>
           </div>
         </div>
-        <button
-          type="button"
-          className="shrink-0 rounded-xl border border-white/15 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-magenta/40 hover:text-magenta"
-        >
-          Log out
-        </button>
       </header>
 
+      <section className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Image
+              src={profileUser.avatar}
+              alt=""
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full object-cover"
+            />
+            <p className="text-xs text-zinc-300">Signed in with Telegram</p>
+          </div>
+          <button
+            type="button"
+            className="rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-pink-500/40"
+          >
+            Log out
+          </button>
+        </div>
+      </section>
+
       <section
-        className="mt-6 overflow-hidden rounded-2xl border border-magenta/40 bg-gradient-to-br from-magenta/25 via-surface to-cyan/20 p-4 shadow-neon"
-        aria-label="Sponsored promotion"
+        className="mt-5 overflow-hidden rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-600/30 via-purple-900/40 to-black p-4 shadow-lg shadow-pink-950/30"
+        aria-label="Sponsored"
       >
-        <p className="text-[10px] font-bold uppercase tracking-widest text-pink-200/80">
-          Sponsored
+        <p className="text-[10px] font-black uppercase tracking-widest text-pink-300">
+          Patrocinado
         </p>
         <h2 className="mt-1 text-lg font-black leading-tight">
-          Jerkmate — Free premium trial tonight
+          JERKMATE IS FREE
         </h2>
-        <p className="mt-2 text-sm text-slate-200/90">
-          Neon-exclusive offer: instant access, no card required for the first session.
+        <p className="mt-2 text-xs text-zinc-200">
+          Oferta neón: acceso instantáneo a la prueba premium.
         </p>
         <button
           type="button"
-          className="mt-4 w-full rounded-xl bg-magenta py-3 text-sm font-extrabold text-white shadow-neon"
+          className="mt-4 w-full rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 py-3 text-sm font-extrabold text-white shadow-lg shadow-pink-600/30"
         >
-          Claim free access
+          Reclamar acceso
         </button>
       </section>
 
-      <section className="mt-8" aria-labelledby="continue-heading">
-        <h2 id="continue-heading" className="mb-3 text-lg font-extrabold">
-          Continue Watching
+      <section className="mt-6" aria-labelledby="activity-heading">
+        <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
+          TU ACTIVIDAD
+        </span>
+        <h2 id="activity-heading" className="mt-1 text-lg font-black">
+          Continuar viendo
         </h2>
-        <article className="overflow-hidden rounded-2xl border border-cyan/20 bg-surface">
-          <div className="relative h-40 w-full">
+        <p className="mb-3 text-xs text-zinc-400">
+          Retoma justo donde lo dejaste
+        </p>
+
+        <article className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/90">
+          <div className="relative h-36 w-full">
             <Image
               src={continueWatching.image}
-              alt={`Continue ${continueWatching.username}`}
+              alt={`@${continueWatching.username}`}
               fill
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-night via-night/40 to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+            <div className="absolute bottom-3 left-3">
               <p className="font-bold">@{continueWatching.username}</p>
-              <p className="text-xs text-slate-300">
+              <p className="text-[11px] text-zinc-300">
                 Last watched {continueWatching.lastWatched}
               </p>
             </div>
           </div>
-          <div className="p-4">
+          <div className="p-3">
             <button
               type="button"
-              className="w-full rounded-xl border border-cyan/40 bg-cyan/10 py-3 text-sm font-extrabold text-cyan shadow-neon-cyan"
+              className="w-full rounded-full border border-zinc-700 bg-zinc-800 py-3 text-sm font-bold text-white hover:border-pink-500/40"
             >
               Resume Watching
             </button>
           </div>
         </article>
       </section>
+
+      <BottomNav />
     </main>
   );
 }

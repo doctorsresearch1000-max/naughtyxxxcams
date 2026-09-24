@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import BottomNav from "@/components/layout/BottomNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0F19",
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -21,10 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-dvh bg-night">
-        <div className="mx-auto min-h-dvh max-w-lg bg-night shadow-2xl shadow-black/40">
+      <body className="min-h-dvh bg-black">
+        <div className="mx-auto min-h-dvh max-w-md bg-black">
           {children}
-          <BottomNav />
         </div>
       </body>
     </html>
