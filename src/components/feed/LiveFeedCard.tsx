@@ -39,6 +39,7 @@ export function LiveFeedCard({
       <LiveEmbed
         embedKey={performer.feedKey}
         posterUrl={performer.posterUrl}
+        performerNameClean={performer.nameClean || performer.name}
         isActive={isActive}
         isArmed={isArmed}
         onIframeWindow={isActive ? onRegisterIframe : undefined}

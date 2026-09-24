@@ -1,9 +1,10 @@
 import {
   CRACKREVENUE_API_KEY,
   CRACKREVENUE_TOKEN,
+  WIDGET_FRAME_BASE,
+  WIDGET_SCRIPT_BASE,
   resolveWidgetBrands,
   resolveWidgetLandingId,
-  WIDGET_SCRIPT_BASE,
 } from "@/lib/crackrevenue/config";
 
 export type WidgetEmbedOptions = {
@@ -15,9 +16,13 @@ export type WidgetEmbedOptions = {
   animateFeed?: number;
   smoothAnimation?: number;
   embedInstanceId?: string;
+  /** Filtra el widget a un modelo concreto (Streamate nameClean). */
+  performerNameClean?: string;
 };
 
-export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
+function buildWidgetSearchParams(
+  options: WidgetEmbedOptions = {},
+): URLSearchParams {
   const brands = resolveWidgetBrands();
   const landingId = resolveWidgetLandingId();
 
@@ -49,65 +54,72 @@ export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
     api_key: CRACKREVENUE_API_KEY,
   });
 
+  const performer = options.performerNameClean?.trim();
+  if (performer) {
+    params.set("performerNameClean", performer);
+  }
+
   if (options.embedInstanceId) {
     params.set("sub_id", options.embedInstanceId.slice(0, 64));
   }
 
+  return params;
+}
+
+/**
+ * Loader oficial (`CamsWidgetScript`); inserta un iframe hijo vía `document.currentScript`.
+ * En srcDoc anidado suele fallar el sizing (`parentNode.clientWidth === 0`) y el vídeo queda en poster.
+ */
+export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
+  const params = buildWidgetSearchParams(options);
   return `${WIDGET_SCRIPT_BASE}?${params.toString()}`;
 }
 
-function buildStreamNotifierScript(instanceId: string): string {
+/**
+ * Misma carga que aplica el script tras `setHeight`: iframe directo a `widget-ext.crxcr2.com/?…#cols,rows`.
+ */
+export function buildWidgetFrameSrc(options: WidgetEmbedOptions = {}): string {
+  const cols = options.cols ?? 1;
+  const rows = options.rows ?? 1;
+  const params = buildWidgetSearchParams(options);
+  const base = WIDGET_FRAME_BASE.endsWith("/")
+    ? WIDGET_FRAME_BASE.slice(0, -1)
+    : WIDGET_FRAME_BASE;
+  return `${base}/?${params.toString()}#${cols},${rows}`;
+}
+
+function buildWidgetLoadNotifierScript(instanceId: string): string {
   const safeInstance = JSON.stringify(instanceId);
   return `
 (function () {
   var instance = ${safeInstance};
   var sent = false;
-  function notify() {
+  function notify(reason) {
     if (sent) return;
     sent = true;
     try {
       window.parent.postMessage(
-        { source: "naughty-embed", action: "stream-active", instance: instance },
+        {
+          source: "naughty-embed",
+          action: "stream-active",
+          instance: instance,
+          reason: reason || "widget-ready",
+        },
         "*"
       );
     } catch (e) {}
   }
-  function probe() {
-    var videos = document.querySelectorAll("video");
-    for (var i = 0; i < videos.length; i++) {
-      var v = videos[i];
-      if (v.readyState >= 2 && (v.videoWidth > 0 || v.currentTime > 0)) {
-        notify();
-        return;
-      }
-      if (!v.paused && v.currentTime > 0) {
-        notify();
-        return;
-      }
-    }
-  }
-  document.addEventListener(
-    "playing",
-    function (e) {
-      if (e.target && e.target.tagName === "VIDEO") notify();
-    },
-    true
-  );
-  document.addEventListener(
-    "loadeddata",
-    function (e) {
-      if (e.target && e.target.tagName === "VIDEO") probe();
-    },
-    true
-  );
-  window.addEventListener("load", probe);
-  setInterval(probe, 350);
-  try {
-    new MutationObserver(probe).observe(document.documentElement, {
-      childList: true,
-      subtree: true,
+  var iframe = document.getElementById("cr-widget-frame");
+  if (iframe) {
+    iframe.addEventListener("load", function () {
+      notify("widget-iframe-load");
     });
-  } catch (e) {}
+  }
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      notify("embed-shell-timeout");
+    }, 1800);
+  });
 })();
 `;
 }
@@ -150,44 +162,18 @@ window.addEventListener('message', function (event) {
 });
 `;
 
-const AUTOPLAY_KICKSTART = `
-(function () {
-  function kick() {
-    document.querySelectorAll('video').forEach(function (v) {
-      try {
-        v.setAttribute('playsinline', '');
-        v.setAttribute('webkit-playsinline', '');
-        v.muted = true;
-        v.autoplay = true;
-        var p = v.play();
-        if (p && typeof p.catch === 'function') p.catch(function () {});
-      } catch (e) {}
-    });
-  }
-  kick();
-  window.addEventListener('load', kick);
-  document.addEventListener('DOMContentLoaded', kick);
-  try {
-    new MutationObserver(kick).observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-    });
-  } catch (e) {}
-  setInterval(kick, 2000);
-})();
-`;
-
 export function buildWidgetSrcDoc(
-  scriptSrc: string,
+  frameSrc: string,
   options?: {
     blockAffiliateNavigation?: boolean;
-    enableAutoplayKickstart?: boolean;
     embedInstanceId?: string;
   },
 ): string {
   const guard = options?.blockAffiliateNavigation ? AFFILIATE_GUARD : "";
-  const kick = options?.enableAutoplayKickstart ? AUTOPLAY_KICKSTART : "";
-  const notifier = buildStreamNotifierScript(options?.embedInstanceId ?? "");
+  const notifier = buildWidgetLoadNotifierScript(
+    options?.embedInstanceId ?? "",
+  );
+  const safeFrameSrc = frameSrc.replace(/"/g, "&quot;");
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -204,23 +190,37 @@ export function buildWidgetSrcDoc(
         background: #000;
         overflow: hidden;
       }
-      #cams-widget-root, iframe, div, object, video {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-height: 100%;
+      #widget-shell {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
       }
-      video {
-        object-fit: cover;
+      #cr-widget-frame {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
       }
     </style>
   </head>
   <body data-embed-instance="${options?.embedInstanceId ?? ""}">
-    <div id="cams-widget-root"></div>
+    <div id="widget-shell">
+      <iframe
+        id="cr-widget-frame"
+        src="${safeFrameSrc}"
+        title="CrackRevenue live widget"
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+    </div>
     <script>${AUDIO_BRIDGE}</script>
     <script>${guard}</script>
     <script>${notifier}</script>
-    <script src="${scriptSrc}"></script>
-    <script>${kick}</script>
   </body>
 </html>`;
 }

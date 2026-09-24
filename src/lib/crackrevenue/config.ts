@@ -22,6 +22,11 @@ export const WIDGET_SCRIPT_BASE =
   process.env.CRACKREVENUE_WIDGET_SCRIPT_URL ??
   "https://widget-ext.crxcr2.com/script";
 
+/** URL del documento del widget (iframe interno que crea el loader `/script`). */
+export const WIDGET_FRAME_BASE =
+  process.env.CRACKREVENUE_WIDGET_FRAME_URL ??
+  WIDGET_SCRIPT_BASE.replace(/\/script\/?$/i, "/");
+
 /** Alias usados por api.ts y rutas legacy */
 export const CRACKREVENUE_TOKEN = CRAK_TOKEN;
 export const CRACKREVENUE_API_KEY = CRAK_API_KEY;

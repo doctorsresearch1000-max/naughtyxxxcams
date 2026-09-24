@@ -11,17 +11,19 @@ import {
 type LiveEmbedProps = {
   embedKey: string;
   posterUrl: string;
+  performerNameClean?: string;
   isActive: boolean;
   isArmed: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
 /** Si el widget no notifica stream, no bloquear el póster indefinidamente. */
-const POSTER_FALLBACK_MS = 12_000;
+const POSTER_FALLBACK_MS = 6_000;
 
 export function LiveEmbed({
   embedKey,
   posterUrl,
+  performerNameClean,
   isActive,
   isArmed,
   onIframeWindow,
@@ -39,8 +41,9 @@ export function LiveEmbed({
         number: 1,
         ratio: 0.5625,
         useFeed: 0,
+        performerNameClean,
       }),
-    [embedKey],
+    [embedKey, performerNameClean],
   );
 
   useEffect(() => {
@@ -70,6 +73,7 @@ export function LiveEmbed({
       if (iframeWin && event.source !== iframeWin) return;
 
       setStreamActive(true);
+      setPosterFallback(true);
     };
 
     window.addEventListener("message", onMessage);

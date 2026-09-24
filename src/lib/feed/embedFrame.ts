@@ -11,7 +11,7 @@ export const WIDGET_IFRAME_ALLOW_FEATURES =
 export const WIDGET_IFRAME_ALLOW_COMBINED = `${WIDGET_IFRAME_ALLOW}; ${WIDGET_IFRAME_ALLOW_FEATURES}`;
 
 export const WIDGET_IFRAME_SANDBOX =
-  "allow-scripts allow-same-origin allow-presentation";
+  "allow-scripts allow-same-origin allow-presentation allow-popups allow-forms";
 
 export function buildCamsEmbedUrl(
   embedInstanceId: string,
@@ -27,5 +27,11 @@ export function buildCamsEmbedUrl(
     animateFeed: String(options?.animateFeed ?? 0),
     smoothAnimation: String(options?.smoothAnimation ?? 0),
   });
+
+  const performer = options?.performerNameClean?.trim();
+  if (performer) {
+    params.set("performer", performer);
+  }
+
   return `/api/embed/cams?${params.toString()}`;
 }

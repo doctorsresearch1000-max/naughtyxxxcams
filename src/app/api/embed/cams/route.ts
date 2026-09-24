@@ -1,5 +1,9 @@
 import {
-  buildWidgetScriptSrc,
+  CRACKREVENUE_API_KEY,
+  CRACKREVENUE_TOKEN,
+} from "@/lib/crackrevenue/config";
+import {
+  buildWidgetFrameSrc,
   buildWidgetSrcDoc,
 } from "@/lib/feed/widgetSrcDoc";
 
@@ -8,8 +12,12 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const instance = searchParams.get("instance") ?? "default";
+  const performer =
+    searchParams.get("performer") ??
+    searchParams.get("performerNameClean") ??
+    "";
 
-  const scriptSrc = buildWidgetScriptSrc({
+  const frameSrc = buildWidgetFrameSrc({
     cols: Number(searchParams.get("cols")) || 1,
     rows: Number(searchParams.get("rows")) || 1,
     number: Number(searchParams.get("number")) || 1,
@@ -18,20 +26,24 @@ export async function GET(request: Request) {
     animateFeed: Number(searchParams.get("animateFeed")) || 0,
     smoothAnimation: Number(searchParams.get("smoothAnimation")) || 0,
     embedInstanceId: instance,
+    performerNameClean: performer || undefined,
   });
 
-  const html = buildWidgetSrcDoc(scriptSrc, {
+  const html = buildWidgetSrcDoc(frameSrc, {
     blockAffiliateNavigation: true,
-    enableAutoplayKickstart: true,
     embedInstanceId: instance,
   });
 
-  return new Response(html, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store",
-      "X-Frame-Options": "SAMEORIGIN",
-      "Permissions-Policy": "autoplay=(self), encrypted-media=(self)",
-    },
-  });
+  const headers: Record<string, string> = {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+    "X-Frame-Options": "SAMEORIGIN",
+    "Permissions-Policy": "autoplay=(self), encrypted-media=(self)",
+  };
+
+  if (!CRACKREVENUE_TOKEN || !CRACKREVENUE_API_KEY) {
+    headers["X-Embed-Warning"] = "missing-crack-credentials";
+  }
+
+  return new Response(html, { headers });
 }
