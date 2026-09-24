@@ -15,7 +15,9 @@ type ExploreCategoryGridProps = {
 };
 
 export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
-  if (categories.length === 0) {
+  const safeCategories = Array.isArray(categories) ? categories : [];
+
+  if (safeCategories.length === 0) {
     return (
       <p className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 text-xs text-zinc-400">
         No hay categorías disponibles en este momento. Vuelve a intentarlo en unos
@@ -26,9 +28,9 @@ export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      {categories.map((cat, index) => (
+      {safeCategories.map((cat, index) => (
         <button
-          key={cat.id}
+          key={cat?.id ?? `category-${index}`}
           type="button"
           className="group relative h-28 w-full overflow-hidden rounded-2xl border border-zinc-800/80 shadow-md transition-all active:scale-95"
         >
@@ -48,10 +50,10 @@ export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
             className={`absolute inset-0 flex flex-col justify-end bg-gradient-to-t p-3 ${GRADIENTS[index % GRADIENTS.length]}`}
           >
             <h3 className="text-sm font-black tracking-wide text-white">
-              {cat.title}
+              {cat?.title ?? "CATEGORY"}
             </h3>
             <span className="text-[10px] font-semibold text-pink-300">
-              {cat.liveCount} Live
+              {cat?.liveCount ?? 0} Live
             </span>
           </div>
         </button>

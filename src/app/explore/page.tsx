@@ -4,13 +4,21 @@ export const fetchCache = "force-no-store";
 import CrackWidget from "@/components/cams/CrackWidget";
 import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
 import BottomNav from "@/components/layout/BottomNav";
-import { fetchAllExploreCategories } from "@/lib/crackrevenue/categories";
+import {
+  dedupeCategories,
+  fetchAllExploreCategories,
+} from "@/lib/crackrevenue/categories";
 
 export default async function ExplorePage() {
-  const categories = await fetchAllExploreCategories();
-  const uniqueCategories = Array.from(
-    new Map(categories.map((cat) => [cat.id, cat])).values(),
-  );
+  let uniqueCategories: Awaited<ReturnType<typeof fetchAllExploreCategories>> =
+    [];
+
+  try {
+    const categories = await fetchAllExploreCategories();
+    uniqueCategories = dedupeCategories(categories);
+  } catch {
+    uniqueCategories = [];
+  }
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-black px-4 pb-20 pt-4 text-white [-webkit-overflow-scrolling:touch]">
