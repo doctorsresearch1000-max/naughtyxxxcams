@@ -63,7 +63,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
   let masterPool: Awaited<ReturnType<typeof fetchExploreMasterPool>> = [];
   try {
-    masterPool = await fetchExploreMasterPool(3);
+    masterPool = await fetchExploreMasterPool(2);
   } catch {
     masterPool = [];
   }
