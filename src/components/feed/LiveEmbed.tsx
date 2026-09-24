@@ -16,7 +16,7 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-const SETTLE_MS = 280;
+const SETTLE_MS = 80;
 
 export function LiveEmbed({
   embedKey,

@@ -1,5 +1,6 @@
 import {
   CRACKREVENUE_API_KEY,
+  CRACKREVENUE_LANDING_ID,
   CRACKREVENUE_TOKEN,
   STREAMATE_BRAND,
   WIDGET_SCRIPT_BASE,
@@ -18,8 +19,11 @@ export type WidgetEmbedOptions = {
 
 /** URL del script — `muted=1` permite autoplay bajo políticas modernas. */
 export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
+  const landingId =
+    CRACKREVENUE_LANDING_ID.trim() || "{offer_url_id}";
+
   const params = new URLSearchParams({
-    landing_id: "{offer_url_id}",
+    landing_id: landingId,
     genders: "f",
     providers: STREAMATE_BRAND,
     brands: STREAMATE_BRAND,
