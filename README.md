@@ -1,66 +1,55 @@
-# NaughtyXxxCams — Mini App
+# NaughtyXxxCams — UI Skeleton (Next.js)
 
-Landing ultra-ligera para **NaughtyXxxCams.com**, orientada a **Core Web Vitals**, SEO técnico y despliegue en **Cloudflare Pages**.
+Esqueleto visual **TikTok-style** para NaughtyXxxCams.com. Datos **mock** únicamente — sin APIs, DB ni sitemaps en esta fase.
 
-## Estructura
+## Stack
 
-```
-├── config/seo.json          # Fuente única de title, description, OG, TeleHub URL
-├── scripts/generate-seo.mjs # Genera HTML estático (crawler-friendly)
-├── public/
-│   ├── index.template.html  # Plantilla con placeholders {{…}}
-│   ├── index.html           # Generado — no editar a mano
-│   ├── robots.txt
-│   ├── sitemap.xml
-│   ├── site.webmanifest
-│   ├── _headers             # Cabeceras de caché/seguridad (Cloudflare Pages)
-│   └── assets/
-└── package.json
-```
+- **Next.js 15** (App Router, `src/app`)
+- **Tailwind CSS** — paleta neón `#0B0F19` / `#FF007F` / `#00F0FF`
+- **lucide-react** — iconografía
 
-## Configuración rápida
+## Rutas
 
-1. Edita **`config/seo.json`**:
-   - `telehubUrl` — enlace real de TeleHub
-   - `domain`, `title`, `description`, `ogImage`
-2. Añade **`public/assets/og-cover.jpg`** (1200×630) para vistas previas en redes.
-3. Genera la home:
+| Ruta | Vista |
+|------|--------|
+| `/` | Feed vertical full-screen con scroll snap |
+| `/explore` | Búsqueda, pills de categorías, grid Trending |
+| `/following` | Carrusel Live Nearby + lista Your models |
+| `/profile` | Cuenta Telegram mock, banner sponsored, Continue Watching |
+
+## Desarrollo
 
 ```bash
-npm run build
-```
-
-## Desarrollo local
-
-```bash
+npm install
 npm run dev
 ```
 
-Abre `http://localhost:8787`.
+Abre [http://localhost:3000](http://localhost:3000).
 
-## Cloudflare Pages
+## Producción
 
-| Campo | Valor |
-|--------|--------|
-| **Framework preset** | None |
-| **Build command** | `npm run build` |
-| **Build output directory** | `public` |
-| **Root directory** | `/` (raíz del repo) |
+```bash
+npm run build
+npm start
+```
 
-Tras conectar el repositorio, cada push a `main` desplegará la carpeta `public` con `index.html` ya inyectado.
+## Estructura de componentes
 
-### Dominio y SEO
+```
+src/
+  components/
+    BottomNav.tsx
+    BrandLogo.tsx
+    feed/
+    explore/
+    following/
+  data/mock.ts
+  app/
+```
 
-- Actualiza `public/sitemap.xml` y `public/robots.txt` si cambias el dominio canónico.
-- El canonical y Open Graph se sincronizan desde `config/seo.json` en cada build.
+Edita `src/data/mock.ts` para cambiar streams, trending y perfiles de prueba.
 
-## Rendimiento
+## Cloudflare Pages (opcional)
 
-- CSS crítico inline (sin frameworks).
-- Fuentes del sistema (sin descargas de webfonts).
-- `preconnect` / `dns-prefetch` hacia TeleHub.
-- Cabeceras de caché inmutables para `/assets/*` vía `_headers`.
-
-## Licencia
-
-Propiedad privada — uso interno NaughtyXxxCams.
+- **Build command:** `npm run build`
+- **Output directory:** `.next` → usar adapter o export según tu pipeline; para Node estándar, despliega en Vercel/Node o configura `@cloudflare/next-on-pages`.
