@@ -1,5 +1,4 @@
-# Configuración Cloudflare Workers (OpenNext).
-# Secretos: CRACKREVENUE_TOKEN y CRACKREVENUE_API_KEY → `wrangler secret put`
+# Sincronizado con variables del panel Cloudflare Workers (OpenNext deploy).
 
 name = "naughtyxxxcams"
 main = ".open-next/worker.js"
@@ -17,3 +16,7 @@ id = "c7a39ac66ad54a34b760cc323472ddf2"
 [vars]
 CRACKREVENUE_USER_AGENT = "NaughtyXxxCams/1.0 (+https://naughtyxxxcams.com)"
 CRACKREVENUE_WIDGET_SCRIPT_URL = "https://widget-ext.crxcr2.com/script"
+CRAK_API_KEY = "fdea1df92de2f1f1136fc0f92c35d85ce84c15ad70443277875a1996752c9992"
+CRAK_BRANDS = ""
+CRAK_LANDING_ID = "https://t.ajrkmx3.com/214769/8780/32489?po=6533&aff_sub5=SF_0060G0000041mDN"
+CRAK_TOKEN = "315cea80-b80b-11f1-b979-1d7e40202c1c"

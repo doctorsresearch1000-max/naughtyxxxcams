@@ -1,8 +1,8 @@
 import {
   CRACKREVENUE_API_KEY,
-  CRACKREVENUE_LANDING_ID,
   CRACKREVENUE_TOKEN,
-  STREAMATE_BRAND,
+  resolveWidgetBrands,
+  resolveWidgetLandingId,
   WIDGET_SCRIPT_BASE,
 } from "@/lib/crackrevenue/config";
 
@@ -19,14 +19,14 @@ export type WidgetEmbedOptions = {
 
 /** URL del script — `muted=1` permite autoplay bajo políticas modernas. */
 export function buildWidgetScriptSrc(options: WidgetEmbedOptions = {}): string {
-  const landingId =
-    CRACKREVENUE_LANDING_ID.trim() || "{offer_url_id}";
+  const brands = resolveWidgetBrands();
+  const landingId = resolveWidgetLandingId();
 
   const params = new URLSearchParams({
     landing_id: landingId,
     genders: "f",
-    providers: STREAMATE_BRAND,
-    brands: STREAMATE_BRAND,
+    providers: brands,
+    brands,
     skin: "1",
     containerAlignment: "center",
     cols: String(options.cols ?? 1),
@@ -93,7 +93,6 @@ window.addEventListener('message', function (event) {
 });
 `;
 
-/** Intenta play() en vídeos que el script del widget inyecta dinámicamente. */
 const AUTOPLAY_KICKSTART = `
 (function () {
   function kick() {
