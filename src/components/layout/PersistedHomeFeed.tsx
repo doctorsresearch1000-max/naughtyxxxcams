@@ -1,9 +1,17 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { HomeVerticalFeed } from "@/components/feed/HomeVerticalFeed";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
+
+function FeedFallback() {
+  return (
+    <div className="flex h-[calc(100dvh-4rem)] items-center justify-center bg-black">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
+    </div>
+  );
+}
 
 /**
  * Keeps the home feed (and its iframes) mounted while browsing other tabs so
@@ -34,7 +42,9 @@ export function PersistedHomeFeed() {
       {...(!visible ? { inert: true as const } : {})}
     >
       <SessionAudioProvider>
-        <HomeVerticalFeed />
+        <Suspense fallback={<FeedFallback />}>
+          <HomeVerticalFeed />
+        </Suspense>
       </SessionAudioProvider>
     </div>
   );

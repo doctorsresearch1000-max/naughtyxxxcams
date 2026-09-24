@@ -1,7 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
@@ -29,6 +30,9 @@ export function HomeVerticalFeed() {
   );
   const pathname = usePathname();
   const onHome = pathname === "/";
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const resumeFeedKey = searchParams.get(RESUME_FEED_QUERY);
   const { registerActiveIframe, setOverlayGate, unlocked } = useSessionAudio();
 
   useEffect(() => {
@@ -53,6 +57,35 @@ export function HomeVerticalFeed() {
       cancelled = true;
     };
   }, []);
+
+  const resumeHandledRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      resumeHandledRef.current ||
+      !resumeFeedKey ||
+      loadState !== "ready" ||
+      slides.length === 0
+    ) {
+      return;
+    }
+
+    resumeHandledRef.current = true;
+    const key = resumeFeedKey;
+    const index = slides.findIndex((s) => s.feedKey === key);
+
+    const timer = window.setTimeout(() => {
+      if (index >= 0) {
+        const card = scrollRef.current?.querySelector<HTMLElement>(
+          `[data-feed-key="${CSS.escape(key)}"]`,
+        );
+        card?.scrollIntoView({ block: "start", behavior: "auto" });
+      }
+      router.replace("/", { scroll: false });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [resumeFeedKey, loadState, slides, router]);
 
   const slideCount = slides.length > 0 ? slides.length : 1;
   const { activeIndex } = useFeedActiveIndex(scrollRef, slideCount);

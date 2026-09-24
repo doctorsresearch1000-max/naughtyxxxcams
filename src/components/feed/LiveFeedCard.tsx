@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
@@ -42,6 +44,22 @@ export function LiveFeedCard({
     performer.nameClean || performer.name,
   );
   const affiliateUrl = buildModelAffiliateUrl(performer);
+
+  useEffect(() => {
+    if (!isActive) return;
+    saveContinueWatching({
+      feedKey: performer.feedKey,
+      nameClean: performer.nameClean,
+      name: performer.name,
+      posterUrl: performer.posterUrl,
+    });
+  }, [
+    isActive,
+    performer.feedKey,
+    performer.nameClean,
+    performer.name,
+    performer.posterUrl,
+  ]);
 
   return (
     <article

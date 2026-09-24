@@ -3,7 +3,8 @@ export const fetchCache = "force-no-store";
 
 import Image from "next/image";
 import Link from "next/link";
-import { continueWatching, profileUser } from "@/data/mock";
+import { ContinueWatchingCard } from "@/components/profile/ContinueWatchingCard";
+import { profileUser } from "@/data/mock";
 
 const SPONSOR_BANNER_HREF =
   "https://t.ajrkmx3.com/214769/8780/0?file_id=598462&po=6533&aff_sub5=SF_006OG000004lmDN&aff_sub4=AT_0002";
@@ -82,32 +83,7 @@ export default function ProfilePage() {
         </h2>
         <p className="mb-3 text-xs text-zinc-400">Pick up right where you left off</p>
 
-        <article className="overflow-hidden rounded-2xl border border-white/10 bg-[#1C1C1E]">
-          <div className="relative h-36 w-full">
-            <Image
-              src={continueWatching.image}
-              alt={`@${continueWatching.username}`}
-              fill
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-            <div className="absolute bottom-3 left-3">
-              <p className="font-bold">@{continueWatching.username}</p>
-              <p className="text-[11px] text-zinc-300">
-                Last watched {continueWatching.lastWatched}
-              </p>
-            </div>
-          </div>
-          <div className="p-3">
-            <button
-              type="button"
-              className="w-full rounded-full bg-[#39FF14] py-3 text-sm font-extrabold text-black transition active:scale-[0.98]"
-            >
-              Resume watching
-            </button>
-          </div>
-        </article>
+        <ContinueWatchingCard />
       </section>
     </main>
   );
