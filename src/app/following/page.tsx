@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
+import { StoriesBar } from "@/components/cams/StoriesBar";
 import { LiveNearbyCarousel } from "@/components/following/LiveNearbyCarousel";
 import { ModelListItem } from "@/components/following/ModelListItem";
 import { yourModels } from "@/data/mock";
@@ -11,6 +12,8 @@ export default function FollowingPage() {
       <h1 className="text-2xl font-black tracking-tight">
         Following <span className="text-cyan">·</span> Live
       </h1>
+
+      <StoriesBar className="mt-4" />
 
       <section className="mt-6" aria-labelledby="nearby-heading">
         <h2 id="nearby-heading" className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-400">

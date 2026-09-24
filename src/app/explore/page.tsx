@@ -2,9 +2,9 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 import { Search } from "lucide-react";
+import { CrackWidget } from "@/components/cams/CrackWidget";
+import { StoriesBar } from "@/components/cams/StoriesBar";
 import { CategoryPills } from "@/components/explore/CategoryPills";
-import { TrendingCard } from "@/components/explore/TrendingCard";
-import { trendingModels } from "@/data/mock";
 
 export default function ExplorePage() {
   return (
@@ -25,6 +25,7 @@ export default function ExplorePage() {
             className="w-full rounded-2xl border border-cyan/20 bg-surface py-3 pl-10 pr-4 text-sm outline-none ring-magenta/0 placeholder:text-slate-500 focus:border-cyan/50 focus:ring-2 focus:ring-cyan/30"
           />
         </label>
+        <StoriesBar />
         <CategoryPills />
       </header>
 
@@ -32,11 +33,7 @@ export default function ExplorePage() {
         <h2 id="trending-heading" className="mb-4 text-lg font-extrabold">
           Trending Now
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {trendingModels.map((model) => (
-            <TrendingCard key={model.id} model={model} />
-          ))}
-        </div>
+        <CrackWidget cols={4} rows={3} number={12} className="min-h-[28rem]" />
       </section>
     </main>
   );
