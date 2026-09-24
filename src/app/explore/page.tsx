@@ -3,8 +3,7 @@ export const fetchCache = "force-no-store";
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import CrackWidget from "@/components/cams/CrackWidget";
-import { ExploreBrowsePanel } from "@/components/explore/ExploreBrowsePanel";
+import { ExploreSlushyDiscover } from "@/components/explore/ExploreSlushyDiscover";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
   getDefaultExploreSeo,
@@ -64,26 +63,23 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
   const masterPool = await fetchExploreMasterPool(3);
   const { performers, total } = await fetchCategoryPerformers(category, {
-    size: 24,
+    size: 48,
     masterPool,
   });
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-black px-4 pb-8 pt-4 text-white [-webkit-overflow-scrolling:touch]">
-      <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
-        EXPLORA
-      </span>
-
+    <main
+      className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-[#0A0A0A] px-3 pb-24 pt-2 text-white [-webkit-overflow-scrolling:touch]"
+    >
       <Suspense
         fallback={
           <>
-            <div className="mb-0.5 h-8 w-48 animate-pulse rounded-lg bg-zinc-800" />
-            <div className="mb-4 h-4 w-full max-w-xs animate-pulse rounded bg-zinc-900" />
-            <ExplorePerformerGridSkeleton count={8} />
+            <div className="mb-4 h-11 w-full animate-pulse rounded-full bg-[#1C1C1E]" />
+            <ExplorePerformerGridSkeleton count={12} columns={3} />
           </>
         }
       >
-        <ExploreBrowsePanel
+        <ExploreSlushyDiscover
           initialCat={initialCat}
           initialPerformers={performers}
           initialTotal={total}
@@ -91,35 +87,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           popularCategories={uniqueCategories}
         />
       </Suspense>
-
-      <section className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
-              TENDENCIAS
-            </span>
-            <h2 className="text-lg font-black">Top Transmisiones</h2>
-          </div>
-          <span className="text-xs font-semibold text-pink-400">
-            Streamate en vivo
-          </span>
-        </div>
-
-        <div className="relative isolate overflow-hidden rounded-2xl">
-          <CrackWidget
-            cols={2}
-            rows={4}
-            number={8}
-            ratio={0.75}
-            useFeed={0}
-            animateFeed={0}
-            height="min-h-[500px]"
-            embedInstanceId={
-              category ? `explore-${category.slug}` : "explore-grid"
-            }
-          />
-        </div>
-      </section>
     </main>
   );
 }

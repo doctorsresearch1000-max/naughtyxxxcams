@@ -1,14 +1,25 @@
-export function ExplorePerformerGridSkeleton({ count = 6 }: { count?: number }) {
+export function ExplorePerformerGridSkeleton({
+  count = 6,
+  columns = 2,
+}: {
+  count?: number;
+  columns?: 2 | 3;
+}) {
+  const gridClass =
+    columns === 3 ? "grid grid-cols-3 gap-1.5 sm:gap-2" : "grid grid-cols-2 gap-3";
+  const aspectClass = columns === 3 ? "aspect-[3/5]" : "aspect-[3/4]";
+  const radiusClass = columns === 3 ? "rounded-[18px]" : "rounded-2xl";
+
   return (
     <div
-      className="grid grid-cols-2 gap-3"
+      className={gridClass}
       aria-busy="true"
       aria-label="Cargando modelos"
     >
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-zinc-800/60 bg-zinc-900/80"
+          className={`relative ${aspectClass} overflow-hidden ${radiusClass} border border-zinc-800/60 bg-[#1C1C1E]`}
         >
           <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950" />
           <div className="absolute bottom-2 left-2 right-2 space-y-2">
