@@ -15,7 +15,7 @@ type ExplorePerformerGridProps = {
 
 export function ExplorePerformerGrid({
   performers,
-  emptyMessage = "No hay modelos en esta categoría ahora. Prueba otra etiqueta o vuelve en unos minutos.",
+  emptyMessage = "No models in this category right now. Try another tag or check back soon.",
 }: ExplorePerformerGridProps) {
   const cards = filterFeedPerformers(performers);
 

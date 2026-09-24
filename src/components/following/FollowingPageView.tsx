@@ -11,9 +11,9 @@ type FollowingPageViewProps = FollowingPageData;
 
 function formatUpdatedLabel(updatedAt: number): string {
   const sec = Math.max(0, Math.floor((Date.now() - updatedAt) / 1000));
-  if (sec < 8) return "Actualizado ahora";
-  if (sec < 60) return `Actualizado hace ${sec}s`;
-  return `Actualizado hace ${Math.floor(sec / 60)} min`;
+  if (sec < 8) return "Updated just now";
+  if (sec < 60) return `Updated ${sec}s ago`;
+  return `Updated ${Math.floor(sec / 60)} min ago`;
 }
 
 export function FollowingPageView({
@@ -42,16 +42,16 @@ export function FollowingPageView({
 
   const subtitle =
     liveCount === 0
-      ? "Ninguna de tus modelos está en directo ahora"
+      ? "None of your models are live right now"
       : liveCount === 1
-        ? "1 de tus modelos está transmitiendo ahora"
-        : `${liveCount} de tus ${followedTotal} modelos están en directo`;
+        ? "1 of your models is live now"
+        : `${liveCount} of your ${followedTotal} models are live`;
 
   return (
     <>
       <section className="mb-6">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#39FF14]">
-          TRANSMISIONES CERCANAS
+          Nearby streams
         </span>
         <div className="mt-2">
           <LiveNearbyCarousel items={nearby} />
@@ -60,18 +60,18 @@ export function FollowingPageView({
 
       <section>
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#39FF14]">
-          SIGUIENDO
+          Following
         </span>
         <div className="mb-1 mt-1 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-black tracking-tight text-white">
-            Tus Modelos
+            Your models
           </h1>
           <button
             type="button"
             onClick={onRefresh}
             disabled={refreshing}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-[#1C1C1E] text-sm text-[#39FF14] transition hover:border-[#39FF14]/40 hover:bg-zinc-900 disabled:opacity-60"
-            aria-label="Actualizar lista"
+            aria-label="Refresh list"
           >
             <span className={refreshing ? "inline-block animate-spin" : ""}>
               🔄
@@ -100,7 +100,7 @@ export function FollowingPageView({
 
       <section>
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
-          Desconectadas
+          Offline
         </span>
         <FollowingOfflineList items={offline} />
       </section>

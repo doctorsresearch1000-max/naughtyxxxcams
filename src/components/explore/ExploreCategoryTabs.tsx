@@ -27,7 +27,7 @@ export function ExploreCategoryTabs({
     <div
       className={`hide-scrollbar -mx-1 mb-5 flex gap-2 overflow-x-auto px-1 pb-1 ${isPending ? "opacity-90" : ""}`}
       role="tablist"
-      aria-label="Categorías en vivo"
+      aria-label="Live categories"
       aria-busy={isPending}
     >
       <button
@@ -38,7 +38,7 @@ export function ExploreCategoryTabs({
         className={pillClass(!activeCat)}
         onClick={() => onSelectCategory(null)}
       >
-        Todas
+        All
       </button>
       {EXPLORE_CATEGORY_SLUGS.map((slug) => {
         const config = EXPLORE_CATEGORY_MAP[slug];

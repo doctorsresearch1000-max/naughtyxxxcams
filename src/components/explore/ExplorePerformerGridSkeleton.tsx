@@ -14,7 +14,7 @@ export function ExplorePerformerGridSkeleton({
     <div
       className={gridClass}
       aria-busy="true"
-      aria-label="Cargando modelos"
+      aria-label="Loading models"
     >
       {Array.from({ length: count }).map((_, i) => (
         <div

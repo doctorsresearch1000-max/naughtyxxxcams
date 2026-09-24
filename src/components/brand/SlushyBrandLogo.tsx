@@ -1,4 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
+
+const LOGO_SRC = "/naughty-xxx-cams-logo.jpg";
 
 type SlushyBrandLogoProps = {
   /** Header: larger; compact: feed overlay */
@@ -13,19 +16,20 @@ export function SlushyBrandLogo({
   className = "",
 }: SlushyBrandLogoProps) {
   const isHeader = variant === "header";
+  const height = isHeader ? 36 : 28;
+  const width = isHeader ? 220 : 168;
 
   const inner = (
-    <span
-      className={`inline-flex items-baseline gap-1 font-black tracking-tight ${
-        isHeader ? "text-[1.35rem] leading-none sm:text-[1.5rem]" : "text-base"
+    <Image
+      src={LOGO_SRC}
+      alt="Naughty XXX Cams"
+      width={width}
+      height={height}
+      priority={isHeader}
+      className={`h-auto w-auto max-w-[min(100%,14.5rem)] object-contain object-left ${
+        isHeader ? "max-h-9 sm:max-h-10" : "max-h-7"
       } ${className}`}
-    >
-      <span className="text-white">Naughty</span>
-      <span className="bg-gradient-to-r from-[#39FF14] to-[#00FF7F] bg-clip-text text-transparent">
-        XXX
-      </span>
-      <span className="text-white">Cams</span>
-    </span>
+    />
   );
 
   if (!href) {
@@ -35,7 +39,7 @@ export function SlushyBrandLogo({
   return (
     <Link
       href={href}
-      className="group shrink-0 transition active:scale-[0.99]"
+      className="group inline-flex shrink-0 items-center transition active:scale-[0.99]"
       aria-label="Naughty XXX Cams home"
     >
       {inner}

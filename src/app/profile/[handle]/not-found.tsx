@@ -12,7 +12,7 @@ export default function ModelProfileNotFound() {
         href="/explore"
         className="mt-6 rounded-xl bg-pink-600 px-5 py-2.5 text-sm font-semibold hover:bg-pink-500"
       >
-        Explorar modelos en vivo
+        Browse live models
       </Link>
     </main>
   );

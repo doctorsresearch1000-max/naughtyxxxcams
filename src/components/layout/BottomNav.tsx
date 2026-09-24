@@ -69,12 +69,23 @@ function NavIconFollowing({ active }: NavIconProps) {
       className={`transition-all duration-200 ${active ? "scale-110" : "scale-100"}`}
     >
       <path
-        d="M12 21s-6.5-4.35-6.5-9a4.5 4.5 0 0 1 8.6-1.7A4.5 4.5 0 0 1 18.5 12c0 4.65-6.5 9-6.5 9Z"
+        d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
         stroke="currentColor"
         strokeWidth={active ? 2.25 : 1.75}
-        strokeLinejoin="round"
-        fill={active ? "currentColor" : "none"}
-        fillOpacity={active ? 0.12 : 0}
+        strokeLinecap="round"
+      />
+      <circle
+        cx="9"
+        cy="7"
+        r="3.5"
+        stroke="currentColor"
+        strokeWidth={active ? 2.25 : 1.75}
+      />
+      <path
+        d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+        stroke="currentColor"
+        strokeWidth={active ? 2.25 : 1.75}
+        strokeLinecap="round"
       />
     </svg>
   );

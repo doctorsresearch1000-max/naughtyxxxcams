@@ -138,7 +138,7 @@ function toViewModel(
     aboutCards: buildAboutCards(p, traits),
     followersLabel: buildFollowersLabel(p),
     badges: buildProfileBadges(p),
-    bio: `¡Hola! Soy ${name}. Me encanta conectar en vivo, charlar contigo y crear momentos únicos en mi sala Streamate. ¿Entras? 💚`,
+    bio: `Hey! I'm ${name}. I love going live, chatting with you, and creating unique moments in my Streamate room. Come say hi 💚`,
     crakLandingId: landingId,
     affiliateUrl: buildModelAffiliateUrl(p),
     performer: p,

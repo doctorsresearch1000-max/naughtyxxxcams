@@ -24,7 +24,6 @@ export type ExploreCategoryConfig = {
   seoTitle: string;
   seoDescription: string;
   api: CategoryApiFilter;
-  /** Filtro adicional en cliente sobre tags del performer. */
   clientMatch?: string[];
 };
 
@@ -33,78 +32,78 @@ export const EXPLORE_CATEGORY_MAP: Record<ExploreCategorySlug, ExploreCategoryCo
     latinas: {
       slug: "latinas",
       label: "Latinas",
-      headline: "Modelos Latinas en vivo",
-      seoTitle: "Cams Latinas en Vivo — Modelos Hispanic Streamate | NaughtyXXXCams",
+      headline: "Latina models live",
+      seoTitle: "Latina Live Cams — Hispanic Streamate Models | NaughtyXXXCams",
       seoDescription:
-        "Explora modelos latinas en HD verificadas en Streamate. Filtra por categoría, entra a salas en vivo y guarda tus favoritas en NaughtyXXXCams.",
+        "Browse verified Latina models in HD on Streamate. Filter by category, join live rooms, and save favorites on NaughtyXXXCams.",
       api: { ethnicities: "hispanic" },
     },
     verified: {
       slug: "verified",
-      label: "18+ Verificadas",
-      headline: "Chicas 18+ verificadas",
-      seoTitle: "Chicas 18+ Verificadas en Vivo — Webcams HD | NaughtyXXXCams",
+      label: "18+ Verified",
+      headline: "Verified 18+ models",
+      seoTitle: "Verified 18+ Live Cams — HD Webcams | NaughtyXXXCams",
       seoDescription:
-        "Directorio de modelos adultas verificadas mayores de 18 años. Transmisiones en vivo, perfiles oficiales y alertas cuando tu favorita conecta.",
+        "Directory of verified adult models 18+. Live streams, official profiles, and alerts when your favorite goes online.",
       api: {},
       clientMatch: ["gc_18_19", "gc_20_29", "young", "verified"],
     },
     milf: {
       slug: "milf",
       label: "MILF",
-      headline: "Cams MILF y maduras",
-      seoTitle: "Cams MILF & Maduras en Vivo — Streamate HD | NaughtyXXXCams",
+      headline: "MILF & mature cams",
+      seoTitle: "MILF & Mature Live Cams — Streamate HD | NaughtyXXXCams",
       seoDescription:
-        "Las mejores MILF y modelos maduras en transmisión en vivo. Chat, shows privados y perfiles SEO con galería y traits.",
+        "Top MILF and mature models streaming live. Chat, private shows, and SEO profiles with gallery and traits.",
       api: { tags: "milf" },
     },
     petite: {
       slug: "petite",
       label: "Petite",
-      headline: "Modelos Petite & E-girls",
-      seoTitle: "Modelos Petite en Vivo — E-girls Streamate | NaughtyXXXCams",
+      headline: "Petite & e-girl models",
+      seoTitle: "Petite Live Cams — E-girls on Streamate | NaughtyXXXCams",
       seoDescription:
-        "Descubre modelos petite y e-girls en cámara HD. Scroll rápido, perfiles únicos y enlaces directos a salas en vivo.",
+        "Discover petite models and e-girls in HD. Fast scroll, unique profiles, and direct links to live rooms.",
       api: { tags: "petite" },
       clientMatch: ["skinny", "petite"],
     },
     cosplay: {
       slug: "cosplay",
       label: "Cosplay",
-      headline: "Streamers Cosplay",
-      seoTitle: "Cams Cosplay en Vivo — Roleplay & Fantasy | NaughtyXXXCams",
+      headline: "Cosplay streamers",
+      seoTitle: "Cosplay Live Cams — Roleplay & Fantasy | NaughtyXXXCams",
       seoDescription:
-        "Modelos con estética cosplay, disfraces y roleplay en vivo. Filtra por categoría y entra al chat en segundos.",
+        "Cosplay aesthetics, costumes, and roleplay live. Filter by category and join chat in seconds.",
       api: { tags: "dancing" },
       clientMatch: ["cosplay", "costume", "roleplay", "anime"],
     },
     couples: {
       slug: "couples",
-      label: "Parejas",
-      headline: "Cams en pareja",
-      seoTitle: "Cams en Pareja en Vivo — Shows a Dúo | NaughtyXXXCams",
+      label: "Couples",
+      headline: "Couple cams",
+      seoTitle: "Couple Live Cams — Duo Shows | NaughtyXXXCams",
       seoDescription:
-        "Parejas y dúos en transmisión en vivo. Explora shows compartidos, chat interactivo y perfiles verificados.",
+        "Couples and duos streaming live. Explore shared shows, interactive chat, and verified profiles.",
       api: { tags: "kinky" },
       clientMatch: ["couple", "couples", "duo", "pair"],
     },
     trans: {
       slug: "trans",
       label: "Trans",
-      headline: "Modelos Trans",
-      seoTitle: "Modelos Trans en Vivo — Webcams HD | NaughtyXXXCams",
+      headline: "Trans models",
+      seoTitle: "Trans Live Cams — HD Webcams | NaughtyXXXCams",
       seoDescription:
-        "Descubre modelos trans en vivo con perfiles estructurados, tags y enlaces a salas autorizadas de la red Streamate.",
+        "Trans models live with structured profiles, tags, and authorized Streamate room links.",
       api: { tags: "beautiful" },
       clientMatch: ["trans", "tgirl", "ts"],
     },
     alt: {
       slug: "alt",
       label: "Alt & Goth",
-      headline: "Modelos Alt & Goth",
-      seoTitle: "Modelos Alt & Goth en Vivo — Tattoo & Kinky | NaughtyXXXCams",
+      headline: "Alt & goth models",
+      seoTitle: "Alt & Goth Live Cams — Tattoo & Kinky | NaughtyXXXCams",
       seoDescription:
-        "Estética alternativa, goth, tatuajes y vibes kinky en cámara. Filtra modelos alt y entra al vivo al instante.",
+        "Alternative, goth, tattoo, and kinky vibes on cam. Filter alt models and go live instantly.",
       api: { tags: "tattoos" },
       clientMatch: ["goth", "alt", "tattoo", "piercing", "emo"],
     },
@@ -130,10 +129,10 @@ export function resolveExploreCategory(
 
 export function getDefaultExploreSeo() {
   return {
-    title: "Explorar Modelos en Vivo — Streamate HD | NaughtyXXXCams",
+    title: "Discover Live Models — Streamate HD | NaughtyXXXCams",
     description:
-      "Descubre modelos en tendencia, filtra por categoría y accede a transmisiones en vivo optimizadas para móvil en NaughtyXXXCams.",
-    headline: "Descubrir",
-    subline: "Encuentra salas según tu categoría preferida",
+      "Trending live models, category filters, and mobile-optimized streams on NaughtyXXXCams.",
+    headline: "Discover",
+    subline: "Find rooms that match your favorite category",
   };
 }

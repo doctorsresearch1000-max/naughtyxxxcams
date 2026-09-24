@@ -6,9 +6,9 @@ import { FollowingPageView } from "@/components/following/FollowingPageView";
 import { getFollowingPageData } from "@/lib/following/followingPageData";
 
 export const metadata: Metadata = {
-  title: "Siguiendo — Tus Modelos en Vivo | NaughtyXXXCams",
+  title: "Following — Your Live Models | NaughtyXXXCams",
   description:
-    "Modelos que sigues en directo y transmisiones cercanas. Acceso rápido a Streamate con un toque.",
+    "Models you follow, nearby live streams, and one-tap access to Streamate rooms.",
 };
 
 export default async function FollowingPage() {

@@ -74,7 +74,7 @@ export default function CrackWidget({
           aria-hidden
         >
           <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent" />
-          <p className="text-xs font-medium">Cargando transmisiones Streamate...</p>
+          <p className="text-xs font-medium">Loading Streamate streams…</p>
         </div>
       )}
 

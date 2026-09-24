@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "imagetransform.icfcdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "www.imglnky.com",
+      },
     ],
   },
 };

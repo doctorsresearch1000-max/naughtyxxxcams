@@ -163,10 +163,10 @@ export function ExploreBrowsePanel({
       <section className="mb-6">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-black uppercase tracking-wide text-zinc-200">
-            {label ? `Resultados · ${label}` : "En vivo ahora"}
+            {label ? `Results · ${label}` : "Live now"}
           </h2>
           <span className="text-xs font-semibold text-pink-500">
-            {showSkeleton ? "…" : total} modelos
+            {showSkeleton ? "…" : total} models
           </span>
         </div>
         {showSkeleton ? (
@@ -180,10 +180,10 @@ export function ExploreBrowsePanel({
         <section className="mb-6">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-black uppercase tracking-wide text-zinc-200">
-              Categorías Populares
+              Popular categories
             </h2>
             <span className="text-xs font-semibold text-pink-500">
-              {popularCategories.length} activas
+              {popularCategories.length} active
             </span>
           </div>
           <ExploreCategoryGrid categories={popularCategories} />

@@ -41,7 +41,7 @@ export function FollowingOfflineList({ items }: FollowingOfflineListProps) {
               href={profileHref}
               className="shrink-0 rounded-xl bg-zinc-800/90 px-3.5 py-2 text-xs font-semibold text-zinc-100 transition hover:bg-zinc-700 active:scale-[0.98]"
             >
-              Perfil
+              Profile
             </Link>
           </li>
         );

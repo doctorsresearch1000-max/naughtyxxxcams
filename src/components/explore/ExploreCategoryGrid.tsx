@@ -38,8 +38,8 @@ export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
   if (safeCategories.length === 0) {
     return (
       <p className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 text-xs text-zinc-400">
-        No hay categorías disponibles en este momento. Vuelve a intentarlo en unos
-        segundos.
+        No categories available right now. Please try again in a few
+        minutes.
       </p>
     );
   }

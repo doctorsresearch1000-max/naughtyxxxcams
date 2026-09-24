@@ -87,7 +87,7 @@ export function FeedActionRail({
             <button
               type="button"
               className="absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-[#39FF14] to-[#00FF7F] text-xs font-black text-black shadow-md"
-              aria-label="Follow"
+              aria-label="Follow model"
             >
               +
             </button>

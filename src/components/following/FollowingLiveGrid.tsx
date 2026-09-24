@@ -33,7 +33,7 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
               target="_blank"
               rel="nofollow noopener"
               className="absolute inset-0 z-0"
-              aria-label={`Ver directo ${handle}`}
+              aria-label={`Watch live ${handle}`}
             />
             <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3">
               <span className="flex w-fit items-center gap-1 rounded-lg bg-[#39FF14] px-2 py-0.5 text-[9px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
@@ -51,7 +51,7 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
                   <h3 className="text-sm font-extrabold text-white">{handle}</h3>
                 )}
                 <span className="inline-flex text-[10px] font-bold text-[#39FF14]">
-                  STREAMATE · Ver directo
+                  STREAMATE · Watch live
                 </span>
               </div>
             </div>

@@ -2,17 +2,23 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 import Image from "next/image";
+import Link from "next/link";
 import { continueWatching, profileUser } from "@/data/mock";
+
+const SPONSOR_BANNER_HREF =
+  "https://t.ajrkmx3.com/214769/8780/0?file_id=598462&po=6533&aff_sub5=SF_006OG000004lmDN&aff_sub4=AT_0002";
+const SPONSOR_BANNER_SRC =
+  "https://www.imglnky.com/8780/PMKT-1157_DESIGN-16618_BannersWebinar_AmyPose_300100.gif";
 
 export default function ProfilePage() {
   return (
-    <main className="mx-auto min-h-screen w-full max-w-md bg-black px-4 pb-8 pt-4 text-white">
-      <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
-        PERFIL
+    <main className="mx-auto min-h-screen w-full max-w-md bg-[#0A0A0A] px-4 pb-24 pt-4 text-white">
+      <span className="text-[10px] font-black uppercase tracking-widest text-[#39FF14]">
+        Profile
       </span>
       <header className="mt-1 flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="h-16 w-16 overflow-hidden rounded-full ring-2 ring-pink-500/50">
+          <div className="h-16 w-16 overflow-hidden rounded-full ring-2 ring-[#39FF14]/40">
             <Image
               src={profileUser.avatar}
               alt={profileUser.name}
@@ -28,7 +34,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <section className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-3">
+      <section className="mt-4 rounded-2xl border border-white/10 bg-[#1C1C1E] p-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Image
@@ -42,46 +48,41 @@ export default function ProfilePage() {
           </div>
           <button
             type="button"
-            className="rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-pink-500/40"
+            className="rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-[#39FF14]/40"
           >
             Log out
           </button>
         </div>
       </section>
 
-      <section
-        className="mt-5 overflow-hidden rounded-2xl border border-pink-500/40 bg-gradient-to-br from-pink-600/30 via-purple-900/40 to-black p-4 shadow-lg shadow-pink-950/30"
-        aria-label="Sponsored"
-      >
-        <p className="text-[10px] font-black uppercase tracking-widest text-pink-300">
-          Patrocinado
-        </p>
-        <h2 className="mt-1 text-lg font-black leading-tight">
-          JERKMATE IS FREE
-        </h2>
-        <p className="mt-2 text-xs text-zinc-200">
-          Oferta neón: acceso instantáneo a la prueba premium.
-        </p>
-        <button
-          type="button"
-          className="mt-4 w-full rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 py-3 text-sm font-extrabold text-white shadow-lg shadow-pink-600/30"
+      <section className="mt-5 flex justify-center" aria-label="Sponsored offer">
+        <Link
+          href={SPONSOR_BANNER_HREF}
+          target="_blank"
+          rel="nofollow noopener sponsored"
+          className="block overflow-hidden rounded-2xl ring-1 ring-white/10 transition active:scale-[0.99]"
         >
-          Reclamar acceso
-        </button>
+          <Image
+            src={SPONSOR_BANNER_SRC}
+            alt="Sponsored live cam offer"
+            width={300}
+            height={100}
+            unoptimized
+            className="h-auto w-full max-w-[300px]"
+          />
+        </Link>
       </section>
 
       <section className="mt-6" aria-labelledby="activity-heading">
-        <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
-          TU ACTIVIDAD
+        <span className="text-[10px] font-black uppercase tracking-widest text-[#39FF14]">
+          Your activity
         </span>
         <h2 id="activity-heading" className="mt-1 text-lg font-black">
-          Continuar viendo
+          Continue watching
         </h2>
-        <p className="mb-3 text-xs text-zinc-400">
-          Retoma justo donde lo dejaste
-        </p>
+        <p className="mb-3 text-xs text-zinc-400">Pick up right where you left off</p>
 
-        <article className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/90">
+        <article className="overflow-hidden rounded-2xl border border-white/10 bg-[#1C1C1E]">
           <div className="relative h-36 w-full">
             <Image
               src={continueWatching.image}
@@ -101,14 +102,13 @@ export default function ProfilePage() {
           <div className="p-3">
             <button
               type="button"
-              className="w-full rounded-full border border-zinc-700 bg-zinc-800 py-3 text-sm font-bold text-white hover:border-pink-500/40"
+              className="w-full rounded-full bg-[#39FF14] py-3 text-sm font-extrabold text-black transition active:scale-[0.98]"
             >
-              Resume Watching
+              Resume watching
             </button>
           </div>
         </article>
       </section>
-
     </main>
   );
 }

@@ -42,10 +42,10 @@ type CacheEntry = {
 const DISPLAY_LIMIT = 48;
 
 const SORT_CHIPS: { id: ExploreSortMode | "filter"; label: string }[] = [
-  { id: "filter", label: "Filtrar" },
-  { id: "hot", label: "Más caliente" },
-  { id: "trending", label: "Tendencias" },
-  { id: "all", label: "Todo" },
+  { id: "filter", label: "Filter" },
+  { id: "hot", label: "Hottest" },
+  { id: "trending", label: "Trending" },
+  { id: "all", label: "All" },
 ];
 
 const TAG_CHIPS: { id: string | null; label: string }[] = [
@@ -242,7 +242,7 @@ export function ExploreSlushyDiscover({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar en Slushy"
+          placeholder="Search models"
           className="w-full rounded-full bg-[#1C1C1E] py-3 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none ring-1 ring-transparent focus:ring-pink-500/40"
           autoComplete="off"
           enterKeyHint="search"
@@ -308,7 +308,7 @@ export function ExploreSlushyDiscover({
             className={chipClass(!activeCat)}
             onClick={() => loadCategory(null)}
           >
-            Todas
+            All
           </button>
           {EXPLORE_CATEGORY_SLUGS.map((slug) => (
             <button

@@ -36,7 +36,7 @@ function EyeIcon() {
 
 export function ExploreSlushyGrid({
   performers,
-  emptyMessage = "No hay resultados. Prueba otro filtro o búsqueda.",
+  emptyMessage = "No results. Try another filter or search.",
 }: ExploreSlushyGridProps) {
   const cards = filterFeedPerformers(performers);
 
