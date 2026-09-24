@@ -5,12 +5,12 @@
 :root {
   color-scheme: dark;
   /* Header global (logo h-10 + padding); bottom nav = 4rem */
-  --app-header-height: 4rem;
+  --app-header-height: 3.25rem;
 }
 
 @media (min-width: 768px) {
   :root {
-    --app-header-height: 4.5rem;
+    --app-header-height: 3.25rem;
   }
 }
 

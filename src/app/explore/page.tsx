@@ -4,9 +4,8 @@ export const fetchCache = "force-no-store";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import CrackWidget from "@/components/cams/CrackWidget";
-import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
-import { ExploreCategoryTabs } from "@/components/explore/ExploreCategoryTabs";
-import { ExplorePerformerGrid } from "@/components/explore/ExplorePerformerGrid";
+import { ExploreBrowsePanel } from "@/components/explore/ExploreBrowsePanel";
+import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
   getDefaultExploreSeo,
   resolveExploreCategory,
@@ -48,7 +47,7 @@ export async function generateMetadata({
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const { cat } = await searchParams;
   const category = resolveExploreCategory(cat);
-  const defaults = getDefaultExploreSeo();
+  const initialCat = category?.slug ?? null;
 
   let uniqueCategories: Awaited<ReturnType<typeof fetchAllExploreCategories>> =
     [];
@@ -64,48 +63,28 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     size: 24,
   });
 
-  const headline = category?.headline ?? defaults.headline;
-  const subline = category
-    ? category.seoDescription.slice(0, 120) + "…"
-    : defaults.subline;
-
   return (
     <main className="mx-auto min-h-screen w-full max-w-md overflow-y-auto bg-black px-4 pb-8 pt-4 text-white [-webkit-overflow-scrolling:touch]">
       <span className="text-[10px] font-black uppercase tracking-widest text-pink-500">
         EXPLORA
       </span>
-      <h1 className="mb-0.5 text-2xl font-black tracking-tight">{headline}</h1>
-      <p className="mb-4 text-xs text-zinc-400">{subline}</p>
 
-      <Suspense fallback={null}>
-        <ExploreCategoryTabs />
+      <Suspense
+        fallback={
+          <>
+            <div className="mb-0.5 h-8 w-48 animate-pulse rounded-lg bg-zinc-800" />
+            <div className="mb-4 h-4 w-full max-w-xs animate-pulse rounded bg-zinc-900" />
+            <ExplorePerformerGridSkeleton count={8} />
+          </>
+        }
+      >
+        <ExploreBrowsePanel
+          initialCat={initialCat}
+          initialPerformers={performers}
+          initialTotal={total}
+          popularCategories={uniqueCategories}
+        />
       </Suspense>
-
-      <section className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-black uppercase tracking-wide text-zinc-200">
-            {category ? `Resultados · ${category.label}` : "En vivo ahora"}
-          </h2>
-          <span className="text-xs font-semibold text-pink-500">
-            {total} modelos
-          </span>
-        </div>
-        <ExplorePerformerGrid performers={performers} />
-      </section>
-
-      {!category && (
-        <section className="mb-6">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-black uppercase tracking-wide text-zinc-200">
-              Categorías Populares
-            </h2>
-            <span className="text-xs font-semibold text-pink-500">
-              {uniqueCategories.length} activas
-            </span>
-          </div>
-          <ExploreCategoryGrid categories={uniqueCategories} />
-        </section>
-      )}
 
       <section className="mb-6">
         <div className="mb-3 flex items-center justify-between">

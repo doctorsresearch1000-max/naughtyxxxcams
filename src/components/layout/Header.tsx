@@ -41,20 +41,24 @@ function LiveStatusPill() {
 export function Header() {
   return (
     <header
-      className="absolute left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-white/10 bg-neutral-950/40 px-4 py-3 backdrop-blur-md"
+      className="absolute left-0 right-0 top-0 z-50 flex min-h-[var(--app-header-height)] items-center justify-between gap-3 border-b border-white/10 bg-neutral-950/40 px-4 py-2 backdrop-blur-md"
     >
-      <Link href="/" className="group flex items-center gap-2">
+      <Link
+        href="/"
+        className="group flex min-w-0 shrink-0 items-center justify-start"
+        aria-label="NaughtyXXXCams — inicio"
+      >
         <Image
           src="/logo.png"
           alt="NaughtyXXXCams Logo"
-          width={150}
-          height={40}
-          className="h-10 w-auto object-contain transition-transform group-hover:scale-105 md:h-12"
+          width={132}
+          height={36}
+          className="h-8 w-auto max-w-[10.5rem] object-contain object-left transition-transform group-hover:scale-[1.02] md:h-8"
           priority
         />
       </Link>
 
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-3">
         <LiveStatusPill />
       </div>
     </header>
