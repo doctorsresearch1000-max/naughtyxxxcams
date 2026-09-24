@@ -5,10 +5,29 @@ export type LiveCommentKind = "chat" | "tip" | "private";
 
 export type LiveCommentItem = {
   id: string;
-  text: string;
+  username: string;
+  message: string;
+  badgeColor: string;
+  badgeLabel: string;
   kind: LiveCommentKind;
   locale: CommentLocale;
 };
+
+const BADGE_COLORS = ["#39FF14", "#A855F7", "#3B82F6", "#F472B6", "#22D3EE"];
+
+function badgeForUser(username: string): { badgeColor: string; badgeLabel: string } {
+  let hash = 0;
+  for (let i = 0; i < username.length; i += 1) {
+    hash = (hash << 5) - hash + username.charCodeAt(i);
+    hash |= 0;
+  }
+  const idx = Math.abs(hash) % BADGE_COLORS.length;
+  const num = (Math.abs(hash) % 89) + 10;
+  return {
+    badgeColor: BADGE_COLORS[idx]!,
+    badgeLabel: String(num),
+  };
+}
 
 export type LiveCommentPools = {
   en: string[];
@@ -164,11 +183,15 @@ export class LiveCommentScheduler {
     const user =
       locale === "es" ? pick(MASKED_USERS_ES) : pick(MASKED_USERS_EN);
 
+    const badge = badgeForUser(user);
     return {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       kind: "chat",
       locale,
-      text: `${user}: ${body}`,
+      username: user,
+      message: body,
+      badgeColor: badge.badgeColor,
+      badgeLabel: badge.badgeLabel,
     };
   }
 
@@ -198,11 +221,15 @@ export class LiveCommentScheduler {
       snippet =
         locale === "es" ? pick(PRIVATE_CTA_ES) : pick(PRIVATE_CTA_EN);
     }
+    const badge = badgeForUser(user);
     return {
       id: `${Date.now()}-${kind}-${Math.random().toString(36).slice(2, 8)}`,
       kind,
       locale,
-      text: `${user} ${snippet}`,
+      username: user,
+      message: snippet,
+      badgeColor: badge.badgeColor,
+      badgeLabel: "★",
     };
   }
 }

@@ -4,7 +4,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
-import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
   IconBookmarkOutline,
@@ -15,7 +14,9 @@ import {
 } from "@/components/icons/LineIcons";
 import {
   isBookmarked,
+  isFollowing,
   toggleBookmark,
+  toggleFollowing,
   type SavedModelRef,
 } from "@/lib/user/userLibrary";
 
@@ -23,7 +24,6 @@ type FeedActionRailProps = {
   feedKey: string;
   modelRef: SavedModelRef;
   posterUrl: string;
-  profileHref?: string | null;
   profileLabel?: string;
   modelName: string;
   affiliateUrl: string;
@@ -37,8 +37,7 @@ export function FeedActionRail({
   feedKey,
   modelRef,
   posterUrl,
-  profileHref,
-  profileLabel = "View profile",
+  profileLabel = "Model",
   modelName,
   affiliateUrl,
   conversionReady,
@@ -49,17 +48,20 @@ export function FeedActionRail({
   const { requireAuth, isAuthenticated } = useTelegramAuth();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [following, setFollowing] = useState(false);
+
+  const syncLibraryState = () => {
+    if (!isAuthenticated) return;
+    setSaved(isBookmarked(feedKey));
+    setFollowing(isFollowing(feedKey));
+  };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      setSaved(isBookmarked(feedKey));
-    }
+    syncLibraryState();
   }, [feedKey, isAuthenticated]);
 
   useEffect(() => {
-    const onLib = () => {
-      if (isAuthenticated) setSaved(isBookmarked(feedKey));
-    };
+    const onLib = () => syncLibraryState();
     window.addEventListener("nx-library-update", onLib);
     return () => window.removeEventListener("nx-library-update", onLib);
   }, [feedKey, isAuthenticated]);
@@ -70,6 +72,12 @@ export function FeedActionRail({
     if (!requireAuth("Sign in with Telegram to bookmark models")) return;
     const next = toggleBookmark(modelRef);
     setSaved(next);
+  };
+
+  const onToggleFollow = () => {
+    if (!requireAuth("Sign in with Telegram to follow models")) return;
+    const next = toggleFollowing(modelRef);
+    setFollowing(next);
   };
 
   const onChatAttempt = () => {
@@ -110,34 +118,45 @@ export function FeedActionRail({
           </button>
 
           <div className="relative mb-1">
-            {profileHref ? (
-              <FeedPerformerLink
-                href={profileHref}
-                ariaLabel={`View profile ${profileLabel}`}
-                className="block h-12 w-12 overflow-hidden rounded-full border-2 border-[#39FF14] bg-black p-0.5 shadow-lg shadow-[#39FF14]/25 transition active:scale-95"
-              >
-                <FeedPoster
-                  feedKey={`${feedKey}-avatar`}
-                  posterUrl={posterUrl}
-                  className="h-full w-full rounded-full object-cover"
-                />
-              </FeedPerformerLink>
-            ) : (
-              <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-[#39FF14] bg-black p-0.5 shadow-lg shadow-[#39FF14]/25">
-                <FeedPoster
-                  feedKey={`${feedKey}-avatar`}
-                  posterUrl={posterUrl}
-                  className="h-full w-full rounded-full object-cover"
-                />
-              </div>
-            )}
             <button
               type="button"
-              className="absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full bg-[#39FF14] text-xs font-black text-black shadow-md"
-              aria-label="Follow model"
+              onClick={onToggleFollow}
+              className="block h-12 w-12 overflow-hidden rounded-full border-2 border-[#39FF14] bg-black p-0.5 shadow-lg shadow-[#39FF14]/25 transition active:scale-95"
+              aria-label={
+                following
+                  ? `Unfollow ${profileLabel}`
+                  : `Follow ${profileLabel}`
+              }
+              aria-pressed={following}
             >
-              +
+              <FeedPoster
+                feedKey={`${feedKey}-avatar`}
+                posterUrl={posterUrl}
+                className="h-full w-full rounded-full object-cover"
+              />
             </button>
+            <span
+              className={`pointer-events-none absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full text-[11px] font-black shadow-md ${
+                following
+                  ? "bg-[#39FF14] text-black"
+                  : "bg-[#EC4899] text-white"
+              }`}
+              aria-hidden
+            >
+              {following ? (
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M5 12.5 10 17.5 19 7.5"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                "+"
+              )}
+            </span>
           </div>
 
           <LikeActionButton feedKey={feedKey} modelRef={modelRef} />

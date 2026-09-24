@@ -10,6 +10,7 @@ type ProfileTabPanelProps = {
   tab: ProfileInteractionTab;
   bookmarks: SavedModelRef[];
   likes: SavedModelRef[];
+  following: SavedModelRef[];
   history: HistoryEntry[];
   playlists: Playlist[];
   onNewCollection: () => void;
@@ -114,6 +115,7 @@ export function ProfileTabPanel({
   tab,
   bookmarks,
   likes,
+  following,
   history,
   playlists,
   onNewCollection,
@@ -171,14 +173,14 @@ export function ProfileTabPanel({
   }
 
   if (tab === "models") {
-    const merged = [...bookmarks, ...likes].filter(
+    const merged = [...following, ...bookmarks, ...likes].filter(
       (item, i, arr) => arr.findIndex((x) => x.feedKey === item.feedKey) === i,
     );
     return (
       <div className="mt-4">
         <ModelThumbGrid
           items={merged}
-          emptyLabel="Models you save or like will appear here."
+          emptyLabel="Tap a model avatar on the feed to follow and add them here."
         />
       </div>
     );

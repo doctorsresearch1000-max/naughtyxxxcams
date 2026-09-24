@@ -49,3 +49,10 @@ export function usePlaylists(): Playlist[] {
   const { library } = useUserLibrary();
   return library.playlists;
 }
+
+export function useFollowingModels(): SavedModelRef[] {
+  const { library } = useUserLibrary();
+  return Object.values(library.following ?? {}).sort(
+    (a, b) => (b.savedAt ?? 0) - (a.savedAt ?? 0),
+  );
+}

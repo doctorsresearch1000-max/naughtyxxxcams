@@ -96,22 +96,22 @@ export function LiveFeedCard({
 
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
 
-      <LiveCommentTicker performer={performer} isActive={isActive} />
-
-      <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[78%] flex flex-col gap-2">
+      <div className="pointer-events-none absolute bottom-4 left-3 z-[55] max-w-[calc(100%-5.5rem)] flex flex-col items-start">
+        <LiveCommentTicker performer={performer} isActive={isActive} />
         {profileHref ? (
           <FeedPerformerLink
             href={profileHref}
             ariaLabel={`View profile ${handleLabel}`}
-            className="pointer-events-auto inline-block max-w-full text-sm font-extrabold text-white drop-shadow-md transition hover:text-[#39FF14]"
+            className="pointer-events-auto max-w-full text-sm font-extrabold uppercase tracking-wide text-white drop-shadow-md transition hover:text-[#39FF14]"
           >
             {handleLabel}
           </FeedPerformerLink>
         ) : (
-          <span className="text-sm font-extrabold text-white drop-shadow-md">
+          <span className="text-sm font-extrabold uppercase tracking-wide text-white drop-shadow-md">
             {handleLabel}
           </span>
         )}
+        <div className="pointer-events-none mt-2 flex w-full max-w-[78%] flex-col gap-2">
         <ChatWithModelCta
           modelName={modelName}
           affiliateUrl={affiliateUrl}
@@ -122,13 +122,13 @@ export function LiveFeedCard({
             Swipe · next model
           </span>
         ) : null}
+        </div>
       </div>
 
       <FeedActionRail
         feedKey={performer.feedKey}
         modelRef={modelRef}
         posterUrl={performer.posterUrl}
-        profileHref={profileHref}
         profileLabel={handleLabel}
         modelName={modelName}
         affiliateUrl={affiliateUrl}

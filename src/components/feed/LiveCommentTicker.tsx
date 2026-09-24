@@ -15,7 +15,7 @@ type LiveCommentTickerProps = {
   isActive: boolean;
 };
 
-const MAX_VISIBLE = 5;
+const MAX_VISIBLE = 3;
 
 export function LiveCommentTicker({
   performer,
@@ -40,7 +40,9 @@ export function LiveCommentTicker({
 
     let cancelled = false;
 
-    const startScheduler = (pools: ReturnType<typeof getLiveCommentPoolsSync>) => {
+    const startScheduler = (
+      pools: ReturnType<typeof getLiveCommentPoolsSync>,
+    ) => {
       if (cancelled) return;
       schedulerRef.current = new LiveCommentScheduler(pools, commentLocale);
 
@@ -48,12 +50,13 @@ export function LiveCommentTicker({
         const sched = schedulerRef.current;
         if (!sched) return;
         const next = sched.next();
-        setItems((prev) => [next, ...prev].slice(0, MAX_VISIBLE));
+        setItems((prev) => [...prev, next].slice(-MAX_VISIBLE));
       };
 
       pushNext();
+      pushNext();
       const schedule = () => {
-        const wait = 1400 + Math.random() * 1800;
+        const wait = 2200 + Math.random() * 2600;
         timerRef.current = window.setTimeout(() => {
           pushNext();
           schedule();
@@ -83,30 +86,37 @@ export function LiveCommentTicker({
 
   return (
     <div
-      className="pointer-events-none absolute inset-x-3 top-[calc(var(--app-header-height,3.5rem)+2.75rem)] z-[55] flex max-h-[38%] flex-col gap-1.5 overflow-hidden sm:right-[5.5rem]"
+      className="mb-2 flex w-full max-w-[min(100%,17.5rem)] flex-col gap-1"
       aria-live="polite"
       aria-label="Live chat"
       data-live-comment-ticker="true"
     >
-      {items.length === 0 ? (
-        <div
-          className="max-w-[min(100%,18rem)] truncate rounded-lg bg-black/50 px-2.5 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm"
-          aria-hidden
-        >
-          Live chat…
-        </div>
-      ) : null}
       {items.map((item) => (
         <div
           key={item.id}
-          className={`max-w-[min(100%,20rem)] truncate rounded-lg px-2.5 py-1.5 text-[11px] font-semibold leading-tight shadow-lg backdrop-blur-md ${
-            item.kind === "chat"
-              ? "bg-black/60 text-white/95"
-              : "border border-[#39FF14]/60 bg-black/80 text-[#39FF14] shadow-[0_0_12px_rgba(57,255,20,0.25)]"
-          }`}
+          className="flex items-start gap-2 text-left leading-snug drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
           data-comment-kind={item.kind}
         >
-          {item.text}
+          <span
+            className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-black text-black"
+            style={{ backgroundColor: item.badgeColor }}
+            aria-hidden
+          >
+            {item.badgeLabel}
+          </span>
+          <p className="min-w-0 text-[12px]">
+            <span className="font-bold text-white">{item.username}</span>
+            <span
+              className={
+                item.kind === "chat"
+                  ? " font-medium text-white/95"
+                  : " font-semibold text-[#39FF14]"
+              }
+            >
+              {" "}
+              {item.message}
+            </span>
+          </p>
         </div>
       ))}
     </div>

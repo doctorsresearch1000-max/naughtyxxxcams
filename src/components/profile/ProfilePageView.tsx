@@ -12,6 +12,7 @@ import {
 import { ProfileTabPanel } from "@/components/profile/ProfileTabPanel";
 import {
   useBookmarkedModels,
+  useFollowingModels,
   useHistoryEntries,
   useLikedModels,
   usePlaylists,
@@ -27,6 +28,7 @@ export function ProfilePageView() {
   const { user, isAuthenticated, login, logout } = useTelegramAuth();
   const likes = useLikedModels();
   const bookmarks = useBookmarkedModels();
+  const following = useFollowingModels();
   const history = useHistoryEntries();
   const playlists = usePlaylists();
   const [libraryTab, setLibraryTab] = useState<ProfileInteractionTab>("saved");
@@ -147,6 +149,7 @@ export function ProfilePageView() {
           tab={libraryTab}
           bookmarks={bookmarks}
           likes={likes}
+          following={following}
           history={history}
           playlists={playlists}
           onNewCollection={onCreatePlaylist}

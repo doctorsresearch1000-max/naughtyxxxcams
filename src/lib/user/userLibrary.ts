@@ -10,8 +10,10 @@ export type SavedModelRef = {
 };
 
 export type HistoryEntry = SavedModelRef & {
-  action: "view" | "like" | "bookmark";
+  action: "view" | "like" | "bookmark" | "follow";
 };
+
+const FAVORITES_COLLECTION = "Favorites";
 
 export type Playlist = {
   id: string;
@@ -23,6 +25,7 @@ export type Playlist = {
 export type UserLibrary = {
   likes: Record<string, SavedModelRef>;
   bookmarks: Record<string, SavedModelRef>;
+  following: Record<string, SavedModelRef>;
   history: HistoryEntry[];
   playlists: Playlist[];
 };
@@ -31,7 +34,7 @@ const STORAGE_KEY = "nx-user-library-v1";
 const MAX_HISTORY = 80;
 
 function emptyLibrary(): UserLibrary {
-  return { likes: {}, bookmarks: {}, history: [], playlists: [] };
+  return { likes: {}, bookmarks: {}, following: {}, history: [], playlists: [] };
 }
 
 export function readUserLibrary(): UserLibrary {
@@ -43,6 +46,7 @@ export function readUserLibrary(): UserLibrary {
     return {
       likes: parsed.likes ?? {},
       bookmarks: parsed.bookmarks ?? {},
+      following: parsed.following ?? {},
       history: Array.isArray(parsed.history) ? parsed.history : [],
       playlists: Array.isArray(parsed.playlists) ? parsed.playlists : [],
     };
@@ -119,6 +123,52 @@ export function createPlaylist(name: string): Playlist {
   lib.playlists = [playlist, ...lib.playlists];
   writeUserLibrary(lib);
   return playlist;
+}
+
+function ensureFavoritesPlaylist(lib: UserLibrary): Playlist {
+  const existing = lib.playlists.find((p) => p.name === FAVORITES_COLLECTION);
+  if (existing) return existing;
+  const playlist: Playlist = {
+    id: `pl-favorites-${Date.now()}`,
+    name: FAVORITES_COLLECTION,
+    createdAt: Date.now(),
+    items: [],
+  };
+  lib.playlists = [playlist, ...lib.playlists];
+  return playlist;
+}
+
+function removeFromFavorites(lib: UserLibrary, feedKey: string): void {
+  for (const pl of lib.playlists) {
+    if (pl.name === FAVORITES_COLLECTION) {
+      pl.items = pl.items.filter((i) => i.feedKey !== feedKey);
+    }
+  }
+}
+
+export function isFollowing(feedKey: string): boolean {
+  return Boolean(readUserLibrary().following[feedKey]);
+}
+
+export function toggleFollowing(ref: SavedModelRef): boolean {
+  const lib = readUserLibrary();
+  const active = Boolean(lib.following[ref.feedKey]);
+  const stamped = { ...ref, savedAt: Date.now() };
+
+  if (active) {
+    delete lib.following[ref.feedKey];
+    removeFromFavorites(lib, ref.feedKey);
+  } else {
+    lib.following[ref.feedKey] = stamped;
+    const favorites = ensureFavoritesPlaylist(lib);
+    if (!favorites.items.some((i) => i.feedKey === ref.feedKey)) {
+      favorites.items = [stamped, ...favorites.items];
+    }
+    pushHistory(lib, { ...stamped, action: "follow" });
+  }
+
+  writeUserLibrary(lib);
+  return !active;
 }
 
 export function addToPlaylist(playlistId: string, ref: SavedModelRef): void {
