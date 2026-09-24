@@ -22,7 +22,7 @@ export function SlushyBrandLogo({
     >
       <span className="text-white">Naughty</span>
       <span className="bg-gradient-to-r from-[#39FF14] to-[#00FF7F] bg-clip-text text-transparent">
-        Xxx
+        XXX
       </span>
       <span className="text-white">Cams</span>
     </span>
@@ -36,7 +36,7 @@ export function SlushyBrandLogo({
     <Link
       href={href}
       className="group shrink-0 transition active:scale-[0.99]"
-      aria-label="Naughty Xxx Cams home"
+      aria-label="Naughty XXX Cams home"
     >
       {inner}
     </Link>
