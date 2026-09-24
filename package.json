@@ -11,8 +11,8 @@
     "dev": "next dev",
     "build:next": "next build",
     "build": "opennextjs-cloudflare build",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "npm run build && opennextjs-cloudflare deploy",
+    "preview": "npm run build && opennextjs-cloudflare preview",
     "lint": "next lint"
   },
   "dependencies": {
