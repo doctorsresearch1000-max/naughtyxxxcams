@@ -6,6 +6,14 @@ import {
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { findPerformerByProfileSlug } from "@/lib/crackrevenue/performerLookup";
 import { resolveWidgetLandingId } from "@/lib/crackrevenue/config";
+import {
+  buildAboutCards,
+  buildFollowersLabel,
+  buildGalleryItems,
+  buildProfileBadges,
+  type AboutCard,
+  type GalleryMediaItem,
+} from "@/lib/profile/profilePresentation";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 const FALLBACK_AVATAR =
@@ -13,7 +21,9 @@ const FALLBACK_AVATAR =
 
 export type ModelProfileView = {
   name: string;
+  displayName: string;
   handle: string;
+  profileSlug: string;
   status: "live" | "offline";
   platform: string;
   age?: number;
@@ -23,7 +33,13 @@ export type ModelProfileView = {
   avatar: string;
   bannerUrl: string;
   gallery: string[];
+  galleryItems: GalleryMediaItem[];
   traits: string[];
+  traitSlugs: string[];
+  aboutCards: AboutCard[];
+  followersLabel: string;
+  badges: string[];
+  bio: string;
   crakLandingId: string;
   affiliateUrl: string;
   performer?: CrackPerformer;
@@ -96,9 +112,15 @@ function toViewModel(
     performerProfileSlug(p.nameClean || p.name) ||
     name.toLowerCase().replace(/[^a-z0-9]+/g, "");
 
+  const traitSlugs = traits
+    .map((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, ""))
+    .filter(Boolean);
+
   return {
     name,
+    displayName: name.toUpperCase(),
     handle: `@${slug}`,
+    profileSlug: slug,
     status: p.live === false ? "offline" : "live",
     platform: "streamate",
     age: p.characteristic?.age,
@@ -108,7 +130,16 @@ function toViewModel(
     avatar,
     bannerUrl,
     gallery: gallery.length > 0 ? gallery : [avatar],
+    galleryItems: buildGalleryItems(
+      gallery.length > 0 ? gallery : [avatar],
+      traits,
+    ),
     traits,
+    traitSlugs,
+    aboutCards: buildAboutCards(p, traits),
+    followersLabel: buildFollowersLabel(p),
+    badges: buildProfileBadges(p),
+    bio: `¡Hola! Soy ${name}. Me encanta conectar en vivo, charlar contigo y crear momentos únicos en mi sala Streamate. ¿Entras? 💚`,
     crakLandingId: landingId,
     affiliateUrl: buildModelAffiliateUrl(p),
     performer: p,

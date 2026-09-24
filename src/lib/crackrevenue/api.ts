@@ -27,7 +27,13 @@ export type CrackPerformer = {
     languages?: string[];
     age?: number;
     bodyTypes?: string[];
+    bustSize?: string;
+    height?: string;
+    hairColor?: string;
+    eyeColor?: string;
+    gender?: string;
   };
+  stars?: number;
 };
 
 export type PerformersResponse = {
