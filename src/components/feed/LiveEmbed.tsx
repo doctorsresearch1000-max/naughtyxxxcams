@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
+import { setActiveFeedIframeElement } from "@/lib/feed/audioGestureUnlock";
 import {
   WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
@@ -36,8 +37,6 @@ export function LiveEmbed({
   const [streamActive, setStreamActive] = useState(false);
   const [posterFallback, setPosterFallback] = useState(false);
 
-  const embedMuted = streamMuted ? 1 : 0;
-
   const embedSrc = useMemo(
     () =>
       buildCamsEmbedUrl(embedKey, {
@@ -47,16 +46,16 @@ export function LiveEmbed({
         ratio: 0.5625,
         useFeed: 0,
         performerNameClean,
-        muted: embedMuted,
+        muted: streamMuted ? 1 : 0,
       }),
-    [embedKey, performerNameClean, embedMuted],
+    [embedKey, performerNameClean, streamMuted],
   );
 
   useEffect(() => {
     setFrameLoaded(false);
     setStreamActive(false);
     setPosterFallback(false);
-  }, [embedKey, isActive, embedMuted]);
+  }, [embedKey, isActive]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -70,6 +69,18 @@ export function LiveEmbed({
       "*",
     );
   }, [streamMuted, isActive, frameLoaded]);
+
+  useEffect(() => {
+    const el = iframeRef.current;
+    if (isActive && isArmed && el) {
+      setActiveFeedIframeElement(el);
+    } else if (!isActive) {
+      setActiveFeedIframeElement(null);
+    }
+    return () => {
+      if (isActive) setActiveFeedIframeElement(null);
+    };
+  }, [isActive, isArmed, frameLoaded]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -127,7 +138,7 @@ export function LiveEmbed({
     <div className="absolute inset-0 z-[10] overflow-hidden bg-black">
       {mountIframe && (
         <iframe
-          key={`${embedKey}-m${embedMuted}`}
+          key={embedKey}
           ref={iframeRef}
           src={embedSrc}
           title={`Live stream ${embedKey}`}

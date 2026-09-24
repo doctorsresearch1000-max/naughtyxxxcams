@@ -11,8 +11,8 @@ type FooterColumnProps = {
 
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
-    <div className="min-w-0 break-words">
-      <h3 className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+    <div className="min-w-0">
+      <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-white">
         {title}
       </h3>
       <ul className="flex flex-col gap-2.5">
@@ -47,8 +47,8 @@ function FooterLegalColumn() {
   ];
 
   return (
-    <div className="min-w-0 break-words lg:col-span-1">
-      <h3 className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+    <div className="min-w-0">
+      <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-white">
         Legal & Support
       </h3>
       <ul className="flex flex-col gap-2.5">
@@ -73,7 +73,7 @@ function FooterLegalColumn() {
         </p>
         <p className="text-xs leading-relaxed text-neutral-300">
           <span className="font-semibold text-white">DMCA agent:</span>{" "}
-          <a href={dmcaMail} className="text-[#39FF14] hover:underline">
+          <a href={dmcaMail} className="break-all text-[#39FF14] hover:underline">
             {SITE_LEGAL.dmcaEmail}
           </a>
         </p>
@@ -83,13 +83,13 @@ function FooterLegalColumn() {
             Reporting guidelines
           </Link>
           {" · "}
-          <a href={abuseMail} className="text-neutral-400 hover:text-white">
+          <a href={abuseMail} className="break-all text-neutral-400 hover:text-white">
             {SITE_LEGAL.abuseEmail}
           </a>
         </p>
         <p className="text-xs leading-relaxed text-neutral-300">
           <span className="font-semibold text-white">Support:</span>{" "}
-          <a href={supportMail} className="text-[#39FF14] hover:underline">
+          <a href={supportMail} className="break-all text-[#39FF14] hover:underline">
             {SITE_LEGAL.supportEmail}
           </a>
         </p>
@@ -130,69 +130,55 @@ const EXPLORE_LINKS: FooterLink[] = [
 export function Footer() {
   return (
     <footer
-      className="relative isolate z-0 mt-12 shrink-0 overflow-hidden border-t border-white/10 bg-[#0A0A0A] text-sm text-neutral-400"
+      className="relative z-0 mt-12 shrink-0 border-t border-white/10 bg-[#0A0A0A] text-sm text-neutral-400"
     >
-      <div className="mx-auto max-w-7xl px-4 py-12 md:px-8 lg:px-10">
-        <p className="mb-8 rounded-xl border border-white/10 bg-[#1C1C1E]/60 px-4 py-3 text-xs leading-relaxed text-neutral-400">
-          <span className="font-semibold text-zinc-200">Accessibility note:</span>{" "}
-          The home feed uses infinite scroll, so the footer sits below the feed.
-          Legal, DMCA, and contact links are always available on{" "}
-          <Link href="/explore" className="text-[#39FF14] hover:underline">
-            Discover
-          </Link>
-          ,{" "}
-          <Link href="/following" className="text-[#39FF14] hover:underline">
-            Following
-          </Link>
-          ,{" "}
-          <Link href="/profile" className="text-[#39FF14] hover:underline">
-            Profile
-          </Link>
-          , and on dedicated pages such as{" "}
-          <Link href="/dmca" className="text-[#39FF14] hover:underline">
-            /dmca
-          </Link>{" "}
-          and{" "}
-          <Link href="/contact" className="text-[#39FF14] hover:underline">
-            /contact
-          </Link>
-          .
-        </p>
-
+      <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div
-          className="grid grid-cols-1 gap-y-12 gap-x-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-x-10 lg:gap-y-0"
+          className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-10"
         >
-          <div className="flex min-w-0 flex-col gap-4 sm:col-span-2 lg:col-span-1 lg:max-w-[240px]">
+          <div className="min-w-0 sm:col-span-2 lg:col-span-4">
             <div className="flex flex-col items-start gap-3">
-              <SlushyBrandLogo variant="compact" href="/" className="max-w-full" />
+              <SlushyBrandLogo
+                variant="compact"
+                href="/"
+                className="max-w-full whitespace-normal"
+              />
               <span
                 className="inline-flex rounded-md bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white"
               >
                 18+ Adults Only
               </span>
             </div>
-            <p className="text-xs leading-relaxed text-neutral-400">
+            <p className="mt-4 max-w-sm text-xs leading-relaxed text-neutral-400">
               Naughty XXX Cams is a mobile-first live webcam directory powered by
               verified Streamate performers in HD. Browse trending rooms, save
               favorites, and jump into chat in seconds.
             </p>
           </div>
 
-          <FooterColumn title="Live Categories" links={LIVE_CATEGORIES} />
-          <FooterColumn title="Show Types" links={SHOW_TYPES} />
-          <FooterColumn title="Explore" links={EXPLORE_LINKS} />
-          <FooterLegalColumn />
+          <div className="min-w-0 lg:col-span-2">
+            <FooterColumn title="Live Categories" links={LIVE_CATEGORIES} />
+          </div>
+          <div className="min-w-0 lg:col-span-2">
+            <FooterColumn title="Show Types" links={SHOW_TYPES} />
+          </div>
+          <div className="min-w-0 lg:col-span-2">
+            <FooterColumn title="Explore" links={EXPLORE_LINKS} />
+          </div>
+          <div className="min-w-0 sm:col-span-2 lg:col-span-2">
+            <FooterLegalColumn />
+          </div>
         </div>
 
-        <div className="mt-12 space-y-3 border-t border-white/10 pt-8">
-          <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+        <div className="mt-10 space-y-3 border-t border-white/10 pt-8">
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
             <Link href="/dmca" className="text-neutral-400 hover:text-[#39FF14]">
               DMCA
             </Link>
             <span className="text-zinc-700" aria-hidden>|</span>
             <a
               href={`mailto:${SITE_LEGAL.dmcaEmail}`}
-              className="text-neutral-400 hover:text-[#39FF14]"
+              className="break-all text-neutral-400 hover:text-[#39FF14]"
             >
               {SITE_LEGAL.dmcaEmail}
             </a>

@@ -379,12 +379,12 @@ export function ExploreSlushyDiscover({
       <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#1a3a3f] via-[#1C1C1E] to-[#0f0f12]">
         <div className="relative z-10 flex min-h-[140px] flex-col justify-center gap-2 p-4 pr-[42%]">
           <span className="inline-flex w-fit rounded-full bg-teal-900/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-teal-200">
-            Promo · WELCOME50
+            Promo · FREE
           </span>
           <p className="text-sm font-black leading-tight text-white sm:text-base">
-            WELCOME OFFER
+            Jerk off FREE
             <br />
-            GET 50% MORE GEMS!
+            with Jerkmate models
           </p>
           <a
             href={promoUrl}
@@ -392,7 +392,7 @@ export function ExploreSlushyDiscover({
             rel="nofollow noopener"
             className="mt-1 inline-flex w-full max-w-[200px] items-center justify-center rounded-full bg-[#39FF14] px-4 py-2.5 text-xs font-extrabold text-black shadow-[0_0_20px_rgba(57,255,20,0.35)] transition active:scale-[0.98]"
           >
-            Claim Bonus Gems
+            Watch FREE now
           </a>
         </div>
         {promoImage && (
