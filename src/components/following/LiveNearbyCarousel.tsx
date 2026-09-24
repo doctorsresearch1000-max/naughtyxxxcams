@@ -19,7 +19,7 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
           <div
             className={`relative rounded-full p-[2px] shadow-md ${
               item.isLive
-                ? "bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-600 shadow-pink-500/25"
+                ? "bg-gradient-to-tr from-[#39FF14] via-[#00FF7F] to-emerald-400 shadow-[#39FF14]/25"
                 : "bg-zinc-700/80"
             }`}
           >
@@ -34,7 +34,7 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
               />
             </div>
             {item.isLive && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full border border-[#0A0A0A] bg-pink-600 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-white">
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full border border-[#0A0A0A] bg-[#39FF14] px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-black">
                 LIVE
               </span>
             )}

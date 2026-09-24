@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SlushyBrandLogo } from "@/components/brand/SlushyBrandLogo";
 
 function LiveStatusPill() {
   const [count, setCount] = useState<number>(36);
@@ -17,7 +16,7 @@ function LiveStatusPill() {
         const n = Array.isArray(json.performers) ? json.performers.length : 0;
         if (n > 0) setCount(n);
       } catch {
-        /* mantener valor por defecto */
+        /* keep default */
       }
     })();
     return () => {
@@ -27,13 +26,13 @@ function LiveStatusPill() {
 
   return (
     <div
-      className="flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-3.5 py-1.5 text-xs text-white backdrop-blur-md"
-      aria-label="Modelos en vivo"
+      className="flex items-center gap-2 rounded-full border border-[#39FF14]/25 bg-black/50 px-3.5 py-1.5 text-xs text-white backdrop-blur-md"
+      aria-label="Models live now"
     >
-      <span className="h-2 w-2 animate-pulse rounded-full bg-pink-500" />
-      <span className="font-medium tracking-wide">LIVE</span>
-      <span className="text-neutral-400">|</span>
-      <span className="font-semibold">{count}</span>
+      <span className="h-2 w-2 animate-pulse rounded-full bg-[#39FF14] shadow-[0_0_8px_#39FF14]" />
+      <span className="font-semibold tracking-wide text-[#39FF14]">LIVE</span>
+      <span className="text-neutral-500">|</span>
+      <span className="font-semibold text-white">{count}</span>
     </div>
   );
 }
@@ -41,23 +40,9 @@ function LiveStatusPill() {
 export function Header() {
   return (
     <header
-      className="absolute left-0 right-0 top-0 z-50 flex min-h-[var(--app-header-height)] items-center justify-between gap-3 border-b border-white/10 bg-neutral-950/40 px-4 py-2 backdrop-blur-md"
+      className="absolute left-0 right-0 top-0 z-50 flex min-h-[var(--app-header-height)] items-center justify-between gap-3 border-b border-white/10 bg-[#0A0A0A]/75 px-4 py-2.5 backdrop-blur-md"
     >
-      <Link
-        href="/"
-        className="group flex min-w-0 shrink-0 items-center justify-start"
-        aria-label="NaughtyXXXCams — inicio"
-      >
-        <Image
-          src="/logo.png"
-          alt="NaughtyXXXCams Logo"
-          width={200}
-          height={52}
-          className="h-11 w-auto max-w-[13.5rem] object-contain object-left transition-transform group-hover:scale-[1.02] md:h-12 md:max-w-[14.5rem]"
-          priority
-        />
-      </Link>
-
+      <SlushyBrandLogo variant="header" href="/" />
       <div className="flex shrink-0 items-center gap-3">
         <LiveStatusPill />
       </div>

@@ -26,6 +26,12 @@ export function FollowingPageView({
   const router = useRouter();
   const [updatedAt, setUpdatedAt] = useState(() => Date.now());
   const [refreshing, setRefreshing] = useState(false);
+  const [, setClockTick] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setClockTick((t) => t + 1), 12_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -44,7 +50,7 @@ export function FollowingPageView({
   return (
     <>
       <section className="mb-6">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-500">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#39FF14]">
           TRANSMISIONES CERCANAS
         </span>
         <div className="mt-2">
@@ -53,7 +59,7 @@ export function FollowingPageView({
       </section>
 
       <section>
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-500">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#39FF14]">
           SIGUIENDO
         </span>
         <div className="mb-1 mt-1 flex items-center justify-between gap-3">
@@ -64,7 +70,7 @@ export function FollowingPageView({
             type="button"
             onClick={onRefresh}
             disabled={refreshing}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-[#1C1C1E] text-sm text-pink-400 transition hover:border-pink-500/40 hover:bg-zinc-900 disabled:opacity-60"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-[#1C1C1E] text-sm text-[#39FF14] transition hover:border-[#39FF14]/40 hover:bg-zinc-900 disabled:opacity-60"
             aria-label="Actualizar lista"
           >
             <span className={refreshing ? "inline-block animate-spin" : ""}>
@@ -75,10 +81,10 @@ export function FollowingPageView({
         <p className="mb-3 text-xs leading-relaxed text-zinc-400">{subtitle}</p>
 
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-pink-500/35 bg-pink-950/50 px-2.5 py-1 text-[10px] font-bold text-pink-400">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#39FF14]/35 bg-[#39FF14]/10 px-2.5 py-1 text-[10px] font-bold text-[#39FF14]">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-500 opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#39FF14] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#39FF14]" />
             </span>
             LIVE · {liveCount}
           </span>

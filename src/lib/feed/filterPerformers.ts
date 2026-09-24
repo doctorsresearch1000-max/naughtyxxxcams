@@ -1,5 +1,6 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { getPerformerKey } from "@/lib/crackrevenue/api";
+import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
 
 export type FeedPerformer = CrackPerformer & {
   feedKey: string;
@@ -16,12 +17,7 @@ function isHttpsUrl(url: string): boolean {
 }
 
 function posterBaseKey(url: string): string {
-  try {
-    const u = new URL(url);
-    return `${u.origin}${u.pathname}`;
-  } catch {
-    return url;
-  }
+  return imageUrlBaseKey(url);
 }
 
 /**

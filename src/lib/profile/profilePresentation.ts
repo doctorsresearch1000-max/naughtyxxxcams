@@ -1,6 +1,8 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { performerProfileSlug } from "@/lib/profile/performerHandle";
+import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
+import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
+import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 export type AboutCard = {
   label: string;
@@ -122,23 +124,24 @@ export function buildGalleryItems(
     .filter((t) => t.length > 2)
     .slice(0, 12);
 
-  const sources = gallery.length > 0 ? gallery : [];
-  const items: GalleryMediaItem[] = [];
-
-  for (let i = 0; i < Math.max(9, sources.length); i += 1) {
-    const src = sources[i % Math.max(sources.length, 1)] ?? sources[0];
-    if (!src) break;
-    const locked = i > 0 && i % 3 === 2;
-    items.push({
-      id: `${src}-${i}`,
-      src,
-      viewsLabel: formatViews(`${src}-${i}`),
-      locked,
-      tags: tagSlugs,
-    });
+  const seen = new Set<string>();
+  const sources: string[] = [];
+  for (const raw of gallery) {
+    const src = raw?.trim();
+    if (!src) continue;
+    const key = imageUrlBaseKey(src);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    sources.push(src);
   }
 
-  return items.slice(0, 12);
+  return sources.slice(0, 12).map((src, i) => ({
+    id: `${imageUrlBaseKey(src)}-${i}`,
+    src,
+    viewsLabel: formatViews(`${src}-${i}`),
+    locked: i > 0 && i % 3 === 2,
+    tags: tagSlugs,
+  }));
 }
 
 export function buildFollowersLabel(performer: CrackPerformer): string {
@@ -164,10 +167,8 @@ export function toRecommendedProfile(
 ): RecommendedProfile | null {
   const slug = performerProfileSlug(performer.nameClean || performer.name);
   if (!slug) return null;
-  const avatar =
-    performer.thumbnailUrl ||
-    performer.liveSnapshotURL ||
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200";
+  const avatar = pickCoverUrl(performer);
+  if (!avatar) return null;
   return {
     name: performer.nameClean || performer.name || slug,
     slug,

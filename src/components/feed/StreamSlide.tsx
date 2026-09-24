@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import type { StreamItem } from "@/data/mock";
 import { formatViewers } from "@/data/mock";
-import { BrandLogo } from "@/components/BrandLogo";
+import { SlushyBrandLogo } from "@/components/brand/SlushyBrandLogo";
+import { useFeedLikes } from "@/hooks/useFeedLikes";
 
 type StreamSlideProps = {
   stream: StreamItem;
@@ -19,6 +20,7 @@ type StreamSlideProps = {
 
 export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
   const doubledComments = [...stream.comments, ...stream.comments];
+  const { liked, label, toggleLike } = useFeedLikes(stream.id);
 
   return (
     <article
@@ -36,12 +38,13 @@ export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/10 to-black/80" />
 
       <header className="absolute left-0 right-0 top-0 z-20 flex items-start justify-between gap-3 p-4 pt-[max(1rem,env(safe-area-inset-top))]">
-        <BrandLogo compact />
+        <SlushyBrandLogo variant="compact" href="/" />
         <div
           className="rounded-full border border-white/10 bg-black/45 px-3 py-1.5 text-xs font-semibold backdrop-blur-sm"
           aria-label={`${stream.viewers} viewers`}
         >
-          <span className="text-cyan">👁</span> {formatViewers(stream.viewers)} watching
+          <span className="text-[#39FF14]">👁</span> {formatViewers(stream.viewers)}{" "}
+          watching
         </div>
       </header>
 
@@ -69,13 +72,18 @@ export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
           </div>
           <button
             type="button"
-            className="absolute -bottom-2 left-1/2 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full bg-magenta text-white shadow-neon"
+            className="absolute -bottom-2 left-1/2 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full bg-[#39FF14] text-black shadow-[0_0_12px_#39FF14]"
             aria-label="Follow model"
           >
             <Plus className="h-4 w-4" strokeWidth={3} />
           </button>
         </div>
-        <ActionIcon icon={Heart} label={`${stream.likes} likes`} />
+        <ActionIcon
+          icon={Heart}
+          label={label}
+          active={liked}
+          onClick={toggleLike}
+        />
         <ActionIcon icon={MessageCircle} label="Chat" />
         <ActionIcon icon={Bookmark} label="Save" />
         <ActionIcon icon={Share2} label="Share" />
@@ -83,12 +91,15 @@ export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
 
       <footer className="absolute bottom-[4.75rem] left-0 right-14 z-20 px-4">
         <p className="text-base font-extrabold tracking-tight">@{stream.username}</p>
-        <p className="mt-0.5 text-sm text-white/75">{stream.displayName} · LIVE on TeleHub</p>
+        <p className="mt-0.5 text-sm text-white/75">
+          {stream.displayName} · LIVE on Streamate
+        </p>
         <div className="relative mt-3 h-16 overflow-hidden">
           <ul className="animate-marquee-up space-y-2 text-sm text-white/85">
             {doubledComments.map((text, i) => (
               <li key={`${stream.id}-c-${i}`} className="truncate">
-                <span className="font-semibold text-cyan/90">fan_{i + 1}</span> {text}
+                <span className="font-semibold text-[#39FF14]/90">fan_{i + 1}</span>{" "}
+                {text}
               </li>
             ))}
           </ul>
@@ -101,20 +112,26 @@ export function StreamSlide({ stream, priority = false }: StreamSlideProps) {
 function ActionIcon({
   icon: Icon,
   label,
+  active = false,
+  onClick,
 }: {
   icon: typeof Heart;
   label: string;
+  active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
-      className="flex flex-col items-center gap-1 text-white/90"
+      onClick={onClick}
+      className={`flex flex-col items-center gap-1 ${active ? "text-[#39FF14]" : "text-white/90"}`}
       aria-label={label}
+      aria-pressed={active}
     >
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-black/35 backdrop-blur-sm">
-        <Icon className="h-6 w-6" />
+        <Icon className={`h-6 w-6 ${active ? "fill-[#39FF14] text-[#39FF14]" : ""}`} />
       </span>
-      <span className="text-[10px] font-medium">{label.split(" ")[0]}</span>
+      <span className="text-[10px] font-medium">{label}</span>
     </button>
   );
 }

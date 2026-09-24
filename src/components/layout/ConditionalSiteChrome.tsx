@@ -19,9 +19,9 @@ export function ConditionalSiteChrome({
 
   return (
     <div
-      className={`flex min-h-0 flex-1 flex-col ${isHome ? "" : "pt-[var(--app-header-height)]"}`}
+      className={`flex min-h-0 flex-1 flex-col overflow-x-hidden ${isHome ? "" : "pt-[var(--app-header-height)]"}`}
     >
-      {children}
+      <div className="relative z-10 min-h-0 flex-1">{children}</div>
       {showFooter ? <Footer /> : null}
     </div>
   );

@@ -36,7 +36,7 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
               aria-label={`Ver directo ${handle}`}
             />
             <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3">
-              <span className="flex w-fit items-center gap-1 rounded-lg bg-pink-600/95 px-2 py-0.5 text-[9px] font-black tracking-wide text-white shadow-lg shadow-pink-900/40">
+              <span className="flex w-fit items-center gap-1 rounded-lg bg-[#39FF14] px-2 py-0.5 text-[9px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
                 ((o)) EN VIVO
               </span>
               <div className="space-y-1">
@@ -50,7 +50,7 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
                 ) : (
                   <h3 className="text-sm font-extrabold text-white">{handle}</h3>
                 )}
-                <span className="inline-flex text-[10px] font-bold text-pink-400">
+                <span className="inline-flex text-[10px] font-bold text-[#39FF14]">
                   STREAMATE · Ver directo
                 </span>
               </div>

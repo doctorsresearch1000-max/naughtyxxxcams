@@ -3,6 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
+import { ConversionGateDialog } from "@/components/conversion/ConversionGateDialog";
+import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
 
@@ -63,6 +66,9 @@ export function ModelProfileSlushyView({
 }: ModelProfileSlushyViewProps) {
   const isLive = model.status === "live";
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [gateOpen, setGateOpen] = useState(false);
+  const conversionReady = useDelayedConversionCta(true, 15_000);
+  const chatCtaLabel = `Chat with ${model.displayName}`;
 
   const galleryTags = useMemo(() => {
     const set = new Set<string>();
@@ -82,10 +88,14 @@ export function ModelProfileSlushyView({
     recommended[0]?.profilePath ??
     "/explore";
 
-  const chatLabel = isLive ? "Entrar al chat en vivo" : "Chat now";
-
   return (
     <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white">
+      <ConversionGateDialog
+        open={gateOpen}
+        modelName={model.displayName}
+        affiliateUrl={model.affiliateUrl}
+        onClose={() => setGateOpen(false)}
+      />
       <div className="mx-auto max-w-md">
         {/* Hero */}
         <section className="relative">
@@ -142,6 +152,16 @@ export function ModelProfileSlushyView({
           <h1 className="text-2xl font-black tracking-tight">
             {model.displayName}
           </h1>
+          <p className="mt-1 text-sm font-semibold text-zinc-400">
+            {model.handle.startsWith("@") ? model.handle : `@${model.handle}`}
+          </p>
+          <div className="mt-3 flex justify-center">
+            <ChatWithModelCta
+              modelName={model.displayName}
+              affiliateUrl={model.affiliateUrl}
+              visible={conversionReady}
+            />
+          </div>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
             {model.bio}
           </p>
@@ -161,11 +181,22 @@ export function ModelProfileSlushyView({
 
         {/* CTAs */}
         <section className="space-y-3 px-4 pt-6">
-          <PrimaryCta
-            href={model.affiliateUrl}
-            live={isLive}
-            label={chatLabel}
-          />
+          {conversionReady ? (
+            <PrimaryCta
+              href={model.affiliateUrl}
+              live={isLive}
+              label={chatCtaLabel}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setGateOpen(true)}
+              className="flex w-full items-center justify-between rounded-full border border-[#39FF14]/30 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-300 transition active:scale-[0.99]"
+            >
+              <span>Chat unlocks in a moment…</span>
+              <span aria-hidden>💬</span>
+            </button>
+          )}
           <button
             type="button"
             className="flex w-full items-center justify-between rounded-full border border-white/15 bg-[#1C1C1E] px-5 py-4 text-sm font-semibold text-white"
@@ -327,7 +358,7 @@ export function ModelProfileSlushyView({
             <PrimaryCta
               href={model.affiliateUrl}
               live={isLive}
-              label="Chat now"
+              label={chatCtaLabel}
             />
             <Link
               href={nextProfilePath}

@@ -1,9 +1,12 @@
 "use client";
 
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
+import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
+import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import {
   performerDisplayHandle,
   performerProfilePath,
@@ -28,12 +31,16 @@ export function LiveFeedCard({
   onRegisterIframe,
 }: LiveFeedCardProps) {
   const { muted, toggleMuted } = useSessionAudio();
+  const conversionReady = useDelayedConversionCta(isActive, 15_000);
   const handleLabel = performerDisplayHandle(
     performer.nameClean || performer.name,
   );
+  const modelName =
+    performer.nameClean || performer.name?.replace(/^@+/, "") || "Model";
   const profileHref = performerProfilePath(
     performer.nameClean || performer.name,
   );
+  const affiliateUrl = buildModelAffiliateUrl(performer);
 
   return (
     <article
@@ -53,18 +60,18 @@ export function LiveFeedCard({
 
       <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
 
-      <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[72%] flex flex-col gap-1">
+      <div className="pointer-events-none absolute bottom-4 left-4 z-[35] max-w-[78%] flex flex-col gap-2">
         {isActive && (
-          <div className="mb-1 flex max-w-[220px] items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs text-zinc-200 backdrop-blur-md">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="truncate">deep_tipper: Estás hecha una diosa</span>
+          <div className="mb-0.5 flex max-w-[220px] items-center gap-2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs text-zinc-200 backdrop-blur-md">
+            <span className="h-2 w-2 rounded-full bg-[#39FF14]" />
+            <span className="truncate">deep_tipper: you look amazing tonight</span>
           </div>
         )}
         {profileHref ? (
           <FeedPerformerLink
             href={profileHref}
-            ariaLabel={`Ver perfil de ${handleLabel}`}
-            className="pointer-events-auto inline-block max-w-full text-sm font-extrabold text-white drop-shadow-md transition hover:text-pink-200"
+            ariaLabel={`View profile ${handleLabel}`}
+            className="pointer-events-auto inline-block max-w-full text-sm font-extrabold text-white drop-shadow-md transition hover:text-[#39FF14]"
           >
             {handleLabel}
           </FeedPerformerLink>
@@ -73,8 +80,13 @@ export function LiveFeedCard({
             {handleLabel}
           </span>
         )}
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-pink-400">
-          {isActive ? "En vivo · Streamate" : "Desliza · siguiente modelo"}
+        <ChatWithModelCta
+          modelName={modelName}
+          affiliateUrl={affiliateUrl}
+          visible={isActive && conversionReady}
+        />
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-[#39FF14]/90">
+          {isActive ? "Live · Streamate" : "Swipe · next model"}
         </span>
       </div>
 
@@ -83,6 +95,9 @@ export function LiveFeedCard({
         posterUrl={performer.posterUrl}
         profileHref={profileHref}
         profileLabel={handleLabel}
+        modelName={modelName}
+        affiliateUrl={affiliateUrl}
+        conversionReady={conversionReady}
         isActive={isActive}
         muted={muted}
         onToggleMute={toggleMuted}

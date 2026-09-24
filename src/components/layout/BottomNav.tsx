@@ -41,7 +41,7 @@ export default function BottomNav() {
             href={item.href}
             prefetch
             className={`pointer-events-auto flex h-full min-w-0 flex-1 flex-col items-center justify-center text-xs transition-colors hover:text-white ${
-              isActive ? "font-bold text-[#ec4899]" : "text-gray-400"
+              isActive ? "font-bold text-[#39FF14]" : "text-gray-400"
             }`}
             style={{ touchAction: "manipulation" }}
           >

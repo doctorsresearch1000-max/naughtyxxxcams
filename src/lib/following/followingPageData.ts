@@ -1,5 +1,6 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { pickCoverUrl } from "@/lib/crackrevenue/api";
+import { getPerformerKey, pickCoverUrl } from "@/lib/crackrevenue/api";
+import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { fetchExploreMasterPool } from "@/lib/explore/fetchCategoryPerformers";
 import {
@@ -107,13 +108,39 @@ export async function getFollowingPageData(): Promise<FollowingPageData> {
   }
 
   const livePool = pool.filter((p) => p.live !== false);
+  const usedPerformerKeys = new Set<string>();
+  const usedImageBases = new Set<string>();
 
-  const nearby: FollowingNearbyItem[] = NEARBY_SEEDS.map((seed, index) => {
-    const match =
-      findByLabel(livePool, seed.label) ??
-      livePool[index % Math.max(livePool.length, 1)];
+  const nearby: FollowingNearbyItem[] = NEARBY_SEEDS.map((seed) => {
+    let match =
+      findByLabel(
+        livePool.filter((p) => !usedPerformerKeys.has(getPerformerKey(p))),
+        seed.label,
+      ) ?? null;
+
+    if (!match) {
+      match =
+        livePool.find((p) => {
+          const key = getPerformerKey(p);
+          if (usedPerformerKeys.has(key)) return false;
+          const img = performerImage(p);
+          if (!img) return false;
+          const base = imageUrlBaseKey(img);
+          if (usedImageBases.has(base)) return false;
+          return true;
+        }) ?? null;
+    }
+
+    if (match) {
+      usedPerformerKeys.add(getPerformerKey(match));
+      const img = performerImage(match);
+      if (img) usedImageBases.add(imageUrlBaseKey(img));
+    }
+
     const performer = match ?? ({ name: seed.label } as CrackPerformer);
     const image = match ? performerImage(match) : seed.fallbackImage;
+    if (!match) usedImageBases.add(imageUrlBaseKey(image));
+
     return {
       id: `nearby-${seed.label}`,
       label: seed.label,

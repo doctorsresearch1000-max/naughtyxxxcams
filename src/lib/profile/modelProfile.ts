@@ -14,6 +14,7 @@ import {
   type AboutCard,
   type GalleryMediaItem,
 } from "@/lib/profile/profilePresentation";
+import { dedupeImageUrls } from "@/lib/media/imageDedupe";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 const FALLBACK_AVATAR =
@@ -98,11 +99,9 @@ function toViewModel(
   const bannerUrl = pickProfileBannerUrl(p) ?? avatar;
   const thumb = p.thumbnailUrl?.trim();
   const snap = p.liveSnapshotURL?.trim();
-  const gallery = Array.from(
-    new Set(
-      [bannerUrl, avatar, thumb, snap].filter(
-        (url): url is string => typeof url === "string" && url.length > 0,
-      ),
+  const gallery = dedupeImageUrls(
+    [bannerUrl, avatar, thumb, snap].filter(
+      (url): url is string => typeof url === "string" && url.length > 0,
     ),
   );
 
