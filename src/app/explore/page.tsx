@@ -3,7 +3,6 @@ export const fetchCache = "force-no-store";
 
 import CrackWidget from "@/components/cams/CrackWidget";
 import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
-import BottomNav from "@/components/layout/BottomNav";
 import {
   dedupeCategories,
   fetchAllExploreCategories,
@@ -83,19 +82,21 @@ export default async function ExplorePage() {
           </span>
         </div>
 
-        <CrackWidget
-          cols={2}
-          rows={4}
-          number={8}
-          ratio={0.75}
-          useFeed={0}
-          animateFeed={0}
-          height="min-h-[500px]"
-          providers="streamate"
-        />
+        <div className="pointer-events-none relative isolate overflow-hidden rounded-2xl">
+          <CrackWidget
+            cols={2}
+            rows={4}
+            number={8}
+            ratio={0.75}
+            useFeed={0}
+            animateFeed={0}
+            height="min-h-[500px]"
+            providers="streamate"
+            className="pointer-events-none"
+          />
+        </div>
       </section>
 
-      <BottomNav />
     </main>
   );
 }

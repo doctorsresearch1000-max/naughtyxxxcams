@@ -20,6 +20,17 @@ body {
   touch-action: manipulation;
 }
 
+/* Evita que iframes bloqueados sigan capturando toques en iOS/WebKit */
+iframe[data-touch-blocked="true"] {
+  pointer-events: none !important;
+  touch-action: none !important;
+}
+
+/* Capas decorativas a pantalla completa no deben interceptar toques */
+.touch-pass-through {
+  pointer-events: none !important;
+}
+
 .hide-scrollbar,
 .no-scrollbar {
   -ms-overflow-style: none;

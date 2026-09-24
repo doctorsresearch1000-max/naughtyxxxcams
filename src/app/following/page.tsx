@@ -3,7 +3,6 @@ export const fetchCache = "force-no-store";
 
 import Image from "next/image";
 import { NaughtyLogo } from "@/components/brand/NaughtyLogo";
-import BottomNav from "@/components/layout/BottomNav";
 
 export default function FollowingPage() {
   const liveNearby = [
@@ -129,7 +128,6 @@ export default function FollowingPage() {
         </button>
       </div>
 
-      <BottomNav />
     </main>
   );
 }

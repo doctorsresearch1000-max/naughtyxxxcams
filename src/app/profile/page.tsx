@@ -3,7 +3,6 @@ export const fetchCache = "force-no-store";
 
 import Image from "next/image";
 import { NaughtyLogo } from "@/components/brand/NaughtyLogo";
-import BottomNav from "@/components/layout/BottomNav";
 import { continueWatching, profileUser } from "@/data/mock";
 
 export default function ProfilePage() {
@@ -113,7 +112,6 @@ export default function ProfilePage() {
         </article>
       </section>
 
-      <BottomNav />
     </main>
   );
 }

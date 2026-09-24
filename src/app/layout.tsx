@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { AppChrome } from "@/components/layout/AppChrome";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,11 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body className="min-h-dvh bg-black">
-        <div className="mx-auto min-h-dvh max-w-md bg-black">
+        <div className="relative mx-auto min-h-dvh max-w-md bg-black pb-16 [touch-action:pan-y]">
           {children}
         </div>
+        <AppChrome />
       </body>
     </html>
   );

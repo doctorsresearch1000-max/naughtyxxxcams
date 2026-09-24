@@ -18,9 +18,9 @@ interface CrackWidgetProps {
   smoothAnimation?: number;
   className?: string;
   height?: string;
+  /** Si true: no montar iframe (evita captura de toques hasta desbloquear sonido). */
   blockPointerEvents?: boolean;
   providers?: string;
-  /** Cuando true, solicita reproducción con audio al widget Streamate. */
   soundEnabled?: boolean;
   enableVerticalScroll?: boolean;
 }
@@ -38,7 +38,6 @@ export default function CrackWidget({
   blockPointerEvents = false,
   providers = STREAMATE_BRAND,
   soundEnabled = false,
-  enableVerticalScroll = false,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -118,15 +117,15 @@ export default function CrackWidget({
     [scriptSrc],
   );
 
-  const iframeInteractive = !blockPointerEvents;
+  const showIframe = !blockPointerEvents;
+  const iframeInteractive = showIframe;
 
   return (
     <div
-      className={`pointer-events-none relative w-full max-h-full bg-black ${
-        enableVerticalScroll ? "overflow-hidden" : "overflow-hidden"
-      } ${height} ${className}`}
+      className={`pointer-events-none relative isolate w-full max-h-full overflow-hidden bg-black ${height} ${className}`}
+      style={{ contain: "layout paint" }}
     >
-      {!loaded && (
+      {!loaded && showIframe && (
         <div
           className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-zinc-400"
           aria-hidden
@@ -135,16 +134,29 @@ export default function CrackWidget({
           <p className="text-xs font-medium">Cargando transmisiones Streamate...</p>
         </div>
       )}
-      <iframe
-        key={soundEnabled ? "sound-on" : "sound-off"}
-        srcDoc={srcDoc}
-        className={`block h-full w-full max-h-full border-0 ${
-          iframeInteractive ? "pointer-events-auto touch-pan-y" : "pointer-events-none"
-        }`}
-        onLoad={() => setLoaded(true)}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-        title="NaughtyXXX Streamate Feed"
-      />
+
+      {blockPointerEvents && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[1] bg-black"
+          aria-hidden
+        />
+      )}
+
+      {showIframe && (
+        <iframe
+          key={soundEnabled ? "sound-on" : "sound-off"}
+          srcDoc={srcDoc}
+          data-touch-blocked={iframeInteractive ? "false" : "true"}
+          className={
+            iframeInteractive
+              ? "pointer-events-auto block h-full w-full max-h-full touch-pan-y border-0"
+              : "pointer-events-none block h-full w-full max-h-full touch-none border-0"
+          }
+          onLoad={() => setLoaded(true)}
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+          title="NaughtyXXX Streamate Feed"
+        />
+      )}
     </div>
   );
 }
