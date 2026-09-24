@@ -1,31 +1,83 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CrackWidget from "@/components/cams/CrackWidget";
 import { SoundUnlockPortal } from "@/components/feed/SoundUnlockPortal";
 
 const FEED_HEIGHT = "calc(100dvh - 4rem)";
+const IFRAME_INTERACT_MS = 2800;
 
-/** Slides del feed vertical (el widget Streamate ocupa el primero). */
-const FEED_SLIDE_COUNT = 3;
+const FEED_SLIDES = [
+  { id: "live-1", handle: "@ElhaSky" },
+  { id: "live-2", handle: "@LunaRose" },
+  { id: "live-3", handle: "@MiaVelvet" },
+];
 
 export default function HomePage() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  /** CTA de sonido visible hasta que el usuario pulse Continuar. */
+  const interactTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [showSoundCta, setShowSoundCta] = useState(true);
-  /** Tras Continuar: un tap en el vídeo expone el iframe al gesto del usuario. */
   const [soundGateOpen, setSoundGateOpen] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [iframeInteract, setIframeInteract] = useState(false);
+
+  const clearInteractTimer = useCallback(() => {
+    if (interactTimerRef.current) {
+      clearTimeout(interactTimerRef.current);
+      interactTimerRef.current = null;
+    }
+  }, []);
+
+  const resetIframeInteraction = useCallback(() => {
+    clearInteractTimer();
+    setIframeInteract(false);
+  }, [clearInteractTimer]);
+
+  const requestIframeInteraction = useCallback(() => {
+    clearInteractTimer();
+    setIframeInteract(true);
+    interactTimerRef.current = setTimeout(() => {
+      setIframeInteract(false);
+      interactTimerRef.current = null;
+    }, IFRAME_INTERACT_MS);
+  }, [clearInteractTimer]);
 
   const dismissSoundCta = useCallback(() => {
     setShowSoundCta(false);
     setSoundGateOpen(true);
   }, []);
 
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+
+    const onScroll = () => {
+      resetIframeInteraction();
+
+      const slideHeight = root.clientHeight;
+      if (slideHeight <= 0) return;
+      const index = Math.round(root.scrollTop / slideHeight);
+      setActiveSlide(Math.min(Math.max(index, 0), FEED_SLIDES.length - 1));
+    };
+
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => root.removeEventListener("scroll", onScroll);
+  }, [resetIframeInteraction]);
+
+  useEffect(() => {
+    if (activeSlide !== 0) {
+      resetIframeInteraction();
+    }
+  }, [activeSlide, resetIframeInteraction]);
+
+  useEffect(() => () => clearInteractTimer(), [clearInteractTimer]);
+
   return (
     <>
       <main
-        className="pointer-events-auto relative mx-auto w-full max-w-md overflow-hidden bg-black text-white"
+        className="relative mx-auto w-full max-w-md overflow-hidden bg-black text-white"
         style={{ height: FEED_HEIGHT }}
       >
         <header className="pointer-events-none absolute left-0 right-0 top-0 z-30 flex items-center justify-between px-4 pb-2 pt-4">
@@ -47,13 +99,12 @@ export default function HomePage() {
 
         <div
           ref={scrollRef}
-          className="snap-feed hide-scrollbar h-full w-full overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
-          style={{ touchAction: "pan-y" }}
+          className="hide-scrollbar h-full w-full overflow-y-auto snap-y snap-mandatory touch-pan-y overscroll-y-contain [-webkit-overflow-scrolling:touch]"
         >
-          {Array.from({ length: FEED_SLIDE_COUNT }, (_, index) => (
+          {FEED_SLIDES.map((slide, index) => (
             <section
-              key={index}
-              className="pointer-events-none relative h-full w-full shrink-0 snap-slide overflow-hidden"
+              key={slide.id}
+              className="relative h-full w-full shrink-0 snap-start overflow-hidden"
             >
               {index === 0 ? (
                 <CrackWidget
@@ -66,18 +117,16 @@ export default function HomePage() {
                   smoothAnimation={1}
                   height="h-full"
                   captureScrollGestures
-                  scrollRootRef={scrollRef}
                   soundGateOpen={soundGateOpen}
+                  allowIframeInteraction={
+                    iframeInteract && activeSlide === 0
+                  }
+                  onRequestIframeInteraction={requestIframeInteraction}
                   soundEnabled={false}
                   providers="streamate"
                 />
               ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-b from-zinc-900 to-black px-6 text-center">
-                  <p className="text-sm font-bold text-pink-400">Siguiente en el feed</p>
-                  <p className="mt-2 text-xs text-zinc-500">
-                    Desliza hacia arriba — el scroll no lo captura el iframe
-                  </p>
-                </div>
+                <div className="h-full w-full bg-gradient-to-b from-zinc-950 via-black to-zinc-950" />
               )}
 
               {index === 0 && (
@@ -91,7 +140,7 @@ export default function HomePage() {
                         </span>
                       </div>
                       <span className="text-sm font-extrabold text-white drop-shadow-md">
-                        @ElhaSky
+                        {slide.handle}
                       </span>
                     </div>
                   </div>
@@ -149,6 +198,17 @@ export default function HomePage() {
                     </div>
                   </div>
                 </>
+              )}
+
+              {index > 0 && (
+                <div className="pointer-events-none absolute bottom-4 left-4 z-20">
+                  <span className="text-sm font-extrabold text-white drop-shadow-md">
+                    {slide.handle}
+                  </span>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-pink-500">
+                    En vivo
+                  </p>
+                </div>
               )}
             </section>
           ))}

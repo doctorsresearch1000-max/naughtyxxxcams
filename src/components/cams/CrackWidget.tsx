@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FeedTouchLayer } from "@/components/feed/FeedTouchLayer";
 import {
   CRACKREVENUE_API_KEY,
@@ -19,18 +19,16 @@ interface CrackWidgetProps {
   smoothAnimation?: number;
   className?: string;
   height?: string;
-  /** @deprecated Usar captureScrollGestures + soundGateOpen en el feed. */
   blockPointerEvents?: boolean;
   providers?: string;
   soundEnabled?: boolean;
-  /** Feed home: capa superior para scroll del padre (iframe sin pointer-events). */
+  /** Feed home: iframe sin pointer-events + capa de tap para audio. */
   captureScrollGestures?: boolean;
-  scrollRootRef?: React.RefObject<HTMLElement | null>;
-  /** Tras pulsar el CTA de sonido: permite tap para exponer iframe al gesto nativo. */
   soundGateOpen?: boolean;
+  /** Ventana breve de interacción con el iframe (gesto nativo de sonido). */
+  allowIframeInteraction?: boolean;
+  onRequestIframeInteraction?: () => void;
 }
-
-const IFRAME_EXPOSE_MS = 2800;
 
 export default function CrackWidget({
   cols = 1,
@@ -46,20 +44,15 @@ export default function CrackWidget({
   providers = STREAMATE_BRAND,
   soundEnabled = false,
   captureScrollGestures = false,
-  scrollRootRef,
   soundGateOpen = false,
+  allowIframeInteraction = false,
+  onRequestIframeInteraction,
 }: CrackWidgetProps) {
   const [loaded, setLoaded] = useState(false);
-  const [iframeExposed, setIframeExposed] = useState(false);
 
   const cleanCols = Number(cols) || 1;
   const cleanRows = Number(rows) || 1;
   const cleanNumber = Number(number) || 10;
-
-  const exposeIframeForUserGesture = useCallback(() => {
-    setIframeExposed(true);
-    window.setTimeout(() => setIframeExposed(false), IFRAME_EXPOSE_MS);
-  }, []);
 
   const scriptSrc = useMemo(() => {
     const params = new URLSearchParams({
@@ -116,6 +109,7 @@ export default function CrackWidget({
             color: #fff;
             overflow: hidden;
             touch-action: none;
+            pointer-events: none;
           }
           iframe, div, object {
             width: 100% !important;
@@ -134,18 +128,16 @@ export default function CrackWidget({
   const legacyBlock = blockPointerEvents && !captureScrollGestures;
   const showIframe = !legacyBlock;
 
-  const shieldActive =
-    captureScrollGestures && scrollRootRef && !iframeExposed;
-
+  const feedMode = captureScrollGestures;
   const iframeReceivesTouches =
-    !captureScrollGestures && !legacyBlock
-      ? true
-      : iframeExposed;
+    feedMode ? allowIframeInteraction : !legacyBlock;
+
+  const showTapShield =
+    feedMode && !allowIframeInteraction && Boolean(onRequestIframeInteraction);
 
   return (
     <div
-      className={`pointer-events-none relative isolate w-full max-h-full overflow-hidden bg-black ${height} ${className}`}
-      style={{ contain: "layout paint" }}
+      className={`pointer-events-none relative w-full max-h-full overflow-hidden bg-black ${height} ${className}`}
     >
       {!loaded && showIframe && (
         <div
@@ -179,11 +171,10 @@ export default function CrackWidget({
         />
       )}
 
-      {shieldActive && (
+      {showTapShield && (
         <FeedTouchLayer
-          scrollRootRef={scrollRootRef}
           soundGateOpen={soundGateOpen}
-          onExposeIframe={exposeIframeForUserGesture}
+          onExposeIframe={() => onRequestIframeInteraction?.()}
         />
       )}
     </div>
