@@ -14,7 +14,8 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-const POSTER_FALLBACK_MS = 4_000;
+/** Zoom 16:9 hybrid player to fill 9:16 card (TikTok-style crop). */
+const PLAYER_FILL_SCALE = 1.35;
 
 /**
  * Clean cross-origin player surface — no parent capture handlers, no affiliate overlays.
@@ -30,22 +31,12 @@ export function LiveEmbed({
 }: LiveEmbedProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [frameLoaded, setFrameLoaded] = useState(false);
-  const [posterFallback, setPosterFallback] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
 
   useEffect(() => {
     setFrameLoaded(false);
-    setPosterFallback(false);
-  }, [embedKey, isActive, initialSrc]);
-
-  useEffect(() => {
-    if (!isActive || !frameLoaded) return;
-    const fallbackTimer = window.setTimeout(() => {
-      setPosterFallback(true);
-    }, POSTER_FALLBACK_MS);
-    return () => window.clearTimeout(fallbackTimer);
-  }, [isActive, frameLoaded, embedKey]);
+  }, [embedKey, initialSrc]);
 
   useEffect(() => {
     if (!isActive) {
@@ -57,13 +48,12 @@ export function LiveEmbed({
   }, [isActive, frameLoaded, onIframeWindow]);
 
   const mountIframe =
-    isActive &&
     isArmed &&
     embedPlan.canMountInteractivePlayer &&
     Boolean(initialSrc);
 
-  const streamRevealed = isActive && frameLoaded && posterFallback;
-  const hidePoster = streamRevealed && mountIframe;
+  const streamRevealed = isActive && frameLoaded && mountIframe;
+  const hidePoster = frameLoaded && mountIframe;
 
   const bindIframeRef = useCallback((node: HTMLIFrameElement | null) => {
     iframeRef.current = node;
@@ -74,7 +64,7 @@ export function LiveEmbed({
       <FeedPoster
         feedKey={embedKey}
         posterUrl={posterUrl}
-        priority={isActive}
+        priority={isActive || isArmed}
         className="absolute inset-0 z-0 h-full w-full object-cover"
       />
     );
@@ -82,7 +72,7 @@ export function LiveEmbed({
 
   return (
     <div
-      className="absolute inset-0 z-[10] overflow-hidden bg-black"
+      className="absolute inset-0 z-[10] h-full w-full overflow-hidden bg-black"
       data-feed-card-root="true"
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
@@ -91,29 +81,33 @@ export function LiveEmbed({
       <FeedPoster
         feedKey={embedKey}
         posterUrl={posterUrl}
-        priority={isActive}
-        className={`pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover transition-opacity duration-500 ${
+        priority={isActive || isArmed}
+        className={`pointer-events-none absolute inset-0 z-[3] h-full w-full object-cover transition-opacity duration-500 ease-out ${
           hidePoster ? "opacity-0" : "opacity-100"
         }`}
       />
 
       {mountIframe && initialSrc ? (
-        <iframe
-          key={`${embedKey}-${embedPlan.mode}`}
-          ref={bindIframeRef}
-          src={initialSrc}
-          title={`Live stream ${embedKey}`}
-          data-naughty-feed-embed="true"
-          data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
-          data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
-          className="pointer-events-auto absolute inset-0 z-[2] h-full w-full border-0 bg-black"
-          allow={WIDGET_IFRAME_ALLOW}
-          referrerPolicy="strict-origin-when-cross-origin"
-          onLoad={() => {
-            setFrameLoaded(true);
-            setPosterFallback(true);
-          }}
-        />
+        <div className="absolute inset-0 z-[2] overflow-hidden">
+          <iframe
+            key={`${embedKey}-${embedPlan.mode}`}
+            ref={bindIframeRef}
+            src={initialSrc}
+            title={`Live stream ${embedKey}`}
+            data-naughty-feed-embed="true"
+            data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
+            data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
+            className={`absolute left-1/2 top-1/2 h-full w-full border-0 bg-black ${
+              isActive ? "pointer-events-auto" : "pointer-events-none"
+            }`}
+            style={{
+              transform: `translate(-50%, -50%) scale(${PLAYER_FILL_SCALE})`,
+            }}
+            allow={WIDGET_IFRAME_ALLOW}
+            referrerPolicy="strict-origin-when-cross-origin"
+            onLoad={() => setFrameLoaded(true)}
+          />
+        </div>
       ) : null}
     </div>
   );
