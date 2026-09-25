@@ -9,6 +9,7 @@ import {
   type CSSProperties,
 } from "react";
 import {
+  adoptInCardStreamSlot,
   claimStreamForStage,
   ensureStreamWarming,
   isStreamSlotLoaded,
@@ -67,7 +68,7 @@ function applyIframeChrome(
 }
 
 /**
- * Validated layout: 16:9 cover iframe in-card; prefetch dock + claim on scroll.
+ * TikTok-style 16:9 cover (scale 3.15) in-card; prefetch dock + claim on scroll.
  */
 export function LiveEmbed({
   embedKey,
@@ -86,6 +87,7 @@ export function LiveEmbed({
   const slideHeightPx = viewportHeightPx ?? contextHeightPx;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const attachGenRef = useRef(0);
   const [frameLoaded, setFrameLoaded] = useState(() =>
     isStreamSlotLoaded(embedKey),
   );
@@ -98,7 +100,6 @@ export function LiveEmbed({
     embedPlan.canMountInteractivePlayer &&
     Boolean(initialSrc);
 
-  const showInCardStage = mountIframe && isActive;
   const warmInDock = mountIframe && isHiddenPrefetch && !isActive;
 
   const posterPriority =
@@ -116,6 +117,24 @@ export function LiveEmbed({
     setFrameLoaded(true);
   }, []);
 
+  const parkIframeToDock = useCallback(() => {
+    const iframe = iframeRef.current;
+    const stage = stageRef.current;
+    if (iframe && stage?.contains(iframe) && !peekStreamSlot(embedKey)) {
+      adoptInCardStreamSlot(
+        embedKey,
+        initialSrc!,
+        iframe,
+        frameLoaded || isStreamSlotLoaded(embedKey),
+      );
+    }
+    if (peekStreamSlot(embedKey)) {
+      releaseStreamSlot(embedKey, true);
+    }
+    iframeRef.current = null;
+    setUsingEngineSlot(false);
+  }, [embedKey, initialSrc, frameLoaded]);
+
   useEffect(() => {
     setFrameLoaded(isStreamSlotLoaded(embedKey));
     setUsingEngineSlot(false);
@@ -123,7 +142,9 @@ export function LiveEmbed({
   }, [embedKey, initialSrc]);
 
   useLayoutEffect(() => {
-    if (!initialSrc || !embedPlan.canMountInteractivePlayer) return;
+    if (!initialSrc || !embedPlan.canMountInteractivePlayer || !mountIframe) {
+      return;
+    }
 
     if (warmInDock) {
       ensureStreamWarming(embedKey, initialSrc);
@@ -133,113 +154,122 @@ export function LiveEmbed({
       return;
     }
 
-    if (!showInCardStage) {
-      if (peekStreamSlot(embedKey)) {
-        releaseStreamSlot(embedKey, true);
-      }
-      iframeRef.current = null;
-      setUsingEngineSlot(false);
+    if (!isActive) {
+      parkIframeToDock();
       return;
     }
 
-    const stage = stageRef.current;
-    if (!stage) return;
+    const gen = ++attachGenRef.current;
 
-    const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
+    const attachActive = () => {
+      if (attachGenRef.current !== gen) return;
+
+      const stage = stageRef.current;
+      if (!stage) {
+        requestAnimationFrame(attachActive);
+        return;
+      }
+
+      const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
+        applyIframeChrome(
+          iframe,
+          slideHeightPx,
+          true,
+          streamPriority,
+          embedPlan,
+          embedKey,
+        );
+      });
+
+      if (claimed) {
+        iframeRef.current = claimed.iframe;
+        setUsingEngineSlot(true);
+        if (claimed.loaded) {
+          markFrameLoaded();
+        } else {
+          claimed.iframe.addEventListener("load", markFrameLoaded, {
+            once: true,
+          });
+        }
+        return;
+      }
+
+      if (iframeRef.current && stage.contains(iframeRef.current)) {
+        applyIframeChrome(
+          iframeRef.current,
+          slideHeightPx,
+          true,
+          streamPriority,
+          embedPlan,
+          embedKey,
+        );
+        return;
+      }
+
+      if (peekStreamSlot(embedKey)) {
+        requestAnimationFrame(attachActive);
+        return;
+      }
+
+      const iframe = document.createElement("iframe");
+      iframe.src = initialSrc;
+      iframe.allow = WIDGET_IFRAME_ALLOW;
+      iframe.referrerPolicy = "strict-origin-when-cross-origin";
+      iframe.addEventListener("load", markFrameLoaded, { once: true });
+      stage.appendChild(iframe);
+      void stage.offsetHeight;
       applyIframeChrome(
         iframe,
         slideHeightPx,
-        isActive,
+        true,
         streamPriority,
         embedPlan,
         embedKey,
       );
-    });
+      adoptInCardStreamSlot(embedKey, initialSrc, iframe, false);
+      iframeRef.current = iframe;
+      setUsingEngineSlot(false);
+    };
 
-    if (claimed) {
-      iframeRef.current = claimed.iframe;
-      setUsingEngineSlot(true);
-      if (claimed.loaded) {
-        markFrameLoaded();
-      } else {
-        claimed.iframe.addEventListener("load", markFrameLoaded, {
-          once: true,
-        });
-      }
-      return;
-    }
-
-    if (iframeRef.current && stage.contains(iframeRef.current)) {
-      applyIframeChrome(
-        iframeRef.current,
-        slideHeightPx,
-        isActive,
-        streamPriority,
-        embedPlan,
-        embedKey,
-      );
-      return;
-    }
-
-    const iframe = document.createElement("iframe");
-    iframe.src = initialSrc;
-    iframe.allow = WIDGET_IFRAME_ALLOW;
-    iframe.referrerPolicy = "strict-origin-when-cross-origin";
-    iframe.addEventListener("load", markFrameLoaded, { once: true });
-    stage.appendChild(iframe);
-    void stage.offsetHeight;
-    applyIframeChrome(
-      iframe,
-      slideHeightPx,
-      isActive,
-      streamPriority,
-      embedPlan,
-      embedKey,
-    );
-    iframeRef.current = iframe;
-    setUsingEngineSlot(false);
+    attachActive();
   }, [
     embedKey,
     initialSrc,
     embedPlan,
-    showInCardStage,
+    mountIframe,
     warmInDock,
     isActive,
     slideHeightPx,
     streamPriority,
     markFrameLoaded,
+    parkIframeToDock,
   ]);
 
   useEffect(() => {
     if (!mountIframe) {
-      releaseStreamSlot(embedKey, isArmed);
+      releaseStreamSlot(embedKey, false);
       iframeRef.current = null;
       onIframeWindow?.(null);
       return;
     }
-
-    return () => {
-      if (isActive) return;
-      releaseStreamSlot(embedKey, isArmed);
-    };
-  }, [mountIframe, isArmed, isActive, embedKey, onIframeWindow]);
+  }, [mountIframe, embedKey, onIframeWindow]);
 
   useLayoutEffect(() => {
-    if (!showInCardStage) return;
+    if (!isActive || !mountIframe) return;
     const iframe = iframeRef.current;
     if (iframe) {
       applyIframeChrome(
         iframe,
         slideHeightPx,
-        isActive,
+        true,
         streamPriority,
         embedPlan,
         embedKey,
       );
       return;
     }
-    refreshStreamStageLayout(embedKey, slideHeightPx, isActive);
-  }, [showInCardStage, isActive, slideHeightPx, streamPriority, embedPlan, embedKey]);
+    refreshStreamStageLayout(embedKey, slideHeightPx, true);
+  }, [isActive, mountIframe, slideHeightPx, streamPriority, embedPlan, embedKey]);
 
   useEffect(() => {
     if (!isActive) {
@@ -256,9 +286,8 @@ export function LiveEmbed({
   const stageStyle: CSSProperties = {
     ...feedEmbedStageStyle(slideHeightPx),
     zIndex: 1,
-    opacity: 1,
-    visibility: showInCardStage ? "visible" : "hidden",
-    contentVisibility: showInCardStage ? "visible" : "auto",
+    opacity: isActive ? 1 : 0,
+    visibility: isActive ? "visible" : "hidden",
     pointerEvents: streamRevealed ? "auto" : "none",
   };
 
@@ -298,7 +327,7 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="9"
+      data-feed-layout-v="10"
       data-engine-slot={usingEngineSlot ? "1" : "0"}
     >
       <FeedPoster
@@ -309,14 +338,12 @@ export function LiveEmbed({
         style={posterStyleWithFade}
       />
 
-      {showInCardStage && initialSrc ? (
-        <div
-          ref={stageRef}
-          className="feed-embed-stage"
-          style={stageStyle}
-          aria-hidden={!isActive}
-        />
-      ) : null}
+      <div
+        ref={stageRef}
+        className="feed-embed-stage"
+        style={stageStyle}
+        aria-hidden={!isActive}
+      />
     </div>
   );
 }

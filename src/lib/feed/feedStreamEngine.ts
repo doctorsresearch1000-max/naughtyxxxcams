@@ -100,6 +100,28 @@ export function peekStreamSlot(feedKey: string): boolean {
   return slots.has(feedKey);
 }
 
+/** In-card iframe (slide 0 or before first dock) — enables release → dock on scroll. */
+export function adoptInCardStreamSlot(
+  feedKey: string,
+  src: string,
+  iframe: HTMLIFrameElement,
+  loaded: boolean,
+): void {
+  const existing = slots.get(feedKey);
+  if (existing && existing.iframe === iframe) {
+    existing.loaded = loaded || existing.loaded;
+    existing.docked = false;
+    return;
+  }
+  slots.set(feedKey, {
+    feedKey,
+    src,
+    iframe,
+    loaded,
+    docked: false,
+  });
+}
+
 /** Prefetch-only (N±1). Do not warm the active slide in the dock. */
 export function ensureStreamWarming(feedKey: string, src: string): void {
   if (typeof document === "undefined" || !feedKey || !src) return;
@@ -108,6 +130,8 @@ export function ensureStreamWarming(feedKey: string, src: string): void {
   if (existing) {
     if (existing.src !== src) {
       evictSlot(feedKey);
+    } else if (existing.docked) {
+      return;
     } else {
       return;
     }

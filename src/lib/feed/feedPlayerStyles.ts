@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
-/** Full-height iframe already fills 9:16; extra scale only crops quality. */
-export const FEED_PLAYER_FILL_SCALE = 1;
+/** Zoom hybrid 16:9 player to fill 9:16 card (TikTok-style crop). */
+export const FEED_PLAYER_FILL_SCALE = 3.15;
 export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 35%";
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
