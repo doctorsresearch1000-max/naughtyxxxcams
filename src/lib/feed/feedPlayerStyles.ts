@@ -1,8 +1,8 @@
 import type { CSSProperties } from "react";
 
 /**
- * Single source of slide height: the snap card (`feedSlideBoxStyle`).
- * Every layer below uses `feedPlayerFillStyle` (100% of that box).
+ * Explicit pixel height on the snap card; inner stack uses the same `heightPx`
+ * (WebKit iframes do not reliably resolve height: 100% in scroll-snap feeds).
  */
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
@@ -18,52 +18,66 @@ export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   };
 }
 
-/** Fills the slide card edge-to-edge (parent must have explicit height). */
-export function feedPlayerFillStyle(): CSSProperties {
+function feedStackLayerStyle(heightPx: number): CSSProperties {
   return {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
     width: "100%",
-    height: "100%",
-    minHeight: "100%",
+    height: heightPx,
+    minHeight: heightPx,
+    maxHeight: heightPx,
     overflow: "hidden",
     background: "#000",
   };
 }
 
-export function feedPlayerMountStyle(_heightPx: number): CSSProperties {
-  return feedPlayerFillStyle();
-}
-
-export function feedEmbedRootStyle(_heightPx: number): CSSProperties {
-  return feedPlayerFillStyle();
-}
-
-export function feedEmbedStageStyle(_heightPx: number): CSSProperties {
-  return feedPlayerFillStyle();
-}
-
-/** Stage iframes use `.feed-embed-iframe--stage` in CSS (100% × 100%). */
-export function feedEmbedIframeStageInlineStyle(): CSSProperties {
+export function feedPlayerMountStyle(heightPx: number): CSSProperties {
   return {
-    clipPath: "none",
+    ...feedStackLayerStyle(heightPx),
+    zIndex: 0,
   };
 }
 
-export function feedPosterImageStyle(_heightPx: number): CSSProperties {
+export function feedEmbedRootStyle(heightPx: number): CSSProperties {
+  return feedStackLayerStyle(heightPx);
+}
+
+export function feedEmbedStageStyle(heightPx: number): CSSProperties {
+  return feedStackLayerStyle(heightPx);
+}
+
+/** Fills the stage using measured pixel height (not %). */
+export function feedEmbedIframeStageStyle(heightPx: number): CSSProperties {
   return {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
     width: "100%",
-    height: "100%",
-    minHeight: "100%",
-    maxHeight: "none",
+    height: heightPx,
+    minHeight: heightPx,
+    maxHeight: heightPx,
+    margin: 0,
+    padding: 0,
+    border: "0",
+    background: "#000",
+    clipPath: "none",
+    transform: "none",
+  };
+}
+
+export function feedPosterImageStyle(heightPx: number): CSSProperties {
+  return {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    width: "100%",
+    height: heightPx,
+    minHeight: heightPx,
+    maxHeight: heightPx,
     objectFit: "cover",
     objectPosition: "center 35%",
   };

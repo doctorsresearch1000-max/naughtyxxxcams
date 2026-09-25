@@ -13,9 +13,9 @@ import {
   ensureStreamWarming,
   isStreamSlotLoaded,
   isStageReadyForStream,
+  markStreamSlotLoaded,
   peekStreamSlot,
   refreshStreamStageLayout,
-  markStreamSlotLoaded,
   registerInCardStreamSlot,
   releaseStreamSlot,
 } from "@/lib/feed/feedStreamEngine";
@@ -66,10 +66,18 @@ function wireIframeMetadata(
   }
 }
 
-/**
- * Active slide: iframe in a stable in-card stage (100% of slide box).
- * N±1 prefetch uses the viewport dock; claim reparents without src change.
- */
+function readStageHeightPx(
+  stage: HTMLElement | null,
+  fallbackPx: number,
+): number {
+  if (!stage) return fallbackPx;
+  const rect = stage.getBoundingClientRect().height;
+  if (rect >= 8) return Math.round(rect);
+  const inline = parseFloat(stage.style.height);
+  if (Number.isFinite(inline) && inline >= 8) return Math.round(inline);
+  return fallbackPx;
+}
+
 export function LiveEmbed({
   embedKey,
   posterUrl,
@@ -88,6 +96,7 @@ export function LiveEmbed({
   const stageRef = useRef<HTMLDivElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const attachGenerationRef = useRef(0);
+  const [stageHeightPx, setStageHeightPx] = useState(slideHeightPx);
   const [frameLoaded, setFrameLoaded] = useState(() =>
     isStreamSlotLoaded(embedKey),
   );
@@ -98,8 +107,6 @@ export function LiveEmbed({
     isArmed &&
     embedPlan.canMountInteractivePlayer &&
     Boolean(initialSrc);
-
-  const showStage = mountIframe && isActive;
 
   const posterPriority =
     streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
@@ -119,6 +126,25 @@ export function LiveEmbed({
   const detachIframeRef = useCallback(() => {
     iframeRef.current = null;
   }, []);
+
+  useEffect(() => {
+    setStageHeightPx(slideHeightPx);
+  }, [slideHeightPx]);
+
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const measure = () => {
+      const h = readStageHeightPx(stage, slideHeightPx);
+      setStageHeightPx((prev) => (prev === h ? prev : h));
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(stage);
+    return () => ro.disconnect();
+  }, [slideHeightPx, mountIframe, isActive]);
 
   useEffect(() => {
     setFrameLoaded(isStreamSlotLoaded(embedKey));
@@ -143,11 +169,6 @@ export function LiveEmbed({
 
     const generation = ++attachGenerationRef.current;
 
-    const applyLayout = (iframe: HTMLIFrameElement) => {
-      applyStreamIframeStagePresentation(iframe, true);
-      wireIframeMetadata(iframe, embedPlan, embedKey, streamPriority);
-    };
-
     const attachToStage = () => {
       if (attachGenerationRef.current !== generation) return;
 
@@ -156,6 +177,13 @@ export function LiveEmbed({
         requestAnimationFrame(attachToStage);
         return;
       }
+
+      const layoutHeightPx = readStageHeightPx(stage, slideHeightPx);
+
+      const applyLayout = (iframe: HTMLIFrameElement) => {
+        applyStreamIframeStagePresentation(iframe, layoutHeightPx, true);
+        wireIframeMetadata(iframe, embedPlan, embedKey, streamPriority);
+      };
 
       const claimed = claimStreamForStage(embedKey, stage, applyLayout);
       if (claimed) {
@@ -207,6 +235,7 @@ export function LiveEmbed({
     isHiddenPrefetch,
     embedKey,
     embedPlan,
+    slideHeightPx,
     streamPriority,
     markFrameLoaded,
     detachIframeRef,
@@ -214,12 +243,14 @@ export function LiveEmbed({
 
   useLayoutEffect(() => {
     if (!isActive) return;
-    refreshStreamStageLayout(embedKey, true);
+    const stage = stageRef.current;
+    const layoutHeightPx = readStageHeightPx(stage, stageHeightPx);
+    refreshStreamStageLayout(embedKey, layoutHeightPx, true);
     const iframe = iframeRef.current;
     if (iframe) {
-      applyStreamIframeStagePresentation(iframe, true);
+      applyStreamIframeStagePresentation(iframe, layoutHeightPx, true);
     }
-  }, [isActive, slideHeightPx, embedKey]);
+  }, [isActive, stageHeightPx, slideHeightPx, embedKey]);
 
   useEffect(() => {
     if (!mountIframe) {
@@ -238,13 +269,13 @@ export function LiveEmbed({
     onIframeWindow?.(iframeRef.current.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
-  const rootStyle = feedEmbedRootStyle(slideHeightPx);
-  const posterStyle = feedPosterImageStyle(slideHeightPx);
+  const rootStyle = feedEmbedRootStyle(stageHeightPx);
+  const posterStyle = feedPosterImageStyle(stageHeightPx);
 
   const stageStyle: CSSProperties = {
-    ...feedEmbedStageStyle(slideHeightPx),
+    ...feedEmbedStageStyle(stageHeightPx),
     zIndex: 1,
-    opacity: showStage ? 1 : 0,
+    opacity: isActive ? 1 : 0,
     pointerEvents: streamRevealed ? "auto" : "none",
   };
 
@@ -284,8 +315,8 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="7"
-      data-feed-slide-height={slideHeightPx}
+      data-feed-layout-v="8"
+      data-feed-slide-height={stageHeightPx}
     >
       <FeedPoster
         feedKey={embedKey}

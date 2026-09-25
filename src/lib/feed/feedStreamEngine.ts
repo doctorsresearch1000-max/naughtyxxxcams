@@ -18,13 +18,14 @@ const slots = new Map<string, StreamSlot>();
 
 const MIN_STAGE_HEIGHT_PX = 8;
 
+/** Tiny fixed strip — avoids full-viewport fixed iframes leaking into the active stage. */
 const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
   left: "0",
   bottom: "0",
   width: "100vw",
-  height: "100dvh",
-  maxHeight: "100dvh",
+  height: "4px",
+  maxHeight: "4px",
   margin: "0",
   padding: "0",
   border: "0",
@@ -32,8 +33,8 @@ const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   visibility: "visible",
   pointerEvents: "none",
   zIndex: "1",
-  clipPath: "inset(calc(100% - 4px) 0 0 0)",
-  transform: "translateZ(0)",
+  clipPath: "none",
+  transform: "none",
   background: "#000",
 };
 
@@ -180,11 +181,12 @@ export function claimStreamForStage(
 
 export function refreshStreamStageLayout(
   feedKey: string,
+  stageHeightPx: number,
   isActive: boolean,
 ): void {
   const slot = slots.get(feedKey);
   if (!slot || slot.docked) return;
-  applyStreamIframeStagePresentation(slot.iframe, isActive);
+  applyStreamIframeStagePresentation(slot.iframe, stageHeightPx, isActive);
 }
 
 export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {
