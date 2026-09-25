@@ -130,7 +130,7 @@ function LiveFeedCardInner({
       aria-label={handleLabel}
       onPointerDownCapture={onCardPointerDownCapture}
     >
-      <div className="feed-player-mount" style={feedPlayerMountStyle()}>
+      <div className="feed-player-mount" style={feedPlayerMountStyle(slideHeightPx)}>
         <LiveEmbed
           embedKey={performer.feedKey}
           posterUrl={performer.posterUrl}

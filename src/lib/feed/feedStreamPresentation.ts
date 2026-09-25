@@ -24,6 +24,7 @@ const DOCK_INLINE_PROPS = [
   "pointer-events",
 ] as const;
 
+/** Remove viewport-dock rules before applying in-card TikTok layout. */
 export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
   iframe.classList.remove("feed-embed-iframe--docked");
   for (const prop of DOCK_INLINE_PROPS) {
@@ -34,11 +35,12 @@ export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
 
 export function applyStreamIframeStagePresentation(
   iframe: HTMLIFrameElement,
+  slideHeightPx: number,
   isActive: boolean,
 ): void {
   clearStreamIframeDockStyles(iframe);
-  iframe.className = `feed-embed-iframe feed-embed-iframe--stage ${
+  iframe.className = `feed-embed-iframe ${
     isActive ? "pointer-events-auto" : "pointer-events-none"
   }`;
-  Object.assign(iframe.style, feedEmbedIframeStyle());
+  Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
 }

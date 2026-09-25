@@ -19,6 +19,7 @@ import {
 } from "@/lib/feed/feedStreamEngine";
 import { applyStreamIframeStagePresentation } from "@/lib/feed/feedStreamPresentation";
 import { FeedPoster } from "@/components/feed/FeedPoster";
+import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
 import {
   feedEmbedRootStyle,
   feedEmbedStageStyle,
@@ -43,14 +44,15 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-function wireIframeMetadata(
+function wireIframeChrome(
   iframe: HTMLIFrameElement,
+  slideHeightPx: number,
   isActive: boolean,
   streamPriority: StreamLoadPriority,
   embedPlan: PerformerEmbedPlan,
   embedKey: string,
 ): void {
-  applyStreamIframeStagePresentation(iframe, isActive);
+  applyStreamIframeStagePresentation(iframe, slideHeightPx, isActive);
   iframe.removeAttribute("data-nx-stream-slot");
   iframe.setAttribute("data-naughty-feed-embed", "true");
   iframe.setAttribute("data-player-src-muted", embedPlan.playerSrcMuted ?? "");
@@ -74,9 +76,12 @@ export function LiveEmbed({
   isHiddenPrefetch = false,
   sessionMuted,
   streamPriority = "auto",
+  viewportHeightPx,
   fastReveal = false,
   onIframeWindow,
 }: LiveEmbedProps) {
+  const contextHeightPx = useFeedSlideHeightPx();
+  const slideHeightPx = viewportHeightPx ?? contextHeightPx;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const attachGenRef = useRef(0);
@@ -163,7 +168,14 @@ export function LiveEmbed({
       }
 
       const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
-        wireIframeMetadata(iframe, true, streamPriority, embedPlan, embedKey);
+        wireIframeChrome(
+          iframe,
+          slideHeightPx,
+          true,
+          streamPriority,
+          embedPlan,
+          embedKey,
+        );
       });
 
       if (claimed) {
@@ -180,8 +192,9 @@ export function LiveEmbed({
       }
 
       if (iframeRef.current && stage.contains(iframeRef.current)) {
-        wireIframeMetadata(
+        wireIframeChrome(
           iframeRef.current,
+          slideHeightPx,
           true,
           streamPriority,
           embedPlan,
@@ -202,7 +215,14 @@ export function LiveEmbed({
       iframe.addEventListener("load", markFrameLoaded, { once: true });
       stage.appendChild(iframe);
       void stage.offsetHeight;
-      wireIframeMetadata(iframe, true, streamPriority, embedPlan, embedKey);
+      wireIframeChrome(
+        iframe,
+        slideHeightPx,
+        true,
+        streamPriority,
+        embedPlan,
+        embedKey,
+      );
       adoptInCardStreamSlot(embedKey, initialSrc, iframe, false);
       iframeRef.current = iframe;
       setUsingEngineSlot(false);
@@ -216,6 +236,7 @@ export function LiveEmbed({
     mountIframe,
     warmInDock,
     isActive,
+    slideHeightPx,
     streamPriority,
     markFrameLoaded,
     parkIframeToDock,
@@ -233,11 +254,18 @@ export function LiveEmbed({
     if (!isActive || !mountIframe) return;
     const iframe = iframeRef.current;
     if (iframe) {
-      wireIframeMetadata(iframe, true, streamPriority, embedPlan, embedKey);
+      wireIframeChrome(
+        iframe,
+        slideHeightPx,
+        true,
+        streamPriority,
+        embedPlan,
+        embedKey,
+      );
       return;
     }
-    refreshStreamStageLayout(embedKey, true);
-  }, [isActive, mountIframe, streamPriority, embedPlan, embedKey]);
+    refreshStreamStageLayout(embedKey, slideHeightPx, true);
+  }, [isActive, mountIframe, slideHeightPx, streamPriority, embedPlan, embedKey]);
 
   useEffect(() => {
     if (!isActive) {
@@ -248,11 +276,11 @@ export function LiveEmbed({
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
-  const rootStyle = feedEmbedRootStyle();
-  const posterStyle = feedPosterImageStyle();
+  const rootStyle = feedEmbedRootStyle(slideHeightPx);
+  const posterStyle = feedPosterImageStyle(slideHeightPx);
 
   const stageStyle: CSSProperties = {
-    ...feedEmbedStageStyle(),
+    ...feedEmbedStageStyle(slideHeightPx),
     zIndex: 1,
     opacity: isActive ? 1 : 0,
     visibility: isActive ? "visible" : "hidden",
@@ -295,7 +323,7 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="13"
+      data-feed-layout-v="14"
       data-engine-slot={usingEngineSlot ? "1" : "0"}
     >
       <FeedPoster

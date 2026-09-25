@@ -1,4 +1,5 @@
 export {
+  FEED_PLAYER_FILL_SCALE,
   FEED_PLAYER_TRANSFORM_ORIGIN,
   feedSlideBoxStyle,
   feedPlayerMountStyle,

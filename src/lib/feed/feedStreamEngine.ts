@@ -167,11 +167,12 @@ export function claimStreamForStage(
 
 export function refreshStreamStageLayout(
   feedKey: string,
+  slideHeightPx: number,
   isActive: boolean,
 ): void {
   const slot = slots.get(feedKey);
   if (!slot || slot.docked) return;
-  applyStreamIframeStagePresentation(slot.iframe, isActive);
+  applyStreamIframeStagePresentation(slot.iframe, slideHeightPx, isActive);
 }
 
 export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {
