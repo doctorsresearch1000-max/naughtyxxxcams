@@ -24,7 +24,6 @@ const DOCK_INLINE_PROPS = [
   "pointer-events",
 ] as const;
 
-/** Strip viewport-dock presentation before mounting in the slide stage. */
 export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
   iframe.classList.remove("feed-embed-iframe--docked");
   for (const prop of DOCK_INLINE_PROPS) {
@@ -36,11 +35,15 @@ export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
 export function applyStreamIframeStagePresentation(
   iframe: HTMLIFrameElement,
   slideHeightPx: number,
+  slideWidthPx: number,
   isActive: boolean,
 ): void {
   clearStreamIframeDockStyles(iframe);
   iframe.className = `feed-embed-iframe ${
     isActive ? "pointer-events-auto" : "pointer-events-none"
   }`;
-  Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
+  Object.assign(
+    iframe.style,
+    feedEmbedIframeStyle(slideHeightPx, slideWidthPx),
+  );
 }

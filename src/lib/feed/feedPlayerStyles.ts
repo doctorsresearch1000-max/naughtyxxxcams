@@ -1,8 +1,10 @@
 import type { CSSProperties } from "react";
 
-/** Zoom hybrid 16:9 player to fill 9:16 card (TikTok-style crop). */
-export const FEED_PLAYER_FILL_SCALE = 3.15;
-export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 35%";
+/** Face-safe crop (validated on mobile feed). */
+export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 38%";
+
+/** Hides ~1–2% Streamate player chrome without over-zooming. */
+export const FEED_COVER_BLEED = 1.028;
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
@@ -38,6 +40,7 @@ export function feedEmbedRootStyle(heightPx: number): CSSProperties {
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
     width: "100%",
     height: heightPx,
     minHeight: heightPx,
@@ -52,27 +55,58 @@ export function feedEmbedStageStyle(heightPx: number): CSSProperties {
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
     width: "100%",
     height: heightPx,
     minHeight: heightPx,
     overflow: "hidden",
+    background: "#000",
   };
 }
 
-/** 16:9 surface sized to card height, centered and scaled to cover 9:16. */
-export function feedEmbedIframeStyle(heightPx: number): CSSProperties {
-  const coverWidth = Math.round((heightPx * 16) / 9);
+/**
+ * Uniform scale so a width-fit 16:9 iframe covers a 9:16 slide (object-fit: cover).
+ * Exact: scale = 16·H / (9·W).
+ */
+export function computeFeedVerticalCoverScale(
+  slideWidthPx: number,
+  slideHeightPx: number,
+): number {
+  if (slideWidthPx <= 0 || slideHeightPx <= 0) {
+    return 3.15;
+  }
+  const baseHeight = (slideWidthPx * 9) / 16;
+  const raw = slideHeightPx / baseHeight;
+  return Math.min(Math.max(raw, 1.02), 3.75);
+}
+
+/**
+ * TikTok-style cover: 16:9 iframe sized to slide width, scaled to fill slide height.
+ */
+export function feedEmbedIframeStyle(
+  slideHeightPx: number,
+  slideWidthPx?: number,
+): CSSProperties {
+  const widthPx =
+    slideWidthPx && slideWidthPx > 0
+      ? Math.round(slideWidthPx)
+      : Math.round((slideHeightPx * 9) / 16);
+  const baseHeight = Math.round((widthPx * 9) / 16);
+  const scale =
+    computeFeedVerticalCoverScale(widthPx, slideHeightPx) * FEED_COVER_BLEED;
+  const scaleRounded = Math.round(scale * 1000) / 1000;
+
   return {
     position: "absolute",
     top: "50%",
     left: "50%",
-    width: coverWidth,
-    height: heightPx,
+    width: widthPx,
+    height: baseHeight,
     margin: 0,
     padding: 0,
     border: "0",
     background: "#000",
-    transform: `translate(-50%, -50%) scale(${FEED_PLAYER_FILL_SCALE})`,
+    transform: `translate(-50%, -50%) scale(${scaleRounded})`,
     transformOrigin: FEED_PLAYER_TRANSFORM_ORIGIN,
     clipPath: "none",
   };
@@ -83,11 +117,13 @@ export function feedPosterImageStyle(heightPx: number): CSSProperties {
     position: "absolute",
     top: 0,
     left: 0,
+    right: 0,
+    bottom: 0,
     width: "100%",
     height: heightPx,
     minHeight: heightPx,
     maxHeight: heightPx,
     objectFit: "cover",
-    objectPosition: "center 35%",
+    objectPosition: "center 38%",
   };
 }

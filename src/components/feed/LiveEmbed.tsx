@@ -47,12 +47,18 @@ type LiveEmbedProps = {
 function applyIframeChrome(
   iframe: HTMLIFrameElement,
   slideHeightPx: number,
+  slideWidthPx: number,
   isActive: boolean,
   streamPriority: StreamLoadPriority,
   embedPlan: PerformerEmbedPlan,
   embedKey: string,
 ): void {
-  applyStreamIframeStagePresentation(iframe, slideHeightPx, isActive);
+  applyStreamIframeStagePresentation(
+    iframe,
+    slideHeightPx,
+    slideWidthPx,
+    isActive,
+  );
   iframe.removeAttribute("data-nx-stream-slot");
   iframe.setAttribute("data-naughty-feed-embed", "true");
   iframe.setAttribute("data-player-src-muted", embedPlan.playerSrcMuted ?? "");
@@ -92,6 +98,9 @@ export function LiveEmbed({
     isStreamSlotLoaded(embedKey),
   );
   const [usingEngineSlot, setUsingEngineSlot] = useState(false);
+  const [stageWidthPx, setStageWidthPx] = useState(() =>
+    Math.round((slideHeightPx * 9) / 16),
+  );
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
 
@@ -142,6 +151,26 @@ export function LiveEmbed({
   }, [embedKey, initialSrc]);
 
   useLayoutEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || !mountIframe) return;
+
+    const syncWidth = () => {
+      const w = stage.getBoundingClientRect().width;
+      if (w > 8) {
+        setStageWidthPx((prev) => {
+          const next = Math.round(w);
+          return prev === next ? prev : next;
+        });
+      }
+    };
+
+    syncWidth();
+    const ro = new ResizeObserver(syncWidth);
+    ro.observe(stage);
+    return () => ro.disconnect();
+  }, [mountIframe, slideHeightPx, isActive]);
+
+  useLayoutEffect(() => {
     if (!initialSrc || !embedPlan.canMountInteractivePlayer || !mountIframe) {
       return;
     }
@@ -170,10 +199,13 @@ export function LiveEmbed({
         return;
       }
 
+      const layoutWidth = Math.round(stage.getBoundingClientRect().width) || stageWidthPx;
+
       const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
         applyIframeChrome(
           iframe,
           slideHeightPx,
+          layoutWidth,
           true,
           streamPriority,
           embedPlan,
@@ -198,6 +230,7 @@ export function LiveEmbed({
         applyIframeChrome(
           iframeRef.current,
           slideHeightPx,
+          layoutWidth,
           true,
           streamPriority,
           embedPlan,
@@ -221,6 +254,7 @@ export function LiveEmbed({
       applyIframeChrome(
         iframe,
         slideHeightPx,
+        layoutWidth,
         true,
         streamPriority,
         embedPlan,
@@ -240,6 +274,7 @@ export function LiveEmbed({
     warmInDock,
     isActive,
     slideHeightPx,
+    stageWidthPx,
     streamPriority,
     markFrameLoaded,
     parkIframeToDock,
@@ -261,6 +296,7 @@ export function LiveEmbed({
       applyIframeChrome(
         iframe,
         slideHeightPx,
+        stageWidthPx,
         true,
         streamPriority,
         embedPlan,
@@ -268,8 +304,21 @@ export function LiveEmbed({
       );
       return;
     }
-    refreshStreamStageLayout(embedKey, slideHeightPx, true);
-  }, [isActive, mountIframe, slideHeightPx, streamPriority, embedPlan, embedKey]);
+    refreshStreamStageLayout(
+      embedKey,
+      slideHeightPx,
+      stageWidthPx,
+      true,
+    );
+  }, [
+    isActive,
+    mountIframe,
+    slideHeightPx,
+    stageWidthPx,
+    streamPriority,
+    embedPlan,
+    embedKey,
+  ]);
 
   useEffect(() => {
     if (!isActive) {
@@ -327,7 +376,8 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="10"
+      data-feed-layout-v="11"
+      data-feed-stage-width={stageWidthPx}
       data-engine-slot={usingEngineSlot ? "1" : "0"}
     >
       <FeedPoster
