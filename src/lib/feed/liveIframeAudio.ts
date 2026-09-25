@@ -133,6 +133,72 @@ function forceMutedPlayerSrc(iframe: HTMLIFrameElement): string | null {
   }
 }
 
+function canonicalFeedEmbedSrc(
+  raw: string,
+  wantSound: boolean,
+): string | null {
+  try {
+    return withFeedAudioParams(raw, wantSound);
+  } catch {
+    return null;
+  }
+}
+
+/** True when the iframe is already on the muted player URL (no navigation needed). */
+export function feedEmbedIsMutedInPlace(
+  iframe: HTMLIFrameElement,
+  embedPlan?: Pick<
+    PerformerEmbedPlan,
+    "playerSrcMuted" | "playerSrcUnmuted"
+  > | null,
+): boolean {
+  const target = resolveEmbedSrc(iframe, false, embedPlan);
+  if (!target) return false;
+  const current =
+    iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+  if (!current) return false;
+  const canonTarget = canonicalFeedEmbedSrc(target, false);
+  const canonCurrent = canonicalFeedEmbedSrc(current, false);
+  if (canonTarget && canonCurrent) return canonTarget === canonCurrent;
+  return current === target;
+}
+
+/** Naiad Pure client listens for `{ name: "SM_MUTE" | "SM_UNMUTE" }`. */
+export function postPurePlayerMuteState(
+  iframe: HTMLIFrameElement | null,
+  muted: boolean,
+): void {
+  if (!iframe?.contentWindow) return;
+  try {
+    iframe.contentWindow.postMessage(
+      { name: muted ? "SM_MUTE" : "SM_UNMUTE" },
+      "*",
+    );
+  } catch {
+    /* cross-origin */
+  }
+}
+
+/**
+ * Mute without reloading when the embed is already on `playerSrcMuted`.
+ * Preserves warmed Pure player sessions on swipe.
+ */
+export function ensureFeedEmbedMutedInPlace(
+  iframe: HTMLIFrameElement | null,
+  embedPlan?: Pick<
+    PerformerEmbedPlan,
+    "playerSrcMuted" | "playerSrcUnmuted"
+  > | null,
+): boolean {
+  if (!iframe) return false;
+  if (feedEmbedIsMutedInPlace(iframe, embedPlan)) {
+    postPurePlayerMuteState(iframe, true);
+    postLiveIframeAudio(iframe, "session-audio-mute");
+    return true;
+  }
+  return setFeedEmbedIframeAudible(iframe, false, embedPlan);
+}
+
 /**
  * Hard silence feed players (muted `src` + postMessage). Streamate ignores
  * parent postMessage after gesture-unmute; src swap is required.
@@ -187,10 +253,31 @@ export function setFeedEmbedIframeAudible(
   if (!next) return false;
 
   try {
-    if (iframe.src !== next) {
+    if (!wantSound && feedEmbedIsMutedInPlace(iframe, embedPlan)) {
+      postPurePlayerMuteState(iframe, true);
+      postLiveIframeAudio(iframe, action);
+      return true;
+    }
+
+    const current =
+      iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+    const canonNext = canonicalFeedEmbedSrc(next, wantSound);
+    const canonCurrent = current
+      ? canonicalFeedEmbedSrc(current, wantSound)
+      : null;
+    const sameSrc =
+      (canonNext && canonCurrent && canonNext === canonCurrent) ||
+      current === next;
+
+    if (!sameSrc) {
       iframe.src = next;
     }
     postLiveIframeAudio(iframe, action);
+    if (!wantSound) {
+      postPurePlayerMuteState(iframe, true);
+    } else {
+      postPurePlayerMuteState(iframe, false);
+    }
     return true;
   } catch {
     return false;

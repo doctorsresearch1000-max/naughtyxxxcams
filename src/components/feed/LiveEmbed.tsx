@@ -27,7 +27,16 @@ import {
 } from "@/lib/feed/feedPlayerStyles";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+import { feedPosterFallbackDelayMs } from "@/lib/feed/feedPosterReveal";
 import {
+  clearPurePlayerDisconnect,
+  parsePureDisconnectData,
+  parsePurePlayerParentMessage,
+  PURE_PLAYER_EVENT_DISCONNECTED,
+  recordPurePlayerDisconnect,
+} from "@/lib/feed/purePlayerDisconnect";
+import {
+  ensureFeedEmbedMutedInPlace,
   getFeedPlayerIframeForKey,
   setFeedEmbedIframeAudible,
 } from "@/lib/feed/liveIframeAudio";
@@ -92,7 +101,13 @@ export function LiveEmbed({
   const [frameLoaded, setFrameLoaded] = useState(() =>
     isStreamSlotLoaded(embedKey),
   );
-  const [streamPaintReady, setStreamPaintReady] = useState(false);
+  /** Poster hidden after bounded fallback — not a first-frame / playing signal. */
+  const [posterDismissed, setPosterDismissed] = useState(false);
+  const [pureDisconnectReason, setPureDisconnectReason] = useState<
+    string | null
+  >(null);
+  const posterDismissedRef = useRef(false);
+  const blockPosterDismissRef = useRef(false);
   const [usingEngineSlot, setUsingEngineSlot] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
@@ -107,10 +122,11 @@ export function LiveEmbed({
   const posterPriority =
     streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
 
-  const streamRevealed = isActive && mountIframe && streamPaintReady;
+  const streamRevealed = isActive && mountIframe && posterDismissed;
   const audible = isActive && !sessionMuted;
   const posterFadeMs =
     fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
+  const isPureIframe = embedPlan.mode === "api-iframe";
 
   /** Iframe document loaded — does NOT mean the stream has painted yet. */
   const markFrameDocumentLoaded = useCallback(() => {
@@ -118,46 +134,74 @@ export function LiveEmbed({
   }, []);
 
   useEffect(() => {
+    posterDismissedRef.current = posterDismissed;
+  }, [posterDismissed]);
+
+  useEffect(() => {
+    clearPurePlayerDisconnect(embedKey);
+    setPureDisconnectReason(null);
+    blockPosterDismissRef.current = false;
+  }, [embedKey, initialSrc]);
+
+  useEffect(() => {
     if (!isActive || !mountIframe) {
-      setStreamPaintReady(false);
+      setPosterDismissed(false);
+      blockPosterDismissRef.current = false;
       return;
     }
 
-    const docReady = frameLoaded || isStreamSlotLoaded(embedKey);
+    const docReadyAtActivation =
+      frameLoaded || isStreamSlotLoaded(embedKey);
+    const delayMs = feedPosterFallbackDelayMs(
+      docReadyAtActivation,
+      fastReveal,
+    );
 
-    let settleTimeoutId: number | undefined;
-    const revealPaint = () => {
-      if (settleTimeoutId !== undefined) {
-        window.clearTimeout(settleTimeoutId);
-        settleTimeoutId = undefined;
-      }
-      setStreamPaintReady(true);
+    const fallbackId = window.setTimeout(() => {
+      if (blockPosterDismissRef.current) return;
+      setPosterDismissed(true);
+    }, delayMs);
+
+    return () => {
+      window.clearTimeout(fallbackId);
     };
+  }, [isActive, mountIframe, embedKey, frameLoaded, fastReveal]);
+
+  useEffect(() => {
+    if (!mountIframe || !isPureIframe) return;
 
     const onMessage = (event: MessageEvent) => {
-      const iframe = iframeRef.current;
+      const iframe =
+        iframeRef.current ?? getFeedPlayerIframeForKey(embedKey);
       if (!iframe?.contentWindow || event.source !== iframe.contentWindow) {
         return;
       }
-      const data = event.data as { source?: string; action?: string };
-      if (data?.source === "naughty-embed" && data?.action === "stream-active") {
-        revealPaint();
+
+      const parsed = parsePurePlayerParentMessage(event.data);
+      if (!parsed || parsed.name !== PURE_PLAYER_EVENT_DISCONNECTED) {
+        return;
+      }
+
+      const disconnectData = parsePureDisconnectData(parsed.data);
+      if (!disconnectData) return;
+
+      const beforePosterDismissed =
+        isActive && !posterDismissedRef.current;
+
+      recordPurePlayerDisconnect(embedKey, disconnectData, {
+        beforePosterDismissed,
+      });
+      setPureDisconnectReason(disconnectData.reason);
+
+      if (beforePosterDismissed) {
+        blockPosterDismissRef.current = true;
+        setPosterDismissed(false);
       }
     };
 
     window.addEventListener("message", onMessage);
-
-    if (docReady) {
-      settleTimeoutId = window.setTimeout(revealPaint, 1800);
-    }
-
-    return () => {
-      window.removeEventListener("message", onMessage);
-      if (settleTimeoutId !== undefined) {
-        window.clearTimeout(settleTimeoutId);
-      }
-    };
-  }, [isActive, mountIframe, embedKey, frameLoaded]);
+    return () => window.removeEventListener("message", onMessage);
+  }, [mountIframe, isPureIframe, embedKey, isActive]);
 
   const parkIframeToDock = useCallback(() => {
     const iframe = iframeRef.current;
@@ -332,12 +376,12 @@ export function LiveEmbed({
     if (!iframe) return;
 
     if (!isActive) {
-      setFeedEmbedIframeAudible(iframe, false, embedPlan);
+      ensureFeedEmbedMutedInPlace(iframe, embedPlan);
       return;
     }
 
     if (sessionMuted) {
-      setFeedEmbedIframeAudible(iframe, false, embedPlan);
+      ensureFeedEmbedMutedInPlace(iframe, embedPlan);
     }
   }, [
     isActive,
@@ -394,6 +438,9 @@ export function LiveEmbed({
       data-feed-prefetch={isHiddenPrefetch ? "1" : "0"}
       data-feed-audible={audible ? "1" : "0"}
       data-stream-revealed={streamRevealed ? "1" : "0"}
+      data-frame-doc-loaded={frameLoaded ? "1" : "0"}
+      data-poster-dismissed={posterDismissed ? "1" : "0"}
+      data-pure-disconnected={pureDisconnectReason ?? ""}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
       data-feed-layout-v="16"
