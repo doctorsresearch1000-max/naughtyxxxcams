@@ -1,6 +1,6 @@
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
 import {
-  applyStreamIframeStageLayout,
+  applyStreamIframeStagePresentation,
   clearStreamIframeDockStyles,
 } from "@/lib/feed/feedStreamPresentation";
 import { postLiveIframeAudio } from "@/lib/feed/liveIframeAudio";
@@ -144,14 +144,14 @@ export function claimStreamForStage(
   return { iframe: slot.iframe, loaded: slot.loaded };
 }
 
-/** Re-apply card layout after resize (keeps dock styles from returning). */
+/** Re-apply stage presentation after resize / reparent. */
 export function refreshStreamStageLayout(
   feedKey: string,
-  slideHeightPx: number,
+  isActive: boolean,
 ): void {
   const slot = slots.get(feedKey);
   if (!slot || slot.docked) return;
-  applyStreamIframeStageLayout(slot.iframe, slideHeightPx);
+  applyStreamIframeStagePresentation(slot.iframe, isActive);
 }
 
 export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {

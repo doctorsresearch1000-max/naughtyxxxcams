@@ -16,11 +16,10 @@ import {
   refreshStreamStageLayout,
   releaseStreamSlot,
 } from "@/lib/feed/feedStreamEngine";
-import { clearStreamIframeDockStyles } from "@/lib/feed/feedStreamPresentation";
+import { applyStreamIframeStagePresentation } from "@/lib/feed/feedStreamPresentation";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
 import {
-  feedEmbedIframeStyle,
   feedEmbedRootStyle,
   feedEmbedStageStyle,
   feedPosterImageStyle,
@@ -46,17 +45,12 @@ type LiveEmbedProps = {
 
 function applyIframeChrome(
   iframe: HTMLIFrameElement,
-  slideHeightPx: number,
   isActive: boolean,
   streamPriority: StreamLoadPriority,
   embedPlan: PerformerEmbedPlan,
   embedKey: string,
 ): void {
-  iframe.className = `feed-embed-iframe ${
-    isActive ? "pointer-events-auto" : "pointer-events-none"
-  }`;
-  clearStreamIframeDockStyles(iframe);
-  Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
+  applyStreamIframeStagePresentation(iframe, isActive);
   iframe.removeAttribute("data-nx-stream-slot");
   iframe.setAttribute("data-naughty-feed-embed", "true");
   iframe.setAttribute("data-player-src-muted", embedPlan.playerSrcMuted ?? "");
@@ -156,7 +150,6 @@ export function LiveEmbed({
     const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
       applyIframeChrome(
         iframe,
-        slideHeightPx,
         isActive,
         streamPriority,
         embedPlan,
@@ -183,14 +176,7 @@ export function LiveEmbed({
 
     const iframe = document.createElement("iframe");
     iframe.src = initialSrc;
-    applyIframeChrome(
-      iframe,
-      slideHeightPx,
-      isActive,
-      streamPriority,
-      embedPlan,
-      embedKey,
-    );
+    applyIframeChrome(iframe, isActive, streamPriority, embedPlan, embedKey);
     iframe.allow = WIDGET_IFRAME_ALLOW;
     iframe.referrerPolicy = "strict-origin-when-cross-origin";
     iframe.addEventListener("load", markFrameLoaded, { once: true });
@@ -204,7 +190,6 @@ export function LiveEmbed({
     showInCardStage,
     warmInDock,
     isActive,
-    slideHeightPx,
     streamPriority,
     markFrameLoaded,
   ]);
@@ -227,25 +212,11 @@ export function LiveEmbed({
     if (!showInCardStage) return;
     const iframe = iframeRef.current;
     if (iframe) {
-      applyIframeChrome(
-        iframe,
-        slideHeightPx,
-        isActive,
-        streamPriority,
-        embedPlan,
-        embedKey,
-      );
+      applyIframeChrome(iframe, isActive, streamPriority, embedPlan, embedKey);
       return;
     }
-    refreshStreamStageLayout(embedKey, slideHeightPx);
-  }, [
-    showInCardStage,
-    slideHeightPx,
-    isActive,
-    streamPriority,
-    embedPlan,
-    embedKey,
-  ]);
+    refreshStreamStageLayout(embedKey, isActive);
+  }, [showInCardStage, isActive, streamPriority, embedPlan, embedKey]);
 
   useEffect(() => {
     if (!isActive) {
