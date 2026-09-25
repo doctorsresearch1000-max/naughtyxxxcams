@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
-import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
+import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
@@ -25,6 +26,8 @@ type FeedActionRailProps = {
   modelRef: SavedModelRef;
   posterUrl: string;
   profileLabel?: string;
+  profilePath?: string | null;
+  modelName?: string;
   affiliateUrl: string;
   isActive: boolean;
   muted: boolean;
@@ -36,6 +39,8 @@ export function FeedActionRail({
   modelRef,
   posterUrl,
   profileLabel = "Model",
+  profilePath = null,
+  modelName = "Model",
   affiliateUrl,
   isActive,
   muted,
@@ -44,6 +49,9 @@ export function FeedActionRail({
   const { requireAuth, isAuthenticated } = useTelegramAuth();
   const [saved, setSaved] = useState(false);
   const [following, setFollowing] = useState(false);
+  const [chatSheetOpen, setChatSheetOpen] = useState(false);
+  const displayName =
+    modelName?.replace(/^@+/, "").trim() || profileLabel.replace(/^@+/, "");
 
   const syncLibraryState = useCallback(() => {
     if (!isAuthenticated) return;
@@ -76,7 +84,7 @@ export function FeedActionRail({
   };
 
   const onChatAttempt = () => {
-    openAffiliateOutbound(affiliateUrl);
+    setChatSheetOpen(true);
   };
 
   const onShareTelegram = () => {
@@ -117,30 +125,48 @@ export function FeedActionRail({
           </button>
 
           <div className="relative mb-1">
+            {profilePath ? (
+              <Link
+                href={profilePath}
+                onClick={(e) => e.stopPropagation()}
+                className="block h-12 w-12 overflow-hidden rounded-full border-2 border-[#39FF14] bg-black p-0.5 shadow-lg shadow-[#39FF14]/25 transition active:scale-95"
+                aria-label={`View profile ${profileLabel}`}
+              >
+                <FeedPoster
+                  feedKey={`${feedKey}-avatar`}
+                  posterUrl={posterUrl}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </Link>
+            ) : (
+              <span
+                className="block h-12 w-12 overflow-hidden rounded-full border-2 border-[#39FF14] bg-black p-0.5 shadow-lg shadow-[#39FF14]/25"
+                aria-hidden
+              >
+                <FeedPoster
+                  feedKey={`${feedKey}-avatar`}
+                  posterUrl={posterUrl}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </span>
+            )}
             <button
               type="button"
-              onClick={onToggleFollow}
-              className="block h-12 w-12 overflow-hidden rounded-full border-2 border-[#39FF14] bg-black p-0.5 shadow-lg shadow-[#39FF14]/25 transition active:scale-95"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFollow();
+              }}
+              className={`absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full text-[11px] font-black shadow-md transition active:scale-95 ${
+                following
+                  ? "bg-[#39FF14] text-black"
+                  : "bg-[#EC4899] text-white"
+              }`}
               aria-label={
                 following
                   ? `Unfollow ${profileLabel}`
                   : `Follow ${profileLabel}`
               }
               aria-pressed={following}
-            >
-              <FeedPoster
-                feedKey={`${feedKey}-avatar`}
-                posterUrl={posterUrl}
-                className="h-full w-full rounded-full object-cover"
-              />
-            </button>
-            <span
-              className={`pointer-events-none absolute -bottom-1 left-1/2 flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full text-[11px] font-black shadow-md ${
-                following
-                  ? "bg-[#39FF14] text-black"
-                  : "bg-[#EC4899] text-white"
-              }`}
-              aria-hidden
             >
               {following ? (
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
@@ -155,7 +181,7 @@ export function FeedActionRail({
               ) : (
                 "+"
               )}
-            </span>
+            </button>
           </div>
 
           <LikeActionButton feedKey={feedKey} modelRef={modelRef} />
@@ -183,6 +209,17 @@ export function FeedActionRail({
           />
         </div>
       </div>
+
+      <ConversionSlideSheet
+        open={chatSheetOpen}
+        modelName={displayName}
+        affiliateUrl={affiliateUrl}
+        onClose={() => setChatSheetOpen(false)}
+        edgeAttached
+        title={`¿Quieres hablar con ${displayName}?`}
+        description="Únete a su chat privado y empieza a hablar con ella."
+        ctaLabel={`Chatear con ${displayName}`}
+      />
     </>
   );
 }

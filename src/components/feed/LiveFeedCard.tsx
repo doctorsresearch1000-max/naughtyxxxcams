@@ -183,6 +183,8 @@ function LiveFeedCardInner({
           modelRef={modelRef}
           posterUrl={performer.posterUrl}
           profileLabel={handleLabel}
+          profilePath={profileHref}
+          modelName={modelName}
           affiliateUrl={affiliateUrl}
           isActive={isActive}
           muted={muted}

@@ -8,6 +8,11 @@ type ConversionSlideSheetProps = {
   modelName: string;
   affiliateUrl: string;
   onClose: () => void;
+  /** Flush to viewport bottom (feed rail chat). */
+  edgeAttached?: boolean;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
 };
 
 export function ConversionSlideSheet({
@@ -15,7 +20,17 @@ export function ConversionSlideSheet({
   modelName,
   affiliateUrl,
   onClose,
+  edgeAttached = false,
+  title,
+  description,
+  ctaLabel,
 }: ConversionSlideSheetProps) {
+  const sheetTitle =
+    title ?? "Private chat";
+  const sheetDescription =
+    description ??
+    "Want to chat privately? Click the CTA below to start talking with her right now.";
+  const sheetCta = ctaLabel ?? `Chat with ${modelName}`;
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -43,25 +58,34 @@ export function ConversionSlideSheet({
         className={`fixed bottom-0 left-0 right-0 z-[100001] mx-auto w-full max-w-md transform transition-transform duration-300 ease-out ${
           open ? "translate-y-0" : "translate-y-full pointer-events-none"
         }`}
-        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+        style={
+          edgeAttached
+            ? { paddingBottom: "env(safe-area-inset-bottom, 0px)" }
+            : { paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }
+        }
       >
-        <div className="mx-3 mb-3 rounded-3xl border border-white/10 bg-[#1C1C1E]/98 p-5 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+        <div
+          className={
+            edgeAttached
+              ? "border-t border-white/10 bg-[#1C1C1E]/98 px-5 pb-5 pt-3 shadow-[0_-12px_48px_rgba(0,0,0,0.65)] backdrop-blur-xl rounded-t-2xl"
+              : "mx-3 mb-3 rounded-3xl border border-white/10 bg-[#1C1C1E]/98 p-5 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+          }
+        >
           <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-zinc-600" />
           <h2
             id="conversion-sheet-title"
             className="text-center text-base font-black text-white"
           >
-            Private chat
+            {sheetTitle}
           </h2>
           <p className="mt-2 text-center text-sm leading-relaxed text-zinc-400">
-            Want to chat privately? Click the CTA below to start talking with
-            her right now.
+            {sheetDescription}
           </p>
           <AffiliateOutboundLink
             href={affiliateUrl}
             className="mt-4 flex w-full items-center justify-center rounded-full bg-[#39FF14] px-4 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition active:scale-[0.98]"
           >
-            Chat with {modelName}
+            {sheetCta}
           </AffiliateOutboundLink>
           <button
             type="button"
