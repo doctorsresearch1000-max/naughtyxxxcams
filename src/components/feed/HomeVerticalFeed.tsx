@@ -13,10 +13,7 @@ import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
-import {
-  applyDirectPlayerAudioFromGesture,
-  muteAllFeedEmbedIframes,
-} from "@/lib/feed/liveIframeAudio";
+import { muteFeedOnSlideChange } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
@@ -72,7 +69,7 @@ function HomeVerticalFeedInner({
   const searchParams = useSearchParams();
   const router = useRouter();
   const resumeFeedKey = searchParams.get(RESUME_FEED_QUERY);
-  const { registerActiveIframe, muted } = useSessionAudio();
+  const { registerActiveIframe } = useSessionAudio();
 
   useLayoutEffect(() => {
     if (serverBootstrapped) {
@@ -159,11 +156,8 @@ function HomeVerticalFeedInner({
 
   useEffect(() => {
     if (!onHome) return;
-    muteAllFeedEmbedIframes();
-    if (!muted) {
-      applyDirectPlayerAudioFromGesture(true);
-    }
-  }, [activeIndex, muted, onHome]);
+    muteFeedOnSlideChange();
+  }, [activeIndex, onHome]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {

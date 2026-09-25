@@ -88,15 +88,19 @@ export function FeedActionRail({
         <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-4">
           <button
             type="button"
-            onPointerDown={(e) => {
+            onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               onToggleMute();
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
             }}
             className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/70 shadow-lg backdrop-blur-sm transition-colors active:scale-95 ${
               muted ? "text-white" : "text-[#39FF14]"
             }`}
             aria-label={muted ? "Unmute" : "Mute"}
+            aria-pressed={!muted}
           >
             {muted ? (
               <IconVolumeOff size={22} strokeWidth={1.65} />

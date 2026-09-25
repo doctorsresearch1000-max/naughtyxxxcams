@@ -205,20 +205,11 @@ export function LiveEmbed({
     const iframe = iframeRef.current;
     if (!iframe || !frameLoaded || !mountIframe) return;
 
-    if (!isActive) {
+    if (!isActive || sessionMuted) {
       setFeedEmbedIframeAudible(iframe, false, embedPlan);
-      return;
     }
-
-    setFeedEmbedIframeAudible(iframe, !sessionMuted, embedPlan);
-  }, [
-    isActive,
-    sessionMuted,
-    frameLoaded,
-    mountIframe,
-    embedPlan,
-    embedKey,
-  ]);
+    /* Unmute only inside user-gesture handlers — never reload unmuted src here. */
+  }, [isActive, sessionMuted, frameLoaded, mountIframe, embedPlan, embedKey]);
 
   const bindIframeRef = useCallback((node: HTMLIFrameElement | null) => {
     iframeRef.current = node;

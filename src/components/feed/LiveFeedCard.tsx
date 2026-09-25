@@ -40,7 +40,10 @@ function LiveFeedCardInner({
   onRegisterIframe,
 }: LiveFeedCardProps) {
   const slideHeightPx = useFeedSlideHeightPx();
-  const { muted, toggleMutedFromPointerDown } = useSessionAudio();
+  const { muted, toggleMutedFromUserGesture } = useSessionAudio();
+  const onToggleMute = () => {
+    toggleMutedFromUserGesture(performer.embedPlan);
+  };
   const [secondaryChromeReady, setSecondaryChromeReady] = useState(
     !deferSecondaryChrome,
   );
@@ -91,11 +94,11 @@ function LiveFeedCardInner({
     if (target.closest("button, a[href]")) return;
 
     if (muted) {
-      toggleMutedFromPointerDown();
+      onToggleMute();
       return;
     }
     if (!(e.target instanceof HTMLIFrameElement)) {
-      toggleMutedFromPointerDown();
+      onToggleMute();
     }
   };
 
@@ -194,7 +197,7 @@ function LiveFeedCardInner({
           affiliateUrl={affiliateUrl}
           isActive={isActive}
           muted={muted}
-          onToggleMute={toggleMutedFromPointerDown}
+          onToggleMute={onToggleMute}
         />
       ) : null}
     </article>

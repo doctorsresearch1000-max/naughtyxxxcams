@@ -83,6 +83,16 @@ export function muteAllFeedEmbedIframes(): void {
   });
 }
 
+/** Mute prefetch / inactive cards without reloading the active player `src`. */
+export function muteInactiveFeedEmbedIframes(): void {
+  const active = getActiveFeedPlayerIframe();
+  const nodes = document.querySelectorAll(ALL_FEED_IFRAMES_SELECTOR);
+  nodes.forEach((node) => {
+    if (node === active) return;
+    setFeedEmbedIframeAudible(node as HTMLIFrameElement, false);
+  });
+}
+
 /**
  * Gesture-initiated player navigation (must run synchronously in pointerdown/click).
  */
