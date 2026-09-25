@@ -40,7 +40,7 @@ export default function RootLayout({
         </div>
         <AppChrome />
         </AppProviders>
-        <GoogleAnalytics gaId="G-CH205SN6QR" />
+        <GoogleAnalytics gaId="G-3RHSY9JWVC" />
       </body>
     </html>
   );
