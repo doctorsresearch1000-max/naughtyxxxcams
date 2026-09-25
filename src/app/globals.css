@@ -6,10 +6,8 @@
   color-scheme: dark;
   /* Header global (logo h-10 + padding); bottom nav = 4rem */
   --app-header-height: 3.75rem;
-  /* Home vertical feed slide (dvh − header overlay − bottom nav) */
-  --feed-viewport-height: calc(
-    100dvh - var(--app-header-height) - 4rem
-  );
+  /* Home vertical feed slide (dvh − bottom nav) */
+  --feed-viewport-height: calc(100dvh - 4rem);
 }
 
 @media (min-width: 768px) {
@@ -149,24 +147,8 @@ img.feed-embed-poster {
   background: #000;
 }
 
-/* In-slide player: top-anchored full width; height set inline in px (see feedStreamPresentation). */
-.feed-embed-iframe--stage {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  transform: none !important;
-  clip-path: none !important;
-  -webkit-clip-path: none !important;
-}
-
 .feed-embed-iframe--docked {
+  position: fixed !important;
   pointer-events: none !important;
   content-visibility: visible !important;
 }

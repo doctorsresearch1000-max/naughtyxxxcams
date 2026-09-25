@@ -16,16 +16,14 @@ type StreamSlot = {
 
 const slots = new Map<string, StreamSlot>();
 
-const MIN_STAGE_HEIGHT_PX = 8;
-
-/** Tiny fixed strip — avoids full-viewport fixed iframes leaking into the active stage. */
+/** Viewport dock — opaque with a 4px strip (avoids background media throttle). */
 const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
   left: "0",
   bottom: "0",
   width: "100vw",
-  height: "4px",
-  maxHeight: "4px",
+  height: "100dvh",
+  maxHeight: "100dvh",
   margin: "0",
   padding: "0",
   border: "0",
@@ -33,8 +31,8 @@ const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   visibility: "visible",
   pointerEvents: "none",
   zIndex: "1",
-  clipPath: "none",
-  transform: "none",
+  clipPath: "inset(calc(100% - 4px) 0 0 0)",
+  transform: "translateZ(0)",
   background: "#000",
 };
 
@@ -102,28 +100,7 @@ export function peekStreamSlot(feedKey: string): boolean {
   return slots.has(feedKey);
 }
 
-/** Track an in-card iframe (slide 0) so release can dock instead of destroy. */
-export function registerInCardStreamSlot(
-  feedKey: string,
-  src: string,
-  iframe: HTMLIFrameElement,
-  loaded: boolean,
-): void {
-  slots.set(feedKey, {
-    feedKey,
-    src,
-    iframe,
-    loaded,
-    docked: false,
-  });
-}
-
-export function markStreamSlotLoaded(feedKey: string): void {
-  const slot = slots.get(feedKey);
-  if (slot) slot.loaded = true;
-}
-
-/** Prefetch-only warm-up (N±1). Never call for the active slide. */
+/** Prefetch-only (N±1). Do not warm the active slide in the dock. */
 export function ensureStreamWarming(feedKey: string, src: string): void {
   if (typeof document === "undefined" || !feedKey || !src) return;
 
@@ -131,8 +108,6 @@ export function ensureStreamWarming(feedKey: string, src: string): void {
   if (existing) {
     if (existing.src !== src) {
       evictSlot(feedKey);
-    } else if (!existing.docked) {
-      return;
     } else {
       return;
     }
@@ -148,14 +123,6 @@ export type ClaimedStreamSlot = {
   loaded: boolean;
 };
 
-export function isStageReadyForStream(stage: HTMLElement): boolean {
-  return stage.getBoundingClientRect().height >= MIN_STAGE_HEIGHT_PX;
-}
-
-/**
- * Reparent warmed iframe into slide stage without resetting `src`.
- * Stage must have layout; caller should retry if this returns null while slot exists.
- */
 export function claimStreamForStage(
   feedKey: string,
   stage: HTMLElement,
@@ -163,30 +130,25 @@ export function claimStreamForStage(
 ): ClaimedStreamSlot | null {
   const slot = slots.get(feedKey);
   if (!slot) return null;
-  if (!isStageReadyForStream(stage)) return null;
 
   slot.docked = false;
   clearStreamIframeDockStyles(slot.iframe);
-
   if (slot.iframe.parentElement !== stage) {
     stage.appendChild(slot.iframe);
   }
-
   void stage.offsetHeight;
   applyLayout(slot.iframe);
-  void slot.iframe.offsetHeight;
-
   return { iframe: slot.iframe, loaded: slot.loaded };
 }
 
 export function refreshStreamStageLayout(
   feedKey: string,
-  stageHeightPx: number,
+  slideHeightPx: number,
   isActive: boolean,
 ): void {
   const slot = slots.get(feedKey);
   if (!slot || slot.docked) return;
-  applyStreamIframeStagePresentation(slot.iframe, stageHeightPx, isActive);
+  applyStreamIframeStagePresentation(slot.iframe, slideHeightPx, isActive);
 }
 
 export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {

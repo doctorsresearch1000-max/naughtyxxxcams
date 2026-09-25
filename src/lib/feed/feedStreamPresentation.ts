@@ -1,19 +1,46 @@
-import { feedEmbedIframeStageStyle } from "@/lib/feed/feedPlayerStyles";
+import { feedEmbedIframeStyle } from "@/lib/feed/feedPlayerStyles";
 
-/** Remove every dock inline rule so fixed/clip-path cannot leak into the stage. */
+const DOCK_INLINE_PROPS = [
+  "clip-path",
+  "-webkit-clip-path",
+  "position",
+  "left",
+  "right",
+  "top",
+  "bottom",
+  "width",
+  "height",
+  "max-height",
+  "max-width",
+  "z-index",
+  "opacity",
+  "visibility",
+  "transform",
+  "transform-origin",
+  "margin",
+  "padding",
+  "border",
+  "background",
+  "pointer-events",
+] as const;
+
+/** Strip viewport-dock presentation before mounting in the slide stage. */
 export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
-  iframe.style.cssText = "";
   iframe.classList.remove("feed-embed-iframe--docked");
+  for (const prop of DOCK_INLINE_PROPS) {
+    iframe.style.removeProperty(prop);
+  }
+  iframe.style.clipPath = "none";
 }
 
 export function applyStreamIframeStagePresentation(
   iframe: HTMLIFrameElement,
-  stageHeightPx: number,
+  slideHeightPx: number,
   isActive: boolean,
 ): void {
   clearStreamIframeDockStyles(iframe);
-  iframe.className = `feed-embed-iframe feed-embed-iframe--stage ${
+  iframe.className = `feed-embed-iframe ${
     isActive ? "pointer-events-auto" : "pointer-events-none"
   }`;
-  Object.assign(iframe.style, feedEmbedIframeStageStyle(stageHeightPx));
+  Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
 }
