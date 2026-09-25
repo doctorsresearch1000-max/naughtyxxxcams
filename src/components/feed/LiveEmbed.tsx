@@ -13,8 +13,10 @@ import {
   ensureStreamWarming,
   isStreamSlotLoaded,
   peekStreamSlot,
+  refreshStreamStageLayout,
   releaseStreamSlot,
 } from "@/lib/feed/feedStreamEngine";
+import { clearStreamIframeDockStyles } from "@/lib/feed/feedStreamPresentation";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
 import {
@@ -53,6 +55,7 @@ function applyIframeChrome(
   iframe.className = `feed-embed-iframe ${
     isActive ? "pointer-events-auto" : "pointer-events-none"
   }`;
+  clearStreamIframeDockStyles(iframe);
   Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
   iframe.removeAttribute("data-nx-stream-slot");
   iframe.setAttribute("data-naughty-feed-embed", "true");
@@ -107,7 +110,10 @@ export function LiveEmbed({
   const posterPriority =
     streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
 
-  const streamRevealed = isActive && frameLoaded && mountIframe;
+  const streamRevealed =
+    isActive &&
+    mountIframe &&
+    (frameLoaded || isStreamSlotLoaded(embedKey) || usingEngineSlot);
   const audible = isActive && !sessionMuted;
   const posterFadeMs =
     fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
@@ -217,13 +223,29 @@ export function LiveEmbed({
     };
   }, [mountIframe, isArmed, isActive, embedKey, onIframeWindow]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!showInCardStage) return;
     const iframe = iframeRef.current;
-    if (!iframe) return;
-    iframe.className = `feed-embed-iframe ${
-      isActive ? "pointer-events-auto" : "pointer-events-none"
-    }`;
-  }, [isActive]);
+    if (iframe) {
+      applyIframeChrome(
+        iframe,
+        slideHeightPx,
+        isActive,
+        streamPriority,
+        embedPlan,
+        embedKey,
+      );
+      return;
+    }
+    refreshStreamStageLayout(embedKey, slideHeightPx);
+  }, [
+    showInCardStage,
+    slideHeightPx,
+    isActive,
+    streamPriority,
+    embedPlan,
+    embedKey,
+  ]);
 
   useEffect(() => {
     if (!isActive) {

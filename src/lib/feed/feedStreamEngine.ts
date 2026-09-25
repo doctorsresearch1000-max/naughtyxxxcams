@@ -1,4 +1,8 @@
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+import {
+  applyStreamIframeStageLayout,
+  clearStreamIframeDockStyles,
+} from "@/lib/feed/feedStreamPresentation";
 import { postLiveIframeAudio } from "@/lib/feed/liveIframeAudio";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
@@ -132,11 +136,22 @@ export function claimStreamForStage(
   if (!slot) return null;
 
   slot.docked = false;
+  clearStreamIframeDockStyles(slot.iframe);
   applyLayout(slot.iframe);
   if (slot.iframe.parentElement !== stage) {
     stage.appendChild(slot.iframe);
   }
   return { iframe: slot.iframe, loaded: slot.loaded };
+}
+
+/** Re-apply card layout after resize (keeps dock styles from returning). */
+export function refreshStreamStageLayout(
+  feedKey: string,
+  slideHeightPx: number,
+): void {
+  const slot = slots.get(feedKey);
+  if (!slot || slot.docked) return;
+  applyStreamIframeStageLayout(slot.iframe, slideHeightPx);
 }
 
 export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {

@@ -155,7 +155,6 @@ img.feed-embed-poster {
 }
 
 .feed-embed-iframe--docked {
-  position: fixed !important;
   pointer-events: none !important;
   content-visibility: visible !important;
 }
