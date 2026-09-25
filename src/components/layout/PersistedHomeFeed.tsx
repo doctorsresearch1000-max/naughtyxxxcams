@@ -2,8 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { Suspense, useRef } from "react";
+import { DesktopHomeCatalog } from "@/components/desktop/DesktopHomeCatalog";
 import { HomeVerticalFeed } from "@/components/feed/HomeVerticalFeed";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function FeedFallback() {
   return (
@@ -19,6 +21,7 @@ function FeedFallback() {
  */
 export function PersistedHomeFeed() {
   const pathname = usePathname();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const everHome = useRef(false);
 
   if (pathname === "/") {
@@ -41,11 +44,15 @@ export function PersistedHomeFeed() {
       aria-hidden={!visible}
       {...(!visible ? { inert: true as const } : {})}
     >
-      <SessionAudioProvider>
-        <Suspense fallback={<FeedFallback />}>
-          <HomeVerticalFeed />
-        </Suspense>
-      </SessionAudioProvider>
+      {isDesktop ? (
+        <DesktopHomeCatalog />
+      ) : (
+        <SessionAudioProvider>
+          <Suspense fallback={<FeedFallback />}>
+            <HomeVerticalFeed />
+          </Suspense>
+        </SessionAudioProvider>
+      )}
     </div>
   );
 }

@@ -107,7 +107,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[99999] mx-auto w-full max-w-md"
+      className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[99999] mx-auto w-full max-w-md lg:hidden"
       data-bottom-nav="v2-heart"
       style={{
         paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))",
