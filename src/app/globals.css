@@ -71,7 +71,7 @@ iframe[data-touch-blocked="true"] {
 }
 
 /* Mobile home: fixed stage from top edge; site header/nav float above */
-.feed-shell--mobile-stage {
+#nx-mobile-feed-stage {
   position: fixed;
   inset: 0;
   z-index: 25;
@@ -82,13 +82,34 @@ iframe[data-touch-blocked="true"] {
   height: 100dvh;
   max-height: 100dvh;
   min-height: 100dvh;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.feed-shell--mobile-stage {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: 25;
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  min-height: 100dvh !important;
+  padding: 0 !important;
 }
 
 @supports (height: 100dvh) {
+  #nx-mobile-feed-stage,
   .feed-shell--mobile-stage {
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 100dvh;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 100dvh !important;
   }
 }
 

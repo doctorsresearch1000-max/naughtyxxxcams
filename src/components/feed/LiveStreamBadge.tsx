@@ -24,7 +24,7 @@ export function LiveStreamBadge({
 
   return (
     <div
-      className="pointer-events-none absolute left-3 top-[calc(var(--app-header-height)+0.35rem)] z-[28] flex items-center gap-2"
+      className="pointer-events-none absolute left-3 top-[max(0.5rem,env(safe-area-inset-top,0px))] z-[28] flex items-center gap-2"
       aria-live="polite"
     >
       {isLive ? (
