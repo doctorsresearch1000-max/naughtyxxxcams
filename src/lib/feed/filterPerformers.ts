@@ -1,6 +1,7 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { getPerformerKey } from "@/lib/crackrevenue/api";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
+import { performerHasNativeEmbedFeed } from "@/lib/feed/nativeIframeFeed";
 import {
   resolvePerformerEmbedPlan,
   type PerformerEmbedPlan,
@@ -59,6 +60,7 @@ export function filterFeedPerformers(
 
   for (const p of performers) {
     if (p.live === false) continue;
+    if (!performerHasNativeEmbedFeed(p)) continue;
 
     const feedKey = getPerformerKey(p);
     if (seenKeys.has(feedKey)) continue;
@@ -78,6 +80,9 @@ export function filterFeedPerformers(
       seenPosterBases.add(posterBaseKey(onlySnap));
       seenKeys.add(feedKey);
       const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
+      if (embedPlan.mode !== "api-iframe" || !embedPlan.canMountInteractivePlayer) {
+        continue;
+      }
       out.push({ ...p, feedKey, posterUrl: onlySnap, embedPlan });
       continue;
     }
@@ -85,6 +90,9 @@ export function filterFeedPerformers(
     seenPosterBases.add(base);
     seenKeys.add(feedKey);
     const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
+    if (embedPlan.mode !== "api-iframe" || !embedPlan.canMountInteractivePlayer) {
+      continue;
+    }
     out.push({ ...p, feedKey, posterUrl, embedPlan });
   }
 

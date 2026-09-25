@@ -17,6 +17,8 @@ export type CrackPerformer = {
   liveSnapshotURL?: string;
   roomUrl?: string;
   iframeFeedURL?: string;
+  /** Documented performers-ext source; feed requires `streamate`. */
+  systemSource?: string;
   systemScore?: number;
   characteristicsTags?: string[];
   autoTags?: string[];

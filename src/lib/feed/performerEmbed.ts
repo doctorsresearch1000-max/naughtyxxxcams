@@ -1,5 +1,9 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
+import {
+  isNativeEmbeddableIframeFeedUrl,
+  pickNativeIframeFeedUrl,
+} from "@/lib/feed/nativeIframeFeed";
 import { buildWidgetFrameSrc } from "@/lib/feed/widgetSrcDoc";
 
 export type PerformerEmbedMode = "api-iframe" | "widget" | "poster-only";
@@ -16,34 +20,9 @@ export type PerformerEmbedPlan = {
   apiIframeFeedUrl: string | null;
 };
 
-const ALLOWED_FEED_HOST_SUFFIXES = [
-  "streamate.com",
-  "streamate.net",
-  "streamateaccess.com",
-  "pcvdaa.com",
-  "crxcr2.com",
-];
-
-const BLOCKED_PLAYER_HOST_MARKERS = [
-  "jerkmate",
-  "go.crakrevenue",
-  "crakrevenue.com/go",
-];
-
+/** @deprecated use isNativeEmbeddableIframeFeedUrl */
 export function isAllowedIframeFeedHost(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    const host = parsed.hostname.toLowerCase();
-    const href = parsed.href.toLowerCase();
-    if (BLOCKED_PLAYER_HOST_MARKERS.some((m) => host.includes(m) || href.includes(m))) {
-      return false;
-    }
-    return ALLOWED_FEED_HOST_SUFFIXES.some(
-      (suffix) => host === suffix || host.endsWith(`.${suffix}`),
-    );
-  } catch {
-    return false;
-  }
+  return isNativeEmbeddableIframeFeedUrl(url);
 }
 
 export function withFeedAudioParams(rawUrl: string, wantSound: boolean): string {
@@ -82,7 +61,7 @@ export function resolvePerformerEmbedPlan(
 ): PerformerEmbedPlan {
   const roomAffiliateUrl = buildModelAffiliateUrl(performer);
   const isLive = performer.live !== false;
-  const rawFeed = performer.iframeFeedURL?.trim() ?? "";
+  const rawFeed = pickNativeIframeFeedUrl(performer) ?? "";
 
   if (!isLive) {
     return {
@@ -96,7 +75,7 @@ export function resolvePerformerEmbedPlan(
     };
   }
 
-  if (rawFeed && isAllowedIframeFeedHost(rawFeed)) {
+  if (rawFeed && isNativeEmbeddableIframeFeedUrl(rawFeed)) {
     const playerSrcMuted = normalizeApiIframeFeedUrl(rawFeed);
     const playerSrcUnmuted = withFeedAudioParams(rawFeed, true);
     return {
