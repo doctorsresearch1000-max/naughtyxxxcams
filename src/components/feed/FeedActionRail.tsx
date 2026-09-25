@@ -36,7 +36,6 @@ export function FeedActionRail({
   modelRef,
   posterUrl,
   profileLabel = "Model",
-  modelName,
   affiliateUrl,
   isActive,
   muted,
