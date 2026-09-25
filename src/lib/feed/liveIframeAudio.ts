@@ -259,18 +259,26 @@ export function setFeedEmbedIframeAudible(
       return true;
     }
 
-    const current =
-      iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
-    const canonNext = canonicalFeedEmbedSrc(next, wantSound);
-    const canonCurrent = current
-      ? canonicalFeedEmbedSrc(current, wantSound)
-      : null;
-    const sameSrc =
-      (canonNext && canonCurrent && canonNext === canonCurrent) ||
-      current === next;
+    if (wantSound) {
+      // Unmute must navigate to `playerSrcUnmuted` (cf46eda). Canonical compare
+      // would treat muted vs unmuted URLs as equivalent and skip navigation.
+      if (iframe.src !== next) {
+        iframe.src = next;
+      }
+    } else {
+      const current =
+        iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+      const canonNext = canonicalFeedEmbedSrc(next, false);
+      const canonCurrent = current
+        ? canonicalFeedEmbedSrc(current, false)
+        : null;
+      const sameSrc =
+        (canonNext && canonCurrent && canonNext === canonCurrent) ||
+        current === next;
 
-    if (!sameSrc) {
-      iframe.src = next;
+      if (!sameSrc) {
+        iframe.src = next;
+      }
     }
     postLiveIframeAudio(iframe, action);
     if (!wantSound) {
