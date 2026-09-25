@@ -10,12 +10,14 @@ import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideShe
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
+import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
 
 type ModelProfileSlushyViewProps = {
   model: ModelProfileView;
-  seoIntro: string;
+  seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
 };
 
@@ -61,7 +63,7 @@ function PrimaryCta({
 
 export function ModelProfileSlushyView({
   model,
-  seoIntro,
+  seo,
   recommended,
 }: ModelProfileSlushyViewProps) {
   const isLive = model.status === "live";
@@ -95,7 +97,7 @@ export function ModelProfileSlushyView({
     <>
       <ModelProfileDesktopView
         model={model}
-        seoIntro={seoIntro}
+        seo={seo}
         recommended={recommended}
       />
     <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white lg:hidden">
@@ -177,7 +179,7 @@ export function ModelProfileSlushyView({
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-zinc-300">{model.bio}</p>
-          <p className="mt-2 line-clamp-3 text-xs text-zinc-500">{seoIntro}</p>
+          <p className="mt-2 text-xs leading-relaxed text-zinc-500">{seo.intro}</p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-5 text-xs text-zinc-300">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 ring-1 ring-white/5">
@@ -238,6 +240,10 @@ export function ModelProfileSlushyView({
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="px-4 pt-8">
+          <ProfileSeoContentBlock seo={seo} />
         </section>
 
         <section className="px-4 pt-10">

@@ -75,7 +75,7 @@ export default async function ModelProfilePage({ params }: PageProps) {
       />
       <ModelProfileSlushyView
         model={modelData}
-        seoIntro={seoContent.intro}
+        seo={seoContent}
         recommended={recommended}
       />
     </>

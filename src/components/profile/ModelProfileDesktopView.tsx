@@ -16,16 +16,19 @@ import {
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import { buildTipMenu } from "@/lib/profile/buildTipMenu";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
+import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
+
 type ModelProfileDesktopViewProps = {
   model: ModelProfileView;
-  seoIntro: string;
+  seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
 };
 
 export function ModelProfileDesktopView({
   model,
-  seoIntro,
+  seo,
   recommended,
 }: ModelProfileDesktopViewProps) {
   const likeKey = `profile-${model.profileSlug}`;
@@ -79,7 +82,7 @@ export function ModelProfileDesktopView({
           ) : null}
         </div>
 
-        <p className="text-center text-xs text-zinc-500">{seoIntro}</p>
+        <ProfileSeoContentBlock seo={seo} />
 
         <ProfileGallerySection items={model.galleryItems} />
 

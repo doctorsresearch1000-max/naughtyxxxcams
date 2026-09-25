@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { ExplorePageClient } from "@/components/explore/ExplorePageClient";
-import {
-  getDefaultExploreSeo,
-  resolveExploreCategory,
-} from "@/lib/explore/categorySlugs";
+import { resolveExploreCategory } from "@/lib/explore/categorySlugs";
 import { exploreCanonicalUrl } from "@/lib/seo/canonical";
+import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
 
 type ExplorePageProps = {
   searchParams: Promise<{ cat?: string }>;
@@ -15,33 +13,18 @@ export async function generateMetadata({
 }: ExplorePageProps): Promise<Metadata> {
   const { cat } = await searchParams;
   const category = resolveExploreCategory(cat);
-  const defaults = getDefaultExploreSeo();
   const canonical = exploreCanonicalUrl(cat);
-
-  if (!category) {
-    return {
-      title: defaults.title,
-      description: defaults.description,
-      alternates: {
-        canonical,
-      },
-      openGraph: {
-        title: defaults.title,
-        description: defaults.description,
-        url: canonical,
-      },
-    };
-  }
+  const copy = generateExploreSeoCopy(category);
 
   return {
-    title: category.seoTitle,
-    description: category.seoDescription,
+    title: copy.title,
+    description: copy.description,
     alternates: {
       canonical,
     },
     openGraph: {
-      title: category.seoTitle,
-      description: category.seoDescription,
+      title: copy.title,
+      description: copy.description,
       url: canonical,
     },
   };
