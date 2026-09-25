@@ -7,7 +7,7 @@ import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
 
 function FeedFallback() {
   return (
-    <div className="flex h-[var(--feed-viewport-height)] items-center justify-center bg-black">
+    <div className="feed-shell flex items-center justify-center bg-black">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
     </div>
   );

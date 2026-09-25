@@ -17,9 +17,6 @@ import { LiveCommentTicker } from "@/components/feed/LiveCommentTicker";
 import { recordView } from "@/lib/user/userLibrary";
 import { LiveEmbed } from "./LiveEmbed";
 
-const CARD_LAYOUT =
-  "relative w-full h-full min-h-full shrink-0 snap-start snap-always overflow-hidden bg-black [height:var(--feed-viewport-height)] min-h-[var(--feed-viewport-height)]";
-
 type LiveFeedCardProps = {
   performer: FeedPerformer;
   index: number;
@@ -74,12 +71,12 @@ export function LiveFeedCard({
 
   return (
     <article
-      className={`tele-card ${CARD_LAYOUT}`}
+      className="tele-card feed-slide"
       data-slide-index={index}
       data-feed-key={performer.feedKey}
       aria-label={handleLabel}
     >
-      <div className="absolute inset-0 z-0 h-full min-h-full w-full overflow-hidden">
+      <div className="feed-player-mount">
         <LiveEmbed
           embedKey={performer.feedKey}
           posterUrl={performer.posterUrl}

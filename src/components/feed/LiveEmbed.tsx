@@ -14,12 +14,6 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-/** Crop hybrid 16:9 player inside 9:16 card after full-bleed layout. */
-const PLAYER_FILL_SCALE = 3.15;
-
-const FULL_BLEED =
-  "relative h-full min-h-full w-full overflow-hidden bg-black";
-
 /**
  * Clean cross-origin player surface — no parent capture handlers, no affiliate overlays.
  * Audio unlock is handled inside the Crak document when the user taps the video.
@@ -62,14 +56,18 @@ export function LiveEmbed({
     iframeRef.current = node;
   }, []);
 
+  const posterClass = `feed-embed-poster transition-opacity duration-500 ease-out ${
+    hidePoster ? "opacity-0" : "opacity-100"
+  }`;
+
   if (!isArmed || !embedPlan.canMountInteractivePlayer) {
     return (
-      <div className={FULL_BLEED}>
+      <div className="feed-embed-root">
         <FeedPoster
           feedKey={embedKey}
           posterUrl={posterUrl}
           priority={isActive || isArmed}
-          className="absolute inset-0 z-0 h-full w-full object-cover"
+          className={posterClass}
         />
       </div>
     );
@@ -77,7 +75,7 @@ export function LiveEmbed({
 
   return (
     <div
-      className={FULL_BLEED}
+      className="feed-embed-root"
       data-feed-card-root="true"
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
@@ -87,13 +85,11 @@ export function LiveEmbed({
         feedKey={embedKey}
         posterUrl={posterUrl}
         priority={isActive || isArmed}
-        className={`pointer-events-none absolute inset-0 z-[3] h-full w-full object-cover transition-opacity duration-500 ease-out ${
-          hidePoster ? "opacity-0" : "opacity-100"
-        }`}
+        className={`pointer-events-none ${posterClass}`}
       />
 
       {mountIframe && initialSrc ? (
-        <div className="absolute inset-0 z-[2] h-full w-full overflow-hidden">
+        <div className="feed-embed-stage">
           <iframe
             key={`${embedKey}-${embedPlan.mode}`}
             ref={bindIframeRef}
@@ -102,13 +98,9 @@ export function LiveEmbed({
             data-naughty-feed-embed="true"
             data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
             data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
-            className={`absolute inset-0 h-full w-full origin-[center_35%] border-0 bg-black ${
+            className={`feed-embed-iframe ${
               isActive ? "pointer-events-auto" : "pointer-events-none"
             }`}
-            style={{
-              transform: `scale(${PLAYER_FILL_SCALE})`,
-              transformOrigin: "center 35%",
-            }}
             allow={WIDGET_IFRAME_ALLOW}
             referrerPolicy="strict-origin-when-cross-origin"
             onLoad={() => setFrameLoaded(true)}
