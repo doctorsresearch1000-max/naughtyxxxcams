@@ -86,7 +86,7 @@ export function warmPerformerStream(
   iframe.referrerPolicy = "strict-origin-when-cross-origin";
   iframe.setAttribute("data-nx-warm-stream", feedKey);
   iframe.style.cssText =
-    "position:fixed;width:2px;height:2px;left:-9999px;top:0;opacity:0;pointer-events:none;border:0";
+    "position:fixed;width:1px;height:1px;left:0;top:0;opacity:0.001;pointer-events:none;border:0;z-index:-1";
 
   const entry: WarmEntry = { iframe, loaded: false, src };
   iframe.addEventListener(

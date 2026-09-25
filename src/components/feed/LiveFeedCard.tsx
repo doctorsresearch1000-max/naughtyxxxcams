@@ -134,6 +134,7 @@ function LiveFeedCardInner({
           embedPlan={performer.embedPlan}
           isActive={isActive}
           isArmed={isArmed}
+          isHiddenPrefetch={isArmed && !isActive}
           sessionMuted={muted}
           streamPriority={streamPriority}
           onIframeWindow={isActive ? onRegisterIframe : undefined}

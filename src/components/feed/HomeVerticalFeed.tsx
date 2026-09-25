@@ -20,7 +20,6 @@ import {
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
-import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 
 function mergeFeedPerformers(
   current: FeedPerformer[],
@@ -152,24 +151,11 @@ function HomeVerticalFeedInner({
 
   const slideCount = slides.length > 0 ? slides.length : 1;
   const { activeIndex } = useFeedActiveIndex(scrollRef, slideCount);
-  const { isArmed, prefetchIndices } = useVideoFeedBuffer(
+  const { isArmed } = useVideoFeedBuffer(
     activeIndex,
     slideCount,
     1,
   );
-
-  useEffect(() => {
-    if (slides.length === 0) return;
-
-    const warm = (index: number, pin: boolean) => {
-      const performer = slides[index];
-      if (!performer?.embedPlan.canMountInteractivePlayer) return;
-      warmPerformerStream(performer.feedKey, performer.embedPlan, { pin });
-    };
-
-    warm(activeIndex, activeIndex === 0);
-    prefetchIndices.forEach((idx) => warm(idx, false));
-  }, [slides, activeIndex, prefetchIndices]);
 
   useEffect(() => {
     if (!onHome) return;

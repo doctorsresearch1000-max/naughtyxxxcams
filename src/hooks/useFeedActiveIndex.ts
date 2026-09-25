@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 const CARD_SELECTOR = "[data-slide-index]";
-/** Minimum visible ratio to treat a slide as active (TikTok-style snap). */
-const ACTIVE_VISIBILITY_THRESHOLD = 0.7;
+
+/** Minimum visible ratio when refining via IntersectionObserver. */
+const ACTIVE_VISIBILITY_THRESHOLD = 0.55;
 
 export function useFeedActiveIndex(
   scrollRef: React.RefObject<HTMLElement | null>,
@@ -21,7 +22,14 @@ export function useFeedActiveIndex(
 
     const ratios = new Map<number, number>();
 
-    const pickActiveFromRatios = () => {
+    const syncFromScrollTop = () => {
+      const h = root.clientHeight;
+      if (h <= 0) return;
+      const approx = clamp(Math.round(root.scrollTop / h));
+      setActiveIndex((prev) => (prev === approx ? prev : approx));
+    };
+
+    const refineFromIntersection = () => {
       let bestIdx = 0;
       let bestRatio = 0;
       ratios.forEach((ratio, idx) => {
@@ -31,7 +39,10 @@ export function useFeedActiveIndex(
         }
       });
       if (bestRatio >= ACTIVE_VISIBILITY_THRESHOLD) {
-        setActiveIndex(clamp(bestIdx));
+        setActiveIndex((prev) => {
+          const next = clamp(bestIdx);
+          return prev === next ? prev : next;
+        });
       }
     };
 
@@ -43,11 +54,11 @@ export function useFeedActiveIndex(
           if (Number.isNaN(idx)) continue;
           ratios.set(idx, entry.intersectionRatio);
         }
-        pickActiveFromRatios();
+        refineFromIntersection();
       },
       {
         root,
-        threshold: [0, 0.25, 0.5, 0.7, 0.85, 1],
+        threshold: [0, 0.35, 0.55, 0.7, 0.85, 1],
       },
     );
 
@@ -55,20 +66,17 @@ export function useFeedActiveIndex(
     slides.forEach((slide) => observer.observe(slide));
 
     const onScroll = () => {
-      const h = root.clientHeight;
-      if (h <= 0) return;
-      const approx = clamp(Math.round(root.scrollTop / h));
-      setActiveIndex((prev) => (prev === approx ? prev : approx));
+      syncFromScrollTop();
     };
 
     root.addEventListener("scroll", onScroll, { passive: true });
-    root.addEventListener("scrollend", onScroll);
-    onScroll();
+    root.addEventListener("scrollend", syncFromScrollTop);
+    syncFromScrollTop();
 
     return () => {
       observer.disconnect();
       root.removeEventListener("scroll", onScroll);
-      root.removeEventListener("scrollend", onScroll);
+      root.removeEventListener("scrollend", syncFromScrollTop);
     };
   }, [scrollRef, slideCount]);
 

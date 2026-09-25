@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
 } from "react";
 import {
   claimWarmStreamIframe,
@@ -31,11 +32,11 @@ type LiveEmbedProps = {
   embedPlan: PerformerEmbedPlan;
   isActive: boolean;
   isArmed: boolean;
+  /** Armed but not active — mount full-size iframe under poster (N+1 warm prerender). */
+  isHiddenPrefetch?: boolean;
   sessionMuted: boolean;
   streamPriority?: StreamLoadPriority;
-  /** Overrides feed viewport height (desktop player shells). */
   viewportHeightPx?: number;
-  /** Faster poster handoff when iframe was pre-warmed on hover. */
   fastReveal?: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
@@ -51,9 +52,33 @@ function destroyEmbedIframe(iframe: HTMLIFrameElement | null): void {
   iframe.remove();
 }
 
+function applyIframeChrome(
+  iframe: HTMLIFrameElement,
+  slideHeightPx: number,
+  isActive: boolean,
+  streamPriority: StreamLoadPriority,
+  embedPlan: PerformerEmbedPlan,
+  embedKey: string,
+): void {
+  iframe.className = `feed-embed-iframe ${
+    isActive ? "pointer-events-auto" : "pointer-events-none"
+  }`;
+  Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
+  iframe.setAttribute("data-naughty-feed-embed", "true");
+  iframe.setAttribute("data-player-src-muted", embedPlan.playerSrcMuted ?? "");
+  iframe.setAttribute(
+    "data-player-src-unmuted",
+    embedPlan.playerSrcUnmuted ?? "",
+  );
+  iframe.title = `Live stream ${embedKey}`;
+  if (streamPriority === "high") {
+    iframe.setAttribute("fetchpriority", "high");
+  }
+}
+
 /**
- * Clean cross-origin player surface — no parent capture handlers, no affiliate overlays.
- * Audio unlock is handled inside the Crak document when the user taps the video.
+ * Cross-origin Streamate surface. Prefetch slides keep a full-size hidden iframe
+ * loading under the poster so scroll reveals are instant.
  */
 export function LiveEmbed({
   embedKey,
@@ -61,6 +86,7 @@ export function LiveEmbed({
   embedPlan,
   isActive,
   isArmed,
+  isHiddenPrefetch = false,
   sessionMuted,
   streamPriority = "auto",
   viewportHeightPx,
@@ -82,7 +108,12 @@ export function LiveEmbed({
     Boolean(initialSrc);
 
   const posterPriority =
-    streamPriority === "high" || isActive || isArmed;
+    streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
+
+  const streamRevealed = isActive && frameLoaded && mountIframe;
+  const audible = isActive && !sessionMuted;
+  const posterFadeMs =
+    fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
 
   useEffect(() => {
     setFrameLoaded(false);
@@ -106,6 +137,10 @@ export function LiveEmbed({
     };
   }, []);
 
+  const markFrameLoaded = useCallback(() => {
+    setFrameLoaded(true);
+  }, []);
+
   useLayoutEffect(() => {
     if (!mountIframe || !initialSrc) return;
 
@@ -120,34 +155,23 @@ export function LiveEmbed({
     if (!warm) return;
 
     const iframe = warm.iframe;
-    iframe.className = `feed-embed-iframe ${
-      isActive ? "pointer-events-auto" : "pointer-events-none"
-    }`;
-    Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
-    iframe.setAttribute("data-naughty-feed-embed", "true");
-    iframe.setAttribute(
-      "data-player-src-muted",
-      embedPlan.playerSrcMuted ?? "",
+    applyIframeChrome(
+      iframe,
+      slideHeightPx,
+      isActive,
+      streamPriority,
+      embedPlan,
+      embedKey,
     );
-    iframe.setAttribute(
-      "data-player-src-unmuted",
-      embedPlan.playerSrcUnmuted ?? "",
-    );
-    iframe.title = `Live stream ${embedKey}`;
-    if (streamPriority === "high") {
-      iframe.setAttribute("fetchpriority", "high");
-    }
 
     stage.appendChild(iframe);
     iframeRef.current = iframe;
     setClaimedWarm(true);
 
     if (warm.loaded) {
-      setFrameLoaded(true);
+      markFrameLoaded();
     } else {
-      iframe.addEventListener("load", () => setFrameLoaded(true), {
-        once: true,
-      });
+      iframe.addEventListener("load", markFrameLoaded, { once: true });
     }
   }, [
     embedKey,
@@ -155,9 +179,9 @@ export function LiveEmbed({
     initialSrc,
     isActive,
     slideHeightPx,
-    embedPlan.playerSrcMuted,
-    embedPlan.playerSrcUnmuted,
+    embedPlan,
     streamPriority,
+    markFrameLoaded,
   ]);
 
   useEffect(() => {
@@ -186,8 +210,7 @@ export function LiveEmbed({
       return;
     }
 
-    const wantSound = !sessionMuted;
-    setFeedEmbedIframeAudible(iframe, wantSound, embedPlan);
+    setFeedEmbedIframeAudible(iframe, !sessionMuted, embedPlan);
   }, [
     isActive,
     sessionMuted,
@@ -197,24 +220,34 @@ export function LiveEmbed({
     embedKey,
   ]);
 
-  const streamRevealed = isActive && frameLoaded && mountIframe;
-  const audible = isActive && !sessionMuted;
-  const hidePoster = frameLoaded && mountIframe;
-
   const bindIframeRef = useCallback((node: HTMLIFrameElement | null) => {
     iframeRef.current = node;
   }, []);
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
   const posterStyle = feedPosterImageStyle(slideHeightPx);
-  const posterFadeMs = fastReveal || streamPriority === "high" ? 120 : 500;
-  const posterClass = `feed-embed-poster ease-out ${
-    hidePoster ? "opacity-0" : "opacity-100"
-  }`;
-  const posterStyleWithFade = {
-    ...posterStyle,
-    transition: `opacity ${posterFadeMs}ms ease-out`,
+
+  const stageStyle: CSSProperties = {
+    ...feedEmbedStageStyle(slideHeightPx),
+    zIndex: 1,
+    opacity: streamRevealed ? 1 : 0,
+    visibility: mountIframe ? "visible" : "hidden",
+    transition: streamRevealed
+      ? `opacity ${posterFadeMs}ms ease-out`
+      : "none",
+    pointerEvents: isActive && streamRevealed ? "auto" : "none",
   };
+
+  const posterStyleWithFade: CSSProperties = {
+    ...posterStyle,
+    zIndex: 2,
+    opacity: streamRevealed ? 0 : 1,
+    transition: streamRevealed
+      ? `opacity ${posterFadeMs}ms ease-out`
+      : "none",
+  };
+
+  const posterClass = "feed-embed-poster";
 
   if (!isArmed || !embedPlan.canMountInteractivePlayer) {
     return (
@@ -236,11 +269,12 @@ export function LiveEmbed({
       style={rootStyle}
       data-feed-card-root="true"
       data-feed-active={isActive ? "1" : "0"}
+      data-feed-prefetch={isHiddenPrefetch ? "1" : "0"}
       data-feed-audible={audible ? "1" : "0"}
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="3"
+      data-feed-layout-v="4"
     >
       <FeedPoster
         feedKey={embedKey}
@@ -254,7 +288,8 @@ export function LiveEmbed({
         <div
           ref={stageRef}
           className="feed-embed-stage"
-          style={feedEmbedStageStyle(slideHeightPx)}
+          style={stageStyle}
+          aria-hidden={!isActive}
         >
           {!claimedWarm ? (
             <iframe
@@ -272,9 +307,15 @@ export function LiveEmbed({
               allow={WIDGET_IFRAME_ALLOW}
               referrerPolicy="strict-origin-when-cross-origin"
               loading="eager"
-              // @ts-expect-error — priority hint for LCP slide (Chromium / Safari 17+)
-              fetchPriority={streamPriority === "high" ? "high" : "auto"}
-              onLoad={() => setFrameLoaded(true)}
+              // @ts-expect-error — Chromium / Safari 17+ fetch priority hint
+              fetchPriority={
+                streamPriority === "high"
+                  ? "high"
+                  : isHiddenPrefetch
+                    ? "low"
+                    : "auto"
+              }
+              onLoad={markFrameLoaded}
             />
           ) : null}
         </div>
