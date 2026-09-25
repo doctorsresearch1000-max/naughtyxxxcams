@@ -1,12 +1,11 @@
 export {
-  FEED_COVER_BLEED,
+  FEED_PLAYER_FILL_SCALE,
   FEED_PLAYER_TRANSFORM_ORIGIN,
-  computeFeedVerticalCoverScale,
+  FEED_PLAYER_TRANSLATE_Y,
   feedSlideBoxStyle,
   feedPlayerMountStyle,
   feedEmbedRootStyle,
   feedEmbedStageStyle,
   feedEmbedIframeStyle,
   feedPosterImageStyle,
-  measureEmbedStagePx,
 } from "@/lib/feed/feedPlayerStyles";
