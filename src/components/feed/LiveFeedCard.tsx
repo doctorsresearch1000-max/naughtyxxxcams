@@ -163,6 +163,11 @@ function LiveFeedCardInner({
             modelName={modelName}
             affiliateUrl={affiliateUrl}
             visible={isActive && conversionReady}
+            className={
+              isActive && conversionReady
+                ? "mb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]"
+                : ""
+            }
           />
           {!isActive ? (
             <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">

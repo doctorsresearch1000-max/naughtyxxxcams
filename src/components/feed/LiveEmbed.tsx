@@ -143,27 +143,14 @@ export function LiveEmbed({
       return;
     }
 
-    if (warmInDock) {
-      ensureStreamWarming(embedKey, initialSrc);
-      if (isStreamSlotLoaded(embedKey)) {
-        markFrameLoaded();
-      }
-      return;
-    }
-
-    if (!isActive) {
-      parkIframeToDock();
-      return;
-    }
-
     const gen = ++attachGenRef.current;
 
-    const attachActive = () => {
+    const attachToStage = (forActive: boolean) => {
       if (attachGenRef.current !== gen) return;
 
       const stage = stageRef.current;
       if (!stage) {
-        requestAnimationFrame(attachActive);
+        requestAnimationFrame(() => attachToStage(forActive));
         return;
       }
 
@@ -171,7 +158,7 @@ export function LiveEmbed({
         wireIframeChrome(
           iframe,
           slideHeightPx,
-          true,
+          forActive,
           streamPriority,
           embedPlan,
           embedKey,
@@ -195,16 +182,19 @@ export function LiveEmbed({
         wireIframeChrome(
           iframeRef.current,
           slideHeightPx,
-          true,
+          forActive,
           streamPriority,
           embedPlan,
           embedKey,
         );
+        if (isStreamSlotLoaded(embedKey)) {
+          markFrameLoaded();
+        }
         return;
       }
 
       if (peekStreamSlot(embedKey)) {
-        requestAnimationFrame(attachActive);
+        requestAnimationFrame(() => attachToStage(forActive));
         return;
       }
 
@@ -218,7 +208,7 @@ export function LiveEmbed({
       wireIframeChrome(
         iframe,
         slideHeightPx,
-        true,
+        forActive,
         streamPriority,
         embedPlan,
         embedKey,
@@ -228,7 +218,18 @@ export function LiveEmbed({
       setUsingEngineSlot(false);
     };
 
-    attachActive();
+    if (warmInDock) {
+      ensureStreamWarming(embedKey, initialSrc);
+      attachToStage(false);
+      return;
+    }
+
+    if (!isActive) {
+      parkIframeToDock();
+      return;
+    }
+
+    attachToStage(true);
   }, [
     embedKey,
     initialSrc,
