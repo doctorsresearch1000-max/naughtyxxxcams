@@ -14,9 +14,11 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-/** Zoom hybrid 16:9 player to fill 9:16 card (TikTok-style crop). */
+/** Crop hybrid 16:9 player inside 9:16 card after full-bleed layout. */
 const PLAYER_FILL_SCALE = 3.15;
-const PLAYER_TRANSFORM_ORIGIN = "center 35%";
+
+const FULL_BLEED =
+  "relative h-full min-h-full w-full overflow-hidden bg-black";
 
 /**
  * Clean cross-origin player surface — no parent capture handlers, no affiliate overlays.
@@ -62,18 +64,20 @@ export function LiveEmbed({
 
   if (!isArmed || !embedPlan.canMountInteractivePlayer) {
     return (
-      <FeedPoster
-        feedKey={embedKey}
-        posterUrl={posterUrl}
-        priority={isActive || isArmed}
-        className="absolute inset-0 z-0 h-full w-full object-cover"
-      />
+      <div className={FULL_BLEED}>
+        <FeedPoster
+          feedKey={embedKey}
+          posterUrl={posterUrl}
+          priority={isActive || isArmed}
+          className="absolute inset-0 z-0 h-full w-full object-cover"
+        />
+      </div>
     );
   }
 
   return (
     <div
-      className="absolute inset-0 z-[10] h-full w-full overflow-hidden bg-black"
+      className={FULL_BLEED}
       data-feed-card-root="true"
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
@@ -103,7 +107,7 @@ export function LiveEmbed({
             }`}
             style={{
               transform: `scale(${PLAYER_FILL_SCALE})`,
-              transformOrigin: PLAYER_TRANSFORM_ORIGIN,
+              transformOrigin: "center 35%",
             }}
             allow={WIDGET_IFRAME_ALLOW}
             referrerPolicy="strict-origin-when-cross-origin"

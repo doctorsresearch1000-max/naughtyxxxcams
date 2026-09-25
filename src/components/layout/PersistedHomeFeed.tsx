@@ -7,7 +7,7 @@ import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
 
 function FeedFallback() {
   return (
-    <div className="flex h-[calc(100dvh-4rem)] items-center justify-center bg-black">
+    <div className="flex h-[var(--feed-viewport-height)] items-center justify-center bg-black">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
     </div>
   );
@@ -35,7 +35,7 @@ export function PersistedHomeFeed() {
     <div
       className={
         visible
-          ? "relative z-20 min-h-0 flex-1"
+          ? "relative z-20 flex h-full min-h-[var(--feed-viewport-height)] flex-1 flex-col"
           : "pointer-events-none invisible fixed -left-[9999px] top-0 h-0 w-0 overflow-hidden"
       }
       aria-hidden={!visible}

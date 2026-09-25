@@ -9,11 +9,12 @@ import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
 
-const SHELL_HEIGHT = "h-[calc(100dvh-4rem)] min-h-0";
+const SHELL_HEIGHT =
+  "h-[var(--feed-viewport-height)] min-h-[var(--feed-viewport-height)] max-h-[var(--feed-viewport-height)]";
 
 function FeedLoadingShell() {
   return (
-    <div className="flex h-full w-full snap-start snap-always items-center justify-center bg-black">
+    <div className="flex h-[var(--feed-viewport-height)] w-full shrink-0 snap-start snap-always items-center justify-center bg-black">
       <div className="flex flex-col items-center gap-3">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
         <p className="text-xs font-medium text-neutral-400">Loading live models…</p>
@@ -111,11 +112,11 @@ export function HomeVerticalFeed() {
 
   return (
     <main
-      className={`tele-shell relative mx-auto w-full max-w-md shrink-0 overflow-hidden bg-black text-white ${SHELL_HEIGHT}`}
+      className={`tele-shell relative mx-auto flex w-full max-w-md shrink-0 flex-col overflow-hidden bg-black text-white ${SHELL_HEIGHT}`}
     >
       <div
         ref={scrollRef}
-        className="tele-scroll hide-scrollbar h-full w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
+        className="tele-scroll hide-scrollbar min-h-0 flex-1 h-full w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
       >
         {loadState === "loading" ? <FeedLoadingShell /> : null}
         {loadState === "empty" ? (

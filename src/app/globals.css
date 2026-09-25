@@ -6,6 +6,8 @@
   color-scheme: dark;
   /* Header global (logo h-10 + padding); bottom nav = 4rem */
   --app-header-height: 3.75rem;
+  /* Home vertical feed slide (dvh − bottom nav) */
+  --feed-viewport-height: calc(100dvh - 4rem);
 }
 
 @media (min-width: 768px) {
