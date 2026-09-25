@@ -1,8 +1,11 @@
 import type { CSSProperties } from "react";
 
 /** Zoom inside cross-origin Streamate iframe to fill 9:16 (validated before dock engine). */
-export const FEED_PLAYER_FILL_SCALE = 3.15;
-export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 35%";
+export const FEED_PLAYER_FILL_SCALE = 3.22;
+/** Slightly above center so the scaled frame tucks under the header overlay. */
+export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 33%";
+/** Nudge up after centering (covers ~1–2% top letterbox without shifting UI chrome). */
+export const FEED_PLAYER_TRANSLATE_Y = "-52%";
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
@@ -73,7 +76,7 @@ export function feedEmbedIframeStyle(heightPx: number): CSSProperties {
     padding: 0,
     border: "0",
     background: "#000",
-    transform: `translate(-50%, -50%) scale(${FEED_PLAYER_FILL_SCALE})`,
+    transform: `translate(-50%, ${FEED_PLAYER_TRANSLATE_Y}) scale(${FEED_PLAYER_FILL_SCALE})`,
     transformOrigin: FEED_PLAYER_TRANSFORM_ORIGIN,
     clipPath: "none",
   };
