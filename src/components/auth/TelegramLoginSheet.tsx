@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getPublicTelegramBotUsername } from "@/lib/auth/telegramBotUsername";
 import { verifyTelegramWidgetLogin } from "@/lib/auth/telegramClient";
+import { rememberTelegramLoginReturnPath } from "@/lib/auth/telegramLoginReturn";
 import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
 import type { TelegramUser } from "@/lib/auth/telegramSession";
@@ -14,9 +16,6 @@ type TelegramLoginSheetProps = {
   onAuthenticated: (user: TelegramUser) => void;
 };
 
-const BOT_USERNAME =
-  process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?.trim() || "NaughtyXXXcamsbot";
-
 export function TelegramLoginSheet({
   open,
   prompt,
@@ -26,13 +25,14 @@ export function TelegramLoginSheet({
   const widgetRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const botUsername = getPublicTelegramBotUsername();
 
-  const title = prompt.title ?? "Telegram Login";
+  const title = prompt.title ?? "Continue with Telegram";
   const description =
     prompt.description ??
     prompt.reason ??
-    "Inicia sesión para guardar tu actividad y sincronizarla entre dispositivos.";
-  const ctaLabel = prompt.ctaLabel ?? "Continuar con Telegram";
+    "Sign in to save your activity and sync it across devices.";
+  const ctaLabel = prompt.ctaLabel ?? "Continue with Telegram";
   const edgeAttached = prompt.edgeAttached ?? false;
 
   const handleAuth = useCallback(
@@ -42,7 +42,7 @@ export function TelegramLoginSheet({
       const user = await verifyTelegramWidgetLogin(auth);
       setBusy(false);
       if (!user) {
-        setError("No se pudo verificar Telegram. Inténtalo de nuevo.");
+        setError("Telegram verification failed. Try again.");
         return;
       }
       onAuthenticated(user);
@@ -51,17 +51,19 @@ export function TelegramLoginSheet({
   );
 
   useEffect(() => {
-    if (!open || !widgetRef.current || !BOT_USERNAME) return;
+    if (!open || !widgetRef.current || !botUsername) return;
+    rememberTelegramLoginReturnPath();
     setError(null);
     const teardown = mountTelegramLoginWidget(
       widgetRef.current,
-      BOT_USERNAME,
+      botUsername,
       (auth) => {
         void handleAuth(auth);
       },
+      { useRedirectAuth: true },
     );
     return teardown;
-  }, [open, handleAuth]);
+  }, [open, handleAuth, botUsername]);
 
   useEffect(() => {
     if (!open) return;
@@ -74,20 +76,11 @@ export function TelegramLoginSheet({
 
   if (!open) return null;
 
-  const mockSync = () => {
-    const id = Math.floor(10_000_000 + Math.random() * 89_999_999);
-    onAuthenticated({
-      id,
-      first_name: "Telegram",
-      username: `user_${id}`,
-    });
-  };
-
   return (
     <>
       <button
         type="button"
-        aria-label="Cerrar"
+        aria-label="Close"
         className="fixed inset-0 z-[100000] bg-black/30 transition-opacity duration-300 opacity-100"
         onClick={onClose}
       />
@@ -126,19 +119,15 @@ export function TelegramLoginSheet({
             <p className="text-center text-xs font-bold uppercase tracking-wide text-[#2AABEE]">
               {ctaLabel}
             </p>
-            {BOT_USERNAME ? (
+            {botUsername ? (
               <div ref={widgetRef} className="flex w-full justify-center" />
             ) : (
-              <button
-                type="button"
-                onClick={mockSync}
-                className="w-full rounded-full bg-[#2AABEE] py-3 text-sm font-bold text-white transition active:scale-[0.98]"
-              >
-                {ctaLabel} (dev)
-              </button>
+              <p className="text-center text-xs text-red-400">
+                Telegram Login is not configured (missing bot username).
+              </p>
             )}
             {busy ? (
-              <p className="text-xs text-zinc-500">Verificando con Telegram…</p>
+              <p className="text-xs text-zinc-500">Verifying with Telegram…</p>
             ) : null}
             {error ? <p className="text-xs text-red-400">{error}</p> : null}
           </div>
@@ -148,7 +137,7 @@ export function TelegramLoginSheet({
             onClick={onClose}
             className="mt-4 w-full rounded-full py-2 text-xs font-semibold text-zinc-500 transition hover:text-zinc-300"
           >
-            Ahora no
+            Not now
           </button>
         </div>
       </div>

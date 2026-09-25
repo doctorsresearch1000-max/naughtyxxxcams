@@ -10,6 +10,53 @@ export type TelegramWidgetAuthPayload = {
   hash: string;
 };
 
+/** Coerce widget / redirect query fields before HMAC verification. */
+export function normalizeWidgetAuthPayload(
+  raw: Record<string, unknown>,
+): TelegramWidgetAuthPayload | null {
+  const idRaw = raw.id;
+  const authDateRaw = raw.auth_date;
+  const hash = typeof raw.hash === "string" ? raw.hash.trim() : "";
+  const first_name =
+    typeof raw.first_name === "string" ? raw.first_name.trim() : "";
+
+  const id =
+    typeof idRaw === "number"
+      ? idRaw
+      : typeof idRaw === "string"
+        ? Number(idRaw)
+        : NaN;
+  const auth_date =
+    typeof authDateRaw === "number"
+      ? authDateRaw
+      : typeof authDateRaw === "string"
+        ? Number(authDateRaw)
+        : NaN;
+
+  if (!hash || !first_name || !Number.isFinite(id) || !Number.isFinite(auth_date)) {
+    return null;
+  }
+
+  const payload: TelegramWidgetAuthPayload = {
+    id,
+    first_name,
+    auth_date,
+    hash,
+  };
+
+  if (typeof raw.last_name === "string" && raw.last_name.trim()) {
+    payload.last_name = raw.last_name.trim();
+  }
+  if (typeof raw.username === "string" && raw.username.trim()) {
+    payload.username = raw.username.trim();
+  }
+  if (typeof raw.photo_url === "string" && raw.photo_url.trim()) {
+    payload.photo_url = raw.photo_url.trim();
+  }
+
+  return payload;
+}
+
 const MAX_AUTH_AGE_SEC = 86_400;
 
 function safeEqualHex(a: string, b: string): boolean {

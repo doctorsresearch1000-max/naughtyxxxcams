@@ -3,12 +3,11 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
+import { getPublicTelegramBotUsername } from "@/lib/auth/telegramBotUsername";
 import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import { verifyTelegramWidgetLogin } from "@/lib/auth/telegramClient";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
-
-const BOT_USERNAME =
-  process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?.trim() || "NaughtyXXXcamsbot";
+import { useTelegramMiniAppBootstrap } from "@/hooks/useTelegramMiniAppBootstrap";
 
 export function TelegramProfileConnect() {
   const { user, isAuthenticated, login, logout, completeLoginVerified } =
@@ -16,6 +15,9 @@ export function TelegramProfileConnect() {
   const widgetRef = useRef<HTMLDivElement>(null);
   const [widgetError, setWidgetError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const botUsername = getPublicTelegramBotUsername();
+
+  useTelegramMiniAppBootstrap(completeLoginVerified, !isAuthenticated);
 
   const onWidgetAuth = useCallback(
     async (auth: TelegramWidgetAuthPayload) => {
@@ -34,17 +36,18 @@ export function TelegramProfileConnect() {
 
   useEffect(() => {
     if (isAuthenticated || !widgetRef.current) return;
-    if (!BOT_USERNAME) return;
+    if (!botUsername) return;
 
     const teardown = mountTelegramLoginWidget(
       widgetRef.current,
-      BOT_USERNAME,
+      botUsername,
       (auth) => {
         void onWidgetAuth(auth);
       },
+      { useRedirectAuth: true },
     );
     return teardown;
-  }, [isAuthenticated, onWidgetAuth]);
+  }, [isAuthenticated, onWidgetAuth, botUsername]);
 
   const avatarSrc =
     user?.photo_url ??
@@ -87,19 +90,18 @@ export function TelegramProfileConnect() {
       ) : (
         <div className="flex flex-col items-stretch gap-3">
           <p className="text-xs leading-relaxed text-zinc-400">
-            Continúa con Telegram para guardar likes, colecciones y modelos que
-            sigues. En la{" "}
-            <span className="text-zinc-200">Mini App de Telegram</span> inicias
-            sesión automáticamente al abrir desde el bot.
+            Continue with Telegram to save likes, bookmarks, following, and
+            playlists. Works in any mobile or desktop browser — no Mini App
+            required.
           </p>
           <p className="text-center text-xs font-bold text-[#2AABEE]">
-            Continuar con Telegram
+            Continue with Telegram
           </p>
           <div
             ref={widgetRef}
             className="flex min-h-[52px] items-center justify-center"
           />
-          {!BOT_USERNAME ? (
+          {!botUsername ? (
             <button
               type="button"
               onClick={login}

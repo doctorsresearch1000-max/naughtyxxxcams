@@ -252,9 +252,9 @@ export function FeedActionRail({
         affiliateUrl={affiliateUrl}
         onClose={() => setChatSheetOpen(false)}
         edgeAttached
-        title={`¿Quieres hablar con ${displayName}?`}
-        description="Únete a su chat privado y empieza a hablar con ella."
-        ctaLabel={`Chatear con ${displayName}`}
+        title={`Want to chat with ${displayName}?`}
+        description="Join her private chat and start talking to her."
+        ctaLabel={`Chat with ${displayName}`}
       />
     </>
   );

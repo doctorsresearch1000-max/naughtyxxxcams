@@ -5,7 +5,8 @@ import {
   verifyTelegramWebAppInitData,
   type TelegramWidgetAuthPayload,
 } from "@/lib/auth/verifyTelegram";
-import { getTelegramBotToken } from "@/lib/telegram/config";
+import { getTelegramLoginBotToken } from "@/lib/telegram/config";
+import { normalizeWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
 import { issueTelegramSyncToken } from "@/lib/telegram/syncToken";
 import type { TelegramUser } from "@/lib/auth/telegramSession";
 
@@ -22,10 +23,10 @@ function toSessionUser(auth: TelegramWidgetAuthPayload): TelegramUser {
 }
 
 export async function POST(request: Request) {
-  const botToken = getTelegramBotToken();
+  const botToken = getTelegramLoginBotToken();
   if (!botToken) {
     return NextResponse.json(
-      { error: "Telegram bot not configured" },
+      { error: "Telegram Login is not configured on the server" },
       { status: 503 },
     );
   }
@@ -57,10 +58,13 @@ export async function POST(request: Request) {
   }
 
   if (payload.type === "widget" && payload.auth) {
-    if (!verifyTelegramLoginWidget(payload.auth, botToken)) {
+    const auth = normalizeWidgetAuthPayload(
+      payload.auth as Record<string, unknown>,
+    );
+    if (!auth || !verifyTelegramLoginWidget(auth, botToken)) {
       return NextResponse.json({ error: "Invalid login" }, { status: 401 });
     }
-    const user = toSessionUser(payload.auth);
+    const user = toSessionUser(auth);
     const syncToken = issueTelegramSyncToken(user.id, botToken);
     return NextResponse.json({ ok: true, user, syncToken, source: "login_widget" });
   }

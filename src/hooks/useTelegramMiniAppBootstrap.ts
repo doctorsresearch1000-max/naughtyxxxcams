@@ -15,6 +15,10 @@ declare global {
   }
 }
 
+/**
+ * Optional auto-login when the site is opened inside Telegram as a Mini App.
+ * Does not load Bot API scripts — only reads WebApp initData if already present.
+ */
 export function useTelegramMiniAppBootstrap(
   onUser: (user: import("@/lib/auth/telegramSession").TelegramUser) => void,
   enabled: boolean,
@@ -28,36 +32,18 @@ export function useTelegramMiniAppBootstrap(
     }
     if (handledRef.current) return;
 
-    const run = async () => {
-      const tg = window.Telegram?.WebApp;
-      if (!tg?.initData?.trim()) return;
+    const tg = window.Telegram?.WebApp;
+    if (!tg?.initData?.trim()) return;
 
+    const run = async () => {
       tg.ready?.();
       tg.expand?.();
-
-      const user = await verifyTelegramMiniAppInitData(tg.initData);
+      const user = await verifyTelegramMiniAppInitData(tg.initData!);
       if (!user) return;
       handledRef.current = true;
       onUser(user);
     };
 
-    if (window.Telegram?.WebApp) {
-      void run();
-      return;
-    }
-
-    const existing = document.querySelector(
-      'script[src*="telegram-web-app.js"]',
-    );
-    if (existing) {
-      existing.addEventListener("load", () => void run(), { once: true });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-web-app.js";
-    script.async = true;
-    script.addEventListener("load", () => void run(), { once: true });
-    document.head.appendChild(script);
+    void run();
   }, [enabled, onUser]);
 }

@@ -2,6 +2,19 @@ import type { NextConfig } from "next";
 import { EXPLORE_CATEGORY_SLUGS } from "./src/lib/explore/categorySlugs";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     const legacyExploreCategoryRedirects = EXPLORE_CATEGORY_SLUGS.map(
       (slug) => ({

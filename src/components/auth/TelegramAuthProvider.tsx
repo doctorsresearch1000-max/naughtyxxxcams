@@ -20,11 +20,10 @@ import {
   type TelegramUser,
 } from "@/lib/auth/telegramSession";
 import { TelegramLoginSheet } from "@/components/auth/TelegramLoginSheet";
-import { useTelegramMiniAppBootstrap } from "@/hooks/useTelegramMiniAppBootstrap";
+import { finalizeTelegramBrowserLogin } from "@/lib/auth/finalizeTelegramLogin";
 import {
   mergeUserLibraries,
   pullTelegramLibrary,
-  syncTelegramLibraryAfterLogin,
 } from "@/lib/telegram/telegramLibraryClient";
 import { readUserLibrary, writeUserLibrary } from "@/lib/user/userLibrary";
 
@@ -85,10 +84,10 @@ export function TelegramAuthProvider({
 
   const login = useCallback(() => {
     setSheetPrompt({
-      title: "Continuar con Telegram",
+      title: "Continue with Telegram",
       description:
-        "Guarda likes, colecciones y modelos que sigues en todos tus dispositivos.",
-      ctaLabel: "Continuar con Telegram",
+        "Save likes, collections, and models you follow across your devices.",
+      ctaLabel: "Continue with Telegram",
     });
     pendingActionRef.current = null;
     setSheetOpen(true);
@@ -116,10 +115,9 @@ export function TelegramAuthProvider({
   const completeLoginVerified = useCallback((next: TelegramUser) => {
     const pending = pendingActionRef.current;
     pendingActionRef.current = null;
-    writeTelegramUser(next);
-    setUser(next);
     setSheetOpen(false);
-    void syncTelegramLibraryAfterLogin(next).finally(() => {
+    void finalizeTelegramBrowserLogin(next).finally(() => {
+      setUser(next);
       pending?.();
     });
   }, []);
@@ -128,8 +126,6 @@ export function TelegramAuthProvider({
     setSheetOpen(false);
     pendingActionRef.current = null;
   }, []);
-
-  useTelegramMiniAppBootstrap(completeLoginVerified, !user);
 
   const value = useMemo(
     () => ({
