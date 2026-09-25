@@ -1,6 +1,6 @@
 /**
- * Feed audio: cross-origin Streamate players are controlled via postMessage.
- * Never change iframe `src` for mute/unmute — that reloads the stream.
+ * Feed audio: dock/slide silencing uses postMessage. User-gesture unmute on the
+ * active direct player reloads `playerSrcUnmuted` / `playerSrcMuted` (see performerEmbed).
  */
 
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
@@ -15,6 +15,26 @@ const ACTIVE_IFRAME_SELECTOR =
 const ALL_FEED_IFRAMES_SELECTOR = 'iframe[data-naughty-feed-embed="true"]';
 
 const AUDIO_RETRY_MS = [0, 40, 120, 320] as const;
+
+function resolveEmbedSrc(
+  iframe: HTMLIFrameElement,
+  wantSound: boolean,
+  embedPlan?: Pick<
+    PerformerEmbedPlan,
+    "playerSrcMuted" | "playerSrcUnmuted"
+  > | null,
+): string | null {
+  const mutedSrc =
+    embedPlan?.playerSrcMuted ??
+    iframe.getAttribute("data-player-src-muted") ??
+    "";
+  const unmutedSrc =
+    embedPlan?.playerSrcUnmuted ??
+    iframe.getAttribute("data-player-src-unmuted") ??
+    "";
+  const next = wantSound ? unmutedSrc : mutedSrc;
+  return next || null;
+}
 
 export function resumeBrowserAudioContext(): void {
   try {
@@ -105,7 +125,7 @@ export function silenceInactiveFeedEmbedIframes(): void {
 }
 
 /**
- * User-gesture audio toggle on the active slide only (no src rewrite).
+ * User-gesture audio on the active slide (sync inside click / pointerdown).
  */
 export function applyDirectPlayerAudioFromGesture(
   wantSound: boolean,
@@ -116,29 +136,34 @@ export function applyDirectPlayerAudioFromGesture(
 ): boolean {
   const iframe = getActiveFeedPlayerIframe();
   if (!iframe) return false;
-  void embedPlan;
-  postLiveIframeAudio(
-    iframe,
-    wantSound ? "session-audio-unlock" : "session-audio-mute",
-  );
-  return true;
+  return setFeedEmbedIframeAudible(iframe, wantSound, embedPlan);
 }
 
-/** @deprecated Use postLiveIframeAudio — src changes reload the player. */
 export function setFeedEmbedIframeAudible(
   iframe: HTMLIFrameElement | null,
   wantSound: boolean,
-  _embedPlan?: Pick<
+  embedPlan?: Pick<
     PerformerEmbedPlan,
     "playerSrcMuted" | "playerSrcUnmuted"
   > | null,
 ): boolean {
   if (!iframe) return false;
-  postLiveIframeAudio(
-    iframe,
-    wantSound ? "session-audio-unlock" : "session-audio-mute",
-  );
-  return true;
+  const next = resolveEmbedSrc(iframe, wantSound, embedPlan);
+  if (!next) return false;
+
+  const action: FeedAudioAction = wantSound
+    ? "session-audio-unlock"
+    : "session-audio-mute";
+
+  try {
+    if (iframe.src !== next) {
+      iframe.src = next;
+    }
+    postLiveIframeAudio(iframe, action);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** @deprecated Use silenceAllFeedEmbedIframes */

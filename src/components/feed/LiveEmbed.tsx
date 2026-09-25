@@ -85,9 +85,12 @@ export function LiveEmbed({
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const attachGenRef = useRef(0);
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
   const [frameLoaded, setFrameLoaded] = useState(() =>
     isStreamSlotLoaded(embedKey),
   );
+  const [streamPaintReady, setStreamPaintReady] = useState(false);
   const [usingEngineSlot, setUsingEngineSlot] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
@@ -102,17 +105,59 @@ export function LiveEmbed({
   const posterPriority =
     streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
 
-  const streamRevealed =
-    isActive &&
-    mountIframe &&
-    (frameLoaded || isStreamSlotLoaded(embedKey) || usingEngineSlot);
+  const streamRevealed = isActive && mountIframe && streamPaintReady;
   const audible = isActive && !sessionMuted;
   const posterFadeMs =
     fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
 
   const markFrameLoaded = useCallback(() => {
     setFrameLoaded(true);
+    if (isActiveRef.current) {
+      setStreamPaintReady(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!isActive || !mountIframe) {
+      setStreamPaintReady(false);
+      return;
+    }
+
+    const docReady = frameLoaded || isStreamSlotLoaded(embedKey);
+
+    let settleTimeoutId: number | undefined;
+    const revealPaint = () => {
+      if (settleTimeoutId !== undefined) {
+        window.clearTimeout(settleTimeoutId);
+        settleTimeoutId = undefined;
+      }
+      setStreamPaintReady(true);
+    };
+
+    const onMessage = (event: MessageEvent) => {
+      const iframe = iframeRef.current;
+      if (!iframe?.contentWindow || event.source !== iframe.contentWindow) {
+        return;
+      }
+      const data = event.data as { source?: string; action?: string };
+      if (data?.source === "naughty-embed" && data?.action === "stream-active") {
+        revealPaint();
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+
+    if (docReady) {
+      settleTimeoutId = window.setTimeout(revealPaint, 1800);
+    }
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      if (settleTimeoutId !== undefined) {
+        window.clearTimeout(settleTimeoutId);
+      }
+    };
+  }, [isActive, mountIframe, embedKey, frameLoaded]);
 
   const parkIframeToDock = useCallback(() => {
     const iframe = iframeRef.current;
