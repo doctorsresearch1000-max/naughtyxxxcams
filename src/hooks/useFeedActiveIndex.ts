@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 
 const CARD_SELECTOR = "[data-slide-index]";
+/** Minimum visible ratio to treat a slide as active (TikTok-style snap). */
+const ACTIVE_VISIBILITY_THRESHOLD = 0.7;
 
 export function useFeedActiveIndex(
   scrollRef: React.RefObject<HTMLElement | null>,
@@ -17,59 +19,56 @@ export function useFeedActiveIndex(
     const clamp = (idx: number) =>
       Math.min(Math.max(idx, 0), Math.max(slideCount - 1, 0));
 
-    const updateFromScrollTop = () => {
-      const h = root.clientHeight;
-      if (h <= 0) return;
-      setActiveIndex(clamp(Math.round(root.scrollTop / h)));
-    };
+    const ratios = new Map<number, number>();
 
-    const updateFromIntersection = () => {
-      const slides = root.querySelectorAll<HTMLElement>(CARD_SELECTOR);
+    const pickActiveFromRatios = () => {
       let bestIdx = 0;
       let bestRatio = 0;
-
-      slides.forEach((slide) => {
-        const rect = slide.getBoundingClientRect();
-        const rootRect = root.getBoundingClientRect();
-        const visible =
-          Math.min(rect.bottom, rootRect.bottom) -
-          Math.max(rect.top, rootRect.top);
-        const ratio = visible / Math.max(rect.height, 1);
-        const idx = Number(slide.dataset.slideIndex);
-        if (!Number.isNaN(idx) && ratio > bestRatio) {
+      ratios.forEach((ratio, idx) => {
+        if (ratio > bestRatio) {
           bestRatio = ratio;
           bestIdx = idx;
         }
       });
-
-      if (bestRatio >= 0.5) {
+      if (bestRatio >= ACTIVE_VISIBILITY_THRESHOLD) {
         setActiveIndex(clamp(bestIdx));
       }
     };
 
-    const sync = () => {
-      updateFromIntersection();
-      updateFromScrollTop();
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const el = entry.target as HTMLElement;
+          const idx = Number(el.dataset.slideIndex);
+          if (Number.isNaN(idx)) continue;
+          ratios.set(idx, entry.intersectionRatio);
+        }
+        pickActiveFromRatios();
+      },
+      {
+        root,
+        threshold: [0, 0.25, 0.5, 0.7, 0.85, 1],
+      },
+    );
 
-    sync();
+    const slides = root.querySelectorAll<HTMLElement>(CARD_SELECTOR);
+    slides.forEach((slide) => observer.observe(slide));
 
-    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
     const onScroll = () => {
-      if (debounceTimer) clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(sync, 100);
+      const h = root.clientHeight;
+      if (h <= 0) return;
+      const approx = clamp(Math.round(root.scrollTop / h));
+      setActiveIndex((prev) => (prev === approx ? prev : approx));
     };
 
     root.addEventListener("scroll", onScroll, { passive: true });
-    root.addEventListener("scrollend", sync);
-
-    const fallbackTimer = window.setInterval(sync, 400);
+    root.addEventListener("scrollend", onScroll);
+    onScroll();
 
     return () => {
+      observer.disconnect();
       root.removeEventListener("scroll", onScroll);
-      root.removeEventListener("scrollend", sync);
-      if (debounceTimer) clearTimeout(debounceTimer);
-      window.clearInterval(fallbackTimer);
+      root.removeEventListener("scrollend", onScroll);
     };
   }, [scrollRef, slideCount]);
 

@@ -3,6 +3,11 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
+import {
+  fetchFeedBootstrapPerformers,
+  fetchFeedFullPerformers,
+  readFeedPerformersCache,
+} from "@/lib/feed/feedClientCache";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
@@ -14,6 +19,22 @@ import {
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
+import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
+
+function mergeFeedPerformers(
+  current: FeedPerformer[],
+  incoming: FeedPerformer[],
+): FeedPerformer[] {
+  if (incoming.length === 0) return current;
+  const seen = new Set(current.map((p) => p.feedKey));
+  const out = [...current];
+  for (const performer of incoming) {
+    if (seen.has(performer.feedKey)) continue;
+    seen.add(performer.feedKey);
+    out.push(performer);
+  }
+  return out;
+}
 
 function FeedLoadingShell() {
   return (
@@ -29,9 +50,15 @@ function FeedLoadingShell() {
 function HomeVerticalFeedInner() {
   const slideHeightPx = useFeedViewportHeight();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [slides, setSlides] = useState<FeedPerformer[]>([]);
+  const initialCache = readFeedPerformersCache();
+  const [slides, setSlides] = useState<FeedPerformer[]>(
+    () => initialCache?.performers ?? [],
+  );
   const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
-    "loading",
+    () =>
+      initialCache?.performers.length
+        ? "ready"
+        : "loading",
   );
   const pathname = usePathname();
   const onHome = pathname === "/";
@@ -42,25 +69,37 @@ function HomeVerticalFeedInner() {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+
+    void (async () => {
       try {
-        const res = await fetch("/api/performers", { cache: "no-store" });
-        const json = (await res.json()) as { performers?: FeedPerformer[] };
+        const boot = await fetchFeedBootstrapPerformers();
         if (cancelled) return;
-        const list = Array.isArray(json.performers) ? json.performers : [];
-        if (list.length > 0) {
-          setSlides(list);
+        if (boot.performers.length > 0) {
+          setSlides(boot.performers);
           setLoadState("ready");
-        } else {
+        } else if (slides.length === 0) {
+          setLoadState("empty");
+        }
+
+        const full = await fetchFeedFullPerformers();
+        if (cancelled) return;
+        if (full.performers.length > 0) {
+          setSlides((prev) => mergeFeedPerformers(prev, full.performers));
+          setLoadState("ready");
+        } else if (boot.performers.length === 0 && slides.length === 0) {
           setLoadState("empty");
         }
       } catch {
-        setLoadState("empty");
+        if (!cancelled && slides.length === 0) {
+          setLoadState("empty");
+        }
       }
     })();
+
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- bootstrap once on mount
   }, []);
 
   const resumeHandledRef = useRef(false);
@@ -94,7 +133,24 @@ function HomeVerticalFeedInner() {
 
   const slideCount = slides.length > 0 ? slides.length : 1;
   const { activeIndex } = useFeedActiveIndex(scrollRef, slideCount);
-  const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 1);
+  const { isArmed, prefetchIndices } = useVideoFeedBuffer(
+    activeIndex,
+    slideCount,
+    1,
+  );
+
+  useEffect(() => {
+    if (slides.length === 0) return;
+
+    const warm = (index: number, pin: boolean) => {
+      const performer = slides[index];
+      if (!performer?.embedPlan.canMountInteractivePlayer) return;
+      warmPerformerStream(performer.feedKey, performer.embedPlan, { pin });
+    };
+
+    warm(activeIndex, activeIndex === 0);
+    prefetchIndices.forEach((idx) => warm(idx, false));
+  }, [slides, activeIndex, prefetchIndices]);
 
   useEffect(() => {
     if (!onHome) return;
@@ -120,7 +176,9 @@ function HomeVerticalFeedInner() {
         ref={scrollRef}
         className="tele-scroll feed-scroll hide-scrollbar w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
       >
-        {loadState === "loading" ? <FeedLoadingShell /> : null}
+        {loadState === "loading" && slides.length === 0 ? (
+          <FeedLoadingShell />
+        ) : null}
         {loadState === "empty" ? (
           <div className="flex h-full snap-start items-center justify-center px-6 text-center">
             <p className="text-sm text-neutral-400">
@@ -136,6 +194,8 @@ function HomeVerticalFeedInner() {
             index={index}
             isActive={index === activeIndex}
             isArmed={isArmed(index)}
+            streamPriority={index === activeIndex ? "high" : index === activeIndex + 1 ? "low" : "auto"}
+            deferSecondaryChrome={index === activeIndex}
             onRegisterIframe={handleRegisterIframe}
           />
         ))}

@@ -23,6 +23,8 @@ import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
 import { setFeedEmbedIframeAudible } from "@/lib/feed/liveIframeAudio";
 
+export type StreamLoadPriority = "high" | "low" | "auto";
+
 type LiveEmbedProps = {
   embedKey: string;
   posterUrl: string;
@@ -30,12 +32,24 @@ type LiveEmbedProps = {
   isActive: boolean;
   isArmed: boolean;
   sessionMuted: boolean;
+  streamPriority?: StreamLoadPriority;
   /** Overrides feed viewport height (desktop player shells). */
   viewportHeightPx?: number;
   /** Faster poster handoff when iframe was pre-warmed on hover. */
   fastReveal?: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
+
+function destroyEmbedIframe(iframe: HTMLIFrameElement | null): void {
+  if (!iframe) return;
+  try {
+    iframe.src = "";
+    iframe.removeAttribute("src");
+  } catch {
+    /* cross-origin */
+  }
+  iframe.remove();
+}
 
 /**
  * Clean cross-origin player surface — no parent capture handlers, no affiliate overlays.
@@ -48,6 +62,7 @@ export function LiveEmbed({
   isActive,
   isArmed,
   sessionMuted,
+  streamPriority = "auto",
   viewportHeightPx,
   fastReveal = false,
   onIframeWindow,
@@ -66,10 +81,30 @@ export function LiveEmbed({
     embedPlan.canMountInteractivePlayer &&
     Boolean(initialSrc);
 
+  const posterPriority =
+    streamPriority === "high" || isActive || isArmed;
+
   useEffect(() => {
     setFrameLoaded(false);
     setClaimedWarm(false);
   }, [embedKey, initialSrc]);
+
+  useEffect(() => {
+    if (mountIframe) return;
+    const iframe = iframeRef.current;
+    destroyEmbedIframe(iframe);
+    iframeRef.current = null;
+    setFrameLoaded(false);
+    setClaimedWarm(false);
+    onIframeWindow?.(null);
+  }, [mountIframe, onIframeWindow]);
+
+  useEffect(() => {
+    return () => {
+      destroyEmbedIframe(iframeRef.current);
+      iframeRef.current = null;
+    };
+  }, []);
 
   useLayoutEffect(() => {
     if (!mountIframe || !initialSrc) return;
@@ -99,6 +134,9 @@ export function LiveEmbed({
       embedPlan.playerSrcUnmuted ?? "",
     );
     iframe.title = `Live stream ${embedKey}`;
+    if (streamPriority === "high") {
+      iframe.setAttribute("fetchpriority", "high");
+    }
 
     stage.appendChild(iframe);
     iframeRef.current = iframe;
@@ -119,6 +157,7 @@ export function LiveEmbed({
     slideHeightPx,
     embedPlan.playerSrcMuted,
     embedPlan.playerSrcUnmuted,
+    streamPriority,
   ]);
 
   useEffect(() => {
@@ -168,7 +207,7 @@ export function LiveEmbed({
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
   const posterStyle = feedPosterImageStyle(slideHeightPx);
-  const posterFadeMs = fastReveal ? 120 : 500;
+  const posterFadeMs = fastReveal || streamPriority === "high" ? 120 : 500;
   const posterClass = `feed-embed-poster ease-out ${
     hidePoster ? "opacity-0" : "opacity-100"
   }`;
@@ -183,7 +222,7 @@ export function LiveEmbed({
         <FeedPoster
           feedKey={embedKey}
           posterUrl={posterUrl}
-          priority={isActive || isArmed}
+          priority={posterPriority}
           className={posterClass}
           style={posterStyleWithFade}
         />
@@ -206,7 +245,7 @@ export function LiveEmbed({
       <FeedPoster
         feedKey={embedKey}
         posterUrl={posterUrl}
-        priority={isActive || isArmed}
+        priority={posterPriority}
         className={`pointer-events-none ${posterClass}`}
         style={posterStyleWithFade}
       />
@@ -233,6 +272,8 @@ export function LiveEmbed({
               allow={WIDGET_IFRAME_ALLOW}
               referrerPolicy="strict-origin-when-cross-origin"
               loading="eager"
+              // @ts-expect-error — priority hint for LCP slide (Chromium / Safari 17+)
+              fetchPriority={streamPriority === "high" ? "high" : "auto"}
               onLoad={() => setFrameLoaded(true)}
             />
           ) : null}

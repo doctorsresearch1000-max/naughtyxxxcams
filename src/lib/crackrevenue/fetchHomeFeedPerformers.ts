@@ -16,13 +16,27 @@ const PAGE_SIZE = 100;
  * Paginates performers-ext until all live models with a native `iframeFeedURL`
  * are collected (hybrid purecam player), excluding promo/redirect embeds.
  */
+export type FetchHomeFeedOptions = {
+  /** Stop after this many API pages (1 = fast bootstrap for mobile LCP). */
+  maxPages?: number;
+  targetCount?: number;
+};
+
 export async function fetchHomeFeedPerformers(
-  targetCount?: number,
+  options?: number | FetchHomeFeedOptions,
 ): Promise<FeedPerformer[]> {
+  const opts: FetchHomeFeedOptions =
+    typeof options === "number" ? { targetCount: options } : (options ?? {});
+  const maxPages = Math.min(
+    Math.max(opts.maxPages ?? MAX_PAGES, 1),
+    MAX_PAGES,
+  );
+  const targetCount = opts.targetCount;
+
   const seen = new Set<string>();
   const pool: CrackPerformer[] = [];
 
-  for (let page = 1; page <= MAX_PAGES; page++) {
+  for (let page = 1; page <= maxPages; page += 1) {
     const data = await fetchStreamatePerformers({
       live: true,
       size: PAGE_SIZE,
@@ -48,3 +62,4 @@ export async function fetchHomeFeedPerformers(
   }
   return all;
 }
+

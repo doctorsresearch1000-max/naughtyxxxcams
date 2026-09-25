@@ -39,20 +39,26 @@ export function injectStreamPreconnects(): void {
 }
 
 function evictOldestWarmEntry(): void {
-  const firstKey = warmPool.keys().next().value as string | undefined;
-  if (!firstKey) return;
-  const entry = warmPool.get(firstKey);
-  entry?.iframe.remove();
-  warmPool.delete(firstKey);
+  for (const key of warmPool.keys()) {
+    if (pinnedWarmKeys.has(key)) continue;
+    const entry = warmPool.get(key);
+    entry?.iframe.remove();
+    warmPool.delete(key);
+    return;
+  }
 }
 
 export function peekWarmStream(feedKey: string): boolean {
   return warmPool.has(feedKey);
 }
 
+/** Pin warm iframe for LCP slide — not evicted by the LRU pool cap. */
+const pinnedWarmKeys = new Set<string>();
+
 export function warmPerformerStream(
   feedKey: string,
   embedPlan: PerformerEmbedPlan,
+  options?: { pin?: boolean },
 ): void {
   if (typeof document === "undefined") return;
 
@@ -93,6 +99,9 @@ export function warmPerformerStream(
 
   document.body.appendChild(iframe);
   warmPool.set(feedKey, entry);
+  if (options?.pin) {
+    pinnedWarmKeys.add(feedKey);
+  }
 }
 
 export type ClaimedWarmIframe = {
@@ -105,6 +114,7 @@ export function claimWarmStreamIframe(
 ): ClaimedWarmIframe | null {
   const entry = warmPool.get(feedKey);
   if (!entry) return null;
+  pinnedWarmKeys.delete(feedKey);
   warmPool.delete(feedKey);
   entry.iframe.removeAttribute("data-nx-warm-stream");
   return { iframe: entry.iframe, loaded: entry.loaded };

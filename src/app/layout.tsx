@@ -7,6 +7,7 @@ import { AppProviders } from "@/components/layout/AppProviders";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/layout/Header";
 import { ExploreBootstrapWarm } from "@/components/explore/ExploreBootstrapWarm";
+import { HomeFeedWarm } from "@/components/feed/HomeFeedWarm";
 import { PersistedHomeFeed } from "@/components/layout/PersistedHomeFeed";
 import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
 import "./globals.css";
@@ -32,6 +33,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <head>
+        <link
+          rel="preconnect"
+          href="https://hybridclient.naiadsystems.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="preconnect" href="https://www.streamate.com" />
+        <link rel="dns-prefetch" href="https://hybridclient.naiadsystems.com" />
         {/* Google tag (gtag.js) */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -50,6 +58,7 @@ export default function RootLayout({
         <AppProviders>
         <div className="relative mx-auto flex min-h-dvh max-w-md flex-col bg-black pb-16 [touch-action:pan-y] lg:max-w-none lg:pb-0">
           <ExploreBootstrapWarm />
+          <HomeFeedWarm />
           <Header />
           <ConditionalSiteChrome>
             <PersistedHomeFeed />

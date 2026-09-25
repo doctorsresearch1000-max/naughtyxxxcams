@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, type PointerEvent } from "react";
+import { memo, useEffect, useMemo, useState, type PointerEvent } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
@@ -17,26 +17,46 @@ import { LiveCommentTicker } from "@/components/feed/LiveCommentTicker";
 import { recordView } from "@/lib/user/userLibrary";
 import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
 import { feedPlayerMountStyle, feedSlideBoxStyle } from "@/components/feed/feedPlayerStyles";
-import { LiveEmbed } from "./LiveEmbed";
+import { LiveEmbed, type StreamLoadPriority } from "./LiveEmbed";
 
 type LiveFeedCardProps = {
   performer: FeedPerformer;
   index: number;
   isActive: boolean;
   isArmed: boolean;
+  streamPriority?: StreamLoadPriority;
+  /** Defer ticker/rail one frame so the embed wins the main thread (LCP). */
+  deferSecondaryChrome?: boolean;
   onRegisterIframe: (win: Window | null) => void;
 };
 
-export function LiveFeedCard({
+function LiveFeedCardInner({
   performer,
   index,
   isActive,
   isArmed,
+  streamPriority = "auto",
+  deferSecondaryChrome = false,
   onRegisterIframe,
 }: LiveFeedCardProps) {
   const slideHeightPx = useFeedSlideHeightPx();
   const { muted, toggleMutedFromPointerDown } = useSessionAudio();
+  const [secondaryChromeReady, setSecondaryChromeReady] = useState(
+    !deferSecondaryChrome,
+  );
   const conversionReady = useDelayedConversionCta(isActive, 15_000);
+
+  useEffect(() => {
+    if (!isActive || !deferSecondaryChrome) {
+      setSecondaryChromeReady(!deferSecondaryChrome || isActive);
+      return;
+    }
+    setSecondaryChromeReady(false);
+    const id = requestAnimationFrame(() => {
+      setSecondaryChromeReady(true);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isActive, deferSecondaryChrome]);
   const handleLabel = performerDisplayHandle(
     performer.nameClean || performer.name,
   );
@@ -115,15 +135,18 @@ export function LiveFeedCard({
           isActive={isActive}
           isArmed={isArmed}
           sessionMuted={muted}
+          streamPriority={streamPriority}
           onIframeWindow={isActive ? onRegisterIframe : undefined}
         />
       </div>
 
-      <LiveStreamBadge
-        performer={performer}
-        feedKey={performer.feedKey}
-        visible={isActive}
-      />
+      {secondaryChromeReady ? (
+        <LiveStreamBadge
+          performer={performer}
+          feedKey={performer.feedKey}
+          visible={isActive}
+        />
+      ) : null}
 
       <div
         className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75"
@@ -131,7 +154,9 @@ export function LiveFeedCard({
       />
 
       <div className="pointer-events-none absolute bottom-4 left-3 z-[35] max-w-[calc(100%-5.5rem)] flex flex-col items-start">
-        <LiveCommentTicker performer={performer} isActive={isActive} />
+        {secondaryChromeReady ? (
+          <LiveCommentTicker performer={performer} isActive={isActive} />
+        ) : null}
         {profileHref ? (
           <FeedPerformerLink
             href={profileHref}
@@ -159,16 +184,20 @@ export function LiveFeedCard({
         </div>
       </div>
 
-      <FeedActionRail
-        feedKey={performer.feedKey}
-        modelRef={modelRef}
-        posterUrl={performer.posterUrl}
-        profileLabel={handleLabel}
-        affiliateUrl={affiliateUrl}
-        isActive={isActive}
-        muted={muted}
-        onToggleMute={toggleMutedFromPointerDown}
-      />
+      {secondaryChromeReady ? (
+        <FeedActionRail
+          feedKey={performer.feedKey}
+          modelRef={modelRef}
+          posterUrl={performer.posterUrl}
+          profileLabel={handleLabel}
+          affiliateUrl={affiliateUrl}
+          isActive={isActive}
+          muted={muted}
+          onToggleMute={toggleMutedFromPointerDown}
+        />
+      ) : null}
     </article>
   );
 }
+
+export const LiveFeedCard = memo(LiveFeedCardInner);

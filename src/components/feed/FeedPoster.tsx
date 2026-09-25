@@ -35,7 +35,7 @@ export function FeedPoster({
       key={`poster-${feedKey}`}
       src={posterUrl}
       alt=""
-      decoding="async"
+      decoding={priority ? "sync" : "async"}
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : "auto"}
       className={className}
