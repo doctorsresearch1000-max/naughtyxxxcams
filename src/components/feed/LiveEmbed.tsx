@@ -14,8 +14,9 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-/** Zoom 16:9 hybrid player to fill 9:16 card (TikTok-style crop). */
-const PLAYER_FILL_SCALE = 1.35;
+/** Zoom hybrid 16:9 player to fill 9:16 card (TikTok-style crop). */
+const PLAYER_FILL_SCALE = 3.15;
+const PLAYER_TRANSFORM_ORIGIN = "center 35%";
 
 /**
  * Clean cross-origin player surface — no parent capture handlers, no affiliate overlays.
@@ -88,7 +89,7 @@ export function LiveEmbed({
       />
 
       {mountIframe && initialSrc ? (
-        <div className="absolute inset-0 z-[2] overflow-hidden">
+        <div className="absolute inset-0 z-[2] h-full w-full overflow-hidden">
           <iframe
             key={`${embedKey}-${embedPlan.mode}`}
             ref={bindIframeRef}
@@ -97,11 +98,12 @@ export function LiveEmbed({
             data-naughty-feed-embed="true"
             data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
             data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
-            className={`absolute left-1/2 top-1/2 h-full w-full border-0 bg-black ${
+            className={`absolute inset-0 h-full w-full origin-[center_35%] border-0 bg-black ${
               isActive ? "pointer-events-auto" : "pointer-events-none"
             }`}
             style={{
-              transform: `translate(-50%, -50%) scale(${PLAYER_FILL_SCALE})`,
+              transform: `scale(${PLAYER_FILL_SCALE})`,
+              transformOrigin: PLAYER_TRANSFORM_ORIGIN,
             }}
             allow={WIDGET_IFRAME_ALLOW}
             referrerPolicy="strict-origin-when-cross-origin"

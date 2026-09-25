@@ -78,14 +78,16 @@ export function LiveFeedCard({
       data-feed-key={performer.feedKey}
       aria-label={handleLabel}
     >
-      <LiveEmbed
-        embedKey={performer.feedKey}
-        posterUrl={performer.posterUrl}
-        embedPlan={performer.embedPlan}
-        isActive={isActive}
-        isArmed={isArmed}
-        onIframeWindow={isActive ? onRegisterIframe : undefined}
-      />
+      <div className="absolute inset-0 z-0 h-full w-full overflow-hidden">
+        <LiveEmbed
+          embedKey={performer.feedKey}
+          posterUrl={performer.posterUrl}
+          embedPlan={performer.embedPlan}
+          isActive={isActive}
+          isArmed={isArmed}
+          onIframeWindow={isActive ? onRegisterIframe : undefined}
+        />
+      </div>
 
       <LiveStreamBadge
         performer={performer}
