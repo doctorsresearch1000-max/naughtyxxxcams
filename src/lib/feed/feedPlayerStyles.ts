@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 /** Zoom inside cross-origin Streamate iframe to fill 9:16 (mobile feed framing). */
-export const FEED_PLAYER_FILL_SCALE = 3.22;
+export const FEED_PLAYER_FILL_SCALE = 2.75;
 /** Slightly above center so the scaled frame tucks under the header overlay. */
 export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 33%";
 /** Nudge up after centering (covers top letterbox inside the embed). */
