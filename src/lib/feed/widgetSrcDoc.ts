@@ -99,13 +99,10 @@ export function buildWidgetSrcDoc(
     blockAffiliateNavigation?: boolean;
     embedInstanceId?: string;
     widgetMuted?: number;
-    roomAffiliateUrl?: string;
   },
 ): string {
   return buildStreamEmbedSrcDoc(frameSrc, {
     embedInstanceId: options?.embedInstanceId ?? "",
     widgetMuted: options?.widgetMuted ?? 1,
-    roomAffiliateUrl: options?.roomAffiliateUrl,
-    blockAffiliateNavigation: options?.blockAffiliateNavigation,
   });
 }

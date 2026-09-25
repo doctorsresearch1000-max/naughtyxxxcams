@@ -11,23 +11,23 @@ import {
 import { usePathname } from "next/navigation";
 import { flushSync } from "react-dom";
 import {
+  applyDirectPlayerAudioFromGesture,
   resumeBrowserAudioContext,
-  setActiveFeedIframePointerEvents,
-  setFeedCardAudio,
 } from "@/lib/feed/liveIframeAudio";
 import { SessionAudioOverlay } from "./SessionAudioOverlay";
 
 type SessionAudioContextValue = {
-  /** Session latch: first gesture enables audio for the whole visit. */
   isAudioUnlocked: boolean;
   muted: boolean;
-  unlockFromPointerDown: () => void;
+  /** UI session only — never reload iframe or open affiliate URLs. */
+  acknowledgePlayerSurfaceTap: () => void;
+  /** Rail volume control — gesture-initiated player src swap (optional fallback). */
   toggleMutedFromPointerDown: () => void;
   registerActiveIframe: (win: Window | null) => void;
   setOverlayGate: (visible: boolean) => void;
-  /** @deprecated use isAudioUnlocked */
   unlocked: boolean;
   unlockSession: () => void;
+  unlockFromPointerDown: () => void;
   toggleMuted: () => void;
 };
 
@@ -59,43 +59,44 @@ export function SessionAudioProvider({
     activeIframeWindowRef.current = win;
   }, []);
 
-  const unlockFromPointerDown = useCallback(() => {
+  const acknowledgePlayerSurfaceTap = useCallback(() => {
     isAudioUnlockedRef.current = true;
     mutedRef.current = false;
-
-    resumeBrowserAudioContext();
-    setFeedCardAudio(true, true);
-    setActiveFeedIframePointerEvents(true);
-
     flushSync(() => {
       setIsAudioUnlocked(true);
       setMuted(false);
+      setOverlayGate(false);
     });
   }, []);
 
+  const unlockFromPointerDown = acknowledgePlayerSurfaceTap;
+
   const toggleMutedFromPointerDown = useCallback(() => {
+    resumeBrowserAudioContext();
+
     if (!isAudioUnlockedRef.current) {
-      unlockFromPointerDown();
+      isAudioUnlockedRef.current = true;
+      mutedRef.current = false;
+      applyDirectPlayerAudioFromGesture(true);
+      flushSync(() => {
+        setIsAudioUnlocked(true);
+        setMuted(false);
+        setOverlayGate(false);
+      });
       return;
     }
 
     if (mutedRef.current) {
       mutedRef.current = false;
-      setFeedCardAudio(true, true);
-      setActiveFeedIframePointerEvents(true);
-      flushSync(() => {
-        setMuted(false);
-      });
+      applyDirectPlayerAudioFromGesture(true);
+      flushSync(() => setMuted(false));
       return;
     }
 
     mutedRef.current = true;
-    setFeedCardAudio(false, true);
-    setActiveFeedIframePointerEvents(true);
-    flushSync(() => {
-      setMuted(true);
-    });
-  }, [unlockFromPointerDown]);
+    applyDirectPlayerAudioFromGesture(false);
+    flushSync(() => setMuted(true));
+  }, []);
 
   const unlockSession = unlockFromPointerDown;
   const toggleMuted = toggleMutedFromPointerDown;
@@ -104,6 +105,7 @@ export function SessionAudioProvider({
     () => ({
       isAudioUnlocked,
       muted,
+      acknowledgePlayerSurfaceTap,
       unlockFromPointerDown,
       toggleMutedFromPointerDown,
       registerActiveIframe,
@@ -115,6 +117,7 @@ export function SessionAudioProvider({
     [
       isAudioUnlocked,
       muted,
+      acknowledgePlayerSurfaceTap,
       unlockFromPointerDown,
       toggleMutedFromPointerDown,
       registerActiveIframe,

@@ -34,13 +34,9 @@ export async function GET(request: Request) {
     muted,
   });
 
-  const room = searchParams.get("room")?.trim() ?? "";
-
   const html = buildWidgetSrcDoc(frameSrc, {
-    blockAffiliateNavigation: true,
     embedInstanceId: instance,
     widgetMuted: muted,
-    roomAffiliateUrl: room || undefined,
   });
 
   const headers: Record<string, string> = {

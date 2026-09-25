@@ -6,8 +6,6 @@ import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
-import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
-import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import {
   performerDisplayHandle,
   performerProfilePath,
@@ -35,7 +33,6 @@ export function LiveFeedCard({
   onRegisterIframe,
 }: LiveFeedCardProps) {
   const { muted, toggleMutedFromPointerDown } = useSessionAudio();
-  const conversionReady = useDelayedConversionCta(isActive, 15_000);
   const handleLabel = performerDisplayHandle(
     performer.nameClean || performer.name,
   );
@@ -78,6 +75,11 @@ export function LiveFeedCard({
       data-feed-key={performer.feedKey}
       aria-label={handleLabel}
     >
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-black/45 via-transparent to-black/75"
+        aria-hidden
+      />
+
       <LiveEmbed
         embedKey={performer.feedKey}
         posterUrl={performer.posterUrl}
@@ -93,15 +95,13 @@ export function LiveFeedCard({
         visible={isActive}
       />
 
-      <div className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75" />
-
-      <div className="pointer-events-none absolute bottom-4 left-3 z-[55] max-w-[calc(100%-5.5rem)] flex flex-col items-start">
+      <div className="pointer-events-none absolute bottom-4 left-3 z-[20] max-w-[calc(100%-5.5rem)]">
         <LiveCommentTicker performer={performer} isActive={isActive} />
         {profileHref ? (
           <FeedPerformerLink
             href={profileHref}
             ariaLabel={`View profile ${handleLabel}`}
-            className="pointer-events-auto max-w-full text-sm font-extrabold uppercase tracking-wide text-white drop-shadow-md transition hover:text-[#39FF14]"
+            className="pointer-events-auto inline-block max-w-full text-sm font-extrabold uppercase tracking-wide text-white drop-shadow-md transition hover:text-[#39FF14]"
           >
             {handleLabel}
           </FeedPerformerLink>
@@ -110,18 +110,6 @@ export function LiveFeedCard({
             {handleLabel}
           </span>
         )}
-        <div className="pointer-events-none mt-2 flex w-full max-w-[78%] flex-col gap-2">
-        <ChatWithModelCta
-          modelName={modelName}
-          affiliateUrl={affiliateUrl}
-          visible={isActive && conversionReady}
-        />
-        {!isActive ? (
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-            Swipe · next model
-          </span>
-        ) : null}
-        </div>
       </div>
 
       <FeedActionRail
@@ -131,7 +119,7 @@ export function LiveFeedCard({
         profileLabel={handleLabel}
         modelName={modelName}
         affiliateUrl={affiliateUrl}
-        conversionReady={conversionReady}
+        conversionReady={false}
         isActive={isActive}
         muted={muted}
         onToggleMute={toggleMutedFromPointerDown}

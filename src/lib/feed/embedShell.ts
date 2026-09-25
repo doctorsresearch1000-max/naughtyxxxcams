@@ -50,10 +50,6 @@ const AUDIO_BRIDGE = `
     setInnerFeedAudioParams(true);
     unmuteAllVideos();
     forwardToWidget(data);
-    try {
-      var frame = getWidgetFrame();
-      if (frame) frame.style.pointerEvents = 'auto';
-    } catch (e) {}
   }
   function applyMute() {
     setInnerFeedAudioParams(false);
@@ -76,29 +72,6 @@ const AUDIO_BRIDGE = `
       applyMute();
     }
   });
-})();
-`;
-
-const AFFILIATE_GUARD = `
-(function () {
-  var isOffSite = function (href) {
-    if (!href || href === '#' || href.indexOf('javascript:') === 0) return false;
-    try {
-      var u = new URL(href, window.location.href);
-      return u.host && u.host !== window.location.host;
-    } catch (e) { return true; }
-  };
-  document.addEventListener('click', function (e) {
-    var t = e.target;
-    if (!t || !t.closest) return;
-    if (t.closest('#cr-widget-frame')) return;
-    var a = t.closest('a[href]');
-    if (a && isOffSite(a.getAttribute('href'))) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-    }
-  }, true);
-  window.open = function () { return null; };
 })();
 `;
 
@@ -141,20 +114,16 @@ function buildWidgetLoadNotifierScript(instanceId: string): string {
 export type EmbedShellOptions = {
   embedInstanceId: string;
   widgetMuted: number;
-  roomAffiliateUrl?: string;
   blockAffiliateNavigation?: boolean;
 };
 
+/** Legacy widget shell — no affiliate links or click guards over the player. */
 export function buildStreamEmbedSrcDoc(
   innerFrameSrc: string,
   options: EmbedShellOptions,
 ): string {
-  const guard = options.blockAffiliateNavigation ? AFFILIATE_GUARD : "";
   const notifier = buildWidgetLoadNotifierScript(options.embedInstanceId);
   const safeFrameSrc = innerFrameSrc.replace(/"/g, "&quot;");
-  const safeRoom = (options.roomAffiliateUrl ?? "")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "");
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -191,7 +160,7 @@ export function buildStreamEmbedSrcDoc(
       }
     </style>
   </head>
-  <body data-embed-instance="${options.embedInstanceId}" data-widget-muted="${options.widgetMuted}" data-room-url="${safeRoom}">
+  <body data-embed-instance="${options.embedInstanceId}" data-widget-muted="${options.widgetMuted}">
     <div id="widget-shell">
       <iframe
         id="cr-widget-frame"
@@ -202,7 +171,6 @@ export function buildStreamEmbedSrcDoc(
       ></iframe>
     </div>
     <script>${AUDIO_BRIDGE}</script>
-    <script>${guard}</script>
     <script>${notifier}</script>
   </body>
 </html>`;

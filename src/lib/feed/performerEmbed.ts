@@ -22,12 +22,22 @@ const ALLOWED_FEED_HOST_SUFFIXES = [
   "streamateaccess.com",
   "pcvdaa.com",
   "crxcr2.com",
-  "crakrevenue.com",
+];
+
+const BLOCKED_PLAYER_HOST_MARKERS = [
+  "jerkmate",
+  "go.crakrevenue",
+  "crakrevenue.com/go",
 ];
 
 export function isAllowedIframeFeedHost(url: string): boolean {
   try {
-    const host = new URL(url).hostname.toLowerCase();
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    const href = parsed.href.toLowerCase();
+    if (BLOCKED_PLAYER_HOST_MARKERS.some((m) => host.includes(m) || href.includes(m))) {
+      return false;
+    }
     return ALLOWED_FEED_HOST_SUFFIXES.some(
       (suffix) => host === suffix || host.endsWith(`.${suffix}`),
     );

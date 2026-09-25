@@ -81,11 +81,11 @@ export function FeedActionRail({
   };
 
   const onChatAttempt = () => {
-    if (conversionReady) {
-      window.open(affiliateUrl, "_blank", "noopener,noreferrer");
+    if (!conversionReady) {
+      setSheetOpen(true);
       return;
     }
-    setSheetOpen(true);
+    window.open(affiliateUrl, "_blank", "noopener,noreferrer");
   };
 
   return (

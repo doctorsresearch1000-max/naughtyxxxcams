@@ -10,7 +10,6 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const instance = searchParams.get("instance") ?? "default";
   const rawUrl = searchParams.get("u")?.trim() ?? "";
-  const room = searchParams.get("room")?.trim() ?? "";
   const mutedParam = searchParams.get("muted");
   const muted =
     mutedParam === "0" || mutedParam === "false" ? 0 : 1;
@@ -23,8 +22,6 @@ export async function GET(request: Request) {
   const html = buildStreamEmbedSrcDoc(innerSrc, {
     embedInstanceId: instance,
     widgetMuted: muted,
-    roomAffiliateUrl: room || undefined,
-    blockAffiliateNavigation: true,
   });
 
   return new Response(html, {
