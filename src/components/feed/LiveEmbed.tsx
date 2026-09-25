@@ -220,7 +220,9 @@ export function LiveEmbed({
 
     if (warmInDock) {
       ensureStreamWarming(embedKey, initialSrc);
-      attachToStage(false);
+      if (isStreamSlotLoaded(embedKey)) {
+        markFrameLoaded();
+      }
       return;
     }
 
