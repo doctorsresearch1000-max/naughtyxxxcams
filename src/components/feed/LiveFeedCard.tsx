@@ -15,6 +15,8 @@ import {
 import { LiveStreamBadge } from "@/components/feed/LiveStreamBadge";
 import { LiveCommentTicker } from "@/components/feed/LiveCommentTicker";
 import { recordView } from "@/lib/user/userLibrary";
+import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
+import { feedPlayerMountStyle, feedSlideBoxStyle } from "@/components/feed/feedPlayerStyles";
 import { LiveEmbed } from "./LiveEmbed";
 
 type LiveFeedCardProps = {
@@ -32,6 +34,7 @@ export function LiveFeedCard({
   isArmed,
   onRegisterIframe,
 }: LiveFeedCardProps) {
+  const slideHeightPx = useFeedSlideHeightPx();
   const { muted, toggleMutedFromPointerDown } = useSessionAudio();
   const conversionReady = useDelayedConversionCta(isActive, 15_000);
   const handleLabel = performerDisplayHandle(
@@ -71,12 +74,14 @@ export function LiveFeedCard({
 
   return (
     <article
-      className="tele-card feed-slide"
+      className="tele-card feed-slide w-full shrink-0 snap-start snap-always overflow-hidden bg-black"
+      style={feedSlideBoxStyle(slideHeightPx)}
       data-slide-index={index}
       data-feed-key={performer.feedKey}
+      data-feed-layout-v="3"
       aria-label={handleLabel}
     >
-      <div className="feed-player-mount">
+      <div className="feed-player-mount" style={feedPlayerMountStyle(slideHeightPx)}>
         <LiveEmbed
           embedKey={performer.feedKey}
           posterUrl={performer.posterUrl}

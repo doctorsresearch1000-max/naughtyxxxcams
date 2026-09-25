@@ -122,7 +122,15 @@ iframe[data-touch-blocked="true"] {
   left: 0;
   width: 100%;
   height: 100%;
+  max-width: none !important;
+  max-height: none !important;
   object-fit: cover;
+}
+
+/* Tailwind preflight sets img { height: auto } — breaks full-bleed posters */
+img.feed-embed-poster {
+  height: 100% !important;
+  width: 100% !important;
 }
 
 .feed-embed-stage {

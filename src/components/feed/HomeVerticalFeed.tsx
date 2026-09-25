@@ -4,6 +4,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
+import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
+import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
@@ -20,7 +22,8 @@ function FeedLoadingShell() {
   );
 }
 
-export function HomeVerticalFeed() {
+function HomeVerticalFeedInner() {
+  const slideHeightPx = useFeedViewportHeight();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [slides, setSlides] = useState<FeedPerformer[]>([]);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
@@ -110,6 +113,7 @@ export function HomeVerticalFeed() {
   return (
     <main
       className="tele-shell feed-shell relative mx-auto flex w-full max-w-md shrink-0 flex-col overflow-hidden bg-black text-white"
+      style={{ height: slideHeightPx, minHeight: slideHeightPx, maxHeight: slideHeightPx }}
     >
       <div
         ref={scrollRef}
@@ -136,5 +140,13 @@ export function HomeVerticalFeed() {
         ))}
       </div>
     </main>
+  );
+}
+
+export function HomeVerticalFeed() {
+  return (
+    <FeedViewportProvider>
+      <HomeVerticalFeedInner />
+    </FeedViewportProvider>
   );
 }

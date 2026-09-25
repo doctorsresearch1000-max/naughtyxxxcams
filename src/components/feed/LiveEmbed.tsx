@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
+import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
+import {
+  feedEmbedIframeStyle,
+  feedEmbedRootStyle,
+  feedEmbedStageStyle,
+  feedPosterImageStyle,
+} from "@/components/feed/feedPlayerStyles";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
 
@@ -26,6 +33,7 @@ export function LiveEmbed({
   isArmed,
   onIframeWindow,
 }: LiveEmbedProps) {
+  const slideHeightPx = useFeedSlideHeightPx();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [frameLoaded, setFrameLoaded] = useState(false);
 
@@ -56,18 +64,21 @@ export function LiveEmbed({
     iframeRef.current = node;
   }, []);
 
+  const rootStyle = feedEmbedRootStyle(slideHeightPx);
+  const posterStyle = feedPosterImageStyle(slideHeightPx);
   const posterClass = `feed-embed-poster transition-opacity duration-500 ease-out ${
     hidePoster ? "opacity-0" : "opacity-100"
   }`;
 
   if (!isArmed || !embedPlan.canMountInteractivePlayer) {
     return (
-      <div className="feed-embed-root">
+      <div className="feed-embed-root" style={rootStyle}>
         <FeedPoster
           feedKey={embedKey}
           posterUrl={posterUrl}
           priority={isActive || isArmed}
           className={posterClass}
+          style={posterStyle}
         />
       </div>
     );
@@ -76,20 +87,26 @@ export function LiveEmbed({
   return (
     <div
       className="feed-embed-root"
+      style={rootStyle}
       data-feed-card-root="true"
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
+      data-feed-layout-v="3"
     >
       <FeedPoster
         feedKey={embedKey}
         posterUrl={posterUrl}
         priority={isActive || isArmed}
         className={`pointer-events-none ${posterClass}`}
+        style={posterStyle}
       />
 
       {mountIframe && initialSrc ? (
-        <div className="feed-embed-stage">
+        <div
+          className="feed-embed-stage"
+          style={feedEmbedStageStyle(slideHeightPx)}
+        >
           <iframe
             key={`${embedKey}-${embedPlan.mode}`}
             ref={bindIframeRef}
@@ -101,6 +118,7 @@ export function LiveEmbed({
             className={`feed-embed-iframe ${
               isActive ? "pointer-events-auto" : "pointer-events-none"
             }`}
+            style={feedEmbedIframeStyle(slideHeightPx)}
             allow={WIDGET_IFRAME_ALLOW}
             referrerPolicy="strict-origin-when-cross-origin"
             onLoad={() => setFrameLoaded(true)}
