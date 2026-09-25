@@ -284,7 +284,7 @@ export function LiveEmbed({
     zIndex: 1,
     opacity: isActive ? 1 : 0,
     visibility: isActive ? "visible" : "hidden",
-    pointerEvents: streamRevealed ? "auto" : "none",
+    pointerEvents: "none",
   };
 
   const posterStyleWithFade: CSSProperties = {

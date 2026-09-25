@@ -18,10 +18,7 @@ import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
 import { syncFeedStreamNeighbors } from "@/lib/feed/feedStreamEngine";
 import { MobileFeedFullscreenPortal } from "@/components/feed/MobileFeedFullscreenPortal";
-import {
-  measureFeedSlideHeightPx,
-  useFeedViewportHeight,
-} from "@/hooks/useFeedViewportHeight";
+import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
 
 function mergeFeedPerformers(
   current: FeedPerformer[],
@@ -210,9 +207,9 @@ function HomeVerticalFeedInner({
 
   return (
     <main
-      className="tele-shell feed-shell feed-shell--mobile-stage flex w-full flex-col overflow-hidden bg-black text-white"
+      className="tele-shell feed-shell feed-shell--portal-inner flex h-full w-full min-h-0 flex-col overflow-hidden bg-black text-white"
       data-feed-stage="fullscreen"
-      data-feed-stage-v="17"
+      data-feed-stage-v="18"
     >
       <div
         ref={scrollRef}
@@ -266,11 +263,8 @@ export function HomeVerticalFeed({
     setScrollHeightPx((prev) => (prev === heightPx ? prev : heightPx));
   }, []);
 
-  const slideHeightPx = Math.max(
-    viewportHeightPx,
-    scrollHeightPx,
-    measureFeedSlideHeightPx(),
-  );
+  const slideHeightPx =
+    scrollHeightPx > 0 ? scrollHeightPx : viewportHeightPx;
 
   const feed = (
     <FeedViewportProvider heightPx={slideHeightPx}>

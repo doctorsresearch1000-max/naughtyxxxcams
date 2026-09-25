@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useMemo, useState, type PointerEvent } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
@@ -87,21 +87,6 @@ function LiveFeedCardInner({
     ],
   );
 
-  const onCardPointerDownCapture = (e: PointerEvent<HTMLElement>) => {
-    if (!isActive) return;
-    const target = e.target as HTMLElement;
-    if (target.closest("[data-feed-action-rail]")) return;
-    if (target.closest("button, a[href]")) return;
-
-    if (muted) {
-      onToggleMute();
-      return;
-    }
-    if (!(e.target instanceof HTMLIFrameElement)) {
-      onToggleMute();
-    }
-  };
-
   useEffect(() => {
     if (!isActive) return;
     saveContinueWatching({
@@ -128,7 +113,6 @@ function LiveFeedCardInner({
       data-feed-key={performer.feedKey}
       data-feed-layout-v="3"
       aria-label={handleLabel}
-      onPointerDownCapture={onCardPointerDownCapture}
     >
       <div className="feed-player-mount" style={feedPlayerMountStyle(slideHeightPx)}>
         <LiveEmbed

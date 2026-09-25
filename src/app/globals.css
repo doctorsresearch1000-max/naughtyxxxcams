@@ -104,12 +104,22 @@ iframe[data-touch-blocked="true"] {
   padding: 0 !important;
 }
 
+/* Single fixed layer: portal host only; inner shell fills it */
+#nx-mobile-feed-stage .feed-shell--portal-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+}
+
 @supports (height: 100dvh) {
-  #nx-mobile-feed-stage,
-  .feed-shell--mobile-stage {
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    min-height: 100dvh !important;
+  #nx-mobile-feed-stage {
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
   }
 }
 
@@ -121,9 +131,22 @@ html.feed-home-active body {
   overscroll-behavior: none;
 }
 
+#nx-mobile-feed-stage .feed-scroll {
+  height: 100%;
+  min-height: 0;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+}
+
 .feed-scroll {
   height: 100%;
   min-height: 0;
+}
+
+#nx-mobile-feed-stage .feed-slide {
+  height: auto;
+  min-height: 0;
+  touch-action: pan-y;
 }
 
 .feed-slide {
@@ -196,6 +219,12 @@ img.feed-embed-poster {
 .feed-embed-iframe {
   border: 0;
   background: #000;
+}
+
+#nx-mobile-feed-stage .feed-embed-iframe {
+  pointer-events: none !important;
+  touch-action: none !important;
+  -webkit-user-drag: none;
 }
 
 .feed-embed-iframe--docked {

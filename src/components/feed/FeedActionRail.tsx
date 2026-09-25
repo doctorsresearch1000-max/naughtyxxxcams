@@ -84,17 +84,15 @@ export function FeedActionRail({
       <div
         data-feed-action-rail="true"
         className="pointer-events-none absolute bottom-0 right-0 top-0 z-[45] w-[4.75rem]"
+        onPointerDownCapture={(e) => e.stopPropagation()}
       >
-        <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-4">
+        <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-4 touch-manipulation">
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               onToggleMute();
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
             }}
             className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/70 shadow-lg backdrop-blur-sm transition-colors active:scale-95 ${
               muted ? "text-white" : "text-[#39FF14]"

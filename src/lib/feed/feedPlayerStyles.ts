@@ -5,7 +5,7 @@ export const FEED_PLAYER_FILL_SCALE = 3.22;
 /** Slightly above center so the scaled frame tucks under the header overlay. */
 export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 33%";
 /** Nudge up after centering (covers ~1–2% top letterbox without shifting UI chrome). */
-export const FEED_PLAYER_TRANSLATE_Y = "-52%";
+export const FEED_PLAYER_TRANSLATE_Y = "-50%";
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
@@ -19,7 +19,7 @@ export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   };
 }
 
-export function feedPlayerMountStyle(heightPx: number): CSSProperties {
+export function feedPlayerMountStyle(_heightPx: number): CSSProperties {
   return {
     position: "absolute",
     top: 0,
@@ -28,37 +28,39 @@ export function feedPlayerMountStyle(heightPx: number): CSSProperties {
     bottom: 0,
     zIndex: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
+    height: "100%",
+    minHeight: 0,
     overflow: "hidden",
     background: "#000",
     isolation: "isolate",
   };
 }
 
-export function feedEmbedRootStyle(heightPx: number): CSSProperties {
+export function feedEmbedRootStyle(_heightPx: number): CSSProperties {
   return {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
+    height: "100%",
+    minHeight: 0,
     overflow: "hidden",
     background: "#000",
   };
 }
 
-export function feedEmbedStageStyle(heightPx: number): CSSProperties {
+export function feedEmbedStageStyle(_heightPx: number): CSSProperties {
   return {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
+    height: "100%",
+    minHeight: 0,
     overflow: "hidden",
   };
 }

@@ -14,7 +14,7 @@ const MOBILE_FEED_PORTAL_ID = "nx-mobile-feed-stage";
 
 function FeedFallback() {
   return (
-    <div className="feed-shell feed-shell--mobile-stage flex items-center justify-center bg-black">
+    <div className="feed-shell feed-shell--portal-inner flex h-full w-full items-center justify-center bg-black">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
     </div>
   );
