@@ -17,6 +17,7 @@ import { muteFeedOnSlideChange } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
+import { syncFeedStreamNeighbors } from "@/lib/feed/feedStreamEngine";
 
 function mergeFeedPerformers(
   current: FeedPerformer[],
@@ -153,6 +154,11 @@ function HomeVerticalFeedInner({
     slideCount,
     1,
   );
+
+  useLayoutEffect(() => {
+    if (slides.length === 0) return;
+    syncFeedStreamNeighbors(slides, activeIndex);
+  }, [slides, activeIndex]);
 
   useEffect(() => {
     if (!onHome) return;

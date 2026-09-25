@@ -9,9 +9,12 @@ import {
   type CSSProperties,
 } from "react";
 import {
-  claimWarmStreamIframe,
-  peekWarmStream,
-} from "@/lib/feed/streamEmbedWarmup";
+  claimStreamForStage,
+  ensureStreamWarming,
+  isStreamSlotLoaded,
+  peekStreamSlot,
+  releaseStreamSlot,
+} from "@/lib/feed/feedStreamEngine";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
 import {
@@ -32,7 +35,6 @@ type LiveEmbedProps = {
   embedPlan: PerformerEmbedPlan;
   isActive: boolean;
   isArmed: boolean;
-  /** Armed but not active — mount full-size iframe under poster (N+1 warm prerender). */
   isHiddenPrefetch?: boolean;
   sessionMuted: boolean;
   streamPriority?: StreamLoadPriority;
@@ -40,17 +42,6 @@ type LiveEmbedProps = {
   fastReveal?: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
-
-function destroyEmbedIframe(iframe: HTMLIFrameElement | null): void {
-  if (!iframe) return;
-  try {
-    iframe.src = "";
-    iframe.removeAttribute("src");
-  } catch {
-    /* cross-origin */
-  }
-  iframe.remove();
-}
 
 function applyIframeChrome(
   iframe: HTMLIFrameElement,
@@ -64,6 +55,7 @@ function applyIframeChrome(
     isActive ? "pointer-events-auto" : "pointer-events-none"
   }`;
   Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
+  iframe.removeAttribute("data-nx-stream-slot");
   iframe.setAttribute("data-naughty-feed-embed", "true");
   iframe.setAttribute("data-player-src-muted", embedPlan.playerSrcMuted ?? "");
   iframe.setAttribute(
@@ -71,14 +63,15 @@ function applyIframeChrome(
     embedPlan.playerSrcUnmuted ?? "",
   );
   iframe.title = `Live stream ${embedKey}`;
+  iframe.setAttribute("loading", "eager");
   if (streamPriority === "high") {
     iframe.setAttribute("fetchpriority", "high");
   }
 }
 
 /**
- * Cross-origin Streamate surface. Prefetch slides keep a full-size hidden iframe
- * loading under the poster so scroll reveals are instant.
+ * Streamate embed: active slide displays in-card; prefetch uses viewport dock
+ * (not opacity-throttled) then reparents without src reset on scroll.
  */
 export function LiveEmbed({
   embedKey,
@@ -97,8 +90,10 @@ export function LiveEmbed({
   const slideHeightPx = viewportHeightPx ?? contextHeightPx;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
-  const [frameLoaded, setFrameLoaded] = useState(false);
-  const [claimedWarm, setClaimedWarm] = useState(false);
+  const [frameLoaded, setFrameLoaded] = useState(() =>
+    isStreamSlotLoaded(embedKey),
+  );
+  const [usingEngineSlot, setUsingEngineSlot] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
 
@@ -106,6 +101,9 @@ export function LiveEmbed({
     isArmed &&
     embedPlan.canMountInteractivePlayer &&
     Boolean(initialSrc);
+
+  const showInCardStage = mountIframe && isActive;
+  const warmInDock = mountIframe && isHiddenPrefetch && !isActive;
 
   const posterPriority =
     streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
@@ -115,46 +113,71 @@ export function LiveEmbed({
   const posterFadeMs =
     fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
 
-  useEffect(() => {
-    setFrameLoaded(false);
-    setClaimedWarm(false);
-  }, [embedKey, initialSrc]);
-
-  useEffect(() => {
-    if (mountIframe) return;
-    const iframe = iframeRef.current;
-    destroyEmbedIframe(iframe);
-    iframeRef.current = null;
-    setFrameLoaded(false);
-    setClaimedWarm(false);
-    onIframeWindow?.(null);
-  }, [mountIframe, onIframeWindow]);
-
-  useEffect(() => {
-    return () => {
-      destroyEmbedIframe(iframeRef.current);
-      iframeRef.current = null;
-    };
-  }, []);
-
   const markFrameLoaded = useCallback(() => {
     setFrameLoaded(true);
   }, []);
 
+  useEffect(() => {
+    setFrameLoaded(isStreamSlotLoaded(embedKey));
+    setUsingEngineSlot(false);
+    iframeRef.current = null;
+  }, [embedKey, initialSrc]);
+
   useLayoutEffect(() => {
-    if (!mountIframe || !initialSrc) return;
+    if (!initialSrc || !embedPlan.canMountInteractivePlayer) return;
+
+    if (warmInDock) {
+      ensureStreamWarming(embedKey, initialSrc);
+      if (isStreamSlotLoaded(embedKey)) {
+        markFrameLoaded();
+      }
+      return;
+    }
+
+    if (!showInCardStage) {
+      if (peekStreamSlot(embedKey)) {
+        releaseStreamSlot(embedKey, true);
+      }
+      iframeRef.current = null;
+      setUsingEngineSlot(false);
+      return;
+    }
 
     const stage = stageRef.current;
     if (!stage) return;
+
+    ensureStreamWarming(embedKey, initialSrc);
+
+    const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
+      applyIframeChrome(
+        iframe,
+        slideHeightPx,
+        isActive,
+        streamPriority,
+        embedPlan,
+        embedKey,
+      );
+    });
+
+    if (claimed) {
+      iframeRef.current = claimed.iframe;
+      setUsingEngineSlot(true);
+      if (claimed.loaded) {
+        markFrameLoaded();
+      } else {
+        claimed.iframe.addEventListener("load", markFrameLoaded, {
+          once: true,
+        });
+      }
+      return;
+    }
 
     if (iframeRef.current && stage.contains(iframeRef.current)) {
       return;
     }
 
-    const warm = peekWarmStream(embedKey) ? claimWarmStreamIframe(embedKey) : null;
-    if (!warm) return;
-
-    const iframe = warm.iframe;
+    const iframe = document.createElement("iframe");
+    iframe.src = initialSrc;
     applyIframeChrome(
       iframe,
       slideHeightPx,
@@ -163,26 +186,37 @@ export function LiveEmbed({
       embedPlan,
       embedKey,
     );
-
+    iframe.allow = WIDGET_IFRAME_ALLOW;
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.addEventListener("load", markFrameLoaded, { once: true });
     stage.appendChild(iframe);
     iframeRef.current = iframe;
-    setClaimedWarm(true);
-
-    if (warm.loaded) {
-      markFrameLoaded();
-    } else {
-      iframe.addEventListener("load", markFrameLoaded, { once: true });
-    }
+    setUsingEngineSlot(false);
   }, [
     embedKey,
-    mountIframe,
     initialSrc,
+    embedPlan,
+    showInCardStage,
+    warmInDock,
     isActive,
     slideHeightPx,
-    embedPlan,
     streamPriority,
     markFrameLoaded,
   ]);
+
+  useEffect(() => {
+    if (!mountIframe) {
+      releaseStreamSlot(embedKey, isArmed);
+      iframeRef.current = null;
+      onIframeWindow?.(null);
+      return;
+    }
+
+    return () => {
+      if (isActive) return;
+      releaseStreamSlot(embedKey, isArmed);
+    };
+  }, [mountIframe, isArmed, isActive, embedKey, onIframeWindow]);
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -203,17 +237,12 @@ export function LiveEmbed({
 
   useEffect(() => {
     const iframe = iframeRef.current;
-    if (!iframe || !frameLoaded || !mountIframe) return;
+    if (!iframe || !frameLoaded || !showInCardStage) return;
 
-    if (!isActive || sessionMuted) {
+    if (sessionMuted) {
       setFeedEmbedIframeAudible(iframe, false, embedPlan);
     }
-    /* Unmute only inside user-gesture handlers — never reload unmuted src here. */
-  }, [isActive, sessionMuted, frameLoaded, mountIframe, embedPlan, embedKey]);
-
-  const bindIframeRef = useCallback((node: HTMLIFrameElement | null) => {
-    iframeRef.current = node;
-  }, []);
+  }, [sessionMuted, frameLoaded, showInCardStage, embedPlan]);
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
   const posterStyle = feedPosterImageStyle(slideHeightPx);
@@ -221,12 +250,10 @@ export function LiveEmbed({
   const stageStyle: CSSProperties = {
     ...feedEmbedStageStyle(slideHeightPx),
     zIndex: 1,
-    opacity: streamRevealed ? 1 : 0,
-    visibility: mountIframe ? "visible" : "hidden",
-    transition: streamRevealed
-      ? `opacity ${posterFadeMs}ms ease-out`
-      : "none",
-    pointerEvents: isActive && streamRevealed ? "auto" : "none",
+    opacity: 1,
+    visibility: showInCardStage ? "visible" : "hidden",
+    contentVisibility: showInCardStage ? "visible" : "auto",
+    pointerEvents: streamRevealed ? "auto" : "none",
   };
 
   const posterStyleWithFade: CSSProperties = {
@@ -265,7 +292,8 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="4"
+      data-feed-layout-v="5"
+      data-engine-slot={usingEngineSlot ? "1" : "0"}
     >
       <FeedPoster
         feedKey={embedKey}
@@ -275,41 +303,13 @@ export function LiveEmbed({
         style={posterStyleWithFade}
       />
 
-      {mountIframe && initialSrc ? (
+      {showInCardStage && initialSrc ? (
         <div
           ref={stageRef}
           className="feed-embed-stage"
           style={stageStyle}
           aria-hidden={!isActive}
-        >
-          {!claimedWarm ? (
-            <iframe
-              key={`${embedKey}-${embedPlan.mode}`}
-              ref={bindIframeRef}
-              src={initialSrc}
-              title={`Live stream ${embedKey}`}
-              data-naughty-feed-embed="true"
-              data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
-              data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
-              className={`feed-embed-iframe ${
-                isActive ? "pointer-events-auto" : "pointer-events-none"
-              }`}
-              style={feedEmbedIframeStyle(slideHeightPx)}
-              allow={WIDGET_IFRAME_ALLOW}
-              referrerPolicy="strict-origin-when-cross-origin"
-              loading="eager"
-              // @ts-expect-error — Chromium / Safari 17+ fetch priority hint
-              fetchPriority={
-                streamPriority === "high"
-                  ? "high"
-                  : isHiddenPrefetch
-                    ? "low"
-                    : "auto"
-              }
-              onLoad={markFrameLoaded}
-            />
-          ) : null}
-        </div>
+        />
       ) : null}
     </div>
   );

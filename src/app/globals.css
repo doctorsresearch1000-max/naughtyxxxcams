@@ -153,3 +153,9 @@ img.feed-embed-poster {
   transform: scale(1);
   transform-origin: center 35%;
 }
+
+.feed-embed-iframe--docked {
+  position: fixed !important;
+  pointer-events: none !important;
+  content-visibility: visible !important;
+}

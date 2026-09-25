@@ -1,5 +1,9 @@
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
-import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+import {
+  ensureStreamWarming,
+  isStreamSlotLoaded,
+  peekStreamSlot,
+} from "@/lib/feed/feedStreamEngine";
 
 const PRECONNECT_ORIGINS = [
   "https://hybridclient.naiadsystems.com",
@@ -8,14 +12,7 @@ const PRECONNECT_ORIGINS = [
   "https://www.streamateaccess.com",
 ] as const;
 
-type WarmEntry = {
-  iframe: HTMLIFrameElement;
-  loaded: boolean;
-  src: string;
-};
-
-const warmPool = new Map<string, WarmEntry>();
-const MAX_WARM_POOL = 5;
+const pinnedWarmKeys = new Set<string>();
 let preconnectInjected = false;
 
 export function injectStreamPreconnects(): void {
@@ -38,22 +35,9 @@ export function injectStreamPreconnects(): void {
   }
 }
 
-function evictOldestWarmEntry(): void {
-  for (const key of warmPool.keys()) {
-    if (pinnedWarmKeys.has(key)) continue;
-    const entry = warmPool.get(key);
-    entry?.iframe.remove();
-    warmPool.delete(key);
-    return;
-  }
-}
-
 export function peekWarmStream(feedKey: string): boolean {
-  return warmPool.has(feedKey);
+  return peekStreamSlot(feedKey);
 }
-
-/** Pin warm iframe for LCP slide — not evicted by the LRU pool cap. */
-const pinnedWarmKeys = new Set<string>();
 
 export function warmPerformerStream(
   feedKey: string,
@@ -66,39 +50,7 @@ export function warmPerformerStream(
   if (!embedPlan.canMountInteractivePlayer || !src) return;
 
   injectStreamPreconnects();
-
-  const existing = warmPool.get(feedKey);
-  if (existing?.src === src) return;
-
-  if (existing) {
-    existing.iframe.remove();
-    warmPool.delete(feedKey);
-  }
-
-  while (warmPool.size >= MAX_WARM_POOL) {
-    evictOldestWarmEntry();
-  }
-
-  const iframe = document.createElement("iframe");
-  iframe.src = src;
-  iframe.title = `Warm stream ${feedKey}`;
-  iframe.allow = WIDGET_IFRAME_ALLOW;
-  iframe.referrerPolicy = "strict-origin-when-cross-origin";
-  iframe.setAttribute("data-nx-warm-stream", feedKey);
-  iframe.style.cssText =
-    "position:fixed;width:1px;height:1px;left:0;top:0;opacity:0.001;pointer-events:none;border:0;z-index:-1";
-
-  const entry: WarmEntry = { iframe, loaded: false, src };
-  iframe.addEventListener(
-    "load",
-    () => {
-      entry.loaded = true;
-    },
-    { once: true },
-  );
-
-  document.body.appendChild(iframe);
-  warmPool.set(feedKey, entry);
+  ensureStreamWarming(feedKey, src);
   if (options?.pin) {
     pinnedWarmKeys.add(feedKey);
   }
@@ -112,10 +64,11 @@ export type ClaimedWarmIframe = {
 export function claimWarmStreamIframe(
   feedKey: string,
 ): ClaimedWarmIframe | null {
-  const entry = warmPool.get(feedKey);
-  if (!entry) return null;
+  if (!peekStreamSlot(feedKey)) return null;
   pinnedWarmKeys.delete(feedKey);
-  warmPool.delete(feedKey);
-  entry.iframe.removeAttribute("data-nx-warm-stream");
-  return { iframe: entry.iframe, loaded: entry.loaded };
+  const iframe = document.querySelector(
+    `iframe[data-nx-stream-slot="${CSS.escape(feedKey)}"]`,
+  ) as HTMLIFrameElement | null;
+  if (!iframe) return null;
+  return { iframe, loaded: isStreamSlotLoaded(feedKey) };
 }
