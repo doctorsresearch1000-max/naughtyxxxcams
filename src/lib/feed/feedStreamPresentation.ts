@@ -34,16 +34,11 @@ export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
 
 export function applyStreamIframeStagePresentation(
   iframe: HTMLIFrameElement,
-  slideHeightPx: number,
-  slideWidthPx: number,
   isActive: boolean,
 ): void {
   clearStreamIframeDockStyles(iframe);
-  iframe.className = `feed-embed-iframe ${
+  iframe.className = `feed-embed-iframe feed-embed-iframe--stage ${
     isActive ? "pointer-events-auto" : "pointer-events-none"
   }`;
-  Object.assign(
-    iframe.style,
-    feedEmbedIframeStyle(slideHeightPx, slideWidthPx),
-  );
+  Object.assign(iframe.style, feedEmbedIframeStyle());
 }

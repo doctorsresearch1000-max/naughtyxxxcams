@@ -1,16 +1,6 @@
 import type { CSSProperties } from "react";
 
-/** Face-safe crop (validated mobile feed). */
 export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 38%";
-
-/**
- * Zoom inside Streamate's 16:9 iframe to kill interior letterboxing (validated).
- * Combined with geometric cover when the slide is extra tall vs width.
- */
-export const FEED_PLAYER_INTERIOR_ZOOM = 3.15;
-
-/** Hides player chrome / sub-pixel gaps at edges. */
-export const FEED_COVER_BLEED = 1.04;
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
@@ -25,100 +15,67 @@ export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   };
 }
 
-export function feedPlayerMountStyle(heightPx: number): CSSProperties {
+/** Video layer — stays below overlay chrome (z-index on card). */
+export function feedPlayerMountStyle(): CSSProperties {
   return {
     position: "absolute",
     inset: 0,
     zIndex: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
-    maxHeight: heightPx,
+    height: "100%",
     overflow: "hidden",
     background: "#000",
+    isolation: "isolate",
   };
 }
 
-export function feedEmbedRootStyle(heightPx: number): CSSProperties {
+export function feedEmbedRootStyle(): CSSProperties {
   return {
     position: "absolute",
     inset: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
-    maxHeight: heightPx,
+    height: "100%",
     overflow: "hidden",
     background: "#000",
   };
 }
 
-export function feedEmbedStageStyle(heightPx: number): CSSProperties {
+export function feedEmbedStageStyle(): CSSProperties {
   return {
     position: "absolute",
     inset: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
-    maxHeight: heightPx,
+    height: "100%",
     overflow: "hidden",
     background: "#000",
   };
 }
 
-/** Cover scale: validated interior zoom + geometric 9:16 cover (no hard cap). */
-export function computeFeedVerticalCoverScale(
-  slideWidthPx: number,
-  slideHeightPx: number,
-): number {
-  if (slideWidthPx <= 0 || slideHeightPx <= 0) {
-    return FEED_PLAYER_INTERIOR_ZOOM * FEED_COVER_BLEED;
-  }
-  const geometric = (16 * slideHeightPx) / (9 * slideWidthPx);
-  return Math.max(FEED_PLAYER_INTERIOR_ZOOM, geometric) * FEED_COVER_BLEED;
-}
-
-/**
- * Validated TikTok layout: 16:9 surface height = slide height, centered, scaled up.
- */
-export function feedEmbedIframeStyle(
-  slideHeightPx: number,
-  slideWidthPx?: number,
-): CSSProperties {
-  const heightPx = Math.round(slideHeightPx);
-  const coverWidth = Math.round((heightPx * 16) / 9);
-  const widthPx =
-    slideWidthPx && slideWidthPx > 0
-      ? slideWidthPx
-      : Math.round((heightPx * 9) / 16);
-  const scale =
-    Math.round(
-      computeFeedVerticalCoverScale(widthPx, heightPx) * 1000,
-    ) / 1000;
-
+/** Stage iframe: fill the stage edge-to-edge (no transform scale). */
+export function feedEmbedIframeStyle(): CSSProperties {
   return {
     position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: coverWidth,
-    height: heightPx,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    height: "100%",
     margin: 0,
     padding: 0,
     border: "0",
     background: "#000",
-    transform: `translate(-50%, -50%) scale(${scale})`,
-    transformOrigin: FEED_PLAYER_TRANSFORM_ORIGIN,
+    transform: "none",
     clipPath: "none",
   };
 }
 
-export function feedPosterImageStyle(heightPx: number): CSSProperties {
+export function feedPosterImageStyle(): CSSProperties {
   return {
     position: "absolute",
     inset: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
-    maxHeight: heightPx,
+    height: "100%",
     objectFit: "cover",
     objectPosition: "center 38%",
   };

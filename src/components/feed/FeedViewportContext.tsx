@@ -1,14 +1,18 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
 
 const FeedViewportContext = createContext<number>(640);
 
-export function FeedViewportProvider({ children }: { children: React.ReactNode }) {
-  const slideHeightPx = useFeedViewportHeight();
+export function FeedViewportProvider({
+  heightPx,
+  children,
+}: {
+  heightPx: number;
+  children: React.ReactNode;
+}) {
   return (
-    <FeedViewportContext.Provider value={slideHeightPx}>
+    <FeedViewportContext.Provider value={heightPx}>
       {children}
     </FeedViewportContext.Provider>
   );

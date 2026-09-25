@@ -11,13 +11,13 @@ import {
 } from "@/lib/feed/feedClientCache";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
-import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { muteFeedOnSlideChange } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
 import { syncFeedStreamNeighbors } from "@/lib/feed/feedStreamEngine";
+import { measureFeedSlideHeightPx } from "@/hooks/useFeedViewportHeight";
 
 function mergeFeedPerformers(
   current: FeedPerformer[],
@@ -34,9 +34,12 @@ function mergeFeedPerformers(
   return out;
 }
 
-function FeedLoadingShell() {
+function FeedLoadingShell({ slideHeightPx }: { slideHeightPx: number }) {
   return (
-    <div className="feed-slide flex items-center justify-center">
+    <div
+      className="feed-slide flex items-center justify-center"
+      style={{ height: slideHeightPx, minHeight: slideHeightPx }}
+    >
       <div className="flex flex-col items-center gap-3">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
         <p className="text-xs font-medium text-neutral-400">Loading live models…</p>
@@ -47,12 +50,15 @@ function FeedLoadingShell() {
 
 type HomeVerticalFeedInnerProps = {
   initialPerformers: FeedPerformer[];
+  slideHeightPx: number;
+  onScrollHeightChange: (heightPx: number) => void;
 };
 
 function HomeVerticalFeedInner({
   initialPerformers,
+  slideHeightPx,
+  onScrollHeightChange,
 }: HomeVerticalFeedInnerProps) {
-  const slideHeightPx = useFeedViewportHeight();
   const scrollRef = useRef<HTMLDivElement>(null);
   const serverBootstrapped = initialPerformers.length > 0;
   const [slides, setSlides] = useState<FeedPerformer[]>(() => {
@@ -75,6 +81,29 @@ function HomeVerticalFeedInner({
       seedFeedPerformersCache(initialPerformers, { complete: false });
     }
   }, [initialPerformers, serverBootstrapped]);
+
+  useLayoutEffect(() => {
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+
+    const sync = () => {
+      const h = scroll.clientHeight;
+      if (h >= 200) {
+        onScrollHeightChange(h);
+      }
+    };
+
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(scroll);
+    window.addEventListener("resize", sync);
+    window.visualViewport?.addEventListener("resize", sync);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", sync);
+      window.visualViewport?.removeEventListener("resize", sync);
+    };
+  }, [onScrollHeightChange, loadState, slides.length]);
 
   useEffect(() => {
     let cancelled = false;
@@ -175,16 +204,23 @@ function HomeVerticalFeedInner({
     [registerActiveIframe],
   );
 
+  const shellStyle = {
+    height: slideHeightPx,
+    minHeight: slideHeightPx,
+    maxHeight: slideHeightPx,
+  };
+
   return (
     <main
-      className="tele-shell feed-shell relative mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col overflow-hidden bg-black text-white"
+      className="tele-shell feed-shell relative z-0 mx-auto flex w-full max-w-md shrink-0 flex-col overflow-hidden bg-black text-white"
+      style={shellStyle}
     >
       <div
         ref={scrollRef}
-        className="tele-scroll feed-scroll hide-scrollbar min-h-0 w-full flex-1 overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
+        className="tele-scroll feed-scroll hide-scrollbar h-full w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
       >
         {loadState === "loading" && slides.length === 0 ? (
-          <FeedLoadingShell />
+          <FeedLoadingShell slideHeightPx={slideHeightPx} />
         ) : null}
         {loadState === "empty" ? (
           <div className="flex h-full snap-start items-center justify-center px-6 text-center">
@@ -218,9 +254,21 @@ type HomeVerticalFeedProps = {
 export function HomeVerticalFeed({
   initialPerformers = [],
 }: HomeVerticalFeedProps) {
+  const [slideHeightPx, setSlideHeightPx] = useState(() =>
+    measureFeedSlideHeightPx(),
+  );
+
+  const onScrollHeightChange = useCallback((heightPx: number) => {
+    setSlideHeightPx((prev) => (prev === heightPx ? prev : heightPx));
+  }, []);
+
   return (
-    <FeedViewportProvider>
-      <HomeVerticalFeedInner initialPerformers={initialPerformers} />
+    <FeedViewportProvider heightPx={slideHeightPx}>
+      <HomeVerticalFeedInner
+        initialPerformers={initialPerformers}
+        slideHeightPx={slideHeightPx}
+        onScrollHeightChange={onScrollHeightChange}
+      />
     </FeedViewportProvider>
   );
 }
