@@ -65,6 +65,7 @@ export function SessionAudioProvider({
   const resetAudioOnSlideChange = useCallback(() => {
     mutedRef.current = true;
     setMuted(true);
+    muteFeedOnSlideChange();
   }, []);
 
   const toggleMutedFromUserGesture = useCallback(
@@ -133,6 +134,10 @@ export function SessionAudioProvider({
 
 /** Silence every player when the active slide changes (force muted embed src). */
 export function muteFeedOnSlideChange(): void {
-  silenceAllStreamSlots();
-  silenceAllFeedEmbedIframes();
+  const run = () => {
+    silenceAllStreamSlots();
+    silenceAllFeedEmbedIframes();
+  };
+  run();
+  requestAnimationFrame(run);
 }

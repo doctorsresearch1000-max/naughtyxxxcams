@@ -12,7 +12,6 @@ import {
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
-import { muteFeedOnSlideChange } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
@@ -187,7 +186,6 @@ function HomeVerticalFeedInner({
 
   useLayoutEffect(() => {
     if (prevActiveIndexRef.current !== activeIndex) {
-      muteFeedOnSlideChange();
       resetAudioOnSlideChange();
       prevActiveIndexRef.current = activeIndex;
     }

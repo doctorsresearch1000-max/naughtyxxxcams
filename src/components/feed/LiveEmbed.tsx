@@ -27,6 +27,10 @@ import {
 } from "@/lib/feed/feedPlayerStyles";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+import {
+  getFeedPlayerIframeForKey,
+  setFeedEmbedIframeAudible,
+} from "@/lib/feed/liveIframeAudio";
 
 export type StreamLoadPriority = "high" | "low" | "auto";
 
@@ -319,6 +323,31 @@ export function LiveEmbed({
     if (!frameLoaded) return;
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
+
+  useLayoutEffect(() => {
+    if (!mountIframe || !embedPlan.canMountInteractivePlayer) return;
+
+    const iframe =
+      iframeRef.current ?? getFeedPlayerIframeForKey(embedKey);
+    if (!iframe) return;
+
+    if (!isActive) {
+      setFeedEmbedIframeAudible(iframe, false, embedPlan);
+      return;
+    }
+
+    if (sessionMuted) {
+      setFeedEmbedIframeAudible(iframe, false, embedPlan);
+    }
+  }, [
+    isActive,
+    sessionMuted,
+    mountIframe,
+    embedKey,
+    embedPlan,
+    frameLoaded,
+    usingEngineSlot,
+  ]);
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
   const posterStyle = feedPosterImageStyle(slideHeightPx);

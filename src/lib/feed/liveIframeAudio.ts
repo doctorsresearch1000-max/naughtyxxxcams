@@ -3,7 +3,10 @@
  * active direct player reloads `playerSrcUnmuted` / `playerSrcMuted` (see performerEmbed).
  */
 
-import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
+import {
+  type PerformerEmbedPlan,
+  withFeedAudioParams,
+} from "@/lib/feed/performerEmbed";
 
 export const FEED_AUDIO_SOURCE = "naughty-feed";
 
@@ -107,6 +110,29 @@ export function getAllFeedPlayerIframes(): HTMLIFrameElement[] {
   ) as HTMLIFrameElement[];
 }
 
+/** Resolve feed player iframe for a slide (stage or body dock). */
+export function getFeedPlayerIframeForKey(
+  feedKey: string,
+): HTMLIFrameElement | null {
+  const docked = document.querySelector(
+    `iframe[data-nx-stream-slot="${feedKey}"]`,
+  ) as HTMLIFrameElement | null;
+  if (docked) return docked;
+  return document.querySelector(
+    `[data-feed-key="${feedKey}"] iframe[data-naughty-feed-embed="true"]`,
+  ) as HTMLIFrameElement | null;
+}
+
+function forceMutedPlayerSrc(iframe: HTMLIFrameElement): string | null {
+  const raw = iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+  if (!raw) return null;
+  try {
+    return withFeedAudioParams(raw, false);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Hard silence feed players (muted `src` + postMessage). Streamate ignores
  * parent postMessage after gesture-unmute; src swap is required.
@@ -149,12 +175,16 @@ export function setFeedEmbedIframeAudible(
   > | null,
 ): boolean {
   if (!iframe) return false;
-  const next = resolveEmbedSrc(iframe, wantSound, embedPlan);
-  if (!next) return false;
 
   const action: FeedAudioAction = wantSound
     ? "session-audio-unlock"
     : "session-audio-mute";
+
+  let next = resolveEmbedSrc(iframe, wantSound, embedPlan);
+  if (!next && !wantSound) {
+    next = forceMutedPlayerSrc(iframe);
+  }
+  if (!next) return false;
 
   try {
     if (iframe.src !== next) {
