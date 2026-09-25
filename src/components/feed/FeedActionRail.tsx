@@ -96,7 +96,10 @@ export function FeedActionRail({
         affiliateUrl={affiliateUrl}
         onClose={() => setSheetOpen(false)}
       />
-      <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-[45] w-[4.75rem]">
+      <div
+        data-feed-action-rail="true"
+        className="pointer-events-none absolute bottom-0 right-0 top-0 z-[45] w-[4.75rem]"
+      >
         <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-4">
           <button
             type="button"

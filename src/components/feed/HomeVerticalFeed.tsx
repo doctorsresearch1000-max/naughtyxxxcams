@@ -1,12 +1,16 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
+import {
+  applyDirectPlayerAudioFromGesture,
+  muteAllFeedEmbedIframes,
+} from "@/lib/feed/liveIframeAudio";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
@@ -34,8 +38,7 @@ function HomeVerticalFeedInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const resumeFeedKey = searchParams.get(RESUME_FEED_QUERY);
-  const { registerActiveIframe, setOverlayGate, isAudioUnlocked } =
-    useSessionAudio();
+  const { registerActiveIframe, muted } = useSessionAudio();
 
   useEffect(() => {
     let cancelled = false;
@@ -94,14 +97,11 @@ function HomeVerticalFeedInner() {
   const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 1);
 
   useEffect(() => {
-    if (!onHome) {
-      setOverlayGate(false);
-      return;
+    muteAllFeedEmbedIframes();
+    if (!muted) {
+      applyDirectPlayerAudioFromGesture(true);
     }
-    if (!isAudioUnlocked) {
-      setOverlayGate(true);
-    }
-  }, [activeIndex, isAudioUnlocked, setOverlayGate, onHome]);
+  }, [activeIndex, muted]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {

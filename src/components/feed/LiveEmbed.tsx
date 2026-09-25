@@ -11,6 +11,7 @@ import {
 } from "@/components/feed/feedPlayerStyles";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+import { setFeedEmbedIframeAudible } from "@/lib/feed/liveIframeAudio";
 
 type LiveEmbedProps = {
   embedKey: string;
@@ -18,6 +19,7 @@ type LiveEmbedProps = {
   embedPlan: PerformerEmbedPlan;
   isActive: boolean;
   isArmed: boolean;
+  sessionMuted: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
@@ -31,6 +33,7 @@ export function LiveEmbed({
   embedPlan,
   isActive,
   isArmed,
+  sessionMuted,
   onIframeWindow,
 }: LiveEmbedProps) {
   const slideHeightPx = useFeedSlideHeightPx();
@@ -38,6 +41,11 @@ export function LiveEmbed({
   const [frameLoaded, setFrameLoaded] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
+
+  const mountIframe =
+    isArmed &&
+    embedPlan.canMountInteractivePlayer &&
+    Boolean(initialSrc);
 
   useEffect(() => {
     setFrameLoaded(false);
@@ -52,12 +60,28 @@ export function LiveEmbed({
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
-  const mountIframe =
-    isArmed &&
-    embedPlan.canMountInteractivePlayer &&
-    Boolean(initialSrc);
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe || !frameLoaded || !mountIframe) return;
+
+    if (!isActive) {
+      setFeedEmbedIframeAudible(iframe, false, embedPlan);
+      return;
+    }
+
+    const wantSound = !sessionMuted;
+    setFeedEmbedIframeAudible(iframe, wantSound, embedPlan);
+  }, [
+    isActive,
+    sessionMuted,
+    frameLoaded,
+    mountIframe,
+    embedPlan,
+    embedKey,
+  ]);
 
   const streamRevealed = isActive && frameLoaded && mountIframe;
+  const audible = isActive && !sessionMuted;
   const hidePoster = frameLoaded && mountIframe;
 
   const bindIframeRef = useCallback((node: HTMLIFrameElement | null) => {
@@ -89,6 +113,8 @@ export function LiveEmbed({
       className="feed-embed-root"
       style={rootStyle}
       data-feed-card-root="true"
+      data-feed-active={isActive ? "1" : "0"}
+      data-feed-audible={audible ? "1" : "0"}
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}

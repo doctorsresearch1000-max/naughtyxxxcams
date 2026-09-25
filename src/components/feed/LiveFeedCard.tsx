@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type PointerEvent } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
@@ -55,6 +55,21 @@ export function LiveFeedCard({
     savedAt: Date.now(),
   };
 
+  const onCardPointerDownCapture = (e: PointerEvent<HTMLElement>) => {
+    if (!isActive) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-feed-action-rail]")) return;
+    if (target.closest("button, a[href]")) return;
+
+    if (muted) {
+      toggleMutedFromPointerDown();
+      return;
+    }
+    if (!(e.target instanceof HTMLIFrameElement)) {
+      toggleMutedFromPointerDown();
+    }
+  };
+
   useEffect(() => {
     if (!isActive) return;
     saveContinueWatching({
@@ -80,6 +95,7 @@ export function LiveFeedCard({
       data-feed-key={performer.feedKey}
       data-feed-layout-v="3"
       aria-label={handleLabel}
+      onPointerDownCapture={onCardPointerDownCapture}
     >
       <div className="feed-player-mount" style={feedPlayerMountStyle(slideHeightPx)}>
         <LiveEmbed
@@ -88,6 +104,7 @@ export function LiveFeedCard({
           embedPlan={performer.embedPlan}
           isActive={isActive}
           isArmed={isArmed}
+          sessionMuted={muted}
           onIframeWindow={isActive ? onRegisterIframe : undefined}
         />
       </div>

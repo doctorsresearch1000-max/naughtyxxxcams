@@ -8,26 +8,21 @@ import {
   useRef,
   useState,
 } from "react";
-import { usePathname } from "next/navigation";
 import { flushSync } from "react-dom";
 import {
   applyDirectPlayerAudioFromGesture,
+  muteAllFeedEmbedIframes,
   resumeBrowserAudioContext,
 } from "@/lib/feed/liveIframeAudio";
-import { SessionAudioOverlay } from "./SessionAudioOverlay";
 
 type SessionAudioContextValue = {
   isAudioUnlocked: boolean;
   muted: boolean;
-  /** UI session only — never reload iframe or open affiliate URLs. */
-  acknowledgePlayerSurfaceTap: () => void;
-  /** Rail volume control — gesture-initiated player src swap (optional fallback). */
   toggleMutedFromPointerDown: () => void;
   registerActiveIframe: (win: Window | null) => void;
-  setOverlayGate: (visible: boolean) => void;
+  /** @deprecated */
   unlocked: boolean;
   unlockSession: () => void;
-  unlockFromPointerDown: () => void;
   toggleMuted: () => void;
 };
 
@@ -50,7 +45,6 @@ export function SessionAudioProvider({
 }) {
   const [isAudioUnlocked, setIsAudioUnlocked] = useState(false);
   const [muted, setMuted] = useState(true);
-  const [overlayGate, setOverlayGate] = useState(false);
   const isAudioUnlockedRef = useRef(false);
   const mutedRef = useRef(true);
   const activeIframeWindowRef = useRef<Window | null>(null);
@@ -59,57 +53,43 @@ export function SessionAudioProvider({
     activeIframeWindowRef.current = win;
   }, []);
 
-  const acknowledgePlayerSurfaceTap = useCallback(() => {
-    isAudioUnlockedRef.current = true;
-    mutedRef.current = false;
-    flushSync(() => {
-      setIsAudioUnlocked(true);
-      setMuted(false);
-      setOverlayGate(false);
-    });
-  }, []);
-
-  const unlockFromPointerDown = acknowledgePlayerSurfaceTap;
-
   const toggleMutedFromPointerDown = useCallback(() => {
     resumeBrowserAudioContext();
 
     if (!isAudioUnlockedRef.current) {
       isAudioUnlockedRef.current = true;
       mutedRef.current = false;
+      muteAllFeedEmbedIframes();
       applyDirectPlayerAudioFromGesture(true);
       flushSync(() => {
         setIsAudioUnlocked(true);
         setMuted(false);
-        setOverlayGate(false);
       });
       return;
     }
 
     if (mutedRef.current) {
       mutedRef.current = false;
+      muteAllFeedEmbedIframes();
       applyDirectPlayerAudioFromGesture(true);
       flushSync(() => setMuted(false));
       return;
     }
 
     mutedRef.current = true;
-    applyDirectPlayerAudioFromGesture(false);
+    muteAllFeedEmbedIframes();
     flushSync(() => setMuted(true));
   }, []);
 
-  const unlockSession = unlockFromPointerDown;
+  const unlockSession = toggleMutedFromPointerDown;
   const toggleMuted = toggleMutedFromPointerDown;
 
   const value = useMemo(
     () => ({
       isAudioUnlocked,
       muted,
-      acknowledgePlayerSurfaceTap,
-      unlockFromPointerDown,
       toggleMutedFromPointerDown,
       registerActiveIframe,
-      setOverlayGate,
       unlocked: isAudioUnlocked,
       unlockSession,
       toggleMuted,
@@ -117,8 +97,6 @@ export function SessionAudioProvider({
     [
       isAudioUnlocked,
       muted,
-      acknowledgePlayerSurfaceTap,
-      unlockFromPointerDown,
       toggleMutedFromPointerDown,
       registerActiveIframe,
       unlockSession,
@@ -126,13 +104,9 @@ export function SessionAudioProvider({
     ],
   );
 
-  const pathname = usePathname();
-  const showOverlay = overlayGate && !isAudioUnlocked && pathname === "/";
-
   return (
     <SessionAudioContext.Provider value={value}>
       {children}
-      <SessionAudioOverlay visible={showOverlay} />
     </SessionAudioContext.Provider>
   );
 }
