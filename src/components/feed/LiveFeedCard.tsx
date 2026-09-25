@@ -16,7 +16,7 @@ import { LiveStreamBadge } from "@/components/feed/LiveStreamBadge";
 import { LiveCommentTicker } from "@/components/feed/LiveCommentTicker";
 import { recordView } from "@/lib/user/userLibrary";
 import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
-import { feedPlayerMountStyle, feedSlideBoxStyle } from "@/components/feed/feedPlayerStyles";
+import { feedPlayerMountStyle, feedSlideBoxStyle } from "@/lib/feed/feedPlayerStyles";
 import { LiveEmbed, type StreamLoadPriority } from "./LiveEmbed";
 
 type LiveFeedCardProps = {

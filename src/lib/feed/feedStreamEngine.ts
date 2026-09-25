@@ -16,7 +16,8 @@ type StreamSlot = {
 
 const slots = new Map<string, StreamSlot>();
 
-/** Viewport dock — fully opaque with a 4px visible strip (avoids background media throttle). */
+const MIN_STAGE_HEIGHT_PX = 8;
+
 const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
   left: "0",
@@ -68,6 +69,7 @@ function createSlot(feedKey: string, src: string): StreamSlot {
 
 function dockSlot(slot: StreamSlot): void {
   postLiveIframeAudio(slot.iframe, "session-audio-mute");
+  clearStreamIframeDockStyles(slot.iframe);
   Object.assign(slot.iframe.style, DOCK_STYLE);
   slot.iframe.className = "feed-embed-iframe feed-embed-iframe--docked";
   if (slot.iframe.parentElement && slot.iframe.parentElement !== document.body) {
@@ -99,9 +101,28 @@ export function peekStreamSlot(feedKey: string): boolean {
   return slots.has(feedKey);
 }
 
-/**
- * Keep a muted player loading in the viewport dock (active network warm-up).
- */
+/** Track an in-card iframe (slide 0) so release can dock instead of destroy. */
+export function registerInCardStreamSlot(
+  feedKey: string,
+  src: string,
+  iframe: HTMLIFrameElement,
+  loaded: boolean,
+): void {
+  slots.set(feedKey, {
+    feedKey,
+    src,
+    iframe,
+    loaded,
+    docked: false,
+  });
+}
+
+export function markStreamSlotLoaded(feedKey: string): void {
+  const slot = slots.get(feedKey);
+  if (slot) slot.loaded = true;
+}
+
+/** Prefetch-only warm-up (N±1). Never call for the active slide. */
 export function ensureStreamWarming(feedKey: string, src: string): void {
   if (typeof document === "undefined" || !feedKey || !src) return;
 
@@ -126,7 +147,14 @@ export type ClaimedStreamSlot = {
   loaded: boolean;
 };
 
-/** Reparent warmed iframe into slide stage without resetting `src`. */
+export function isStageReadyForStream(stage: HTMLElement): boolean {
+  return stage.getBoundingClientRect().height >= MIN_STAGE_HEIGHT_PX;
+}
+
+/**
+ * Reparent warmed iframe into slide stage without resetting `src`.
+ * Stage must have layout; caller should retry if this returns null while slot exists.
+ */
 export function claimStreamForStage(
   feedKey: string,
   stage: HTMLElement,
@@ -134,17 +162,22 @@ export function claimStreamForStage(
 ): ClaimedStreamSlot | null {
   const slot = slots.get(feedKey);
   if (!slot) return null;
+  if (!isStageReadyForStream(stage)) return null;
 
   slot.docked = false;
   clearStreamIframeDockStyles(slot.iframe);
-  applyLayout(slot.iframe);
+
   if (slot.iframe.parentElement !== stage) {
     stage.appendChild(slot.iframe);
   }
+
+  void stage.offsetHeight;
+  applyLayout(slot.iframe);
+  void slot.iframe.offsetHeight;
+
   return { iframe: slot.iframe, loaded: slot.loaded };
 }
 
-/** Re-apply stage presentation after resize / reparent. */
 export function refreshStreamStageLayout(
   feedKey: string,
   isActive: boolean,
@@ -174,7 +207,6 @@ export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
   }
 }
 
-/** Immediate audio cut on all engine slots (e.g. before active slide handoff). */
 export function silenceAllStreamSlots(exceptFeedKey?: string): void {
   for (const [key, slot] of slots.entries()) {
     if (exceptFeedKey && key === exceptFeedKey) continue;
@@ -184,7 +216,11 @@ export function silenceAllStreamSlots(exceptFeedKey?: string): void {
 
 function performerSrc(performer: {
   feedKey: string;
-  embedPlan: { playerSrcMuted?: string | null; outerEmbedSrc?: string | null; canMountInteractivePlayer: boolean };
+  embedPlan: {
+    playerSrcMuted?: string | null;
+    outerEmbedSrc?: string | null;
+    canMountInteractivePlayer: boolean;
+  };
 }): string | null {
   if (!performer.embedPlan.canMountInteractivePlayer) return null;
   return (
@@ -194,9 +230,15 @@ function performerSrc(performer: {
   );
 }
 
-/** Warm N+1 / N-1 in dock; never re-dock the active key from here. */
 export function syncFeedStreamNeighbors(
-  slides: Array<{ feedKey: string; embedPlan: { playerSrcMuted?: string | null; outerEmbedSrc?: string | null; canMountInteractivePlayer: boolean } }>,
+  slides: Array<{
+    feedKey: string;
+    embedPlan: {
+      playerSrcMuted?: string | null;
+      outerEmbedSrc?: string | null;
+      canMountInteractivePlayer: boolean;
+    };
+  }>,
   activeIndex: number,
 ): void {
   const keep = new Set<string>();

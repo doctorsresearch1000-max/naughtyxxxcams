@@ -147,7 +147,7 @@ img.feed-embed-poster {
   background: #000;
 }
 
-/* In-slide player: fill the stage edge-to-edge (dock clip-path must not persist). */
+/* In-slide player: fill stage (dock clip-path / fixed sizing must not persist). */
 .feed-embed-iframe--stage {
   position: absolute !important;
   top: 0 !important;

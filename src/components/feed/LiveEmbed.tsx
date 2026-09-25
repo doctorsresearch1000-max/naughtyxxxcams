@@ -12,8 +12,11 @@ import {
   claimStreamForStage,
   ensureStreamWarming,
   isStreamSlotLoaded,
+  isStageReadyForStream,
   peekStreamSlot,
   refreshStreamStageLayout,
+  markStreamSlotLoaded,
+  registerInCardStreamSlot,
   releaseStreamSlot,
 } from "@/lib/feed/feedStreamEngine";
 import { applyStreamIframeStagePresentation } from "@/lib/feed/feedStreamPresentation";
@@ -23,7 +26,7 @@ import {
   feedEmbedRootStyle,
   feedEmbedStageStyle,
   feedPosterImageStyle,
-} from "@/components/feed/feedPlayerStyles";
+} from "@/lib/feed/feedPlayerStyles";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
 
@@ -43,14 +46,12 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
 };
 
-function applyIframeChrome(
+function wireIframeMetadata(
   iframe: HTMLIFrameElement,
-  isActive: boolean,
-  streamPriority: StreamLoadPriority,
   embedPlan: PerformerEmbedPlan,
   embedKey: string,
+  streamPriority: StreamLoadPriority,
 ): void {
-  applyStreamIframeStagePresentation(iframe, isActive);
   iframe.removeAttribute("data-nx-stream-slot");
   iframe.setAttribute("data-naughty-feed-embed", "true");
   iframe.setAttribute("data-player-src-muted", embedPlan.playerSrcMuted ?? "");
@@ -66,8 +67,8 @@ function applyIframeChrome(
 }
 
 /**
- * Streamate embed: active slide displays in-card; prefetch uses viewport dock
- * (not opacity-throttled) then reparents without src reset on scroll.
+ * Active slide: iframe in a stable in-card stage (100% of slide box).
+ * N±1 prefetch uses the viewport dock; claim reparents without src change.
  */
 export function LiveEmbed({
   embedKey,
@@ -84,12 +85,12 @@ export function LiveEmbed({
 }: LiveEmbedProps) {
   const contextHeightPx = useFeedSlideHeightPx();
   const slideHeightPx = viewportHeightPx ?? contextHeightPx;
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const attachGenerationRef = useRef(0);
   const [frameLoaded, setFrameLoaded] = useState(() =>
     isStreamSlotLoaded(embedKey),
   );
-  const [usingEngineSlot, setUsingEngineSlot] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
 
@@ -98,8 +99,7 @@ export function LiveEmbed({
     embedPlan.canMountInteractivePlayer &&
     Boolean(initialSrc);
 
-  const showInCardStage = mountIframe && isActive;
-  const warmInDock = mountIframe && isHiddenPrefetch && !isActive;
+  const showStage = mountIframe && isActive;
 
   const posterPriority =
     streamPriority === "high" || isActive || isArmed || isHiddenPrefetch;
@@ -107,7 +107,7 @@ export function LiveEmbed({
   const streamRevealed =
     isActive &&
     mountIframe &&
-    (frameLoaded || isStreamSlotLoaded(embedKey) || usingEngineSlot);
+    (frameLoaded || isStreamSlotLoaded(embedKey));
   const audible = isActive && !sessionMuted;
   const posterFadeMs =
     fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
@@ -116,115 +116,126 @@ export function LiveEmbed({
     setFrameLoaded(true);
   }, []);
 
+  const detachIframeRef = useCallback(() => {
+    iframeRef.current = null;
+  }, []);
+
   useEffect(() => {
     setFrameLoaded(isStreamSlotLoaded(embedKey));
-    setUsingEngineSlot(false);
-    iframeRef.current = null;
-  }, [embedKey, initialSrc]);
+    detachIframeRef();
+  }, [embedKey, initialSrc, detachIframeRef]);
 
   useLayoutEffect(() => {
-    if (!initialSrc || !embedPlan.canMountInteractivePlayer) return;
+    if (!mountIframe || !initialSrc) return;
 
-    if (warmInDock) {
+    if (isHiddenPrefetch && !isActive) {
       ensureStreamWarming(embedKey, initialSrc);
-      if (isStreamSlotLoaded(embedKey)) {
-        markFrameLoaded();
-      }
       return;
     }
 
-    if (!showInCardStage) {
+    if (!isActive) {
       if (peekStreamSlot(embedKey)) {
         releaseStreamSlot(embedKey, true);
       }
-      iframeRef.current = null;
-      setUsingEngineSlot(false);
+      detachIframeRef();
       return;
     }
 
-    const stage = stageRef.current;
-    if (!stage) return;
+    const generation = ++attachGenerationRef.current;
 
-    ensureStreamWarming(embedKey, initialSrc);
+    const applyLayout = (iframe: HTMLIFrameElement) => {
+      applyStreamIframeStagePresentation(iframe, true);
+      wireIframeMetadata(iframe, embedPlan, embedKey, streamPriority);
+    };
 
-    const claimed = claimStreamForStage(embedKey, stage, (iframe) => {
-      applyIframeChrome(
-        iframe,
-        isActive,
-        streamPriority,
-        embedPlan,
-        embedKey,
-      );
-    });
+    const attachToStage = () => {
+      if (attachGenerationRef.current !== generation) return;
 
-    if (claimed) {
-      iframeRef.current = claimed.iframe;
-      setUsingEngineSlot(true);
-      if (claimed.loaded) {
-        markFrameLoaded();
-      } else {
-        claimed.iframe.addEventListener("load", markFrameLoaded, {
-          once: true,
-        });
+      const stage = stageRef.current;
+      if (!stage || !isStageReadyForStream(stage)) {
+        requestAnimationFrame(attachToStage);
+        return;
       }
-      return;
-    }
 
-    if (iframeRef.current && stage.contains(iframeRef.current)) {
-      return;
-    }
+      const claimed = claimStreamForStage(embedKey, stage, applyLayout);
+      if (claimed) {
+        iframeRef.current = claimed.iframe;
+        if (claimed.loaded) {
+          markFrameLoaded();
+        } else {
+          claimed.iframe.addEventListener("load", markFrameLoaded, {
+            once: true,
+          });
+        }
+        return;
+      }
 
-    const iframe = document.createElement("iframe");
-    iframe.src = initialSrc;
-    applyIframeChrome(iframe, isActive, streamPriority, embedPlan, embedKey);
-    iframe.allow = WIDGET_IFRAME_ALLOW;
-    iframe.referrerPolicy = "strict-origin-when-cross-origin";
-    iframe.addEventListener("load", markFrameLoaded, { once: true });
-    stage.appendChild(iframe);
-    iframeRef.current = iframe;
-    setUsingEngineSlot(false);
+      if (iframeRef.current && stage.contains(iframeRef.current)) {
+        applyLayout(iframeRef.current);
+        return;
+      }
+
+      if (peekStreamSlot(embedKey)) {
+        requestAnimationFrame(attachToStage);
+        return;
+      }
+
+      const iframe = document.createElement("iframe");
+      iframe.src = initialSrc;
+      iframe.allow = WIDGET_IFRAME_ALLOW;
+      iframe.referrerPolicy = "strict-origin-when-cross-origin";
+      stage.appendChild(iframe);
+      void stage.offsetHeight;
+      applyLayout(iframe);
+      registerInCardStreamSlot(embedKey, initialSrc, iframe, false);
+      iframe.addEventListener(
+        "load",
+        () => {
+          markStreamSlotLoaded(embedKey);
+          markFrameLoaded();
+        },
+        { once: true },
+      );
+      iframeRef.current = iframe;
+    };
+
+    attachToStage();
   }, [
-    embedKey,
+    mountIframe,
     initialSrc,
-    embedPlan,
-    showInCardStage,
-    warmInDock,
     isActive,
+    isHiddenPrefetch,
+    embedKey,
+    embedPlan,
     streamPriority,
     markFrameLoaded,
+    detachIframeRef,
   ]);
+
+  useLayoutEffect(() => {
+    if (!isActive) return;
+    refreshStreamStageLayout(embedKey, true);
+    const iframe = iframeRef.current;
+    if (iframe) {
+      applyStreamIframeStagePresentation(iframe, true);
+    }
+  }, [isActive, slideHeightPx, embedKey]);
 
   useEffect(() => {
     if (!mountIframe) {
-      releaseStreamSlot(embedKey, isArmed);
-      iframeRef.current = null;
+      releaseStreamSlot(embedKey, false);
+      detachIframeRef();
       onIframeWindow?.(null);
-      return;
     }
-
-    return () => {
-      if (isActive) return;
-      releaseStreamSlot(embedKey, isArmed);
-    };
-  }, [mountIframe, isArmed, isActive, embedKey, onIframeWindow]);
-
-  useLayoutEffect(() => {
-    if (!showInCardStage) return;
-    const iframe = iframeRef.current;
-    if (iframe) {
-      applyIframeChrome(iframe, isActive, streamPriority, embedPlan, embedKey);
-      return;
-    }
-    refreshStreamStageLayout(embedKey, isActive);
-  }, [showInCardStage, isActive, streamPriority, embedPlan, embedKey]);
+  }, [mountIframe, embedKey, onIframeWindow, detachIframeRef]);
 
   useEffect(() => {
     if (!isActive) {
       onIframeWindow?.(null);
       return;
     }
-    if (!frameLoaded) return;
-    onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
+    if (!frameLoaded || !iframeRef.current) return;
+    onIframeWindow?.(iframeRef.current.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
@@ -233,9 +244,7 @@ export function LiveEmbed({
   const stageStyle: CSSProperties = {
     ...feedEmbedStageStyle(slideHeightPx),
     zIndex: 1,
-    opacity: 1,
-    visibility: showInCardStage ? "visible" : "hidden",
-    contentVisibility: showInCardStage ? "visible" : "auto",
+    opacity: showStage ? 1 : 0,
     pointerEvents: streamRevealed ? "auto" : "none",
   };
 
@@ -250,7 +259,7 @@ export function LiveEmbed({
 
   const posterClass = "feed-embed-poster";
 
-  if (!isArmed || !embedPlan.canMountInteractivePlayer) {
+  if (!mountIframe) {
     return (
       <div className="feed-embed-root" style={rootStyle}>
         <FeedPoster
@@ -275,8 +284,8 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="5"
-      data-engine-slot={usingEngineSlot ? "1" : "0"}
+      data-feed-layout-v="7"
+      data-feed-slide-height={slideHeightPx}
     >
       <FeedPoster
         feedKey={embedKey}
@@ -286,14 +295,12 @@ export function LiveEmbed({
         style={posterStyleWithFade}
       />
 
-      {showInCardStage && initialSrc ? (
-        <div
-          ref={stageRef}
-          className="feed-embed-stage"
-          style={stageStyle}
-          aria-hidden={!isActive}
-        />
-      ) : null}
+      <div
+        ref={stageRef}
+        className="feed-embed-stage"
+        style={stageStyle}
+        aria-hidden={!isActive}
+      />
     </div>
   );
 }

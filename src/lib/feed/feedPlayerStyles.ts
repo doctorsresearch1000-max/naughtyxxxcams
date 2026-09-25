@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 
-/** Full-height iframe already fills 9:16; extra scale only crops quality. */
-export const FEED_PLAYER_FILL_SCALE = 1;
-export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 35%";
+/**
+ * Single source of slide height: the snap card (`feedSlideBoxStyle`).
+ * Every layer below uses `feedPlayerFillStyle` (100% of that box).
+ */
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
@@ -10,73 +11,45 @@ export function feedSlideBoxStyle(heightPx: number): CSSProperties {
     width: "100%",
     height: heightPx,
     minHeight: heightPx,
+    maxHeight: heightPx,
     flexShrink: 0,
     overflow: "hidden",
     background: "#000",
   };
 }
 
-/** Fills the snap slide; height comes from the slide box. */
-export function feedPlayerMountStyle(_heightPx: number): CSSProperties {
+/** Fills the slide card edge-to-edge (parent must have explicit height). */
+export function feedPlayerFillStyle(): CSSProperties {
   return {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 0,
     width: "100%",
     height: "100%",
-    minHeight: 0,
+    minHeight: "100%",
     overflow: "hidden",
     background: "#000",
   };
+}
+
+export function feedPlayerMountStyle(_heightPx: number): CSSProperties {
+  return feedPlayerFillStyle();
 }
 
 export function feedEmbedRootStyle(_heightPx: number): CSSProperties {
-  return {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%",
-    minHeight: 0,
-    overflow: "hidden",
-    background: "#000",
-  };
+  return feedPlayerFillStyle();
 }
 
 export function feedEmbedStageStyle(_heightPx: number): CSSProperties {
-  return {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%",
-    minHeight: 0,
-    overflow: "hidden",
-  };
+  return feedPlayerFillStyle();
 }
 
-/** Legacy inline cover (desktop shells); mobile stage uses `.feed-embed-iframe--stage` in CSS. */
-export function feedEmbedIframeStyle(heightPx: number): CSSProperties {
-  const coverWidth = Math.round((heightPx * 16) / 9);
+/** Stage iframes use `.feed-embed-iframe--stage` in CSS (100% × 100%). */
+export function feedEmbedIframeStageInlineStyle(): CSSProperties {
   return {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: coverWidth,
-    height: heightPx,
-    margin: 0,
-    padding: 0,
-    border: "0",
-    background: "#000",
-    transform: `translate(-50%, -50%) scale(${FEED_PLAYER_FILL_SCALE})`,
-    transformOrigin: FEED_PLAYER_TRANSFORM_ORIGIN,
+    clipPath: "none",
   };
 }
 
@@ -89,6 +62,8 @@ export function feedPosterImageStyle(_heightPx: number): CSSProperties {
     bottom: 0,
     width: "100%",
     height: "100%",
+    minHeight: "100%",
+    maxHeight: "none",
     objectFit: "cover",
     objectPosition: "center 35%",
   };
