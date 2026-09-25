@@ -6,6 +6,7 @@ import {
   type TelegramWidgetAuthPayload,
 } from "@/lib/auth/verifyTelegram";
 import { getTelegramBotToken } from "@/lib/telegram/config";
+import { issueTelegramSyncToken } from "@/lib/telegram/syncToken";
 import type { TelegramUser } from "@/lib/auth/telegramSession";
 
 export const dynamic = "force-dynamic";
@@ -51,7 +52,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing user" }, { status: 400 });
     }
     const user = toSessionUser(parsed);
-    return NextResponse.json({ ok: true, user, source: "mini_app" });
+    const syncToken = issueTelegramSyncToken(user.id, botToken);
+    return NextResponse.json({ ok: true, user, syncToken, source: "mini_app" });
   }
 
   if (payload.type === "widget" && payload.auth) {
@@ -59,7 +61,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid login" }, { status: 401 });
     }
     const user = toSessionUser(payload.auth);
-    return NextResponse.json({ ok: true, user, source: "login_widget" });
+    const syncToken = issueTelegramSyncToken(user.id, botToken);
+    return NextResponse.json({ ok: true, user, syncToken, source: "login_widget" });
   }
 
   return NextResponse.json({ error: "Unsupported payload" }, { status: 400 });

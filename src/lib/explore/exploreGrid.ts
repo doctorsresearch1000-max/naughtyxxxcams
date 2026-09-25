@@ -57,14 +57,27 @@ export function filterPerformersByTagSlug(
 ): CrackPerformer[] {
   if (!tagSlug) return list;
   const tag = tagSlug.toLowerCase();
+  const aliases: Record<string, string[]> = {
+    latina: ["latina", "latinas", "hispanic"],
+    teen: ["teen", "18", "19", "gc_18_19", "gc_20_29"],
+    milf: ["milf", "mature", "gc_30_39", "gc_40_49"],
+    booty: ["booty", "ass", "big ass"],
+    boobs: ["boobs", "tits", "big tits", "bust"],
+    uncensored: ["uncensored", "explicit"],
+  };
+  const needles = aliases[tag] ?? [tag];
   return list.filter((p) => {
     const blob = [
+      p.name,
+      p.nameClean,
       ...(p.autoTags ?? []),
       ...(p.characteristicsTags ?? []),
       ...(p.customTags ?? []),
+      ...(p.characteristic?.ethnicities ?? []),
+      ...(p.characteristic?.bodyTypes ?? []),
     ]
       .join(" ")
       .toLowerCase();
-    return blob.includes(tag);
+    return needles.some((needle) => blob.includes(needle));
   });
 }

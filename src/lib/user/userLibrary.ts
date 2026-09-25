@@ -14,6 +14,7 @@ export type HistoryEntry = SavedModelRef & {
 };
 
 const FAVORITES_COLLECTION = "Favorites";
+const SAVED_COLLECTION = "Guardados";
 
 export type Playlist = {
   id: string;
@@ -55,7 +56,7 @@ export function readUserLibrary(): UserLibrary {
   }
 }
 
-function writeUserLibrary(lib: UserLibrary): void {
+export function writeUserLibrary(lib: UserLibrary): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(lib));
@@ -98,11 +99,17 @@ export function isLiked(feedKey: string): boolean {
 export function toggleBookmark(ref: SavedModelRef): boolean {
   const lib = readUserLibrary();
   const saved = Boolean(lib.bookmarks[ref.feedKey]);
+  const stamped = { ...ref, savedAt: Date.now() };
   if (saved) {
     delete lib.bookmarks[ref.feedKey];
+    removeFromNamedPlaylist(lib, SAVED_COLLECTION, ref.feedKey);
   } else {
-    lib.bookmarks[ref.feedKey] = { ...ref, savedAt: Date.now() };
-    pushHistory(lib, { ...ref, action: "bookmark", savedAt: Date.now() });
+    lib.bookmarks[ref.feedKey] = stamped;
+    const collection = ensureSavedPlaylist(lib);
+    if (!collection.items.some((i) => i.feedKey === ref.feedKey)) {
+      collection.items = [stamped, ...collection.items];
+    }
+    pushHistory(lib, { ...stamped, action: "bookmark" });
   }
   writeUserLibrary(lib);
   return !saved;
@@ -125,12 +132,12 @@ export function createPlaylist(name: string): Playlist {
   return playlist;
 }
 
-function ensureFavoritesPlaylist(lib: UserLibrary): Playlist {
-  const existing = lib.playlists.find((p) => p.name === FAVORITES_COLLECTION);
+function ensureNamedPlaylist(lib: UserLibrary, name: string, idPrefix: string): Playlist {
+  const existing = lib.playlists.find((p) => p.name === name);
   if (existing) return existing;
   const playlist: Playlist = {
-    id: `pl-favorites-${Date.now()}`,
-    name: FAVORITES_COLLECTION,
+    id: `${idPrefix}-${Date.now()}`,
+    name,
     createdAt: Date.now(),
     items: [],
   };
@@ -138,12 +145,33 @@ function ensureFavoritesPlaylist(lib: UserLibrary): Playlist {
   return playlist;
 }
 
-function removeFromFavorites(lib: UserLibrary, feedKey: string): void {
+function ensureFavoritesPlaylist(lib: UserLibrary): Playlist {
+  return ensureNamedPlaylist(lib, FAVORITES_COLLECTION, "pl-favorites");
+}
+
+function ensureSavedPlaylist(lib: UserLibrary): Playlist {
+  if (lib.playlists.length === 0) {
+    return ensureNamedPlaylist(lib, SAVED_COLLECTION, "pl-saved");
+  }
+  const named = lib.playlists.find((p) => p.name === SAVED_COLLECTION);
+  if (named) return named;
+  return ensureNamedPlaylist(lib, SAVED_COLLECTION, "pl-saved");
+}
+
+function removeFromNamedPlaylist(
+  lib: UserLibrary,
+  name: string,
+  feedKey: string,
+): void {
   for (const pl of lib.playlists) {
-    if (pl.name === FAVORITES_COLLECTION) {
+    if (pl.name === name) {
       pl.items = pl.items.filter((i) => i.feedKey !== feedKey);
     }
   }
+}
+
+function removeFromFavorites(lib: UserLibrary, feedKey: string): void {
+  removeFromNamedPlaylist(lib, FAVORITES_COLLECTION, feedKey);
 }
 
 export function isFollowing(feedKey: string): boolean {

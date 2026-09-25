@@ -9,12 +9,19 @@ import {
   useState,
 } from "react";
 import {
+  readSyncToken,
   readTelegramUser,
   writeTelegramUser,
   type TelegramUser,
 } from "@/lib/auth/telegramSession";
 import { TelegramLoginSheet } from "@/components/auth/TelegramLoginSheet";
 import { useTelegramMiniAppBootstrap } from "@/hooks/useTelegramMiniAppBootstrap";
+import {
+  mergeUserLibraries,
+  pullTelegramLibrary,
+  syncTelegramLibraryAfterLogin,
+} from "@/lib/telegram/telegramLibraryClient";
+import { readUserLibrary, writeUserLibrary } from "@/lib/user/userLibrary";
 
 type TelegramAuthContextValue = {
   user: TelegramUser | null;
@@ -57,6 +64,14 @@ export function TelegramAuthProvider({
     return () => window.removeEventListener("nx-telegram-auth", onAuth);
   }, [sync]);
 
+  useEffect(() => {
+    if (!user || !readSyncToken()) return;
+    void pullTelegramLibrary().then((remote) => {
+      if (!remote) return;
+      writeUserLibrary(mergeUserLibraries(readUserLibrary(), remote));
+    });
+  }, [user]);
+
   const login = useCallback(() => {
     setSheetReason("Connect Telegram to sync likes & playlists");
     setSheetOpen(true);
@@ -81,6 +96,7 @@ export function TelegramAuthProvider({
     writeTelegramUser(next);
     setUser(next);
     setSheetOpen(false);
+    void syncTelegramLibraryAfterLogin(next);
   }, []);
 
   useTelegramMiniAppBootstrap(completeLoginVerified, !user);

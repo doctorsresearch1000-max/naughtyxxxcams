@@ -7,6 +7,7 @@ export type TelegramUser = {
 };
 
 const STORAGE_KEY = "nx-telegram-session-v1";
+const SYNC_TOKEN_KEY = "nx-telegram-sync-v1";
 
 export function readTelegramUser(): TelegramUser | null {
   if (typeof window === "undefined") return null;
@@ -26,6 +27,7 @@ export function writeTelegramUser(user: TelegramUser | null): void {
   try {
     if (!user) {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SYNC_TOKEN_KEY);
     } else {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     }
@@ -37,4 +39,23 @@ export function writeTelegramUser(user: TelegramUser | null): void {
 
 export function isTelegramAuthenticated(): boolean {
   return readTelegramUser() != null;
+}
+
+export function readSyncToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(SYNC_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function writeSyncToken(token: string | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (!token) localStorage.removeItem(SYNC_TOKEN_KEY);
+    else localStorage.setItem(SYNC_TOKEN_KEY, token);
+  } catch {
+    /* ignore */
+  }
 }

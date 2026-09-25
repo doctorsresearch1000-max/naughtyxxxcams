@@ -65,7 +65,7 @@ export function feedEmbedStageStyle(_heightPx: number): CSSProperties {
   };
 }
 
-/** 16:9 surface at slide height, centered, scaled to TikTok cover. */
+/** 16:9 player surface centered in the 9:16 stage; horizontal crop via overflow hidden. */
 export function feedEmbedIframeStyle(slideHeightPx: number): CSSProperties {
   const coverWidth = Math.round((slideHeightPx * 16) / 9);
   return {
@@ -78,8 +78,8 @@ export function feedEmbedIframeStyle(slideHeightPx: number): CSSProperties {
     padding: 0,
     border: "0",
     background: "#000",
-    transform: `translate(-50%, ${FEED_PLAYER_TRANSLATE_Y}) scale(${FEED_PLAYER_FILL_SCALE})`,
-    transformOrigin: FEED_PLAYER_TRANSFORM_ORIGIN,
+    transform: "translate(-50%, -50%)",
+    transformOrigin: "center center",
     clipPath: "none",
   };
 }

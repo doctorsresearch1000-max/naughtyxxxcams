@@ -1,4 +1,7 @@
-import type { TelegramUser } from "@/lib/auth/telegramSession";
+import {
+  type TelegramUser,
+  writeSyncToken,
+} from "@/lib/auth/telegramSession";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
 
 export async function verifyTelegramWidgetLogin(
@@ -10,7 +13,11 @@ export async function verifyTelegramWidgetLogin(
     body: JSON.stringify({ type: "widget", auth }),
   });
   if (!res.ok) return null;
-  const json = (await res.json()) as { user?: TelegramUser };
+  const json = (await res.json()) as {
+    user?: TelegramUser;
+    syncToken?: string;
+  };
+  if (json.syncToken) writeSyncToken(json.syncToken);
   return json.user ?? null;
 }
 
@@ -23,6 +30,10 @@ export async function verifyTelegramMiniAppInitData(
     body: JSON.stringify({ type: "web_app", initData }),
   });
   if (!res.ok) return null;
-  const json = (await res.json()) as { user?: TelegramUser };
+  const json = (await res.json()) as {
+    user?: TelegramUser;
+    syncToken?: string;
+  };
+  if (json.syncToken) writeSyncToken(json.syncToken);
   return json.user ?? null;
 }

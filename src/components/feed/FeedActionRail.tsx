@@ -8,7 +8,7 @@ import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
   IconBookmarkOutline,
   IconCommentOutline,
-  IconShareOutline,
+  IconTelegram,
   IconVolumeOff,
   IconVolumeOn,
 } from "@/components/icons/LineIcons";
@@ -77,6 +77,15 @@ export function FeedActionRail({
 
   const onChatAttempt = () => {
     openAffiliateOutbound(affiliateUrl);
+  };
+
+  const onShareTelegram = () => {
+    const handle = modelRef.nameClean || modelRef.name || profileLabel;
+    const text = `Watch ${handle} live on NaughtyXXXCams`;
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
+      affiliateUrl,
+    )}&text=${encodeURIComponent(text)}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -169,7 +178,8 @@ export function FeedActionRail({
           />
           <RailAction
             label="Share"
-            icon={<IconShareOutline size={24} strokeWidth={1.65} />}
+            onClick={onShareTelegram}
+            icon={<IconTelegram size={24} className="text-[#2AABEE]" />}
           />
         </div>
       </div>

@@ -13,7 +13,6 @@ import {
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreSlushyGrid } from "@/components/explore/ExploreSlushyGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
@@ -89,7 +88,7 @@ function horizontalScrollClass(): string {
 
 function chipClass(active: boolean): string {
   return [
-    "shrink-0 rounded-full px-3.5 py-2 text-xs font-semibold transition active:scale-[0.98]",
+    "shrink-0 cursor-pointer rounded-full px-3.5 py-2 text-xs font-semibold transition active:scale-[0.98] touch-manipulation select-none",
     active
       ? "bg-white text-black"
       : "bg-[#1C1C1E] text-zinc-200 hover:bg-[#2a2a2e]",
@@ -127,6 +126,10 @@ export function ExploreSlushyDiscover({
   const cacheRef = useRef<Map<string, CacheEntry>>(new Map());
 
   useEffect(() => {
+    setActiveCat(initialCat);
+  }, [initialCat]);
+
+  useEffect(() => {
     const built = buildCacheFromPool(masterPool);
     cacheRef.current = built;
     const key = cacheKey(initialCat);
@@ -146,6 +149,9 @@ export function ExploreSlushyDiscover({
     setActiveCat(cat);
     setBasePerformers(entry.performers);
     setTotal(entry.total);
+    setSearch("");
+    setActiveTag(null);
+    setShowCategoryPicker(false);
   }, []);
 
   const loadCategory = useCallback(
@@ -204,10 +210,6 @@ export function ExploreSlushyDiscover({
       .slice(0, 14);
   }, [masterPool]);
 
-  const promoModel = liveStories[0] ?? basePerformers[0];
-  const promoUrl = promoModel ? buildModelAffiliateUrl(promoModel) : "/";
-  const promoImage = promoModel ? pickCoverUrl(promoModel) : null;
-
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
 
@@ -217,6 +219,9 @@ export function ExploreSlushyDiscover({
       setActiveTag(null);
       setSortMode("all");
       setShowCategoryPicker(false);
+      if (activeCat) {
+        loadCategory(null);
+      }
       return;
     }
     setSortMode(id);
@@ -378,40 +383,6 @@ export function ExploreSlushyDiscover({
           })}
         </div>
       )}
-
-      <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#1a3a3f] via-[#1C1C1E] to-[#0f0f12]">
-        <div className="relative z-10 flex min-h-[140px] flex-col justify-center gap-2 p-4 pr-[42%]">
-          <span className="inline-flex w-fit rounded-full bg-teal-900/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-teal-200">
-            Promo · FREE
-          </span>
-          <p className="text-sm font-black leading-tight text-white sm:text-base">
-            Jerk off FREE
-            <br />
-            with Jerkmate models
-          </p>
-          <a
-            href={promoUrl}
-            target="_blank"
-            rel="nofollow noopener"
-            className="mt-1 inline-flex w-full max-w-[200px] items-center justify-center rounded-full bg-[#39FF14] px-4 py-2.5 text-xs font-extrabold text-black shadow-[0_0_20px_rgba(57,255,20,0.35)] transition active:scale-[0.98]"
-          >
-            Watch FREE now
-          </a>
-        </div>
-        {promoImage && (
-          <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[46%]">
-            <Image
-              src={promoImage}
-              alt=""
-              fill
-              className="object-cover object-top opacity-95"
-              sizes="200px"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#1C1C1E]/40 to-[#1C1C1E]" />
-          </div>
-        )}
-      </div>
 
       <section>
         <div className="mb-2 flex items-center justify-between px-0.5">

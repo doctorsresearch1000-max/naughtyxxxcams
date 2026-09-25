@@ -347,6 +347,26 @@ export function IconVolumeOn({
   );
 }
 
+export function IconTelegram({
+  className = "",
+  size = defaults.size,
+}: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      className={className}
+    >
+      <path
+        d="M21.94 4.66A1.2 1.2 0 0 0 20.7 4.1L3.2 11.12c-.98.41-.96 1.84.04 2.2l4.35 1.5 1.67 5.1c.28.86 1.42 1.05 1.98.35l2.7-3.28 5.02 3.7c.76.56 1.84.14 2.04-.82l3.74-17.2c.18-.84-.5-1.6-1.32-1.69Z"
+      />
+    </svg>
+  );
+}
+
 export function IconVolumeOff({
   className = "",
   size = defaults.size,
