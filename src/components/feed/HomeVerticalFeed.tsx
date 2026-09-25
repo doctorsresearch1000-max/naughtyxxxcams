@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
 import {
@@ -65,12 +65,10 @@ function HomeVerticalFeedInner({
       return readFeedPerformersCache()?.performers.length ? "ready" : "loading";
     },
   );
-  const pathname = usePathname();
-  const onHome = pathname === "/";
   const searchParams = useSearchParams();
   const router = useRouter();
   const resumeFeedKey = searchParams.get(RESUME_FEED_QUERY);
-  const { registerActiveIframe } = useSessionAudio();
+  const { registerActiveIframe, resetAudioOnSlideChange } = useSessionAudio();
 
   useLayoutEffect(() => {
     if (serverBootstrapped) {
@@ -155,15 +153,20 @@ function HomeVerticalFeedInner({
     1,
   );
 
+  const prevActiveIndexRef = useRef(activeIndex);
+
+  useLayoutEffect(() => {
+    if (prevActiveIndexRef.current !== activeIndex) {
+      muteFeedOnSlideChange();
+      resetAudioOnSlideChange();
+      prevActiveIndexRef.current = activeIndex;
+    }
+  }, [activeIndex, resetAudioOnSlideChange]);
+
   useLayoutEffect(() => {
     if (slides.length === 0) return;
     syncFeedStreamNeighbors(slides, activeIndex);
   }, [slides, activeIndex]);
-
-  useEffect(() => {
-    if (!onHome) return;
-    muteFeedOnSlideChange();
-  }, [activeIndex, onHome]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {

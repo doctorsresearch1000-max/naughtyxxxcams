@@ -25,7 +25,6 @@ import {
 } from "@/components/feed/feedPlayerStyles";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
-import { setFeedEmbedIframeAudible } from "@/lib/feed/liveIframeAudio";
 
 export type StreamLoadPriority = "high" | "low" | "auto";
 
@@ -234,15 +233,6 @@ export function LiveEmbed({
     if (!frameLoaded) return;
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
-
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe || !frameLoaded || !showInCardStage) return;
-
-    if (sessionMuted) {
-      setFeedEmbedIframeAudible(iframe, false, embedPlan);
-    }
-  }, [sessionMuted, frameLoaded, showInCardStage, embedPlan]);
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
   const posterStyle = feedPosterImageStyle(slideHeightPx);

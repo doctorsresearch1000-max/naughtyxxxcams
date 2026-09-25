@@ -1,4 +1,5 @@
 import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+import { postLiveIframeAudio } from "@/lib/feed/liveIframeAudio";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 type StreamSlot = {
@@ -62,6 +63,7 @@ function createSlot(feedKey: string, src: string): StreamSlot {
 }
 
 function dockSlot(slot: StreamSlot): void {
+  postLiveIframeAudio(slot.iframe, "session-audio-mute");
   Object.assign(slot.iframe.style, DOCK_STYLE);
   slot.iframe.className = "feed-embed-iframe feed-embed-iframe--docked";
   if (slot.iframe.parentElement && slot.iframe.parentElement !== document.body) {
@@ -154,6 +156,14 @@ export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
     if (!keepFeedKeys.has(key)) {
       evictSlot(key);
     }
+  }
+}
+
+/** Immediate audio cut on all engine slots (e.g. before active slide handoff). */
+export function silenceAllStreamSlots(exceptFeedKey?: string): void {
+  for (const [key, slot] of slots.entries()) {
+    if (exceptFeedKey && key === exceptFeedKey) continue;
+    postLiveIframeAudio(slot.iframe, "session-audio-mute");
   }
 }
 

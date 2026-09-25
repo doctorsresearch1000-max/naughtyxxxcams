@@ -10,11 +10,12 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
+import { silenceAllStreamSlots } from "@/lib/feed/feedStreamEngine";
 import {
   applyDirectPlayerAudioFromGesture,
-  muteAllFeedEmbedIframes,
-  muteInactiveFeedEmbedIframes,
   resumeBrowserAudioContext,
+  silenceAllFeedEmbedIframes,
+  silenceInactiveFeedEmbedIframes,
 } from "@/lib/feed/liveIframeAudio";
 
 type EmbedPlanAudio = Pick<
@@ -26,9 +27,9 @@ type SessionAudioContextValue = {
   isAudioUnlocked: boolean;
   muted: boolean;
   toggleMutedFromUserGesture: (embedPlan?: EmbedPlanAudio | null) => void;
-  /** @deprecated use toggleMutedFromUserGesture */
   toggleMutedFromPointerDown: (embedPlan?: EmbedPlanAudio | null) => void;
   registerActiveIframe: (win: Window | null) => void;
+  resetAudioOnSlideChange: () => void;
   unlocked: boolean;
   unlockSession: (embedPlan?: EmbedPlanAudio | null) => void;
   toggleMuted: (embedPlan?: EmbedPlanAudio | null) => void;
@@ -61,6 +62,11 @@ export function SessionAudioProvider({
     activeIframeWindowRef.current = win;
   }, []);
 
+  const resetAudioOnSlideChange = useCallback(() => {
+    mutedRef.current = true;
+    setMuted(true);
+  }, []);
+
   const toggleMutedFromUserGesture = useCallback(
     (embedPlan?: EmbedPlanAudio | null) => {
       resumeBrowserAudioContext();
@@ -68,7 +74,7 @@ export function SessionAudioProvider({
       if (!isAudioUnlockedRef.current) {
         isAudioUnlockedRef.current = true;
         mutedRef.current = false;
-        muteInactiveFeedEmbedIframes();
+        silenceInactiveFeedEmbedIframes();
         applyDirectPlayerAudioFromGesture(true, embedPlan);
         flushSync(() => {
           setIsAudioUnlocked(true);
@@ -79,7 +85,7 @@ export function SessionAudioProvider({
 
       if (mutedRef.current) {
         mutedRef.current = false;
-        muteInactiveFeedEmbedIframes();
+        silenceInactiveFeedEmbedIframes();
         applyDirectPlayerAudioFromGesture(true, embedPlan);
         flushSync(() => setMuted(false));
         return;
@@ -102,6 +108,7 @@ export function SessionAudioProvider({
       toggleMutedFromUserGesture,
       toggleMutedFromPointerDown: toggleMutedFromUserGesture,
       registerActiveIframe,
+      resetAudioOnSlideChange,
       unlocked: isAudioUnlocked,
       unlockSession,
       toggleMuted,
@@ -111,6 +118,7 @@ export function SessionAudioProvider({
       muted,
       toggleMutedFromUserGesture,
       registerActiveIframe,
+      resetAudioOnSlideChange,
       unlockSession,
       toggleMuted,
     ],
@@ -123,7 +131,8 @@ export function SessionAudioProvider({
   );
 }
 
-/** Call on slide change — keeps prefetch muted without touching React mute state. */
+/** Silence every player when the active slide changes (no iframe src reload). */
 export function muteFeedOnSlideChange(): void {
-  muteAllFeedEmbedIframes();
+  silenceAllStreamSlots();
+  silenceAllFeedEmbedIframes();
 }

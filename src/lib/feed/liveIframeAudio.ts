@@ -1,17 +1,20 @@
 /**
- * Cross-origin Crak players only unlock audio when navigation/play is tied to a
- * real user gesture. Parent-page postMessage cannot substitute that.
- * We reload the direct player iframe `src` synchronously inside pointerdown handlers.
+ * Feed audio: cross-origin Streamate players are controlled via postMessage.
+ * Never change iframe `src` for mute/unmute — that reloads the stream.
  */
 
 import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 
 export const FEED_AUDIO_SOURCE = "naughty-feed";
 
+export type FeedAudioAction = "session-audio-mute" | "session-audio-unlock";
+
 const ACTIVE_IFRAME_SELECTOR =
   '[data-feed-card-root][data-feed-active="1"] iframe[data-naughty-feed-embed="true"]';
 
 const ALL_FEED_IFRAMES_SELECTOR = 'iframe[data-naughty-feed-embed="true"]';
+
+const AUDIO_RETRY_MS = [0, 40, 120, 320] as const;
 
 export function resumeBrowserAudioContext(): void {
   try {
@@ -27,45 +30,48 @@ export function resumeBrowserAudioContext(): void {
   }
 }
 
-function resolveEmbedSrc(
-  iframe: HTMLIFrameElement,
-  wantSound: boolean,
-  embedPlan?: Pick<
-    PerformerEmbedPlan,
-    "playerSrcMuted" | "playerSrcUnmuted"
-  > | null,
-): string | null {
-  const mutedSrc =
-    embedPlan?.playerSrcMuted ??
-    iframe.getAttribute("data-player-src-muted") ??
-    "";
-  const unmutedSrc =
-    embedPlan?.playerSrcUnmuted ??
-    iframe.getAttribute("data-player-src-unmuted") ??
-    "";
-  const next = wantSound ? unmutedSrc : mutedSrc;
-  return next || null;
+function buildPostMessagePayloads(
+  action: FeedAudioAction,
+): Record<string, unknown>[] {
+  const unlock = action === "session-audio-unlock";
+  return [
+    { source: FEED_AUDIO_SOURCE, action },
+    { source: FEED_AUDIO_SOURCE, action, volumelevel: unlock ? 1 : 0 },
+    { type: unlock ? "unmute" : "mute" },
+    { command: unlock ? "unmute" : "mute" },
+    { event: "volume", volume: unlock ? 1 : 0, muted: !unlock },
+    { method: "setVolume", args: [unlock ? 100 : 0] },
+    { action: unlock ? "soundOn" : "soundOff" },
+    { msg: unlock ? "unmute" : "mute" },
+    { mute: !unlock },
+    { muted: !unlock },
+  ];
 }
 
-export function setFeedEmbedIframeAudible(
+/** Post mute/unmute into a player iframe (no navigation / no src change). */
+export function postLiveIframeAudio(
   iframe: HTMLIFrameElement | null,
-  wantSound: boolean,
-  embedPlan?: Pick<
-    PerformerEmbedPlan,
-    "playerSrcMuted" | "playerSrcUnmuted"
-  > | null,
-): boolean {
-  if (!iframe) return false;
-  const next = resolveEmbedSrc(iframe, wantSound, embedPlan);
-  if (!next) return false;
+  action: FeedAudioAction,
+): void {
+  if (!iframe) return;
+  const payloads = buildPostMessagePayloads(action);
 
-  try {
-    if (iframe.src !== next) {
-      iframe.src = next;
+  const send = () => {
+    const win = iframe.contentWindow;
+    if (!win) return;
+    for (const data of payloads) {
+      try {
+        win.postMessage(data, "*");
+      } catch {
+        /* cross-origin */
+      }
     }
-    return true;
-  } catch {
-    return false;
+  };
+
+  send();
+  for (const ms of AUDIO_RETRY_MS) {
+    if (ms === 0) continue;
+    window.setTimeout(send, ms);
   }
 }
 
@@ -75,26 +81,31 @@ export function getActiveFeedPlayerIframe(): HTMLIFrameElement | null {
   ) as HTMLIFrameElement | null;
 }
 
-/** Force every mounted feed player back to muted `src` (stops scroll overlap). */
-export function muteAllFeedEmbedIframes(): void {
-  const nodes = document.querySelectorAll(ALL_FEED_IFRAMES_SELECTOR);
-  nodes.forEach((node) => {
-    setFeedEmbedIframeAudible(node as HTMLIFrameElement, false);
-  });
-}
-
-/** Mute prefetch / inactive cards without reloading the active player `src`. */
-export function muteInactiveFeedEmbedIframes(): void {
-  const active = getActiveFeedPlayerIframe();
-  const nodes = document.querySelectorAll(ALL_FEED_IFRAMES_SELECTOR);
-  nodes.forEach((node) => {
-    if (node === active) return;
-    setFeedEmbedIframeAudible(node as HTMLIFrameElement, false);
-  });
+export function getAllFeedPlayerIframes(): HTMLIFrameElement[] {
+  return Array.from(
+    document.querySelectorAll(ALL_FEED_IFRAMES_SELECTOR),
+  ) as HTMLIFrameElement[];
 }
 
 /**
- * Gesture-initiated player navigation (must run synchronously in pointerdown/click).
+ * Hard silence every feed player except optional active iframe (slide change).
+ */
+export function silenceAllFeedEmbedIframes(
+  exceptIframe?: HTMLIFrameElement | null,
+): void {
+  for (const iframe of getAllFeedPlayerIframes()) {
+    if (exceptIframe && iframe === exceptIframe) continue;
+    postLiveIframeAudio(iframe, "session-audio-mute");
+  }
+}
+
+export function silenceInactiveFeedEmbedIframes(): void {
+  const active = getActiveFeedPlayerIframe();
+  silenceAllFeedEmbedIframes(active);
+}
+
+/**
+ * User-gesture audio toggle on the active slide only (no src rewrite).
  */
 export function applyDirectPlayerAudioFromGesture(
   wantSound: boolean,
@@ -105,25 +116,51 @@ export function applyDirectPlayerAudioFromGesture(
 ): boolean {
   const iframe = getActiveFeedPlayerIframe();
   if (!iframe) return false;
-  return setFeedEmbedIframeAudible(iframe, wantSound, embedPlan);
+  void embedPlan;
+  postLiveIframeAudio(
+    iframe,
+    wantSound ? "session-audio-unlock" : "session-audio-mute",
+  );
+  return true;
 }
 
-/** @deprecated Cross-origin feeds ignore parent postMessage for audio. */
+/** @deprecated Use postLiveIframeAudio — src changes reload the player. */
+export function setFeedEmbedIframeAudible(
+  iframe: HTMLIFrameElement | null,
+  wantSound: boolean,
+  _embedPlan?: Pick<
+    PerformerEmbedPlan,
+    "playerSrcMuted" | "playerSrcUnmuted"
+  > | null,
+): boolean {
+  if (!iframe) return false;
+  postLiveIframeAudio(
+    iframe,
+    wantSound ? "session-audio-unlock" : "session-audio-mute",
+  );
+  return true;
+}
+
+/** @deprecated Use silenceAllFeedEmbedIframes */
+export function muteAllFeedEmbedIframes(): void {
+  silenceAllFeedEmbedIframes();
+}
+
+/** @deprecated Use silenceInactiveFeedEmbedIframes */
+export function muteInactiveFeedEmbedIframes(): void {
+  silenceInactiveFeedEmbedIframes();
+}
+
 export function setFeedCardAudio(wantSound: boolean, gesture: boolean): void {
   if (!gesture) return;
   resumeBrowserAudioContext();
   applyDirectPlayerAudioFromGesture(wantSound);
 }
 
-/** @deprecated No-op — pointer events are managed on each LiveEmbed iframe. */
 export function setActiveFeedIframePointerEvents(): void {}
 
 export function getActiveFeedAudioTarget(): null {
   return null;
 }
 
-/** @deprecated No-op — direct cross-origin embed per card. */
 export function registerActiveFeedAudioTarget(): void {}
-
-/** @deprecated No-op — use setFeedEmbedIframeAudible / applyDirectPlayerAudioFromGesture. */
-export function postLiveIframeAudio(): void {}
