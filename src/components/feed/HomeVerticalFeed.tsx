@@ -17,7 +17,11 @@ import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useFeedActiveIndex } from "@/hooks/useFeedActiveIndex";
 import { useVideoFeedBuffer } from "@/hooks/useVideoFeedBuffer";
 import { syncFeedStreamNeighbors } from "@/lib/feed/feedStreamEngine";
-import { useFeedViewportHeight } from "@/hooks/useFeedViewportHeight";
+import { MobileFeedFullscreenPortal } from "@/components/feed/MobileFeedFullscreenPortal";
+import {
+  measureFeedSlideHeightPx,
+  useFeedViewportHeight,
+} from "@/hooks/useFeedViewportHeight";
 
 function mergeFeedPerformers(
   current: FeedPerformer[],
@@ -206,14 +210,13 @@ function HomeVerticalFeedInner({
 
   return (
     <main
-      className="tele-shell feed-shell feed-shell--in-portal flex h-full w-full flex-col overflow-hidden bg-black text-white"
+      className="tele-shell feed-shell feed-shell--mobile-stage flex w-full flex-col overflow-hidden bg-black text-white"
       data-feed-stage="fullscreen"
-      data-feed-stage-v="16"
-      style={{ ["--feed-slide-px" as string]: `${slideHeightPx}px` }}
+      data-feed-stage-v="17"
     >
       <div
         ref={scrollRef}
-        className="tele-scroll feed-scroll hide-scrollbar h-full min-h-0 w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory [-webkit-overflow-scrolling:touch]"
+        className="tele-scroll feed-scroll hide-scrollbar h-full w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
       >
         {loadState === "loading" && slides.length === 0 ? (
           <FeedLoadingShell slideHeightPx={slideHeightPx} />
@@ -245,10 +248,16 @@ function HomeVerticalFeedInner({
 
 type HomeVerticalFeedProps = {
   initialPerformers?: FeedPerformer[];
+  /** Mount fullscreen stage on body (mobile persistence). */
+  fullscreenActive?: boolean;
+  /** Show stage on screen (false when another tab is open). */
+  fullscreenVisible?: boolean;
 };
 
 export function HomeVerticalFeed({
   initialPerformers = [],
+  fullscreenActive = true,
+  fullscreenVisible = true,
 }: HomeVerticalFeedProps) {
   const viewportHeightPx = useFeedViewportHeight();
   const [scrollHeightPx, setScrollHeightPx] = useState(0);
@@ -257,10 +266,13 @@ export function HomeVerticalFeed({
     setScrollHeightPx((prev) => (prev === heightPx ? prev : heightPx));
   }, []);
 
-  const slideHeightPx =
-    scrollHeightPx > 0 ? scrollHeightPx : viewportHeightPx;
+  const slideHeightPx = Math.max(
+    viewportHeightPx,
+    scrollHeightPx,
+    measureFeedSlideHeightPx(),
+  );
 
-  return (
+  const feed = (
     <FeedViewportProvider heightPx={slideHeightPx}>
       <HomeVerticalFeedInner
         initialPerformers={initialPerformers}
@@ -268,5 +280,14 @@ export function HomeVerticalFeed({
         onScrollHeightChange={onScrollHeightChange}
       />
     </FeedViewportProvider>
+  );
+
+  return (
+    <MobileFeedFullscreenPortal
+      active={fullscreenActive}
+      visible={fullscreenVisible}
+    >
+      {feed}
+    </MobileFeedFullscreenPortal>
   );
 }

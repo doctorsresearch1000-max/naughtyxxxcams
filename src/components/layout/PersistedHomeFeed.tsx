@@ -3,19 +3,18 @@
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useRef } from "react";
 import { DesktopHomeCatalog } from "@/components/desktop/DesktopHomeCatalog";
-import {
-  MobileFeedFullscreenPortal,
-  MOBILE_FEED_PORTAL_ID,
-} from "@/components/feed/MobileFeedFullscreenPortal";
+import { MobileFeedFullscreenPortal } from "@/components/feed/MobileFeedFullscreenPortal";
 import { HomeVerticalFeed } from "@/components/feed/HomeVerticalFeed";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { tearDownAllStreamSlots } from "@/lib/feed/feedStreamEngine";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
+const MOBILE_FEED_PORTAL_ID = "nx-mobile-feed-stage";
+
 function FeedFallback() {
   return (
-    <div className="feed-shell feed-shell--in-portal flex h-full w-full items-center justify-center bg-black">
+    <div className="feed-shell feed-shell--mobile-stage flex items-center justify-center bg-black">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
     </div>
   );
@@ -23,7 +22,7 @@ function FeedFallback() {
 
 function MobileFeedFallback() {
   return (
-    <MobileFeedFullscreenPortal>
+    <MobileFeedFullscreenPortal active visible>
       <FeedFallback />
     </MobileFeedFullscreenPortal>
   );
@@ -67,6 +66,7 @@ export function PersistedHomeFeed({
     return null;
   }
 
+  /** Mobile feed + portal only on `/` — avoids ghost overlay on /explore etc. */
   if (!onHome && !isDesktop) {
     return null;
   }
@@ -87,10 +87,18 @@ export function PersistedHomeFeed({
         <DesktopHomeCatalog />
       ) : (
         <SessionAudioProvider>
-          <Suspense fallback={<MobileFeedFallback />}>
-            <MobileFeedFullscreenPortal>
-              <HomeVerticalFeed initialPerformers={initialPerformers} />
-            </MobileFeedFullscreenPortal>
+          <Suspense
+            fallback={
+              !isDesktop ? (
+                <MobileFeedFallback />
+              ) : (
+                <div className="feed-shell flex items-center justify-center bg-black">
+                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
+                </div>
+              )
+            }
+          >
+            <HomeVerticalFeed initialPerformers={initialPerformers} />
           </Suspense>
         </SessionAudioProvider>
       )}

@@ -36,9 +36,11 @@ export function clearStreamIframeDockStyles(iframe: HTMLIFrameElement): void {
 export function applyStreamIframeStagePresentation(
   iframe: HTMLIFrameElement,
   slideHeightPx: number,
-  _isActive: boolean,
+  isActive: boolean,
 ): void {
   clearStreamIframeDockStyles(iframe);
-  iframe.className = "feed-embed-iframe pointer-events-none";
+  iframe.className = `feed-embed-iframe ${
+    isActive ? "pointer-events-auto" : "pointer-events-none"
+  }`;
   Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
 }

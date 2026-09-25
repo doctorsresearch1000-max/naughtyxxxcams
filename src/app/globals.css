@@ -87,22 +87,29 @@ iframe[data-touch-blocked="true"] {
   pointer-events: none;
 }
 
-/* Shell inside body portal — single fixed layer (#nx-mobile-feed-stage) */
-.feed-shell--in-portal {
-  position: relative;
+.feed-shell--mobile-stage {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: 25;
   width: 100%;
-  height: 100%;
-  min-height: 0;
-  max-height: none;
-  padding: 0;
-  margin: 0;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  min-height: 100dvh !important;
+  padding: 0 !important;
 }
 
 @supports (height: 100dvh) {
-  #nx-mobile-feed-stage {
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 100dvh;
+  #nx-mobile-feed-stage,
+  .feed-shell--mobile-stage {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 100dvh !important;
   }
 }
 
@@ -117,8 +124,6 @@ html.feed-home-active body {
 .feed-scroll {
   height: 100%;
   min-height: 0;
-  touch-action: pan-y;
-  overscroll-behavior-y: contain;
 }
 
 .feed-slide {
@@ -127,16 +132,13 @@ html.feed-home-active body {
   grid-template-rows: minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  height: var(--feed-slide-px, var(--feed-viewport-height));
-  min-height: var(--feed-slide-px, var(--feed-viewport-height));
+  height: var(--feed-viewport-height);
+  min-height: var(--feed-viewport-height);
   flex-shrink: 0;
   overflow: hidden;
   background: #000;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
 }
 
 .feed-player-mount {
@@ -149,7 +151,6 @@ html.feed-home-active body {
   min-height: 0;
   overflow: hidden;
   background: #000;
-  touch-action: none;
 }
 
 .feed-embed-root {
@@ -162,7 +163,6 @@ html.feed-home-active body {
   height: 100%;
   overflow: hidden;
   background: #000;
-  touch-action: none;
 }
 
 .feed-embed-poster {
@@ -191,23 +191,15 @@ img.feed-embed-poster {
   bottom: 0;
   left: 0;
   overflow: hidden;
-  touch-action: none;
 }
 
 .feed-embed-iframe {
   border: 0;
   background: #000;
-  touch-action: none !important;
-  pointer-events: none !important;
-  user-select: none;
-  -webkit-user-drag: none;
 }
 
 .feed-embed-iframe--docked {
   position: fixed !important;
   pointer-events: none !important;
-  touch-action: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  content-visibility: hidden !important;
+  content-visibility: visible !important;
 }
