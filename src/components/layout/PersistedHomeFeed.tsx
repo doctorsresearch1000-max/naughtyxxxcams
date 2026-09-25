@@ -5,6 +5,7 @@ import { Suspense, useRef } from "react";
 import { DesktopHomeCatalog } from "@/components/desktop/DesktopHomeCatalog";
 import { HomeVerticalFeed } from "@/components/feed/HomeVerticalFeed";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
+import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function FeedFallback() {
@@ -19,7 +20,13 @@ function FeedFallback() {
  * Keeps the home feed (and its iframes) mounted while browsing other tabs so
  * route changes are not blocked by tearing down multiple live embeds.
  */
-export function PersistedHomeFeed() {
+type PersistedHomeFeedProps = {
+  initialPerformers: FeedPerformer[];
+};
+
+export function PersistedHomeFeed({
+  initialPerformers,
+}: PersistedHomeFeedProps) {
   const pathname = usePathname();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const everHome = useRef(false);
@@ -49,7 +56,7 @@ export function PersistedHomeFeed() {
       ) : (
         <SessionAudioProvider>
           <Suspense fallback={<FeedFallback />}>
-            <HomeVerticalFeed />
+            <HomeVerticalFeed initialPerformers={initialPerformers} />
           </Suspense>
         </SessionAudioProvider>
       )}

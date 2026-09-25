@@ -8,7 +8,7 @@ import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome
 import { Header } from "@/components/layout/Header";
 import { ExploreBootstrapWarm } from "@/components/explore/ExploreBootstrapWarm";
 import { HomeFeedWarm } from "@/components/feed/HomeFeedWarm";
-import { PersistedHomeFeed } from "@/components/layout/PersistedHomeFeed";
+import { HomeFeedServerBridge } from "@/components/layout/HomeFeedServerBridge";
 import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
 import "./globals.css";
 
@@ -61,7 +61,7 @@ export default function RootLayout({
           <HomeFeedWarm />
           <Header />
           <ConditionalSiteChrome>
-            <PersistedHomeFeed />
+            <HomeFeedServerBridge />
             <SecondaryPageLayer>{children}</SecondaryPageLayer>
           </ConditionalSiteChrome>
         </div>

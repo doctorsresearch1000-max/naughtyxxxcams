@@ -1,12 +1,13 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
 import {
   fetchFeedBootstrapPerformers,
   fetchFeedFullPerformers,
   readFeedPerformersCache,
+  seedFeedPerformersCache,
 } from "@/lib/feed/feedClientCache";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
@@ -47,18 +48,25 @@ function FeedLoadingShell() {
   );
 }
 
-function HomeVerticalFeedInner() {
+type HomeVerticalFeedInnerProps = {
+  initialPerformers: FeedPerformer[];
+};
+
+function HomeVerticalFeedInner({
+  initialPerformers,
+}: HomeVerticalFeedInnerProps) {
   const slideHeightPx = useFeedViewportHeight();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const initialCache = readFeedPerformersCache();
-  const [slides, setSlides] = useState<FeedPerformer[]>(
-    () => initialCache?.performers ?? [],
-  );
+  const serverBootstrapped = initialPerformers.length > 0;
+  const [slides, setSlides] = useState<FeedPerformer[]>(() => {
+    if (serverBootstrapped) return initialPerformers;
+    return readFeedPerformersCache()?.performers ?? [];
+  });
   const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
-    () =>
-      initialCache?.performers.length
-        ? "ready"
-        : "loading",
+    () => {
+      if (serverBootstrapped) return "ready";
+      return readFeedPerformersCache()?.performers.length ? "ready" : "loading";
+    },
   );
   const pathname = usePathname();
   const onHome = pathname === "/";
@@ -67,18 +75,29 @@ function HomeVerticalFeedInner() {
   const resumeFeedKey = searchParams.get(RESUME_FEED_QUERY);
   const { registerActiveIframe, muted } = useSessionAudio();
 
+  useLayoutEffect(() => {
+    if (serverBootstrapped) {
+      seedFeedPerformersCache(initialPerformers, { complete: false });
+    }
+  }, [initialPerformers, serverBootstrapped]);
+
   useEffect(() => {
     let cancelled = false;
 
     void (async () => {
       try {
-        const boot = await fetchFeedBootstrapPerformers();
-        if (cancelled) return;
-        if (boot.performers.length > 0) {
-          setSlides(boot.performers);
-          setLoadState("ready");
-        } else if (slides.length === 0) {
-          setLoadState("empty");
+        let bootCount = serverBootstrapped ? initialPerformers.length : 0;
+
+        if (!serverBootstrapped) {
+          const boot = await fetchFeedBootstrapPerformers();
+          if (cancelled) return;
+          bootCount = boot.performers.length;
+          if (boot.performers.length > 0) {
+            setSlides(boot.performers);
+            setLoadState("ready");
+          } else if (slides.length === 0) {
+            setLoadState("empty");
+          }
         }
 
         const full = await fetchFeedFullPerformers();
@@ -86,7 +105,7 @@ function HomeVerticalFeedInner() {
         if (full.performers.length > 0) {
           setSlides((prev) => mergeFeedPerformers(prev, full.performers));
           setLoadState("ready");
-        } else if (boot.performers.length === 0 && slides.length === 0) {
+        } else if (bootCount === 0 && slides.length === 0) {
           setLoadState("empty");
         }
       } catch {
@@ -99,8 +118,8 @@ function HomeVerticalFeedInner() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- bootstrap once on mount
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once; full catalog in background
+  }, [serverBootstrapped]);
 
   const resumeHandledRef = useRef(false);
 
@@ -204,10 +223,16 @@ function HomeVerticalFeedInner() {
   );
 }
 
-export function HomeVerticalFeed() {
+type HomeVerticalFeedProps = {
+  initialPerformers?: FeedPerformer[];
+};
+
+export function HomeVerticalFeed({
+  initialPerformers = [],
+}: HomeVerticalFeedProps) {
   return (
     <FeedViewportProvider>
-      <HomeVerticalFeedInner />
+      <HomeVerticalFeedInner initialPerformers={initialPerformers} />
     </FeedViewportProvider>
   );
 }

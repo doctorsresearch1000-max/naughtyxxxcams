@@ -21,6 +21,19 @@ export function readFeedPerformersCache(): FeedCachePayload | null {
   return memoryCache;
 }
 
+/** Hydrate client cache from RSC props (avoids a duplicate bootstrap fetch). */
+export function seedFeedPerformersCache(
+  performers: FeedPerformer[],
+  options?: { complete?: boolean },
+): void {
+  if (!performers.length) return;
+  memoryCache = {
+    performers,
+    complete: options?.complete ?? false,
+    fetchedAt: Date.now(),
+  };
+}
+
 async function fetchPerformersJson(
   query: string,
 ): Promise<FeedPerformer[]> {
