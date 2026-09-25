@@ -13,7 +13,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "NaughtyXxxCams — Live Feed",
-  description: "Immersive TikTok-style live cam experience (UI mock).",
+  description:
+    "Discover verified Streamate models in HD. Mobile live feed, category browse, and official performer profiles on NaughtyXXXCams.",
 };
 
 export const viewport: Viewport = {

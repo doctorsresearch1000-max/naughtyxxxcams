@@ -4,6 +4,7 @@ import {
   getDefaultExploreSeo,
   resolveExploreCategory,
 } from "@/lib/explore/categorySlugs";
+import { exploreCanonicalUrl } from "@/lib/seo/canonical";
 
 type ExplorePageProps = {
   searchParams: Promise<{ cat?: string }>;
@@ -15,20 +16,33 @@ export async function generateMetadata({
   const { cat } = await searchParams;
   const category = resolveExploreCategory(cat);
   const defaults = getDefaultExploreSeo();
+  const canonical = exploreCanonicalUrl(cat);
 
   if (!category) {
     return {
       title: defaults.title,
       description: defaults.description,
+      alternates: {
+        canonical,
+      },
+      openGraph: {
+        title: defaults.title,
+        description: defaults.description,
+        url: canonical,
+      },
     };
   }
 
   return {
     title: category.seoTitle,
     description: category.seoDescription,
+    alternates: {
+      canonical,
+    },
     openGraph: {
       title: category.seoTitle,
       description: category.seoDescription,
+      url: canonical,
     },
   };
 }

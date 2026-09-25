@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelProfileSlushyView } from "@/components/profile/ModelProfileSlushyView";
-import { generateUniqueSEOContent } from "@/lib/profile/seoContent";
+import { ModelProfileJsonLd } from "@/components/seo/ModelProfileJsonLd";
+import {
+  generateUniqueSEOContent,
+  modelViewToSeoInput,
+} from "@/lib/profile/seoContent";
 import { resolveModelProfile } from "@/lib/profile/modelProfile";
 import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
+import { profileCanonicalUrl } from "@/lib/seo/canonical";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -24,20 +29,19 @@ export async function generateMetadata({
     };
   }
 
-  const seo = generateUniqueSEOContent({
-    name: model.name,
-    handle: model.handle,
-    traits: model.traits,
-    language: model.language,
-    bodyType: model.bodyType,
-  });
+  const seo = generateUniqueSEOContent(modelViewToSeoInput(model));
+  const canonical = profileCanonicalUrl(model.profileSlug);
 
   return {
     title: seo.title,
-    description: seo.intro.slice(0, 160),
+    description: seo.metaDescription,
+    alternates: {
+      canonical,
+    },
     openGraph: {
       title: seo.title,
-      description: seo.intro.slice(0, 200),
+      description: seo.metaDescription,
+      url: canonical,
       images: model.bannerUrl ? [{ url: model.bannerUrl }] : undefined,
     },
   };
@@ -51,13 +55,9 @@ export default async function ModelProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const seoContent = generateUniqueSEOContent({
-    name: modelData.name,
-    handle: modelData.handle,
-    traits: modelData.traits,
-    language: modelData.language,
-    bodyType: modelData.bodyType,
-  });
+  const seoInput = modelViewToSeoInput(modelData);
+  const seoContent = generateUniqueSEOContent(seoInput);
+  const canonical = profileCanonicalUrl(modelData.profileSlug);
 
   let recommended: Awaited<ReturnType<typeof fetchRecommendedProfiles>> = [];
   try {
@@ -67,10 +67,17 @@ export default async function ModelProfilePage({ params }: PageProps) {
   }
 
   return (
-    <ModelProfileSlushyView
-      model={modelData}
-      seoIntro={seoContent.intro}
-      recommended={recommended}
-    />
+    <>
+      <ModelProfileJsonLd
+        model={modelData}
+        canonicalUrl={canonical}
+        description={seoContent.longDescription}
+      />
+      <ModelProfileSlushyView
+        model={modelData}
+        seoIntro={seoContent.intro}
+        recommended={recommended}
+      />
+    </>
   );
 }
