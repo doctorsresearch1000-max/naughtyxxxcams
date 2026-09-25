@@ -49,7 +49,7 @@ export function ExploreSlushyGrid({
   }
 
   return (
-    <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+    <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
       {cards.map((performer) => {
         const profilePath = performerProfilePathFromPerformer(performer);
         const handle = performerDisplayHandle(
@@ -65,7 +65,7 @@ export function ExploreSlushyGrid({
                 src={cover}
                 alt={handle}
                 fill
-                sizes="33vw"
+                sizes="50vw"
                 className="object-cover"
                 unoptimized
               />
@@ -81,7 +81,7 @@ export function ExploreSlushyGrid({
         );
 
         const className =
-          "relative aspect-[3/5] overflow-hidden rounded-[18px] bg-[#1C1C1E]";
+          "relative aspect-[3/4] overflow-hidden rounded-[20px] bg-[#1C1C1E] ring-1 ring-white/[0.04]";
 
         return profilePath ? (
           <Link key={performer.feedKey} href={profilePath} className={className}>

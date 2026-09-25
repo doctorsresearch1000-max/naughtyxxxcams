@@ -13,7 +13,9 @@ import {
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
+import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
+import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
 import { ExploreSlushyGrid } from "@/components/explore/ExploreSlushyGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
@@ -88,10 +90,10 @@ function horizontalScrollClass(): string {
 
 function chipClass(active: boolean): string {
   return [
-    "shrink-0 cursor-pointer rounded-full px-3.5 py-2 text-xs font-semibold transition active:scale-[0.98] touch-manipulation select-none",
+    "shrink-0 cursor-pointer rounded-full px-3.5 py-2 text-[11px] font-bold transition active:scale-[0.98] touch-manipulation select-none",
     active
-      ? "bg-white text-black"
-      : "bg-[#1C1C1E] text-zinc-200 hover:bg-[#2a2a2e]",
+      ? "bg-white text-black shadow-sm"
+      : "bg-[#1a1a1e] text-zinc-300 ring-1 ring-white/[0.06] hover:bg-[#25252a]",
   ].join(" ");
 }
 
@@ -210,6 +212,10 @@ export function ExploreSlushyDiscover({
       .slice(0, 14);
   }, [masterPool]);
 
+  const promoModel = liveStories[0] ?? basePerformers[0];
+  const promoUrl = promoModel ? buildModelAffiliateUrl(promoModel) : "/";
+  const promoImage = promoModel ? pickCoverUrl(promoModel) : null;
+
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
 
@@ -238,9 +244,9 @@ export function ExploreSlushyDiscover({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-1">
       <div className="relative">
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500">
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
             <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="2" />
@@ -251,7 +257,7 @@ export function ExploreSlushyDiscover({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search models"
-          className="w-full rounded-full bg-[#1C1C1E] py-3 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none ring-1 ring-transparent focus:ring-pink-500/40"
+          className="w-full rounded-full bg-[#1a1a1e] py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none ring-1 ring-white/[0.06] focus:ring-pink-500/35"
           autoComplete="off"
           enterKeyHint="search"
         />
@@ -340,33 +346,33 @@ export function ExploreSlushyDiscover({
             );
             const thumb = pickCoverUrl(performer);
             const inner = (
-              <div className="flex w-[72px] flex-col items-center gap-1.5">
+              <div className="flex w-[76px] flex-col items-center gap-1.5">
                 <div
-                  className="rounded-[22px] p-[2px]"
+                  className="rounded-[24px] p-[2px]"
                   style={{
                     background:
-                      "linear-gradient(135deg, #ff2d92 0%, #c026d3 45%, #7c3aed 100%)",
+                      "linear-gradient(135deg, #ff2d92 0%, #e879f9 40%, #a855f7 100%)",
                   }}
                 >
-                  <div className="relative h-[68px] w-[68px] overflow-hidden rounded-[20px] bg-[#1C1C1E]">
+                  <div className="relative h-[72px] w-[72px] overflow-hidden rounded-[22px] bg-[#1C1C1E]">
                     {thumb ? (
                       <Image
                         src={thumb}
                         alt={handle}
                         fill
                         className="object-cover"
-                        sizes="72px"
+                        sizes="76px"
                         unoptimized
                       />
                     ) : (
                       <div className="h-full w-full bg-zinc-800" />
                     )}
-                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded px-1 text-[8px] font-black uppercase tracking-wide text-white drop-shadow">
+                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pb-1 pt-3 text-center text-[8px] font-black uppercase tracking-wide text-white">
                       Live
                     </span>
                   </div>
                 </div>
-                <span className="max-w-[72px] truncate text-[10px] font-semibold text-white">
+                <span className="max-w-[76px] truncate text-[10px] font-bold text-zinc-100">
                   {handle.replace(/^@/, "")}
                 </span>
               </div>
@@ -384,19 +390,26 @@ export function ExploreSlushyDiscover({
         </div>
       )}
 
+      {promoModel && (
+        <ExploreJerkmatePromoBanner
+          affiliateUrl={promoUrl}
+          coverUrl={promoImage}
+        />
+      )}
+
       <section>
-        <div className="mb-2 flex items-center justify-between px-0.5">
-          <h2 className="text-xs font-bold text-zinc-300">
-            {category ? category.label : "Discover"}
+        <div className="mb-2.5 flex items-center justify-between px-0.5">
+          <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
+            {category ? category.label : "For you"}
           </h2>
-          <span className="text-[10px] font-semibold text-zinc-500">
+          <span className="text-[10px] font-semibold text-zinc-600">
             {isPending || showSkeleton
               ? "…"
               : `${displayedPerformers.length} / ${total}`}
           </span>
         </div>
         {showSkeleton ? (
-          <ExplorePerformerGridSkeleton count={12} columns={3} />
+          <ExplorePerformerGridSkeleton count={8} columns={2} />
         ) : (
           <ExploreSlushyGrid performers={displayedPerformers} />
         )}
