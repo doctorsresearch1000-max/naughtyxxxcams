@@ -15,7 +15,9 @@ export const WIDGET_IFRAME_SANDBOX =
 
 export function buildCamsEmbedUrl(
   embedInstanceId: string,
-  options?: Omit<WidgetEmbedOptions, "embedInstanceId">,
+  options?: Omit<WidgetEmbedOptions, "embedInstanceId"> & {
+    roomAffiliateUrl?: string;
+  },
 ): string {
   const params = new URLSearchParams({
     instance: embedInstanceId,
@@ -32,6 +34,10 @@ export function buildCamsEmbedUrl(
   const performer = options?.performerNameClean?.trim();
   if (performer) {
     params.set("performer", performer);
+  }
+
+  if (options?.roomAffiliateUrl?.trim()) {
+    params.set("room", options.roomAffiliateUrl.trim());
   }
 
   return `/api/embed/cams?${params.toString()}`;

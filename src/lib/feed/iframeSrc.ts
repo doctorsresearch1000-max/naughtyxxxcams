@@ -12,6 +12,7 @@ export function buildStableFeedEmbedSrc(
     number?: number;
     ratio?: number;
     useFeed?: number;
+    roomAffiliateUrl?: string;
   },
 ): string {
   return buildCamsEmbedUrl(embedInstanceId, {
@@ -21,6 +22,7 @@ export function buildStableFeedEmbedSrc(
     ratio: options?.ratio ?? 0.5625,
     useFeed: options?.useFeed ?? 0,
     performerNameClean: options?.performerNameClean,
+    roomAffiliateUrl: options?.roomAffiliateUrl,
     muted: 1,
   });
 }

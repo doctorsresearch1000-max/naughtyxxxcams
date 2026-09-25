@@ -1,10 +1,15 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { getPerformerKey } from "@/lib/crackrevenue/api";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
+import {
+  resolvePerformerEmbedPlan,
+  type PerformerEmbedPlan,
+} from "@/lib/feed/performerEmbed";
 
 export type FeedPerformer = CrackPerformer & {
   feedKey: string;
   posterUrl: string;
+  embedPlan: PerformerEmbedPlan;
 };
 
 function isHttpsUrl(url: string): boolean {
@@ -72,13 +77,15 @@ export function filterFeedPerformers(
       if (!onlySnap || seenPosterBases.has(posterBaseKey(onlySnap))) continue;
       seenPosterBases.add(posterBaseKey(onlySnap));
       seenKeys.add(feedKey);
-      out.push({ ...p, feedKey, posterUrl: onlySnap });
+      const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
+      out.push({ ...p, feedKey, posterUrl: onlySnap, embedPlan });
       continue;
     }
 
     seenPosterBases.add(base);
     seenKeys.add(feedKey);
-    out.push({ ...p, feedKey, posterUrl });
+    const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
+    out.push({ ...p, feedKey, posterUrl, embedPlan });
   }
 
   return out;

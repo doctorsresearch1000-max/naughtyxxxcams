@@ -3,13 +3,12 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
-import { buildStableFeedEmbedSrc } from "@/lib/feed/iframeSrc";
+import type { PerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import {
   postLiveIframeAudio,
   registerActiveFeedAudioTarget,
@@ -22,18 +21,18 @@ import {
 type LiveEmbedProps = {
   embedKey: string;
   posterUrl: string;
-  performerNameClean?: string;
+  embedPlan: PerformerEmbedPlan;
   isActive: boolean;
   isArmed: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
-const POSTER_FALLBACK_MS = 6_000;
+const POSTER_FALLBACK_MS = 5_000;
 
 export function LiveEmbed({
   embedKey,
   posterUrl,
-  performerNameClean,
+  embedPlan,
   isActive,
   isArmed,
   onIframeWindow,
@@ -46,14 +45,7 @@ export function LiveEmbed({
   const [streamActive, setStreamActive] = useState(false);
   const [posterFallback, setPosterFallback] = useState(false);
 
-  const embedSrc = useMemo(
-    () =>
-      buildStableFeedEmbedSrc(embedKey, {
-        performerNameClean,
-        useFeed: 0,
-      }),
-    [embedKey, performerNameClean],
-  );
+  const embedSrc = embedPlan.outerEmbedSrc;
 
   const syncActiveAudioTarget = useCallback(() => {
     if (!isActive || !isArmed || !iframeRef.current || !cardRootRef.current) {
@@ -95,7 +87,7 @@ export function LiveEmbed({
     setFrameLoaded(false);
     setStreamActive(false);
     setPosterFallback(false);
-  }, [embedKey, isActive]);
+  }, [embedKey, isActive, embedSrc]);
 
   useEffect(() => {
     if (!isActive || !frameLoaded) return;
@@ -134,10 +126,15 @@ export function LiveEmbed({
     onIframeWindow?.(iframeRef.current?.contentWindow ?? null);
   }, [isActive, frameLoaded, onIframeWindow]);
 
-  const mountIframe = isActive && isArmed;
+  const mountIframe =
+    isActive &&
+    isArmed &&
+    embedPlan.canMountInteractivePlayer &&
+    Boolean(embedSrc);
+
   const streamRevealed =
     isActive && frameLoaded && (streamActive || posterFallback);
-  const hidePoster = streamRevealed;
+  const hidePoster = streamRevealed && mountIframe;
   const allowPlayerInteraction = isAudioUnlocked && !muted;
 
   useEffect(() => {
@@ -146,7 +143,7 @@ export function LiveEmbed({
     postLiveIframeAudio(!streamMuted);
   }, [streamMuted, streamRevealed, isActive, frameLoaded, isAudioUnlocked]);
 
-  if (!isArmed) {
+  if (!isArmed || !embedPlan.canMountInteractivePlayer) {
     return (
       <FeedPoster
         feedKey={embedKey}
@@ -164,10 +161,11 @@ export function LiveEmbed({
       data-feed-card-root="true"
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
+      data-embed-mode={embedPlan.mode}
     >
-      {mountIframe && (
+      {mountIframe && embedSrc ? (
         <iframe
-          key={embedKey}
+          key={`${embedKey}-${embedPlan.mode}`}
           ref={bindIframeRef}
           src={embedSrc}
           title={`Live stream ${embedKey}`}
@@ -185,7 +183,7 @@ export function LiveEmbed({
             syncActiveAudioTarget();
           }}
         />
-      )}
+      ) : null}
 
       <FeedPoster
         feedKey={embedKey}
@@ -196,12 +194,12 @@ export function LiveEmbed({
         }`}
       />
 
-      {mountIframe && streamMuted && (
+      {mountIframe && streamMuted ? (
         <div
           className="pointer-events-none absolute inset-0 z-[25] touch-none"
           aria-hidden
         />
-      )}
+      ) : null}
     </div>
   );
 }

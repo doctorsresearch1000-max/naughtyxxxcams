@@ -45,7 +45,7 @@ export function LiveFeedCard({
   const profileHref = performerProfilePath(
     performer.nameClean || performer.name,
   );
-  const affiliateUrl = buildModelAffiliateUrl(performer);
+  const affiliateUrl = performer.embedPlan.roomAffiliateUrl;
   const modelRef = {
     feedKey: performer.feedKey,
     nameClean: performer.nameClean,
@@ -82,7 +82,7 @@ export function LiveFeedCard({
       <LiveEmbed
         embedKey={performer.feedKey}
         posterUrl={performer.posterUrl}
-        performerNameClean={performer.nameClean || performer.name}
+        embedPlan={performer.embedPlan}
         isActive={isActive}
         isArmed={isArmed}
         onIframeWindow={isActive ? onRegisterIframe : undefined}

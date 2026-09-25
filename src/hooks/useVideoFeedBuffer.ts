@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-const DEFAULT_RADIUS = 2;
+const DEFAULT_RADIUS = 1;
 
 /** Índices con iframe montado (ventana N±radius). */
 export function useVideoFeedBuffer(
