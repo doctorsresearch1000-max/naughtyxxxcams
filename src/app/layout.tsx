@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import { AppChrome } from "@/components/layout/AppChrome";
+
+const GA_MEASUREMENT_ID = "G-3RHSY9JWVC";
 import { AppProviders } from "@/components/layout/AppProviders";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/layout/Header";
@@ -28,6 +30,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="beforeInteractive"
+        />
+        <Script id="google-analytics-gtag" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+      </head>
       <body className="min-h-dvh bg-black">
         <AppProviders>
         <div className="relative mx-auto flex min-h-dvh max-w-md flex-col bg-black pb-16 [touch-action:pan-y]">
@@ -40,7 +57,6 @@ export default function RootLayout({
         </div>
         <AppChrome />
         </AppProviders>
-        <GoogleAnalytics gaId="G-3RHSY9JWVC" />
       </body>
     </html>
   );
