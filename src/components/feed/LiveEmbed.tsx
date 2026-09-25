@@ -85,8 +85,6 @@ export function LiveEmbed({
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const attachGenRef = useRef(0);
-  const isActiveRef = useRef(isActive);
-  isActiveRef.current = isActive;
   const [frameLoaded, setFrameLoaded] = useState(() =>
     isStreamSlotLoaded(embedKey),
   );
@@ -110,11 +108,9 @@ export function LiveEmbed({
   const posterFadeMs =
     fastReveal || streamPriority === "high" ? 120 : streamRevealed ? 180 : 0;
 
-  const markFrameLoaded = useCallback(() => {
+  /** Iframe document loaded — does NOT mean the stream has painted yet. */
+  const markFrameDocumentLoaded = useCallback(() => {
     setFrameLoaded(true);
-    if (isActiveRef.current) {
-      setStreamPaintReady(true);
-    }
   }, []);
 
   useEffect(() => {
@@ -214,9 +210,9 @@ export function LiveEmbed({
         iframeRef.current = claimed.iframe;
         setUsingEngineSlot(true);
         if (claimed.loaded) {
-          markFrameLoaded();
+          markFrameDocumentLoaded();
         } else {
-          claimed.iframe.addEventListener("load", markFrameLoaded, {
+          claimed.iframe.addEventListener("load", markFrameDocumentLoaded, {
             once: true,
           });
         }
@@ -233,7 +229,7 @@ export function LiveEmbed({
           embedKey,
         );
         if (isStreamSlotLoaded(embedKey)) {
-          markFrameLoaded();
+          markFrameDocumentLoaded();
         }
         return;
       }
@@ -247,7 +243,7 @@ export function LiveEmbed({
       iframe.src = initialSrc;
       iframe.allow = WIDGET_IFRAME_ALLOW;
       iframe.referrerPolicy = "strict-origin-when-cross-origin";
-      iframe.addEventListener("load", markFrameLoaded, { once: true });
+      iframe.addEventListener("load", markFrameDocumentLoaded, { once: true });
       stage.appendChild(iframe);
       void stage.offsetHeight;
       wireIframeChrome(
@@ -266,7 +262,7 @@ export function LiveEmbed({
     if (warmInDock) {
       ensureStreamWarming(embedKey, initialSrc);
       if (isStreamSlotLoaded(embedKey)) {
-        markFrameLoaded();
+        markFrameDocumentLoaded();
       }
       return;
     }
@@ -286,7 +282,7 @@ export function LiveEmbed({
     isActive,
     slideHeightPx,
     streamPriority,
-    markFrameLoaded,
+    markFrameDocumentLoaded,
     parkIframeToDock,
   ]);
 
