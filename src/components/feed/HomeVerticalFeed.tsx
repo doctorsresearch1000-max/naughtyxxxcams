@@ -177,12 +177,11 @@ function HomeVerticalFeedInner({
 
   return (
     <main
-      className="tele-shell feed-shell relative mx-auto flex w-full max-w-md shrink-0 flex-col overflow-hidden bg-black text-white"
-      style={{ height: slideHeightPx, minHeight: slideHeightPx, maxHeight: slideHeightPx }}
+      className="tele-shell feed-shell relative mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col overflow-hidden bg-black text-white"
     >
       <div
         ref={scrollRef}
-        className="tele-scroll feed-scroll hide-scrollbar w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
+        className="tele-scroll feed-scroll hide-scrollbar min-h-0 w-full flex-1 overflow-y-auto overscroll-y-contain snap-y snap-mandatory touch-pan-y [-webkit-overflow-scrolling:touch]"
       >
         {loadState === "loading" && slides.length === 0 ? (
           <FeedLoadingShell />

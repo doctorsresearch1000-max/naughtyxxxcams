@@ -65,9 +65,9 @@ iframe[data-touch-blocked="true"] {
 
 /* —— Home vertical feed: full-bleed player (TikTok / Reels) —— */
 .feed-shell {
-  height: var(--feed-viewport-height);
-  min-height: var(--feed-viewport-height);
-  max-height: var(--feed-viewport-height);
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
 }
 
 .feed-scroll {
@@ -81,8 +81,6 @@ iframe[data-touch-blocked="true"] {
   grid-template-rows: minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
   width: 100%;
-  height: var(--feed-viewport-height);
-  min-height: var(--feed-viewport-height);
   flex-shrink: 0;
   overflow: hidden;
   background: #000;
