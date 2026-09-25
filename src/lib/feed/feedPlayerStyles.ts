@@ -1,11 +1,10 @@
 import type { CSSProperties } from "react";
 
-/** Zoom inside cross-origin Streamate iframe to fill 9:16 (validated before dock engine). */
-export const FEED_PLAYER_FILL_SCALE = 3.22;
-/** Slightly above center so the scaled frame tucks under the header overlay. */
-export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 33%";
-/** Nudge up after centering (covers ~1–2% top letterbox without shifting UI chrome). */
-export const FEED_PLAYER_TRANSLATE_Y = "-50%";
+/** Face-safe crop (matches poster object-position). */
+export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 38%";
+
+/** Slight bleed so Streamate player chrome stays outside the clip. */
+export const FEED_COVER_BLEED = 1.028;
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
@@ -65,35 +64,79 @@ export function feedEmbedStageStyle(_heightPx: number): CSSProperties {
   };
 }
 
-/** 16:9 surface at slide height, centered, scaled to TikTok cover. */
-export function feedEmbedIframeStyle(heightPx: number): CSSProperties {
-  const coverWidth = Math.round((heightPx * 16) / 9);
+export function measureEmbedStagePx(stage: HTMLElement): {
+  widthPx: number;
+  heightPx: number;
+} {
+  const rect = stage.getBoundingClientRect();
+  return {
+    widthPx: Math.max(1, Math.round(rect.width)),
+    heightPx: Math.max(1, Math.round(rect.height)),
+  };
+}
+
+/**
+ * Uniform scale so a width-fit 16:9 iframe covers a 9:16 stage (like object-fit: cover).
+ * Exact: scale = H_slide / (9/16 * W_slide) = 16·H / (9·W).
+ */
+export function computeFeedVerticalCoverScale(
+  stageWidthPx: number,
+  stageHeightPx: number,
+): number {
+  if (stageWidthPx <= 0 || stageHeightPx <= 0) {
+    return 3.15;
+  }
+  const baseHeight = (stageWidthPx * 9) / 16;
+  const raw = stageHeightPx / baseHeight;
+  return Math.min(Math.max(raw, 1.02), 3.75);
+}
+
+/**
+ * Same visual footprint as `.feed-embed-poster` (inset 0 + cover), but for the 16:9 iframe
+ * we scale uniformly from the stage center so the stream fills the slide height.
+ */
+export function feedEmbedIframeStyle(
+  stageHeightPx: number,
+  stageWidthPx?: number,
+): CSSProperties {
+  const widthPx =
+    stageWidthPx && stageWidthPx > 0
+      ? Math.round(stageWidthPx)
+      : Math.round((stageHeightPx * 9) / 16);
+  const heightPx = Math.round((widthPx * 9) / 16);
+  const scale =
+    computeFeedVerticalCoverScale(widthPx, stageHeightPx) * FEED_COVER_BLEED;
+  const scaleRounded = Math.round(scale * 1000) / 1000;
+
   return {
     position: "absolute",
     top: "50%",
     left: "50%",
-    width: coverWidth,
+    width: widthPx,
     height: heightPx,
     margin: 0,
     padding: 0,
     border: "0",
     background: "#000",
-    transform: `translate(-50%, ${FEED_PLAYER_TRANSLATE_Y}) scale(${FEED_PLAYER_FILL_SCALE})`,
+    transform: `translate(-50%, -50%) scale(${scaleRounded})`,
     transformOrigin: FEED_PLAYER_TRANSFORM_ORIGIN,
     clipPath: "none",
   };
 }
 
-export function feedPosterImageStyle(heightPx: number): CSSProperties {
+/** Poster: full-bleed inside embed root (same box the iframe is clipped to). */
+export function feedPosterImageStyle(_heightPx: number): CSSProperties {
   return {
     position: "absolute",
     top: 0,
     left: 0,
+    right: 0,
+    bottom: 0,
     width: "100%",
-    height: heightPx,
-    minHeight: heightPx,
-    maxHeight: heightPx,
+    height: "100%",
+    minHeight: 0,
+    maxHeight: "none",
     objectFit: "cover",
-    objectPosition: "center 35%",
+    objectPosition: "center 38%",
   };
 }

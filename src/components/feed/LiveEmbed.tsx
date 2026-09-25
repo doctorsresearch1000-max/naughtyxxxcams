@@ -323,7 +323,7 @@ export function LiveEmbed({
       data-stream-revealed={streamRevealed ? "1" : "0"}
       data-feed-key={embedKey}
       data-embed-mode={embedPlan.mode}
-      data-feed-layout-v="14"
+      data-feed-layout-v="15"
       data-engine-slot={usingEngineSlot ? "1" : "0"}
     >
       <FeedPoster

@@ -209,7 +209,7 @@ function HomeVerticalFeedInner({
     <main
       className="tele-shell feed-shell feed-shell--portal-inner flex h-full w-full min-h-0 flex-col overflow-hidden bg-black text-white"
       data-feed-stage="fullscreen"
-      data-feed-stage-v="18"
+      data-feed-stage-v="19"
     >
       <div
         ref={scrollRef}

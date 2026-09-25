@@ -1,4 +1,7 @@
-import { feedEmbedIframeStyle } from "@/lib/feed/feedPlayerStyles";
+import {
+  feedEmbedIframeStyle,
+  measureEmbedStagePx,
+} from "@/lib/feed/feedPlayerStyles";
 
 const DOCK_INLINE_PROPS = [
   "clip-path",
@@ -37,8 +40,23 @@ export function applyStreamIframeStagePresentation(
   iframe: HTMLIFrameElement,
   slideHeightPx: number,
   _isActive: boolean,
+  stageWidthPx?: number,
 ): void {
   clearStreamIframeDockStyles(iframe);
   iframe.className = "feed-embed-iframe pointer-events-none";
-  Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
+
+  const stage = iframe.parentElement;
+  if (stage) {
+    const { widthPx, heightPx } = measureEmbedStagePx(stage);
+    Object.assign(
+      iframe.style,
+      feedEmbedIframeStyle(heightPx, widthPx),
+    );
+    return;
+  }
+
+  Object.assign(
+    iframe.style,
+    feedEmbedIframeStyle(slideHeightPx, stageWidthPx),
+  );
 }
