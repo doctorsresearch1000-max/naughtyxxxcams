@@ -19,21 +19,21 @@ const slots = new Map<string, StreamSlot>();
 /** Viewport dock — opaque with a 4px strip (avoids background media throttle). */
 const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
-  left: "0",
-  bottom: "0",
-  width: "100vw",
-  height: "100dvh",
-  maxHeight: "100dvh",
+  left: "-9999px",
+  top: "0",
+  width: "4px",
+  height: "4px",
+  maxHeight: "4px",
   margin: "0",
   padding: "0",
   border: "0",
-  opacity: "1",
-  visibility: "visible",
+  opacity: "0",
+  visibility: "hidden",
   pointerEvents: "none",
-  zIndex: "1",
-  clipPath: "inset(calc(100% - 4px) 0 0 0)",
+  zIndex: "-1",
+  clipPath: "inset(100%)",
   transform: "translateZ(0)",
-  background: "#000",
+  background: "transparent",
 };
 
 function createSlot(feedKey: string, src: string): StreamSlot {
@@ -199,6 +199,13 @@ export function silenceAllStreamSlots(exceptFeedKey?: string): void {
   for (const [key, slot] of slots.entries()) {
     if (exceptFeedKey && key === exceptFeedKey) continue;
     postLiveIframeAudio(slot.iframe, "session-audio-mute");
+  }
+}
+
+/** Leave home / unmount feed — remove body-level dock iframes so they cannot overlay other routes. */
+export function tearDownAllStreamSlots(): void {
+  for (const key of [...slots.keys()]) {
+    evictSlot(key);
   }
 }
 
