@@ -1,12 +1,12 @@
 import type { WidgetEmbedOptions } from "@/lib/feed/widgetSrcDoc";
 
-/** Permisos explícitos para autoplay y media en el iframe y frames anidados del widget. */
+/** Parent iframe feature policy (delegates to nested Crak / Streamate players). */
 export const WIDGET_IFRAME_ALLOW =
-  "autoplay; encrypted-media; fullscreen; picture-in-picture";
+  "autoplay; encrypted-media; microphone; camera; fullscreen; picture-in-picture";
 
-/** Permisos delegados a orígenes del widget (Streamate / popin anidados). */
+/** Legacy feature-policy string for nested widget iframes in srcdoc shells. */
 export const WIDGET_IFRAME_ALLOW_FEATURES =
-  "autoplay *; encrypted-media *; fullscreen *; picture-in-picture *";
+  "autoplay *; encrypted-media *; microphone *; camera *; fullscreen *; picture-in-picture *";
 
 export const WIDGET_IFRAME_ALLOW_COMBINED = `${WIDGET_IFRAME_ALLOW}; ${WIDGET_IFRAME_ALLOW_FEATURES}`;
 

@@ -14,6 +14,7 @@ import {
   registerActiveFeedAudioTarget,
 } from "@/lib/feed/liveIframeAudio";
 import {
+  WIDGET_IFRAME_ALLOW,
   WIDGET_IFRAME_ALLOW_COMBINED,
   WIDGET_IFRAME_SANDBOX,
 } from "@/lib/feed/embedFrame";
@@ -135,7 +136,8 @@ export function LiveEmbed({
   const streamRevealed =
     isActive && frameLoaded && (streamActive || posterFallback);
   const hidePoster = streamRevealed && mountIframe;
-  const allowPlayerInteraction = isAudioUnlocked && !muted;
+  /** After session unlock, allow clicks to reach the Crak player (even if UI mute is on). */
+  const allowPlayerInteraction = isAudioUnlocked;
 
   useEffect(() => {
     if (!isActive || !frameLoaded || !streamRevealed) return;
@@ -175,7 +177,7 @@ export function LiveEmbed({
           className={`absolute inset-0 z-[12] h-full w-full border-0 ${
             allowPlayerInteraction ? "pointer-events-auto" : "pointer-events-none"
           }`}
-          allow={WIDGET_IFRAME_ALLOW_COMBINED}
+          allow={`${WIDGET_IFRAME_ALLOW}; ${WIDGET_IFRAME_ALLOW_COMBINED}`}
           sandbox={WIDGET_IFRAME_SANDBOX}
           referrerPolicy="strict-origin-when-cross-origin"
           onLoad={() => {

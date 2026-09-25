@@ -47,7 +47,8 @@ export async function GET(request: Request) {
     "Content-Type": "text/html; charset=utf-8",
     "Cache-Control": "no-store",
     "X-Frame-Options": "SAMEORIGIN",
-    "Permissions-Policy": "autoplay=(self), encrypted-media=(self)",
+    "Permissions-Policy":
+      "autoplay=(self), encrypted-media=(self), microphone=(self), camera=(self), fullscreen=(self)",
   };
 
   if (!CRACKREVENUE_TOKEN || !CRACKREVENUE_API_KEY) {

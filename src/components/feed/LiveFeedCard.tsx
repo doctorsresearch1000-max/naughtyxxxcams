@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";

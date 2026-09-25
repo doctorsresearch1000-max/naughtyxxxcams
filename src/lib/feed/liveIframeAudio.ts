@@ -1,6 +1,6 @@
 /**
- * TeleHub-style feed audio bridge: never rewrite iframe src for volume.
- * Unlock/mute via synchronous postMessage bundles + timed retries.
+ * TeleHub-style feed audio bridge: outer iframe src stays stable; unlock/mute via postMessage.
+ * Embed shell rewrites inner Crak feed URL params (volumelevel) on unlock for cross-origin players.
  */
 
 export const FEED_AUDIO_SOURCE = "naughty-feed";
@@ -44,6 +44,37 @@ export function isStreamRevealed(cardRoot: HTMLElement | null | undefined): bool
   return cardRoot?.getAttribute("data-stream-revealed") === "1";
 }
 
+/**
+ * Fallback when React ref registration lags behind the user gesture.
+ */
+export function resolveActiveFeedAudioTargetFromDom(): ActiveFeedAudioTarget | null {
+  if (activeTarget?.contentWindow) return activeTarget;
+
+  const root = document.querySelector(
+    '[data-feed-card-root][data-stream-revealed="1"]',
+  ) as HTMLElement | null;
+  if (!root) return null;
+
+  const iframe = root.querySelector(
+    'iframe[data-naughty-feed-embed="true"]',
+  ) as HTMLIFrameElement | null;
+  if (!iframe?.contentWindow) return null;
+
+  const embedKey =
+    root.getAttribute("data-feed-key") ||
+    iframe.getAttribute("data-embed-key") ||
+    "active";
+
+  const target: ActiveFeedAudioTarget = {
+    iframe,
+    cardRoot: root,
+    contentWindow: iframe.contentWindow,
+    embedKey,
+  };
+  activeTarget = target;
+  return target;
+}
+
 export function resumeBrowserAudioContext(): void {
   try {
     type ACtor = typeof AudioContext;
@@ -68,16 +99,20 @@ function postToEmbedWindow(win: Window, action: FeedAudioActionType): void {
   );
 }
 
-/**
- * TeleHub `postLiveIframeAudio`: postMessage burst with retries.
- * @param force When true (user gesture), send even if stream not revealed yet.
- */
+function getTargetWindow(): Window | null {
+  const target =
+    activeTarget?.contentWindow ??
+    resolveActiveFeedAudioTargetFromDom()?.contentWindow ??
+    null;
+  return target;
+}
+
 export function postLiveIframeAudio(
   wantSound: boolean,
   options?: { force?: boolean },
 ): void {
-  const target = activeTarget;
-  const win = target?.contentWindow;
+  const target = activeTarget ?? resolveActiveFeedAudioTargetFromDom();
+  const win = target?.contentWindow ?? getTargetWindow();
   if (!target || !win) return;
 
   if (!options?.force && !isStreamRevealed(target.cardRoot)) {
@@ -99,11 +134,10 @@ export function postLiveIframeAudio(
   });
 }
 
-/** Synchronous bundle for pointerdown (0ms only in gesture stack). */
 export function postLiveIframeAudioSync(wantSound: boolean): void {
-  const target = activeTarget;
-  const win = target?.contentWindow;
-  if (!target || !win) return;
+  const target = activeTarget ?? resolveActiveFeedAudioTargetFromDom();
+  const win = target?.contentWindow ?? getTargetWindow();
+  if (!win) return;
 
   const action = wantSound ? FeedAudioAction.unlock : FeedAudioAction.mute;
   try {
@@ -113,13 +147,24 @@ export function postLiveIframeAudioSync(wantSound: boolean): void {
   }
 }
 
-/** TeleHub `setFeedCardAudio`: UI-facing mute without session lock reset. */
 export function setFeedCardAudio(wantSound: boolean, gesture: boolean): void {
   if (gesture) {
     resumeBrowserAudioContext();
+    resolveActiveFeedAudioTargetFromDom();
     postLiveIframeAudioSync(wantSound);
     postLiveIframeAudio(wantSound, { force: gesture });
     return;
   }
   postLiveIframeAudio(wantSound);
+}
+
+/** Enable hit-testing on the outer feed iframe after session unlock. */
+export function setActiveFeedIframePointerEvents(enabled: boolean): void {
+  const iframe =
+    activeTarget?.iframe ??
+    (document.querySelector(
+      '[data-feed-card-root][data-stream-revealed="1"] iframe[data-naughty-feed-embed="true"]',
+    ) as HTMLIFrameElement | null);
+  if (!iframe) return;
+  iframe.style.pointerEvents = enabled ? "auto" : "none";
 }

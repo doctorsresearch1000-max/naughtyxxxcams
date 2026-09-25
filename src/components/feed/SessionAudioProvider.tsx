@@ -12,6 +12,7 @@ import { usePathname } from "next/navigation";
 import { flushSync } from "react-dom";
 import {
   resumeBrowserAudioContext,
+  setActiveFeedIframePointerEvents,
   setFeedCardAudio,
 } from "@/lib/feed/liveIframeAudio";
 import { SessionAudioOverlay } from "./SessionAudioOverlay";
@@ -64,6 +65,7 @@ export function SessionAudioProvider({
 
     resumeBrowserAudioContext();
     setFeedCardAudio(true, true);
+    setActiveFeedIframePointerEvents(true);
 
     flushSync(() => {
       setIsAudioUnlocked(true);
@@ -72,13 +74,24 @@ export function SessionAudioProvider({
   }, []);
 
   const toggleMutedFromPointerDown = useCallback(() => {
-    if (!isAudioUnlockedRef.current || mutedRef.current) {
+    if (!isAudioUnlockedRef.current) {
       unlockFromPointerDown();
+      return;
+    }
+
+    if (mutedRef.current) {
+      mutedRef.current = false;
+      setFeedCardAudio(true, true);
+      setActiveFeedIframePointerEvents(true);
+      flushSync(() => {
+        setMuted(false);
+      });
       return;
     }
 
     mutedRef.current = true;
     setFeedCardAudio(false, true);
+    setActiveFeedIframePointerEvents(true);
     flushSync(() => {
       setMuted(true);
     });

@@ -1,4 +1,6 @@
-import { WIDGET_IFRAME_ALLOW_FEATURES } from "@/lib/feed/embedFrame";
+import { WIDGET_IFRAME_ALLOW } from "@/lib/feed/embedFrame";
+
+const INNER_IFRAME_ALLOW = WIDGET_IFRAME_ALLOW;
 
 const AUDIO_BRIDGE = `
 (function () {
@@ -21,6 +23,23 @@ const AUDIO_BRIDGE = `
       try { v.muted = true; v.volume = 0; } catch (e) {}
     });
   }
+  function setInnerFeedAudioParams(unlock) {
+    var frame = getWidgetFrame();
+    if (!frame) return;
+    var raw = frame.getAttribute('src') || frame.src;
+    if (!raw) return;
+    try {
+      var u = new URL(raw, window.location.href);
+      u.searchParams.set('volumelevel', unlock ? '1' : '0');
+      u.searchParams.set('widescreen', 'true');
+      u.searchParams.set('muted', unlock ? '0' : '1');
+      u.searchParams.set('volume', unlock ? '1' : '0');
+      var next = u.toString();
+      if (frame.src !== next) {
+        frame.src = next;
+      }
+    } catch (e) {}
+  }
   function forwardToWidget(data) {
     var widgetFrame = getWidgetFrame();
     if (widgetFrame && widgetFrame.contentWindow) {
@@ -28,10 +47,16 @@ const AUDIO_BRIDGE = `
     }
   }
   function applyUnlock(data) {
+    setInnerFeedAudioParams(true);
     unmuteAllVideos();
     forwardToWidget(data);
+    try {
+      var frame = getWidgetFrame();
+      if (frame) frame.style.pointerEvents = 'auto';
+    } catch (e) {}
   }
   function applyMute() {
+    setInnerFeedAudioParams(false);
     muteAllVideos();
     forwardToWidget({ source: 'naughty-feed', action: 'session-audio-mute' });
   }
@@ -66,6 +91,7 @@ const AFFILIATE_GUARD = `
   document.addEventListener('click', function (e) {
     var t = e.target;
     if (!t || !t.closest) return;
+    if (t.closest('#cr-widget-frame')) return;
     var a = t.closest('a[href]');
     if (a && isOffSite(a.getAttribute('href'))) {
       e.preventDefault();
@@ -130,16 +156,12 @@ export function buildStreamEmbedSrcDoc(
     .replace(/"/g, "&quot;")
     .replace(/</g, "");
 
-  const roomLayer = safeRoom
-    ? `<a id="affiliate-room-layer" href="${safeRoom}" target="_blank" rel="nofollow sponsored noopener noreferrer" aria-label="Open model room" style="position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;"></a>`
-    : "";
-
   return `<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Permissions-Policy" content="autoplay=(self), encrypted-media=(self)">
+    <meta http-equiv="Permissions-Policy" content="autoplay=(self), encrypted-media=(self), microphone=(self), camera=(self), fullscreen=(self)">
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       html, body {
@@ -165,6 +187,7 @@ export function buildStreamEmbedSrcDoc(
         border: 0;
         display: block;
         z-index: 1;
+        pointer-events: auto;
       }
     </style>
   </head>
@@ -174,10 +197,9 @@ export function buildStreamEmbedSrcDoc(
         id="cr-widget-frame"
         src="${safeFrameSrc}"
         title="Live stream"
-        allow="${WIDGET_IFRAME_ALLOW_FEATURES}"
+        allow="${INNER_IFRAME_ALLOW}"
         referrerpolicy="strict-origin-when-cross-origin"
       ></iframe>
-      ${roomLayer}
     </div>
     <script>${AUDIO_BRIDGE}</script>
     <script>${guard}</script>
