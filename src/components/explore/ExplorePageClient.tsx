@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
@@ -44,10 +43,12 @@ function initialFromCache(): {
   return { masterPool: [], popularCategories: [], ready: false };
 }
 
-export function ExplorePageClient() {
-  const searchParams = useSearchParams();
-  const catParam = searchParams.get("cat");
-  const category = resolveExploreCategory(catParam);
+type ExplorePageClientProps = {
+  categorySlug: string | null;
+};
+
+export function ExplorePageClient({ categorySlug }: ExplorePageClientProps) {
+  const category = resolveExploreCategory(categorySlug);
   const initialCat = category?.slug ?? null;
 
   const [boot] = useState(initialFromCache);

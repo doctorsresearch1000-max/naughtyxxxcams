@@ -1,5 +1,5 @@
-import { buildSitemapIndexEntries } from "@/lib/sitemap/buildSitemapIndex";
-import { renderSitemapIndexXml } from "@/lib/sitemap/renderSitemapXml";
+import { buildExploreSitemapEntries } from "@/lib/sitemap/buildExploreSitemap";
+import { renderSitemapXml } from "@/lib/sitemap/renderSitemapXml";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -10,13 +10,9 @@ const XML_HEADERS = {
     "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400",
 } as const;
 
-/**
- * Sitemap index: explore hub + chunked profile urlsets.
- * Explicit route for OpenNext / Cloudflare Workers.
- */
 export async function GET(): Promise<Response> {
-  const entries = await buildSitemapIndexEntries();
-  const xml = renderSitemapIndexXml(entries);
+  const entries = buildExploreSitemapEntries();
+  const xml = renderSitemapXml(entries);
 
   return new Response(xml, {
     status: 200,

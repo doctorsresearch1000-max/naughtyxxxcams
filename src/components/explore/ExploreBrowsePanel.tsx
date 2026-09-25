@@ -21,6 +21,7 @@ import {
   resolveExploreCategory,
   type ExploreCategorySlug,
 } from "@/lib/explore/categorySlugs";
+import { explorePathForCategoryParam } from "@/lib/explore/paths";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 
 type CacheEntry = {
@@ -104,7 +105,7 @@ export function ExploreBrowsePanel({
       if (cached) {
         startTransition(() => {
           applyEntry(slug, cached);
-          const href = slug ? `/explore?cat=${slug}` : "/explore";
+          const href = explorePathForCategoryParam(slug);
           router.replace(href, { scroll: false });
         });
         return;
@@ -121,7 +122,7 @@ export function ExploreBrowsePanel({
           cacheRef.current.set(key, entry);
           startTransition(() => {
             applyEntry(slug, entry);
-            const href = slug ? `/explore?cat=${slug}` : "/explore";
+            const href = explorePathForCategoryParam(slug);
             router.replace(href, { scroll: false });
           });
         })

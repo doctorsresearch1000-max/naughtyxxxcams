@@ -99,14 +99,14 @@ function FooterLegalColumn() {
 }
 
 const LIVE_CATEGORIES: FooterLink[] = [
-  { href: "/explore?cat=latinas", label: "Latina Models" },
-  { href: "/explore?cat=verified", label: "Verified 18+" },
-  { href: "/explore?cat=milf", label: "MILF & Mature" },
-  { href: "/explore?cat=petite", label: "Petite & E-girls" },
-  { href: "/explore?cat=cosplay", label: "Cosplay" },
-  { href: "/explore?cat=couples", label: "Couples" },
-  { href: "/explore?cat=trans", label: "Trans Models" },
-  { href: "/explore?cat=alt", label: "Alt & Goth" },
+  { href: "/explore/latinas", label: "Latina Models" },
+  { href: "/explore/verified", label: "Verified 18+" },
+  { href: "/explore/milf", label: "MILF & Mature" },
+  { href: "/explore/petite", label: "Petite & E-girls" },
+  { href: "/explore/cosplay", label: "Cosplay" },
+  { href: "/explore/couples", label: "Couples" },
+  { href: "/explore/trans", label: "Trans Models" },
+  { href: "/explore/alt", label: "Alt & Goth" },
 ];
 
 const SHOW_TYPES: FooterLink[] = [

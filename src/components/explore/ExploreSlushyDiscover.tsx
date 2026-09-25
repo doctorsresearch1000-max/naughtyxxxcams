@@ -29,6 +29,7 @@ import {
   type ExploreSortMode,
 } from "@/lib/explore/exploreGrid";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
+import { explorePathForCategoryParam } from "@/lib/explore/paths";
 import {
   performerDisplayHandle,
   performerProfilePathFromPerformer,
@@ -155,7 +156,7 @@ export function ExploreSlushyDiscover({
       if (cached) {
         startTransition(() => {
           applyEntry(slug, cached);
-          const href = slug ? `/explore?cat=${slug}` : "/explore";
+          const href = explorePathForCategoryParam(slug);
           router.replace(href, { scroll: false });
         });
         return;
@@ -172,7 +173,7 @@ export function ExploreSlushyDiscover({
           cacheRef.current.set(key, entry);
           startTransition(() => {
             applyEntry(slug, entry);
-            const href = slug ? `/explore?cat=${slug}` : "/explore";
+            const href = explorePathForCategoryParam(slug);
             router.replace(href, { scroll: false });
           });
         })

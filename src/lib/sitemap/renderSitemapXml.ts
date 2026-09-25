@@ -10,6 +10,34 @@ function escapeXml(value: string): string {
 }
 
 /** Serializa entradas al formato sitemap.org (compatible con Google). */
+export type SitemapIndexLoc = {
+  loc: string;
+  lastmod?: Date | string;
+};
+
+export function renderSitemapIndexXml(entries: SitemapIndexLoc[]): string {
+  const items = entries
+    .map((entry) => {
+      const loc = escapeXml(entry.loc);
+      const lastmod =
+        entry.lastmod instanceof Date
+          ? entry.lastmod.toISOString()
+          : entry.lastmod
+            ? new Date(entry.lastmod).toISOString()
+            : null;
+      return `<sitemap>
+<loc>${loc}</loc>${lastmod ? `\n<lastmod>${lastmod}</lastmod>` : ""}
+</sitemap>`;
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${items}
+</sitemapindex>
+`;
+}
+
 export function renderSitemapXml(entries: MetadataRoute.Sitemap): string {
   const urls = entries
     .map((entry) => {
