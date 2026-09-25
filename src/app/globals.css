@@ -6,8 +6,8 @@
   color-scheme: dark;
   /* Header global (logo h-10 + padding); bottom nav = 4rem */
   --app-header-height: 3.75rem;
-  /* Home vertical feed slide (dvh − bottom nav) */
-  --feed-viewport-height: calc(100dvh - 4rem);
+  /* Home vertical feed: true viewport (bottom nav floats above) */
+  --feed-viewport-height: 100dvh;
 }
 
 @media (min-width: 768px) {
@@ -68,6 +68,36 @@ iframe[data-touch-blocked="true"] {
   height: var(--feed-viewport-height);
   min-height: var(--feed-viewport-height);
   max-height: var(--feed-viewport-height);
+}
+
+/* Mobile home: fixed stage from top edge; site header/nav float above */
+.feed-shell--mobile-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
+}
+
+@supports (height: 100dvh) {
+  .feed-shell--mobile-stage {
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
+  }
+}
+
+html.feed-home-active,
+html.feed-home-active body {
+  overflow: hidden;
+  height: 100%;
+  min-height: 100dvh;
+  overscroll-behavior: none;
 }
 
 .feed-scroll {

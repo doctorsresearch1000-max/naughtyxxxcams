@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Suspense, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { DesktopHomeCatalog } from "@/components/desktop/DesktopHomeCatalog";
 import { HomeVerticalFeed } from "@/components/feed/HomeVerticalFeed";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
@@ -10,7 +10,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function FeedFallback() {
   return (
-    <div className="feed-shell flex items-center justify-center bg-black">
+    <div className="feed-shell feed-shell--mobile-stage flex items-center justify-center bg-black">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#39FF14]/30 border-t-[#39FF14]" />
     </div>
   );
@@ -35,17 +35,30 @@ export function PersistedHomeFeed({
     everHome.current = true;
   }
 
-  if (!everHome.current) {
+  const visible = pathname === "/";
+  const mounted = everHome.current;
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    const lock = mounted && visible && !isDesktop;
+    root.classList.toggle("feed-home-active", lock);
+    return () => {
+      root.classList.remove("feed-home-active");
+    };
+  }, [mounted, visible, isDesktop]);
+
+  if (!mounted) {
     return null;
   }
-
-  const visible = pathname === "/";
 
   return (
     <div
       className={
         visible
-          ? "relative z-20 flex h-full min-h-[var(--feed-viewport-height)] flex-1 flex-col"
+          ? isDesktop
+            ? "relative z-20 flex h-full min-h-[var(--feed-viewport-height)] flex-1 flex-col"
+            : "pointer-events-none fixed inset-0 z-[25] h-0 w-full max-w-md mx-auto"
           : "pointer-events-none invisible fixed -left-[9999px] top-0 h-0 w-0 overflow-hidden"
       }
       aria-hidden={!visible}
@@ -55,9 +68,11 @@ export function PersistedHomeFeed({
         <DesktopHomeCatalog />
       ) : (
         <SessionAudioProvider>
-          <Suspense fallback={<FeedFallback />}>
-            <HomeVerticalFeed initialPerformers={initialPerformers} />
-          </Suspense>
+          <div className={visible && !isDesktop ? "pointer-events-auto h-full w-full" : "h-full w-full"}>
+            <Suspense fallback={<FeedFallback />}>
+              <HomeVerticalFeed initialPerformers={initialPerformers} />
+            </Suspense>
+          </div>
         </SessionAudioProvider>
       )}
     </div>
