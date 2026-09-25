@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
@@ -50,21 +50,21 @@ export function FeedActionRail({
   const [saved, setSaved] = useState(false);
   const [following, setFollowing] = useState(false);
 
-  const syncLibraryState = () => {
+  const syncLibraryState = useCallback(() => {
     if (!isAuthenticated) return;
     setSaved(isBookmarked(feedKey));
     setFollowing(isFollowing(feedKey));
-  };
+  }, [feedKey, isAuthenticated]);
 
   useEffect(() => {
     syncLibraryState();
-  }, [feedKey, isAuthenticated]);
+  }, [syncLibraryState]);
 
   useEffect(() => {
     const onLib = () => syncLibraryState();
     window.addEventListener("nx-library-update", onLib);
     return () => window.removeEventListener("nx-library-update", onLib);
-  }, [feedKey, isAuthenticated]);
+  }, [syncLibraryState]);
 
   if (!isActive) return null;
 

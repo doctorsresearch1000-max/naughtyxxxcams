@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type PointerEvent } from "react";
+import { useEffect, useMemo, type PointerEvent } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
@@ -46,14 +46,23 @@ export function LiveFeedCard({
     performer.nameClean || performer.name,
   );
   const affiliateUrl = performer.embedPlan.roomAffiliateUrl;
-  const modelRef = {
-    feedKey: performer.feedKey,
-    nameClean: performer.nameClean,
-    name: performer.name,
-    posterUrl: performer.posterUrl,
-    profilePath: profileHref,
-    savedAt: Date.now(),
-  };
+  const modelRef = useMemo(
+    () => ({
+      feedKey: performer.feedKey,
+      nameClean: performer.nameClean,
+      name: performer.name,
+      posterUrl: performer.posterUrl,
+      profilePath: profileHref,
+      savedAt: Date.now(),
+    }),
+    [
+      performer.feedKey,
+      performer.nameClean,
+      performer.name,
+      performer.posterUrl,
+      profileHref,
+    ],
+  );
 
   const onCardPointerDownCapture = (e: PointerEvent<HTMLElement>) => {
     if (!isActive) return;
@@ -81,6 +90,7 @@ export function LiveFeedCard({
     recordView(modelRef);
   }, [
     isActive,
+    modelRef,
     performer.feedKey,
     performer.nameClean,
     performer.name,

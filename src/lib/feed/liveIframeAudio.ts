@@ -105,21 +105,15 @@ export function setFeedCardAudio(wantSound: boolean, gesture: boolean): void {
   applyDirectPlayerAudioFromGesture(wantSound);
 }
 
-export function setActiveFeedIframePointerEvents(_enabled: boolean): void {
-  /* no-op */
-}
+/** @deprecated No-op — pointer events are managed on each LiveEmbed iframe. */
+export function setActiveFeedIframePointerEvents(): void {}
 
 export function getActiveFeedAudioTarget(): null {
   return null;
 }
 
-export function registerActiveFeedAudioTarget(_target?: unknown): void {
-  /* no-op */
-}
+/** @deprecated No-op — direct cross-origin embed per card. */
+export function registerActiveFeedAudioTarget(): void {}
 
-export function postLiveIframeAudio(
-  _wantSound?: boolean,
-  _options?: { force?: boolean },
-): void {
-  /* no-op */
-}
+/** @deprecated No-op — use setFeedEmbedIframeAudible / applyDirectPlayerAudioFromGesture. */
+export function postLiveIframeAudio(): void {}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RESUME_FEED_QUERY } from "@/lib/feed/continueWatchingStorage";
 import { LiveFeedCard } from "@/components/feed/LiveFeedCard";
@@ -97,11 +97,12 @@ function HomeVerticalFeedInner() {
   const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount, 1);
 
   useEffect(() => {
+    if (!onHome) return;
     muteAllFeedEmbedIframes();
     if (!muted) {
       applyDirectPlayerAudioFromGesture(true);
     }
-  }, [activeIndex, muted]);
+  }, [activeIndex, muted, onHome]);
 
   const handleRegisterIframe = useCallback(
     (win: Window | null) => {

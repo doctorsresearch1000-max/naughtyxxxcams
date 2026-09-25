@@ -26,7 +26,7 @@ export function LiveCommentTicker({
   const timerRef = useRef<number | null>(null);
   const commentLocale = useMemo(
     () => detectStreamCommentLocale(performer),
-    [performer.feedKey, performer.characteristic?.languages],
+    [performer],
   );
 
   useEffect(() => {
