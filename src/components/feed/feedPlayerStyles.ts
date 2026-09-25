@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
-export const FEED_PLAYER_FILL_SCALE = 3.15;
+/** Full-height iframe already fills 9:16; extra scale only crops quality. */
+export const FEED_PLAYER_FILL_SCALE = 1;
 export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 35%";
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
