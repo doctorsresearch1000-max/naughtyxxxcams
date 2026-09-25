@@ -6,13 +6,12 @@ import { IconVolumeOff } from "@/components/icons/LineIcons";
 
 type SessionAudioOverlayProps = {
   visible: boolean;
-  onUnlockPointerDown: () => void;
 };
 
-export function SessionAudioOverlay({
-  visible,
-  onUnlockPointerDown,
-}: SessionAudioOverlayProps) {
+/**
+ * Non-blocking hint only — taps must reach the cross-origin player iframe.
+ */
+export function SessionAudioOverlay({ visible }: SessionAudioOverlayProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,24 +21,17 @@ export function SessionAudioOverlay({
   if (!mounted || !visible) return null;
 
   return createPortal(
-    <button
-      type="button"
-      onPointerDown={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onUnlockPointerDown();
-      }}
-      className="pointer-events-auto fixed left-1/2 top-[40%] z-[8000] max-w-[90vw] -translate-x-1/2 touch-manipulation active:scale-[0.98]"
-      style={{ touchAction: "manipulation" }}
-      aria-label="Tap screen for sound"
+    <div
+      className="pointer-events-none fixed inset-0 z-[8000] flex items-start justify-center pt-[38%]"
+      aria-live="polite"
     >
-      <div className="rounded-2xl border border-pink-500/40 bg-black/90 px-6 py-3 text-center text-sm font-bold text-white shadow-2xl shadow-pink-900/50 backdrop-blur-md">
+      <div className="max-w-[90vw] rounded-2xl border border-pink-500/40 bg-black/85 px-6 py-3 text-center text-sm font-bold text-white shadow-2xl shadow-pink-900/50 backdrop-blur-md">
         <span className="mb-2 flex justify-center text-white">
           <IconVolumeOff size={28} strokeWidth={1.65} />
         </span>
-        Tap for sound
+        Tap the live video to enable sound
       </div>
-    </button>,
+    </div>,
     document.body,
   );
 }

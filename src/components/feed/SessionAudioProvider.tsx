@@ -129,10 +129,7 @@ export function SessionAudioProvider({
   return (
     <SessionAudioContext.Provider value={value}>
       {children}
-      <SessionAudioOverlay
-        visible={showOverlay}
-        onUnlockPointerDown={unlockFromPointerDown}
-      />
+      <SessionAudioOverlay visible={showOverlay} />
     </SessionAudioContext.Provider>
   );
 }
