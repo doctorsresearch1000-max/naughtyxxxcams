@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { AppChrome } from "@/components/layout/AppChrome";
 import { AppProviders } from "@/components/layout/AppProviders";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
@@ -40,18 +40,7 @@ export default function RootLayout({
         </div>
         <AppChrome />
         </AppProviders>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-CH205SN6QR"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CH205SN6QR');
-          `}
-        </Script>
+        <GoogleAnalytics gaId="G-CH205SN6QR" />
       </body>
     </html>
   );
