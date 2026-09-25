@@ -1,11 +1,11 @@
 import type { CSSProperties } from "react";
 
 /** Zoom inside cross-origin Streamate iframe to fill 9:16 (mobile feed framing). */
-export const FEED_PLAYER_FILL_SCALE = 2.75;
+export const FEED_PLAYER_FILL_SCALE = 3.22;
 /** Slightly above center so the scaled frame tucks under the header overlay. */
 export const FEED_PLAYER_TRANSFORM_ORIGIN = "center 33%";
 /** Nudge up after centering (covers top letterbox inside the embed). */
-export const FEED_PLAYER_TRANSLATE_Y = "-52%";
+export const FEED_PLAYER_TRANSLATE_Y = "-50%";
 
 export function feedSlideBoxStyle(heightPx: number): CSSProperties {
   return {
