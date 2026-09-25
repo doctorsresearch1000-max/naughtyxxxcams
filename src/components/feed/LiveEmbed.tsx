@@ -1,6 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  claimWarmStreamIframe,
+  peekWarmStream,
+} from "@/lib/feed/streamEmbedWarmup";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import { useFeedSlideHeightPx } from "@/components/feed/FeedViewportContext";
 import {
@@ -22,6 +32,8 @@ type LiveEmbedProps = {
   sessionMuted: boolean;
   /** Overrides feed viewport height (desktop player shells). */
   viewportHeightPx?: number;
+  /** Faster poster handoff when iframe was pre-warmed on hover. */
+  fastReveal?: boolean;
   onIframeWindow?: (win: Window | null) => void;
 };
 
@@ -37,12 +49,15 @@ export function LiveEmbed({
   isArmed,
   sessionMuted,
   viewportHeightPx,
+  fastReveal = false,
   onIframeWindow,
 }: LiveEmbedProps) {
   const contextHeightPx = useFeedSlideHeightPx();
   const slideHeightPx = viewportHeightPx ?? contextHeightPx;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const [frameLoaded, setFrameLoaded] = useState(false);
+  const [claimedWarm, setClaimedWarm] = useState(false);
 
   const initialSrc = embedPlan.playerSrcMuted ?? embedPlan.outerEmbedSrc;
 
@@ -53,7 +68,66 @@ export function LiveEmbed({
 
   useEffect(() => {
     setFrameLoaded(false);
+    setClaimedWarm(false);
   }, [embedKey, initialSrc]);
+
+  useLayoutEffect(() => {
+    if (!mountIframe || !initialSrc) return;
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    if (iframeRef.current && stage.contains(iframeRef.current)) {
+      return;
+    }
+
+    const warm = peekWarmStream(embedKey) ? claimWarmStreamIframe(embedKey) : null;
+    if (!warm) return;
+
+    const iframe = warm.iframe;
+    iframe.className = `feed-embed-iframe ${
+      isActive ? "pointer-events-auto" : "pointer-events-none"
+    }`;
+    Object.assign(iframe.style, feedEmbedIframeStyle(slideHeightPx));
+    iframe.setAttribute("data-naughty-feed-embed", "true");
+    iframe.setAttribute(
+      "data-player-src-muted",
+      embedPlan.playerSrcMuted ?? "",
+    );
+    iframe.setAttribute(
+      "data-player-src-unmuted",
+      embedPlan.playerSrcUnmuted ?? "",
+    );
+    iframe.title = `Live stream ${embedKey}`;
+
+    stage.appendChild(iframe);
+    iframeRef.current = iframe;
+    setClaimedWarm(true);
+
+    if (warm.loaded) {
+      setFrameLoaded(true);
+    } else {
+      iframe.addEventListener("load", () => setFrameLoaded(true), {
+        once: true,
+      });
+    }
+  }, [
+    embedKey,
+    mountIframe,
+    initialSrc,
+    isActive,
+    slideHeightPx,
+    embedPlan.playerSrcMuted,
+    embedPlan.playerSrcUnmuted,
+  ]);
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    iframe.className = `feed-embed-iframe ${
+      isActive ? "pointer-events-auto" : "pointer-events-none"
+    }`;
+  }, [isActive]);
 
   useEffect(() => {
     if (!isActive) {
@@ -94,9 +168,14 @@ export function LiveEmbed({
 
   const rootStyle = feedEmbedRootStyle(slideHeightPx);
   const posterStyle = feedPosterImageStyle(slideHeightPx);
-  const posterClass = `feed-embed-poster transition-opacity duration-500 ease-out ${
+  const posterFadeMs = fastReveal ? 120 : 500;
+  const posterClass = `feed-embed-poster ease-out ${
     hidePoster ? "opacity-0" : "opacity-100"
   }`;
+  const posterStyleWithFade = {
+    ...posterStyle,
+    transition: `opacity ${posterFadeMs}ms ease-out`,
+  };
 
   if (!isArmed || !embedPlan.canMountInteractivePlayer) {
     return (
@@ -106,7 +185,7 @@ export function LiveEmbed({
           posterUrl={posterUrl}
           priority={isActive || isArmed}
           className={posterClass}
-          style={posterStyle}
+          style={posterStyleWithFade}
         />
       </div>
     );
@@ -129,30 +208,34 @@ export function LiveEmbed({
         posterUrl={posterUrl}
         priority={isActive || isArmed}
         className={`pointer-events-none ${posterClass}`}
-        style={posterStyle}
+        style={posterStyleWithFade}
       />
 
       {mountIframe && initialSrc ? (
         <div
+          ref={stageRef}
           className="feed-embed-stage"
           style={feedEmbedStageStyle(slideHeightPx)}
         >
-          <iframe
-            key={`${embedKey}-${embedPlan.mode}`}
-            ref={bindIframeRef}
-            src={initialSrc}
-            title={`Live stream ${embedKey}`}
-            data-naughty-feed-embed="true"
-            data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
-            data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
-            className={`feed-embed-iframe ${
-              isActive ? "pointer-events-auto" : "pointer-events-none"
-            }`}
-            style={feedEmbedIframeStyle(slideHeightPx)}
-            allow={WIDGET_IFRAME_ALLOW}
-            referrerPolicy="strict-origin-when-cross-origin"
-            onLoad={() => setFrameLoaded(true)}
-          />
+          {!claimedWarm ? (
+            <iframe
+              key={`${embedKey}-${embedPlan.mode}`}
+              ref={bindIframeRef}
+              src={initialSrc}
+              title={`Live stream ${embedKey}`}
+              data-naughty-feed-embed="true"
+              data-player-src-muted={embedPlan.playerSrcMuted ?? ""}
+              data-player-src-unmuted={embedPlan.playerSrcUnmuted ?? ""}
+              className={`feed-embed-iframe ${
+                isActive ? "pointer-events-auto" : "pointer-events-none"
+              }`}
+              style={feedEmbedIframeStyle(slideHeightPx)}
+              allow={WIDGET_IFRAME_ALLOW}
+              referrerPolicy="strict-origin-when-cross-origin"
+              loading="eager"
+              onLoad={() => setFrameLoaded(true)}
+            />
+          ) : null}
         </div>
       ) : null}
     </div>

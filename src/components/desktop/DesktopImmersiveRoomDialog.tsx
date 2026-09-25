@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, type MouseEvent } from "react";
+import { useCallback, useEffect, type MouseEvent } from "react";
+import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { DesktopLivePlayerShell } from "@/components/desktop/DesktopLivePlayerShell";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import {
@@ -40,6 +41,11 @@ export function DesktopImmersiveRoomDialog({
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
+
+  useEffect(() => {
+    if (!performer) return;
+    warmPerformerStream(performer.feedKey, performer.embedPlan);
+  }, [performer]);
 
   if (!performer) return null;
 

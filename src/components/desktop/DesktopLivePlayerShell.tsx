@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 
 type DesktopLivePlayerShellProps = {
   performer: FeedPerformer;
@@ -20,6 +21,10 @@ export function DesktopLivePlayerShell({
 }: DesktopLivePlayerShellProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heightPx, setHeightPx] = useState(640);
+
+  useEffect(() => {
+    warmPerformerStream(performer.feedKey, performer.embedPlan);
+  }, [performer.feedKey, performer.embedPlan]);
 
   useEffect(() => {
     if (fillParent) {
@@ -59,6 +64,7 @@ export function DesktopLivePlayerShell({
         isArmed={true}
         sessionMuted={sessionMuted}
         viewportHeightPx={heightPx}
+        fastReveal
       />
     </div>
   );

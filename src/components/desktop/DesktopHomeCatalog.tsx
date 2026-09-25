@@ -14,6 +14,7 @@ import {
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
+import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
   search: "",
@@ -67,6 +68,10 @@ export function DesktopHomeCatalog() {
   const [roomPerformer, setRoomPerformer] = useState<FeedPerformer | null>(
     null,
   );
+
+  useEffect(() => {
+    injectStreamPreconnects();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -225,8 +230,8 @@ export function DesktopHomeCatalog() {
           <div>
             <h1 className="text-2xl font-black tracking-tight">Live cams</h1>
             <p className="text-sm text-zinc-500">
-              Hover to preview thumbnails · Click to open the live API player ·
-              Sign up for chat & premium tools
+              Hover a card to pre-load the stream · Click for instant live
+              player · Sign up for chat & premium tools
             </p>
           </div>
           <p className="text-xs font-semibold text-zinc-500">

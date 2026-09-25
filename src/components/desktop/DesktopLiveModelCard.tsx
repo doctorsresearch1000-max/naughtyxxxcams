@@ -10,6 +10,7 @@ import {
   estimateViewerCount,
   formatViewerCount,
 } from "@/lib/feed/viewerCount";
+import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { performerDisplayHandle } from "@/lib/profile/performerHandle";
 
 type DesktopLiveModelCardProps = {
@@ -69,10 +70,16 @@ export function DesktopLiveModelCard({
   const isNew = (performer.systemScore ?? 0) < 0.22;
   const hoverSnap = performer.liveSnapshotURL || performer.posterUrl;
 
+  const prewarm = () => {
+    warmPerformerStream(performer.feedKey, performer.embedPlan);
+  };
+
   return (
     <button
       type="button"
       onClick={onSelect}
+      onMouseEnter={prewarm}
+      onFocus={prewarm}
       className="group relative flex flex-col overflow-hidden rounded-lg bg-zinc-900 text-left ring-1 ring-zinc-800/80 transition hover:ring-[#39FF14]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#39FF14]"
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-800">
