@@ -21,6 +21,7 @@ import {
 } from "@/lib/auth/telegramSession";
 import { TelegramLoginSheet } from "@/components/auth/TelegramLoginSheet";
 import { finalizeTelegramBrowserLogin } from "@/lib/auth/finalizeTelegramLogin";
+import { clearPendingFollow } from "@/lib/auth/telegramPendingFollow";
 import {
   mergeUserLibraries,
   pullTelegramLibrary,
@@ -125,6 +126,7 @@ export function TelegramAuthProvider({
   const closeSheet = useCallback(() => {
     setSheetOpen(false);
     pendingActionRef.current = null;
+    clearPendingFollow();
   }, []);
 
   const value = useMemo(

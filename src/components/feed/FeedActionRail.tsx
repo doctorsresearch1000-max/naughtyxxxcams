@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
+import { stashPendingFollow } from "@/lib/auth/telegramPendingFollow";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPoster } from "@/components/feed/FeedPoster";
@@ -96,6 +97,7 @@ export function FeedActionRail({
     }
 
     if (!isAuthenticated) {
+      stashPendingFollow(modelRef);
       requireAuth(
         {
           title: `Inicia sesión para seguir a ${displayName}`,

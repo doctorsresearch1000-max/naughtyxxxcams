@@ -11,7 +11,7 @@
     "dev": "next dev",
     "build:next": "next build",
     "build": "opennextjs-cloudflare build",
-    "deploy": "npm run build && opennextjs-cloudflare deploy",
+    "deploy": "NEXT_PUBLIC_SITE_URL=https://naughtyxxxcams.com NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=NaughtyXXXcamsbot npm run build && opennextjs-cloudflare deploy",
     "preview": "npm run build && opennextjs-cloudflare preview",
     "lint": "next lint"
   },

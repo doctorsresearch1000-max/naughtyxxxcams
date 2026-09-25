@@ -4,3 +4,7 @@ CRAK_TOKEN=tu-token-uuid
 CRAK_API_KEY=tu-api-key
 CRAK_BRANDS=
 CRAK_LANDING_ID=https://t.ajrkmx3.com/214769/8780/32489?po=6533&aff_sub5=SF_0060G0000041mDN
+
+# Telegram Login Widget (server secret — set in Cloudflare: wrangler secret put TELEGRAM_BOT_TOKEN)
+TELEGRAM_BOT_TOKEN=
+NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=NaughtyXXXcamsbot
