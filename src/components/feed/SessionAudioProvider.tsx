@@ -131,7 +131,7 @@ export function SessionAudioProvider({
   );
 }
 
-/** Silence every player when the active slide changes (no iframe src reload). */
+/** Silence every player when the active slide changes (force muted embed src). */
 export function muteFeedOnSlideChange(): void {
   silenceAllStreamSlots();
   silenceAllFeedEmbedIframes();

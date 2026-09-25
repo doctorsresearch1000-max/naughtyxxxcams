@@ -3,7 +3,10 @@ import {
   applyStreamIframeStagePresentation,
   clearStreamIframeDockStyles,
 } from "@/lib/feed/feedStreamPresentation";
-import { postLiveIframeAudio } from "@/lib/feed/liveIframeAudio";
+import {
+  postLiveIframeAudio,
+  setFeedEmbedIframeAudible,
+} from "@/lib/feed/liveIframeAudio";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 type StreamSlot = {
@@ -198,7 +201,7 @@ export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
 export function silenceAllStreamSlots(exceptFeedKey?: string): void {
   for (const [key, slot] of slots.entries()) {
     if (exceptFeedKey && key === exceptFeedKey) continue;
-    postLiveIframeAudio(slot.iframe, "session-audio-mute");
+    setFeedEmbedIframeAudible(slot.iframe, false);
   }
 }
 

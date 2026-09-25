@@ -108,14 +108,15 @@ export function getAllFeedPlayerIframes(): HTMLIFrameElement[] {
 }
 
 /**
- * Hard silence every feed player except optional active iframe (slide change).
+ * Hard silence feed players (muted `src` + postMessage). Streamate ignores
+ * parent postMessage after gesture-unmute; src swap is required.
  */
 export function silenceAllFeedEmbedIframes(
   exceptIframe?: HTMLIFrameElement | null,
 ): void {
   for (const iframe of getAllFeedPlayerIframes()) {
     if (exceptIframe && iframe === exceptIframe) continue;
-    postLiveIframeAudio(iframe, "session-audio-mute");
+    setFeedEmbedIframeAudible(iframe, false);
   }
 }
 
