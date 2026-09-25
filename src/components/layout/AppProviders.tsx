@@ -9,9 +9,5 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     preloadLiveCommentPools();
   }, []);
 
-  return (
-    <TelegramAuthProvider>
-      <RegistrationPaywallProvider>{children}</RegistrationPaywallProvider>
-    </TelegramAuthProvider>
-  );
+  return <TelegramAuthProvider>{children}</TelegramAuthProvider>;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { useCallback, useEffect } from "react";
 import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { DesktopLivePlayerShell } from "@/components/desktop/DesktopLivePlayerShell";
@@ -107,26 +108,22 @@ export function DesktopImmersiveRoomDialog({
           </p>
 
           <div className="mt-6 flex flex-col gap-2.5">
-            <a
+            <AffiliateOutboundLink
               href={affiliateUrl}
-              target="_blank"
-              rel="nofollow noopener sponsored"
               className="flex w-full items-center justify-between rounded-xl bg-[#39FF14] px-4 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:brightness-110"
             >
               Open private chat
               <span aria-hidden>💬</span>
-            </a>
+            </AffiliateOutboundLink>
 
             {showToy ? (
-              <a
+              <AffiliateOutboundLink
                 href={affiliateUrl}
-                target="_blank"
-                rel="nofollow noopener sponsored"
                 className="flex w-full items-center justify-between rounded-xl border border-[#39FF14]/35 bg-zinc-950 px-4 py-3.5 text-sm font-semibold text-zinc-100 transition hover:border-[#39FF14]"
               >
                 Interactive toy
                 <span aria-hidden>🎮</span>
-              </a>
+              </AffiliateOutboundLink>
             ) : null}
           </div>
 

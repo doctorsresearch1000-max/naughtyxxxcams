@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 
 type ConversionSlideSheetProps = {
   open: boolean;
@@ -56,14 +57,12 @@ export function ConversionSlideSheet({
             Want to chat privately? Click the CTA below to start talking with
             her right now.
           </p>
-          <a
+          <AffiliateOutboundLink
             href={affiliateUrl}
-            target="_blank"
-            rel="nofollow noopener"
             className="mt-4 flex w-full items-center justify-center rounded-full bg-[#39FF14] px-4 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition active:scale-[0.98]"
           >
             Chat with {modelName}
-          </a>
+          </AffiliateOutboundLink>
           <button
             type="button"
             onClick={onClose}

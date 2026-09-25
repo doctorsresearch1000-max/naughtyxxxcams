@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ApiAvatar } from "@/components/media/ApiAvatar";
 import { useMemo, useState } from "react";
+import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
@@ -37,28 +38,24 @@ function PrimaryCta({
 }) {
   if (!live) {
     return (
-      <a
+      <AffiliateOutboundLink
         href={href}
-        target="_blank"
-        rel="nofollow noopener sponsored"
         className="flex w-full items-center justify-between rounded-full border border-white/15 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 ring-1 ring-white/5 transition active:scale-[0.99]"
       >
         <span>Notify me when she&apos;s live</span>
         <span aria-hidden>🔔</span>
-      </a>
+      </AffiliateOutboundLink>
     );
   }
 
   return (
-    <a
+    <AffiliateOutboundLink
       href={href}
-      target="_blank"
-      rel="nofollow noopener sponsored"
       className="flex w-full items-center justify-between rounded-full bg-[#39FF14] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[#00FF7F] active:scale-[0.99]"
     >
       <span>{label}</span>
       <span aria-hidden>💬</span>
-    </a>
+    </AffiliateOutboundLink>
   );
 }
 

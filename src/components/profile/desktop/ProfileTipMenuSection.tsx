@@ -1,5 +1,6 @@
 import type { TipMenuItem } from "@/lib/profile/buildTipMenu";
 import { ProfileSectionCard } from "@/components/profile/desktop/ProfileSectionCard";
+import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 
 type ProfileTipMenuSectionProps = {
   items: TipMenuItem[];
@@ -18,10 +19,8 @@ export function ProfileTipMenuSection({
       <ul className="divide-y divide-zinc-800 rounded-xl border border-zinc-800 bg-zinc-950/80">
         {items.map((item) => (
           <li key={item.id}>
-            <a
+            <AffiliateOutboundLink
               href={affiliateUrl}
-              target="_blank"
-              rel="nofollow noopener sponsored"
               className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-zinc-900/80"
             >
               <span className="text-sm font-semibold text-zinc-100">
@@ -36,7 +35,7 @@ export function ProfileTipMenuSection({
               >
                 {item.tokens} tk
               </span>
-            </a>
+            </AffiliateOutboundLink>
           </li>
         ))}
       </ul>

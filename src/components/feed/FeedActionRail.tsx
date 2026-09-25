@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
-import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
+import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
@@ -25,9 +25,7 @@ type FeedActionRailProps = {
   modelRef: SavedModelRef;
   posterUrl: string;
   profileLabel?: string;
-  modelName: string;
   affiliateUrl: string;
-  conversionReady: boolean;
   isActive: boolean;
   muted: boolean;
   onToggleMute: () => void;
@@ -40,13 +38,11 @@ export function FeedActionRail({
   profileLabel = "Model",
   modelName,
   affiliateUrl,
-  conversionReady,
   isActive,
   muted,
   onToggleMute,
 }: FeedActionRailProps) {
   const { requireAuth, isAuthenticated } = useTelegramAuth();
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const [following, setFollowing] = useState(false);
 
@@ -81,21 +77,11 @@ export function FeedActionRail({
   };
 
   const onChatAttempt = () => {
-    if (!conversionReady) {
-      setSheetOpen(true);
-      return;
-    }
-    window.open(affiliateUrl, "_blank", "noopener,noreferrer");
+    openAffiliateOutbound(affiliateUrl);
   };
 
   return (
     <>
-      <ConversionSlideSheet
-        open={sheetOpen}
-        modelName={modelName}
-        affiliateUrl={affiliateUrl}
-        onClose={() => setSheetOpen(false)}
-      />
       <div
         data-feed-action-rail="true"
         className="pointer-events-none absolute bottom-0 right-0 top-0 z-[45] w-[4.75rem]"

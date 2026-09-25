@@ -164,9 +164,7 @@ export function LiveFeedCard({
         modelRef={modelRef}
         posterUrl={performer.posterUrl}
         profileLabel={handleLabel}
-        modelName={modelName}
         affiliateUrl={affiliateUrl}
-        conversionReady={conversionReady}
         isActive={isActive}
         muted={muted}
         onToggleMute={toggleMutedFromPointerDown}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { DesktopLivePlayerShell } from "@/components/desktop/DesktopLivePlayerShell";
 import { ProfileGallerySection } from "@/components/profile/desktop/ProfileGallerySection";
@@ -63,15 +64,13 @@ export function ModelProfileDesktopView({
             visible={true}
             className="w-full !py-3.5 !text-sm"
           />
-          <a
+          <AffiliateOutboundLink
             href={model.affiliateUrl}
-            target="_blank"
-            rel="nofollow noopener sponsored"
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#39FF14]/50 bg-zinc-950 px-4 py-3.5 text-sm font-extrabold text-white transition hover:bg-[#39FF14]/10 hover:ring-1 hover:ring-[#39FF14]/40"
           >
             Go to private room
             <span aria-hidden>→</span>
-          </a>
+          </AffiliateOutboundLink>
         </ProfileWelcomeHero>
 
         <div className="relative h-[min(72vh,820px)] min-h-[480px] overflow-hidden rounded-2xl border border-zinc-800 bg-black ring-1 ring-[#39FF14]/15">
