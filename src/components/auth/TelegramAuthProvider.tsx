@@ -14,6 +14,7 @@ import {
   type TelegramUser,
 } from "@/lib/auth/telegramSession";
 import { TelegramLoginSheet } from "@/components/auth/TelegramLoginSheet";
+import { useTelegramMiniAppBootstrap } from "@/hooks/useTelegramMiniAppBootstrap";
 
 type TelegramAuthContextValue = {
   user: TelegramUser | null;
@@ -21,6 +22,7 @@ type TelegramAuthContextValue = {
   login: () => void;
   logout: () => void;
   requireAuth: (reason: string) => boolean;
+  completeLoginVerified: (user: TelegramUser) => void;
 };
 
 const TelegramAuthContext = createContext<TelegramAuthContextValue | null>(
@@ -75,11 +77,13 @@ export function TelegramAuthProvider({
     [user],
   );
 
-  const completeLogin = useCallback((next: TelegramUser) => {
+  const completeLoginVerified = useCallback((next: TelegramUser) => {
     writeTelegramUser(next);
     setUser(next);
     setSheetOpen(false);
   }, []);
+
+  useTelegramMiniAppBootstrap(completeLoginVerified, !user);
 
   const value = useMemo(
     () => ({
@@ -88,8 +92,9 @@ export function TelegramAuthProvider({
       login,
       logout,
       requireAuth,
+      completeLoginVerified,
     }),
-    [user, login, logout, requireAuth],
+    [user, login, logout, requireAuth, completeLoginVerified],
   );
 
   return (
@@ -99,7 +104,7 @@ export function TelegramAuthProvider({
         open={sheetOpen}
         reason={sheetReason}
         onClose={() => setSheetOpen(false)}
-        onAuthenticated={completeLogin}
+        onAuthenticated={completeLoginVerified}
       />
     </TelegramAuthContext.Provider>
   );

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { TelegramProfileConnect } from "@/components/auth/TelegramProfileConnect";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { ContinueWatchingCard } from "@/components/profile/ContinueWatchingCard";
 import {
@@ -25,7 +26,7 @@ const SPONSOR_BANNER_SRC =
   "https://www.imglnky.com/8780/PMKT-1157_DESIGN-16618_BannersWebinar_AmyPose_300100.gif";
 
 export function ProfilePageView() {
-  const { user, isAuthenticated, login, logout } = useTelegramAuth();
+  const { user, isAuthenticated, login } = useTelegramAuth();
   const likes = useLikedModels();
   const bookmarks = useBookmarkedModels();
   const following = useFollowingModels();
@@ -74,43 +75,7 @@ export function ProfilePageView() {
         </div>
       </header>
 
-      <section className="mt-4 rounded-2xl border border-white/10 bg-[#1C1C1E] p-3">
-        {isAuthenticated ? (
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Image
-                src={avatarSrc}
-                alt=""
-                width={32}
-                height={32}
-                className="h-8 w-8 rounded-full object-cover"
-                unoptimized
-              />
-              <p className="text-xs text-zinc-300">Synced with Telegram</p>
-            </div>
-            <button
-              type="button"
-              onClick={logout}
-              className="rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-[#39FF14]/40"
-            >
-              Log out
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-zinc-400">
-              Connect Telegram to save likes, bookmarks, and collections.
-            </p>
-            <button
-              type="button"
-              onClick={login}
-              className="shrink-0 rounded-full bg-[#2AABEE] px-4 py-2 text-xs font-bold text-white"
-            >
-              Telegram Login / Sync
-            </button>
-          </div>
-        )}
-      </section>
+      <TelegramProfileConnect />
 
       <section className="mt-5 flex justify-center" aria-label="Sponsored offer">
         <Link
