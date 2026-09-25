@@ -8,6 +8,7 @@ import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
+import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
 import { useDesktopGatedAction } from "@/hooks/useDesktopGatedAction";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
@@ -106,7 +107,13 @@ export function ModelProfileSlushyView({
   };
 
   return (
-    <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white">
+    <>
+      <ModelProfileDesktopView
+        model={model}
+        seoIntro={seoIntro}
+        recommended={recommended}
+      />
+    <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white lg:hidden">
       <ConversionSlideSheet
         open={sheetOpen}
         modelName={model.displayName}
@@ -392,5 +399,6 @@ export function ModelProfileSlushyView({
         </section>
       </div>
     </main>
+    </>
   );
 }

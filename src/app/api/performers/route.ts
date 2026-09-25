@@ -3,7 +3,7 @@ import { fetchHomeFeedPerformers } from "@/lib/crackrevenue/fetchHomeFeedPerform
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const performers = await fetchHomeFeedPerformers(36);
+  const performers = await fetchHomeFeedPerformers();
   return Response.json(
     {
       count: performers.length,

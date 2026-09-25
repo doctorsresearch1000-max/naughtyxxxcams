@@ -20,6 +20,8 @@ type LiveEmbedProps = {
   isActive: boolean;
   isArmed: boolean;
   sessionMuted: boolean;
+  /** Overrides feed viewport height (desktop player shells). */
+  viewportHeightPx?: number;
   onIframeWindow?: (win: Window | null) => void;
 };
 
@@ -34,9 +36,11 @@ export function LiveEmbed({
   isActive,
   isArmed,
   sessionMuted,
+  viewportHeightPx,
   onIframeWindow,
 }: LiveEmbedProps) {
-  const slideHeightPx = useFeedSlideHeightPx();
+  const contextHeightPx = useFeedSlideHeightPx();
+  const slideHeightPx = viewportHeightPx ?? contextHeightPx;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [frameLoaded, setFrameLoaded] = useState(false);
 

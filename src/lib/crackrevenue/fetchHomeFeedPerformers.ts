@@ -9,16 +9,15 @@ import {
 } from "@/lib/feed/filterPerformers";
 import { performerHasNativeEmbedFeed } from "@/lib/feed/nativeIframeFeed";
 
-const DEFAULT_TARGET = 36;
-const MAX_PAGES = 12;
+const MAX_PAGES = 20;
 const PAGE_SIZE = 100;
 
 /**
- * Paginates performers-ext until the home feed has enough models with a native
- * `iframeFeedURL` (hybrid purecam player), excluding promo/redirect embeds.
+ * Paginates performers-ext until all live models with a native `iframeFeedURL`
+ * are collected (hybrid purecam player), excluding promo/redirect embeds.
  */
 export async function fetchHomeFeedPerformers(
-  targetCount = DEFAULT_TARGET,
+  targetCount?: number,
 ): Promise<FeedPerformer[]> {
   const seen = new Set<string>();
   const pool: CrackPerformer[] = [];
@@ -40,9 +39,12 @@ export async function fetchHomeFeedPerformers(
       pool.push(performer);
     }
 
-    if (filterFeedPerformers(pool).length >= targetCount) break;
     if (batch.length < PAGE_SIZE) break;
   }
 
-  return filterFeedPerformers(pool).slice(0, targetCount);
+  const all = filterFeedPerformers(pool);
+  if (typeof targetCount === "number" && targetCount > 0) {
+    return all.slice(0, targetCount);
+  }
+  return all;
 }

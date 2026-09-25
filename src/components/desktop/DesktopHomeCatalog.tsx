@@ -13,6 +13,7 @@ import {
   type DesktopShowTypeFilter,
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
   search: "",
@@ -23,6 +24,8 @@ const DEFAULT_FILTERS: DesktopCatalogFilters = {
   categorySlug: "trending",
   sort: "trending",
 };
+
+const GRID_BATCH = 36;
 
 function SelectField<T extends string>({
   label,
@@ -89,12 +92,22 @@ export function DesktopHomeCatalog() {
     [performers, filters],
   );
 
+  const { visibleCount, sentinelRef, hasMore } = useInfiniteScrollBatch(
+    filtered.length,
+    GRID_BATCH,
+  );
+
+  const visiblePerformers = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount],
+  );
+
   const liveCount = useMemo(
     () => performers.filter((p) => p.live !== false).length,
     [performers],
   );
 
-  const openRoomPreview = useCallback((performer: FeedPerformer) => {
+  const openLiveRoom = useCallback((performer: FeedPerformer) => {
     setRoomPerformer(performer);
   }, []);
 
@@ -212,12 +225,13 @@ export function DesktopHomeCatalog() {
           <div>
             <h1 className="text-2xl font-black tracking-tight">Live cams</h1>
             <p className="text-sm text-zinc-500">
-              Hover to preview · Click a card for the room preview · Sign up only
-              to watch the full stream or chat
+              Hover to preview thumbnails · Click to open the live API player ·
+              Sign up for chat & premium tools
             </p>
           </div>
           <p className="text-xs font-semibold text-zinc-500">
-            {filtered.length} models
+            Showing {visiblePerformers.length} of {filtered.length} ·{" "}
+            {performers.length} live in catalog
           </p>
         </div>
 
@@ -239,16 +253,24 @@ export function DesktopHomeCatalog() {
           </p>
         ) : null}
 
-        {filtered.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-            {filtered.map((performer) => (
-              <DesktopLiveModelCard
-                key={performer.feedKey}
-                performer={performer}
-                onSelect={() => openRoomPreview(performer)}
-              />
-            ))}
-          </div>
+        {visiblePerformers.length > 0 ? (
+          <>
+            <div className="grid grid-cols-3 gap-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+              {visiblePerformers.map((performer) => (
+                <DesktopLiveModelCard
+                  key={performer.feedKey}
+                  performer={performer}
+                  onSelect={() => openLiveRoom(performer)}
+                />
+              ))}
+            </div>
+            <div ref={sentinelRef} className="h-8 w-full" aria-hidden />
+            {hasMore ? (
+              <p className="py-4 text-center text-xs font-semibold text-zinc-500">
+                Loading more models…
+              </p>
+            ) : null}
+          </>
         ) : null}
       </div>
     </main>
