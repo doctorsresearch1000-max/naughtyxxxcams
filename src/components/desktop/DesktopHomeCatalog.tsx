@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRegistrationPaywall } from "@/components/auth/RegistrationPaywallProvider";
-import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
+import { DesktopImmersiveRoomDialog } from "@/components/desktop/DesktopImmersiveRoomDialog";
 import { DesktopLiveModelCard } from "@/components/desktop/DesktopLiveModelCard";
 import {
   applyDesktopCatalogFilters,
@@ -15,7 +13,6 @@ import {
   type DesktopShowTypeFilter,
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
   search: "",
@@ -46,7 +43,7 @@ function SelectField<T extends string>({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as T)}
-        className="h-9 rounded-lg border border-white/10 bg-[#1a1a1c] px-2 text-xs font-semibold text-zinc-100 outline-none focus:border-[#39FF14]/50"
+        className="h-9 rounded-lg border border-zinc-800 bg-zinc-900 px-2 text-xs font-semibold text-zinc-100 outline-none focus:border-[#39FF14]/60 focus:ring-1 focus:ring-[#39FF14]/25"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -59,14 +56,14 @@ function SelectField<T extends string>({
 }
 
 export function DesktopHomeCatalog() {
-  const router = useRouter();
-  const { isAuthenticated } = useTelegramAuth();
-  const { requireAccount } = useRegistrationPaywall();
   const [performers, setPerformers] = useState<FeedPerformer[]>([]);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
     "loading",
   );
   const [filters, setFilters] = useState<DesktopCatalogFilters>(DEFAULT_FILTERS);
+  const [roomPerformer, setRoomPerformer] = useState<FeedPerformer | null>(
+    null,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -97,22 +94,22 @@ export function DesktopHomeCatalog() {
     [performers],
   );
 
-  const openModel = useCallback(
-    (performer: FeedPerformer) => {
-      if (!requireAccount()) return;
-      const path = performerProfilePathFromPerformer(performer);
-      if (path) router.push(path);
-    },
-    [requireAccount, router],
-  );
+  const openRoomPreview = useCallback((performer: FeedPerformer) => {
+    setRoomPerformer(performer);
+  }, []);
 
   const setCategory = (id: string | null) => {
     setFilters((f) => ({ ...f, categorySlug: id }));
   };
 
   return (
-    <main className="hidden min-h-0 w-full flex-1 flex-col bg-black text-white lg:flex">
-      <div className="border-b border-white/10 bg-[#0a0a0a]/95 px-4 pb-3 pt-[calc(var(--app-header-height)+0.75rem)] backdrop-blur-md">
+    <main className="hidden min-h-0 w-full flex-1 flex-col bg-zinc-950 text-white lg:flex">
+      <DesktopImmersiveRoomDialog
+        performer={roomPerformer}
+        onClose={() => setRoomPerformer(null)}
+      />
+
+      <div className="border-b border-zinc-800/80 bg-zinc-950/95 px-4 pb-3 pt-[calc(var(--app-header-height)+0.75rem)] backdrop-blur-md">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3">
           <div className="relative">
             <span
@@ -128,7 +125,7 @@ export function DesktopHomeCatalog() {
                 setFilters((f) => ({ ...f, search: e.target.value }))
               }
               placeholder="Search models, tags, categories…"
-              className="h-11 w-full rounded-xl border border-white/10 bg-[#141416] pl-10 pr-24 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-[#39FF14]/40"
+              className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-900 pl-10 pr-24 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-[#39FF14]/50 focus:ring-1 focus:ring-[#39FF14]/20"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-[#39FF14]/15 px-2.5 py-1 text-xs font-bold text-[#39FF14]">
               {liveCount} live
@@ -166,7 +163,7 @@ export function DesktopHomeCatalog() {
                 { value: "couple", label: "Couple" },
               ]}
             />
-            <label className="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-white/10 bg-[#1a1a1c] px-3 text-xs font-semibold text-zinc-200">
+            <label className="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-3 text-xs font-semibold text-zinc-200">
               <input
                 type="checkbox"
                 checked={filters.interactiveToy}
@@ -192,8 +189,8 @@ export function DesktopHomeCatalog() {
                   onClick={() => setCategory(pill.id)}
                   className={`shrink-0 rounded-lg px-3 py-2 text-[11px] font-bold tracking-wide transition ${
                     active
-                      ? "bg-[#2f7bff] text-white"
-                      : "bg-[#1c1c1e] text-zinc-300 hover:bg-[#2a2a2e]"
+                      ? "bg-[#39FF14] text-black shadow-[0_0_16px_rgba(57,255,20,0.25)]"
+                      : "bg-zinc-900 text-zinc-300 ring-1 ring-zinc-800 hover:ring-[#39FF14]/35"
                   }`}
                 >
                   {pill.label}
@@ -202,7 +199,7 @@ export function DesktopHomeCatalog() {
             })}
             <Link
               href="/explore"
-              className="shrink-0 rounded-lg bg-[#1c1c1e] px-3 py-2 text-[11px] font-bold tracking-wide text-zinc-300 hover:bg-[#2a2a2e]"
+              className="shrink-0 rounded-lg bg-zinc-900 px-3 py-2 text-[11px] font-bold tracking-wide text-zinc-300 ring-1 ring-zinc-800 transition hover:text-[#39FF14] hover:ring-[#39FF14]/35"
             >
               DIRECTORY
             </Link>
@@ -215,8 +212,8 @@ export function DesktopHomeCatalog() {
           <div>
             <h1 className="text-2xl font-black tracking-tight">Live cams</h1>
             <p className="text-sm text-zinc-500">
-              Hover to preview · Click to open immersive room view
-              {isAuthenticated ? "" : " · Sign in to watch"}
+              Hover to preview · Click a card for the room preview · Sign up only
+              to watch the full stream or chat
             </p>
           </div>
           <p className="text-xs font-semibold text-zinc-500">
@@ -231,13 +228,13 @@ export function DesktopHomeCatalog() {
         ) : null}
 
         {loadState === "empty" ? (
-          <p className="rounded-xl bg-[#1c1c1e] p-6 text-center text-sm text-zinc-400">
+          <p className="rounded-xl bg-zinc-900 p-6 text-center text-sm text-zinc-400 ring-1 ring-zinc-800">
             Live performers are temporarily unavailable. Try again in a moment.
           </p>
         ) : null}
 
         {loadState === "ready" && filtered.length === 0 ? (
-          <p className="rounded-xl bg-[#1c1c1e] p-6 text-center text-sm text-zinc-400">
+          <p className="rounded-xl bg-zinc-900 p-6 text-center text-sm text-zinc-400 ring-1 ring-zinc-800">
             No models match your filters. Try clearing a category or search.
           </p>
         ) : null}
@@ -248,7 +245,7 @@ export function DesktopHomeCatalog() {
               <DesktopLiveModelCard
                 key={performer.feedKey}
                 performer={performer}
-                onSelect={() => openModel(performer)}
+                onSelect={() => openRoomPreview(performer)}
               />
             ))}
           </div>

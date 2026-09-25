@@ -73,9 +73,9 @@ export function DesktopLiveModelCard({
     <button
       type="button"
       onClick={onSelect}
-      className="group relative flex flex-col overflow-hidden rounded-lg bg-[#141416] text-left ring-1 ring-white/5 transition hover:ring-[#39FF14]/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#39FF14]"
+      className="group relative flex flex-col overflow-hidden rounded-lg bg-zinc-900 text-left ring-1 ring-zinc-800/80 transition hover:ring-[#39FF14]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#39FF14]"
     >
-      <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#1C1C1E]">
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-800">
         <Image
           src={performer.posterUrl}
           alt={handle}
@@ -97,11 +97,11 @@ export function DesktopLiveModelCard({
         ) : null}
 
         <div className="absolute left-1.5 top-1.5 flex flex-wrap gap-1">
-          <span className="rounded-md bg-[#ff2d8a] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
+          <span className="rounded-md bg-[#39FF14] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-black">
             Live
           </span>
           {isNew ? (
-            <span className="rounded-md bg-[#2f7bff] px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+            <span className="rounded-md bg-zinc-950/80 px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#39FF14] ring-1 ring-[#39FF14]/40">
               New
             </span>
           ) : null}
@@ -114,7 +114,7 @@ export function DesktopLiveModelCard({
             {lang}
           </span>
           {hasInteractiveToy(performer) ? (
-            <span className="rounded-md bg-violet-600/90 px-1.5 py-0.5 text-[9px] font-bold text-white">
+            <span className="rounded-md bg-zinc-950/80 px-1.5 py-0.5 text-[9px] font-bold text-[#39FF14] ring-1 ring-[#39FF14]/35">
               Toy
             </span>
           ) : null}

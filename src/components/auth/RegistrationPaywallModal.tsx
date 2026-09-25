@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 
 const BENEFITS = [
-  { emoji: "⭐", text: "Acceso a contenido exclusivo" },
-  { emoji: "💬", text: "Chat directo con creadoras" },
-  { emoji: "🎁", text: "Gemas gratis al registrarte" },
-  { emoji: "🔒", text: "Desbloqueo total de salas en vivo" },
+  { emoji: "⭐", text: "Exclusive live rooms & premium shows" },
+  { emoji: "💬", text: "Direct chat with your favorite models" },
+  { emoji: "🎁", text: "Free gems when you sign up" },
+  { emoji: "🔒", text: "Full access to HD streams & perks" },
 ] as const;
 
 type RegistrationPaywallModalProps = {
@@ -66,26 +66,26 @@ export function RegistrationPaywallModal({
     <div className="fixed inset-0 z-[100010] flex items-center justify-center p-4">
       <button
         type="button"
-        aria-label="Cerrar"
-        className="absolute inset-0 bg-black/75 backdrop-blur-md"
+        aria-label="Close"
+        className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="registration-paywall-title"
-        className="relative z-10 w-full max-w-md rounded-2xl border border-white/10 bg-[#121214] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.65)]"
+        className="relative z-10 w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.65)]"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-zinc-400 transition hover:bg-white/10 hover:text-white"
-          aria-label="Cerrar modal"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+          aria-label="Close dialog"
         >
           <span className="text-xl leading-none">&times;</span>
         </button>
 
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#39FF14]/10 ring-1 ring-[#39FF14]/25">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#39FF14]/10 ring-1 ring-[#39FF14]/30">
           <SparkIcon />
         </div>
 
@@ -93,10 +93,10 @@ export function RegistrationPaywallModal({
           id="registration-paywall-title"
           className="text-center text-2xl font-black tracking-tight text-white"
         >
-          REGÍSTRATE GRATIS
+          SIGN UP FREE
         </h2>
         <p className="mt-2 text-center text-sm text-zinc-400">
-          Crea tu cuenta en segundos y desbloquea la experiencia completa.
+          Create your account in seconds and unlock the full live experience.
         </p>
 
         <ul className="mt-6 space-y-3">
@@ -118,7 +118,7 @@ export function RegistrationPaywallModal({
           onClick={onRegister}
           className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-[#39FF14] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_32px_rgba(57,255,20,0.4)] transition hover:brightness-110 active:scale-[0.99]"
         >
-          Crear cuenta gratis
+          Create free account
           <span aria-hidden className="text-lg">→</span>
         </button>
 
@@ -127,7 +127,7 @@ export function RegistrationPaywallModal({
           onClick={onLogin}
           className="mt-4 w-full text-center text-sm font-semibold text-zinc-400 transition hover:text-[#39FF14]"
         >
-          ¿Ya tienes cuenta? Inicia sesión
+          Already have an account? Log in
         </button>
       </div>
     </div>
