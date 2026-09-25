@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, type MouseEvent } from "react";
+import { useCallback, useEffect } from "react";
 import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { DesktopLivePlayerShell } from "@/components/desktop/DesktopLivePlayerShell";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
@@ -13,9 +13,8 @@ import {
   performerMetaLine,
   performerStarRating,
 } from "@/lib/desktop/desktopCatalogFilters";
-import { useDesktopGatedAction } from "@/hooks/useDesktopGatedAction";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
+import { buildJerkmateAffiliateUrl } from "@/lib/crackrevenue/jerkmateAffiliate";
 
 type DesktopImmersiveRoomDialogProps = {
   performer: FeedPerformer | null;
@@ -36,8 +35,6 @@ export function DesktopImmersiveRoomDialog({
   performer,
   onClose,
 }: DesktopImmersiveRoomDialogProps) {
-  const { runGated, gateAnchorClick } = useDesktopGatedAction();
-
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -52,14 +49,10 @@ export function DesktopImmersiveRoomDialog({
   const name = performer.nameClean || performer.name || "Model";
   const age = performer.characteristic?.age;
   const profilePath = performerProfilePathFromPerformer(performer);
-  const affiliateUrl = buildModelAffiliateUrl(performer);
+  const affiliateUrl = buildJerkmateAffiliateUrl(performer);
   const rating = performerStarRating(performer);
   const showToy = hasInteractiveToy(performer);
   const tags = performerDisplayTags(performer);
-
-  const openChat = (e: MouseEvent<HTMLAnchorElement>) => {
-    gateAnchorClick(e, affiliateUrl);
-  };
 
   return (
     <div className="fixed inset-0 z-[100005] hidden items-center justify-center p-4 lg:flex">
@@ -117,8 +110,7 @@ export function DesktopImmersiveRoomDialog({
             <a
               href={affiliateUrl}
               target="_blank"
-              rel="nofollow noopener"
-              onClick={openChat}
+              rel="nofollow noopener sponsored"
               className="flex w-full items-center justify-between rounded-xl bg-[#39FF14] px-4 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:brightness-110"
             >
               Open private chat
@@ -126,18 +118,15 @@ export function DesktopImmersiveRoomDialog({
             </a>
 
             {showToy ? (
-              <button
-                type="button"
-                onClick={() =>
-                  runGated(() => {
-                    window.open(affiliateUrl, "_blank", "noopener,noreferrer");
-                  })
-                }
+              <a
+                href={affiliateUrl}
+                target="_blank"
+                rel="nofollow noopener sponsored"
                 className="flex w-full items-center justify-between rounded-xl border border-[#39FF14]/35 bg-zinc-950 px-4 py-3.5 text-sm font-semibold text-zinc-100 transition hover:border-[#39FF14]"
               >
                 Interactive toy
                 <span aria-hidden>🎮</span>
-              </button>
+              </a>
             ) : null}
           </div>
 
@@ -151,8 +140,8 @@ export function DesktopImmersiveRoomDialog({
           ) : null}
 
           <p className="mt-4 text-[11px] leading-relaxed text-zinc-500">
-            Stream plays instantly from the live API. Sign up is only required
-            for chat and premium interactions.
+            Stream plays instantly from the live API. Chat opens her official
+            Jerkmate room in a new tab.
           </p>
         </aside>
       </div>

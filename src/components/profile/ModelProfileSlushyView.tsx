@@ -9,7 +9,6 @@ import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideShe
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
-import { useDesktopGatedAction } from "@/hooks/useDesktopGatedAction";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
 
@@ -31,20 +30,17 @@ function PrimaryCta({
   href,
   live,
   label,
-  onGatedClick,
 }: {
   href: string;
   live: boolean;
   label: string;
-  onGatedClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
   if (!live) {
     return (
       <a
         href={href}
         target="_blank"
-        rel="nofollow noopener"
-        onClick={onGatedClick}
+        rel="nofollow noopener sponsored"
         className="flex w-full items-center justify-between rounded-full border border-white/15 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 ring-1 ring-white/5 transition active:scale-[0.99]"
       >
         <span>Notify me when she&apos;s live</span>
@@ -57,8 +53,7 @@ function PrimaryCta({
     <a
       href={href}
       target="_blank"
-      rel="nofollow noopener"
-      onClick={onGatedClick}
+      rel="nofollow noopener sponsored"
       className="flex w-full items-center justify-between rounded-full bg-[#39FF14] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[#00FF7F] active:scale-[0.99]"
     >
       <span>{label}</span>
@@ -76,7 +71,6 @@ export function ModelProfileSlushyView({
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const conversionReady = useDelayedConversionCta(true, 15_000);
-  const { gateAnchorClick, runGated } = useDesktopGatedAction();
   const chatCtaLabel = `Chat with ${model.displayName}`;
   const likeKey = `profile-${model.profileSlug}`;
 
@@ -98,13 +92,7 @@ export function ModelProfileSlushyView({
     recommended[0]?.profilePath ??
     "/explore";
 
-  const openSheet = () => {
-    runGated(() => setSheetOpen(true));
-  };
-
-  const gatedAffiliateClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    gateAnchorClick(e, model.affiliateUrl);
-  };
+  const openSheet = () => setSheetOpen(true);
 
   return (
     <>
@@ -212,7 +200,6 @@ export function ModelProfileSlushyView({
               href={model.affiliateUrl}
               live={isLive}
               label={chatCtaLabel}
-              onGatedClick={gatedAffiliateClick}
             />
           ) : (
             <button
@@ -226,7 +213,6 @@ export function ModelProfileSlushyView({
           )}
           <button
             type="button"
-            onClick={() => runGated(() => {})}
             className="flex w-full items-center justify-between rounded-full border border-white/10 bg-[#1C1C1E] px-5 py-4 text-sm font-semibold text-white ring-1 ring-white/5"
           >
             <span>Save to favorites</span>
@@ -386,7 +372,6 @@ export function ModelProfileSlushyView({
               href={model.affiliateUrl}
               live={isLive}
               label={chatCtaLabel}
-              onGatedClick={gatedAffiliateClick}
             />
             <Link
               href={nextProfilePath}

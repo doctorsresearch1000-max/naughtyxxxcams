@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, type MouseEvent } from "react";
+import { useMemo } from "react";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { DesktopLivePlayerShell } from "@/components/desktop/DesktopLivePlayerShell";
 import { ProfileGallerySection } from "@/components/profile/desktop/ProfileGallerySection";
@@ -16,8 +16,6 @@ import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import { buildTipMenu } from "@/lib/profile/buildTipMenu";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
-import { useDesktopGatedAction } from "@/hooks/useDesktopGatedAction";
-
 type ModelProfileDesktopViewProps = {
   model: ModelProfileView;
   seoIntro: string;
@@ -29,7 +27,6 @@ export function ModelProfileDesktopView({
   seoIntro,
   recommended,
 }: ModelProfileDesktopViewProps) {
-  const { gateAnchorClick } = useDesktopGatedAction();
   const likeKey = `profile-${model.profileSlug}`;
 
   const feedPerformer = useMemo(() => {
@@ -52,10 +49,6 @@ export function ModelProfileDesktopView({
     [model.performer],
   );
 
-  const gatedAffiliateClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    gateAnchorClick(e, model.affiliateUrl);
-  };
-
   return (
     <main className="hidden min-h-screen bg-zinc-950 pb-16 text-white lg:block">
       <div className="mx-auto max-w-[1600px] space-y-6 px-4 pt-[calc(var(--app-header-height)+1rem)]">
@@ -73,8 +66,7 @@ export function ModelProfileDesktopView({
           <a
             href={model.affiliateUrl}
             target="_blank"
-            rel="nofollow noopener"
-            onClick={gatedAffiliateClick}
+            rel="nofollow noopener sponsored"
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#39FF14]/50 bg-zinc-950 px-4 py-3.5 text-sm font-extrabold text-white transition hover:bg-[#39FF14]/10 hover:ring-1 hover:ring-[#39FF14]/40"
           >
             Go to private room
