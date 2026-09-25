@@ -6,8 +6,13 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+import {
+  normalizeLoginPrompt,
+  type TelegramLoginPrompt,
+} from "@/components/auth/telegramAuthTypes";
 import {
   readSyncToken,
   readTelegramUser,
@@ -28,7 +33,10 @@ type TelegramAuthContextValue = {
   isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
-  requireAuth: (reason: string) => boolean;
+  requireAuth: (
+    prompt: string | TelegramLoginPrompt,
+    onSuccess?: () => void,
+  ) => boolean;
   completeLoginVerified: (user: TelegramUser) => void;
 };
 
@@ -51,7 +59,10 @@ export function TelegramAuthProvider({
 }) {
   const [user, setUser] = useState<TelegramUser | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [sheetReason, setSheetReason] = useState("Sign in to continue");
+  const [sheetPrompt, setSheetPrompt] = useState<TelegramLoginPrompt>({
+    reason: "Sign in to continue",
+  });
+  const pendingActionRef = useRef<(() => void) | null>(null);
 
   const sync = useCallback(() => {
     setUser(readTelegramUser());
@@ -73,7 +84,13 @@ export function TelegramAuthProvider({
   }, [user]);
 
   const login = useCallback(() => {
-    setSheetReason("Connect Telegram to sync likes & playlists");
+    setSheetPrompt({
+      title: "Continuar con Telegram",
+      description:
+        "Guarda likes, colecciones y modelos que sigues en todos tus dispositivos.",
+      ctaLabel: "Continuar con Telegram",
+    });
+    pendingActionRef.current = null;
     setSheetOpen(true);
   }, []);
 
@@ -83,9 +100,13 @@ export function TelegramAuthProvider({
   }, []);
 
   const requireAuth = useCallback(
-    (reason: string) => {
-      if (user) return true;
-      setSheetReason(reason);
+    (prompt: string | TelegramLoginPrompt, onSuccess?: () => void) => {
+      if (user) {
+        onSuccess?.();
+        return true;
+      }
+      setSheetPrompt(normalizeLoginPrompt(prompt));
+      pendingActionRef.current = onSuccess ?? null;
       setSheetOpen(true);
       return false;
     },
@@ -93,10 +114,19 @@ export function TelegramAuthProvider({
   );
 
   const completeLoginVerified = useCallback((next: TelegramUser) => {
+    const pending = pendingActionRef.current;
+    pendingActionRef.current = null;
     writeTelegramUser(next);
     setUser(next);
     setSheetOpen(false);
-    void syncTelegramLibraryAfterLogin(next);
+    void syncTelegramLibraryAfterLogin(next).finally(() => {
+      pending?.();
+    });
+  }, []);
+
+  const closeSheet = useCallback(() => {
+    setSheetOpen(false);
+    pendingActionRef.current = null;
   }, []);
 
   useTelegramMiniAppBootstrap(completeLoginVerified, !user);
@@ -118,8 +148,8 @@ export function TelegramAuthProvider({
       {children}
       <TelegramLoginSheet
         open={sheetOpen}
-        reason={sheetReason}
-        onClose={() => setSheetOpen(false)}
+        prompt={sheetPrompt}
+        onClose={closeSheet}
         onAuthenticated={completeLoginVerified}
       />
     </TelegramAuthContext.Provider>

@@ -54,7 +54,11 @@ export function FeedActionRail({
     modelName?.replace(/^@+/, "").trim() || profileLabel.replace(/^@+/, "");
 
   const syncLibraryState = useCallback(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      setSaved(false);
+      setFollowing(false);
+      return;
+    }
     setSaved(isBookmarked(feedKey));
     setFollowing(isFollowing(feedKey));
   }, [feedKey, isAuthenticated]);
@@ -69,6 +73,11 @@ export function FeedActionRail({
     return () => window.removeEventListener("nx-library-update", onLib);
   }, [syncLibraryState]);
 
+  const applyFollow = useCallback(() => {
+    const next = toggleFollowing(modelRef);
+    setFollowing(next);
+  }, [modelRef]);
+
   if (!isActive) return null;
 
   const onToggleSave = () => {
@@ -78,9 +87,36 @@ export function FeedActionRail({
   };
 
   const onToggleFollow = () => {
-    if (!requireAuth("Sign in with Telegram to follow models")) return;
-    const next = toggleFollowing(modelRef);
-    setFollowing(next);
+    if (following) {
+      if (!requireAuth("Inicia sesión para gestionar los modelos que sigues")) {
+        return;
+      }
+      applyFollow();
+      return;
+    }
+
+    if (!isAuthenticated) {
+      requireAuth(
+        {
+          title: `Inicia sesión para seguir a ${displayName}`,
+          description:
+            "Guarda tus modelos favoritos y accede a ellos cuando vuelvas.",
+          edgeAttached: true,
+          ctaLabel: "Continuar con Telegram",
+        },
+        () => {
+          if (!isFollowing(feedKey)) {
+            const next = toggleFollowing(modelRef);
+            setFollowing(next);
+          } else {
+            setFollowing(true);
+          }
+        },
+      );
+      return;
+    }
+
+    applyFollow();
   };
 
   const onChatAttempt = () => {

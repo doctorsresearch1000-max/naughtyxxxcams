@@ -5,10 +5,11 @@ import { verifyTelegramWidgetLogin } from "@/lib/auth/telegramClient";
 import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
 import type { TelegramUser } from "@/lib/auth/telegramSession";
+import type { TelegramLoginPrompt } from "@/components/auth/telegramAuthTypes";
 
 type TelegramLoginSheetProps = {
   open: boolean;
-  reason: string;
+  prompt: TelegramLoginPrompt;
   onClose: () => void;
   onAuthenticated: (user: TelegramUser) => void;
 };
@@ -18,13 +19,21 @@ const BOT_USERNAME =
 
 export function TelegramLoginSheet({
   open,
-  reason,
+  prompt,
   onClose,
   onAuthenticated,
 }: TelegramLoginSheetProps) {
   const widgetRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const title = prompt.title ?? "Telegram Login";
+  const description =
+    prompt.description ??
+    prompt.reason ??
+    "Inicia sesión para guardar tu actividad y sincronizarla entre dispositivos.";
+  const ctaLabel = prompt.ctaLabel ?? "Continuar con Telegram";
+  const edgeAttached = prompt.edgeAttached ?? false;
 
   const handleAuth = useCallback(
     async (auth: TelegramWidgetAuthPayload) => {
@@ -33,7 +42,7 @@ export function TelegramLoginSheet({
       const user = await verifyTelegramWidgetLogin(auth);
       setBusy(false);
       if (!user) {
-        setError("Telegram verification failed. Try again.");
+        setError("No se pudo verificar Telegram. Inténtalo de nuevo.");
         return;
       }
       onAuthenticated(user);
@@ -54,6 +63,15 @@ export function TelegramLoginSheet({
     return teardown;
   }, [open, handleAuth]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   if (!open) return null;
 
   const mockSync = () => {
@@ -66,45 +84,74 @@ export function TelegramLoginSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-[100002] flex items-end justify-center bg-black/70 p-4 sm:items-center">
+    <>
+      <button
+        type="button"
+        aria-label="Cerrar"
+        className="fixed inset-0 z-[100000] bg-black/30 transition-opacity duration-300 opacity-100"
+        onClick={onClose}
+      />
       <div
-        className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#1C1C1E] p-5 shadow-2xl"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="telegram-login-sheet-title"
+        className={`fixed bottom-0 left-0 right-0 z-[100001] mx-auto w-full max-w-md transform transition-transform duration-300 ease-out translate-y-0 ${
+          edgeAttached ? "" : "px-3 pb-3"
+        }`}
+        style={
+          edgeAttached
+            ? { paddingBottom: "env(safe-area-inset-bottom, 0px)" }
+            : { paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }
+        }
       >
-        <h2 className="text-lg font-bold text-white">Telegram Login</h2>
-        <p className="mt-2 text-sm text-zinc-400">{reason}</p>
-        <p className="mt-3 text-xs text-zinc-500">
-          Likes, bookmarks, and playlists require Telegram sync so your
-          activity follows you across devices.
-        </p>
-
-        <div className="mt-5 flex min-h-[48px] flex-col items-center justify-center gap-3">
-          {BOT_USERNAME ? (
-            <div ref={widgetRef} />
-          ) : (
-            <button
-              type="button"
-              onClick={mockSync}
-              className="w-full rounded-full bg-[#2AABEE] py-3 text-sm font-bold text-white transition active:scale-[0.98]"
-            >
-              Sync with Telegram (dev)
-            </button>
-          )}
-          {busy ? (
-            <p className="text-xs text-zinc-500">Verifying with Telegram…</p>
-          ) : null}
-          {error ? <p className="text-xs text-red-400">{error}</p> : null}
-        </div>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-4 w-full rounded-full border border-zinc-700 py-2.5 text-sm font-semibold text-zinc-300"
+        <div
+          className={
+            edgeAttached
+              ? "border-t border-white/10 bg-[#1C1C1E]/98 px-5 pb-5 pt-3 shadow-[0_-12px_48px_rgba(0,0,0,0.65)] backdrop-blur-xl rounded-t-2xl"
+              : "rounded-3xl border border-white/10 bg-[#1C1C1E]/98 p-5 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+          }
         >
-          Not now
-        </button>
+          <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-zinc-600" />
+          <h2
+            id="telegram-login-sheet-title"
+            className="text-center text-base font-black text-white"
+          >
+            {title}
+          </h2>
+          <p className="mt-2 text-center text-sm leading-relaxed text-zinc-400">
+            {description}
+          </p>
+
+          <div className="mt-5 flex min-h-[52px] flex-col items-center justify-center gap-3">
+            <p className="text-center text-xs font-bold uppercase tracking-wide text-[#2AABEE]">
+              {ctaLabel}
+            </p>
+            {BOT_USERNAME ? (
+              <div ref={widgetRef} className="flex w-full justify-center" />
+            ) : (
+              <button
+                type="button"
+                onClick={mockSync}
+                className="w-full rounded-full bg-[#2AABEE] py-3 text-sm font-bold text-white transition active:scale-[0.98]"
+              >
+                {ctaLabel} (dev)
+              </button>
+            )}
+            {busy ? (
+              <p className="text-xs text-zinc-500">Verificando con Telegram…</p>
+            ) : null}
+            {error ? <p className="text-xs text-red-400">{error}</p> : null}
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-4 w-full rounded-full py-2 text-xs font-semibold text-zinc-500 transition hover:text-zinc-300"
+          >
+            Ahora no
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

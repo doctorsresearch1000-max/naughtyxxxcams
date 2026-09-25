@@ -87,10 +87,13 @@ export function TelegramProfileConnect() {
       ) : (
         <div className="flex flex-col items-stretch gap-3">
           <p className="text-xs leading-relaxed text-zinc-400">
-            Sign in with Telegram to save likes, bookmarks, following, and
-            playlists. In the{" "}
-            <span className="text-zinc-200">Telegram Mini App</span>, you are
-            signed in automatically when opened from the bot.
+            Continúa con Telegram para guardar likes, colecciones y modelos que
+            sigues. En la{" "}
+            <span className="text-zinc-200">Mini App de Telegram</span> inicias
+            sesión automáticamente al abrir desde el bot.
+          </p>
+          <p className="text-center text-xs font-bold text-[#2AABEE]">
+            Continuar con Telegram
           </p>
           <div
             ref={widgetRef}
