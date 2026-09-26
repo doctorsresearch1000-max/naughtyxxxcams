@@ -3,7 +3,7 @@ import { profileCanonicalUrl } from "@/lib/seo/canonical";
 import { pickVariant } from "@/lib/seo/seoVariants";
 
 /** Max recommended length for SERP titles (programmatic trim). */
-export const MODEL_PROFILE_TITLE_MAX = 70;
+export const MODEL_PROFILE_TITLE_MAX = 60;
 
 /** Meta description soft cap. */
 export const MODEL_PROFILE_DESCRIPTION_MAX = 160;

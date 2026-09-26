@@ -21,10 +21,27 @@ export function DesktopLivePlayerShell({
 }: DesktopLivePlayerShellProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heightPx, setHeightPx] = useState(640);
+  const [playerReady, setPlayerReady] = useState(false);
 
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setPlayerReady(true);
+        }
+      },
+      { rootMargin: "120px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!playerReady) return;
     warmPerformerStream(performer.feedKey, performer.embedPlan);
-  }, [performer.feedKey, performer.embedPlan]);
+  }, [playerReady, performer.feedKey, performer.embedPlan]);
 
   useEffect(() => {
     if (fillParent) {
@@ -56,16 +73,20 @@ export function DesktopLivePlayerShell({
       } ${className}`}
       style={fillParent ? undefined : { height: heightPx, minHeight: 480 }}
     >
-      <LiveEmbed
-        embedKey={performer.feedKey}
-        posterUrl={performer.posterUrl}
-        embedPlan={performer.embedPlan}
-        isActive={true}
-        isArmed={true}
-        sessionMuted={sessionMuted}
-        viewportHeightPx={heightPx}
-        fastReveal
-      />
+      {playerReady ? (
+        <LiveEmbed
+          embedKey={performer.feedKey}
+          posterUrl={performer.posterUrl}
+          embedPlan={performer.embedPlan}
+          isActive={true}
+          isArmed={true}
+          sessionMuted={sessionMuted}
+          viewportHeightPx={heightPx}
+          fastReveal
+          iframeLoading="lazy"
+          streamPriority="low"
+        />
+      ) : null}
     </div>
   );
 }

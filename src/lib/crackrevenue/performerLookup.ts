@@ -1,6 +1,9 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { fetchStreamatePerformers } from "@/lib/crackrevenue/api";
-import { performerProfileSlug } from "@/lib/profile/performerHandle";
+import {
+  performerProfileSlug,
+  performerProfileSlugLegacyCompact,
+} from "@/lib/profile/performerHandle";
 
 const SLUG_CACHE = new Map<string, { performer: CrackPerformer; at: number }>();
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -9,7 +12,8 @@ const MAX_PAGES = 12;
 function slugFromPerformer(p: CrackPerformer): string {
   return (
     performerProfileSlug(p.nameClean || p.name) ??
-    (p.nameClean || p.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "")
+    performerProfileSlug(p.itemId) ??
+    ""
   );
 }
 
@@ -54,12 +58,23 @@ export async function findPerformerByProfileSlug(
   const normalized = performerProfileSlug(slug);
   if (!normalized) return null;
 
-  const cached = SLUG_CACHE.get(normalized);
-  if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
-    return cached.performer;
+  const lookupSlugs = [
+    normalized,
+    performerProfileSlugLegacyCompact(normalized),
+  ].filter((value, index, arr) => value && arr.indexOf(value) === index);
+
+  for (const key of lookupSlugs) {
+    const cached = SLUG_CACHE.get(key);
+    if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
+      return cached.performer;
+    }
   }
 
-  let match = await scanLivePages(normalized);
+  let match: CrackPerformer | null = null;
+  for (const key of lookupSlugs) {
+    match = await scanLivePages(key);
+    if (match) break;
+  }
 
   if (!match) {
     for (let page = 1; page <= 4; page += 1) {
@@ -68,14 +83,19 @@ export async function findPerformerByProfileSlug(
         size: 100,
         page,
       });
-      match = findInPool(data.performers ?? [], normalized);
+      for (const key of lookupSlugs) {
+        match = findInPool(data.performers ?? [], key);
+        if (match) break;
+      }
       if (match) break;
       if ((data.performers ?? []).length < 100) break;
     }
   }
 
   if (match) {
-    SLUG_CACHE.set(normalized, { performer: match, at: Date.now() });
+    for (const key of lookupSlugs) {
+      SLUG_CACHE.set(key, { performer: match, at: Date.now() });
+    }
   }
 
   return match;

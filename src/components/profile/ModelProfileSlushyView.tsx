@@ -10,6 +10,7 @@ import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideShe
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
+import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
@@ -159,8 +160,8 @@ export function ModelProfileSlushyView({
         </section>
 
         <section className="px-5 pt-4 text-center">
-          <h1 className="text-3xl font-black tracking-tight">
-            {model.displayName}
+          <h1 className="text-2xl font-black leading-tight tracking-tight">
+            {seo.landerH1}
           </h1>
           <p className="mt-1 text-sm font-semibold text-zinc-400">
             {model.handle.startsWith("@") ? model.handle : `@${model.handle}`}
@@ -246,6 +247,10 @@ export function ModelProfileSlushyView({
           <ProfileSeoContentBlock seo={seo} />
         </section>
 
+        <section className="px-4 pt-6">
+          <ProfileFaqSection items={seo.faqItems} />
+        </section>
+
         <section className="px-4 pt-10">
           <h2 className="text-center text-xs font-black tracking-[0.25em] text-white">
             PRIVATE GALLERY
@@ -284,7 +289,7 @@ export function ModelProfileSlushyView({
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-2">
-            {filteredGallery.map((item) => (
+            {filteredGallery.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
@@ -296,6 +301,7 @@ export function ModelProfileSlushyView({
                   alt=""
                   fill
                   unoptimized
+                  loading={index === 0 ? "eager" : "lazy"}
                   className={`object-cover ${item.locked ? "blur-md brightness-50" : ""}`}
                   sizes="33vw"
                 />
@@ -331,6 +337,7 @@ export function ModelProfileSlushyView({
                       alt={friend.name}
                       fill
                       unoptimized
+                      loading="lazy"
                       className="object-cover"
                       sizes="144px"
                     />

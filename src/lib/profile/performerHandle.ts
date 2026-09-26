@@ -1,12 +1,20 @@
-/** Slug URL para `/profile/[handle]` (sin @, minúsculas, solo alfanumérico). */
+/** Slug URL para `/profile/[handle]` (minúsculas, guiones medios, sin @). */
 export function performerProfileSlug(raw?: string | null): string | null {
   if (!raw?.trim()) return null;
   const slug = decodeURIComponent(raw)
     .trim()
     .replace(/^@+/, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "");
+    .replace(/_/g, "-")
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
   return slug.length > 0 ? slug : null;
+}
+
+/** Legacy slug without hyphens (pre-normalization URLs). */
+export function performerProfileSlugLegacyCompact(slug: string): string {
+  return slug.replace(/-/g, "");
 }
 
 export function performerProfilePath(raw?: string | null): string | null {

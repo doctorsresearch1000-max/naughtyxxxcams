@@ -16,6 +16,7 @@ import {
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import { buildTipMenu } from "@/lib/profile/buildTipMenu";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
@@ -60,6 +61,7 @@ export function ModelProfileDesktopView({
           model={model}
           welcomeText={welcomeText}
           likeKey={likeKey}
+          landerH1={seo.landerH1}
         >
           <ChatWithModelCta
             modelName={model.displayName}
@@ -83,6 +85,8 @@ export function ModelProfileDesktopView({
         </div>
 
         <ProfileSeoContentBlock seo={seo} />
+
+        <ProfileFaqSection items={seo.faqItems} />
 
         <ProfileGallerySection items={model.galleryItems} />
 

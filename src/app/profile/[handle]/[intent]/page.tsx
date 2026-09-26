@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ModelProfileSlushyView } from "@/components/profile/ModelProfileSlushyView";
 import { ModelProfileJsonLd } from "@/components/seo/ModelProfileJsonLd";
+import { ProfileFaqJsonLd } from "@/components/seo/ProfileFaqJsonLd";
 import {
   generateUniqueSEOContent,
   modelViewToSeoInput,
@@ -70,6 +71,7 @@ export default async function ModelProfileIntentPage({ params }: PageProps) {
 
   return (
     <>
+      <ProfileFaqJsonLd items={seoContent.faqItems} />
       <ModelProfileJsonLd
         model={modelData}
         canonicalUrl={canonical}

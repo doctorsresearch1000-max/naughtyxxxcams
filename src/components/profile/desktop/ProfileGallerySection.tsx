@@ -10,7 +10,7 @@ export function ProfileGallerySection({ items }: ProfileGallerySectionProps) {
   return (
     <ProfileSectionCard title="Gallery" subtitle="Photos & highlights">
       <div className="grid grid-cols-3 gap-2 md:grid-cols-4 xl:grid-cols-6">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <div
             key={item.id}
             className="relative aspect-[3/4] overflow-hidden rounded-xl bg-zinc-950 ring-1 ring-zinc-800"
@@ -20,6 +20,7 @@ export function ProfileGallerySection({ items }: ProfileGallerySectionProps) {
               alt=""
               fill
               unoptimized
+              loading={index < 3 ? "eager" : "lazy"}
               className={`object-cover ${item.locked ? "blur-md brightness-50" : ""}`}
               sizes="16vw"
             />

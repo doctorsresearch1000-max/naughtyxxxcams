@@ -7,6 +7,7 @@ type ProfileWelcomeHeroProps = {
   model: ModelProfileView;
   welcomeText: string;
   likeKey: string;
+  landerH1: string;
   children?: import("react").ReactNode;
 };
 
@@ -14,6 +15,7 @@ export function ProfileWelcomeHero({
   model,
   welcomeText,
   likeKey,
+  landerH1,
   children,
 }: ProfileWelcomeHeroProps) {
   return (
@@ -30,8 +32,8 @@ export function ProfileWelcomeHero({
 
       <div className="min-w-0 flex-1 text-center lg:text-left">
         <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-          <h1 className="text-2xl font-black tracking-tight text-white">
-            {model.displayName}
+          <h1 className="text-xl font-black leading-snug tracking-tight text-white lg:text-2xl">
+            {landerH1}
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-[10px] font-black uppercase ${
@@ -61,6 +63,7 @@ export function ProfileWelcomeHero({
             fill
             className="object-cover"
             unoptimized
+            loading="lazy"
             sizes="192px"
           />
         </div>

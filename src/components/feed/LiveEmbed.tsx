@@ -54,6 +54,7 @@ type LiveEmbedProps = {
   streamPriority?: StreamLoadPriority;
   viewportHeightPx?: number;
   fastReveal?: boolean;
+  iframeLoading?: "lazy" | "eager";
   onIframeWindow?: (win: Window | null) => void;
 };
 
@@ -64,6 +65,7 @@ function wireIframeChrome(
   streamPriority: StreamLoadPriority,
   embedPlan: PerformerEmbedPlan,
   embedKey: string,
+  iframeLoading: "lazy" | "eager",
 ): void {
   applyStreamIframeStagePresentation(iframe, slideHeightPx, isActive);
   iframe.removeAttribute("data-nx-stream-slot");
@@ -74,7 +76,7 @@ function wireIframeChrome(
     embedPlan.playerSrcUnmuted ?? "",
   );
   iframe.title = `Live stream ${embedKey}`;
-  iframe.setAttribute("loading", "eager");
+  iframe.setAttribute("loading", iframeLoading);
   if (streamPriority === "high") {
     iframe.setAttribute("fetchpriority", "high");
   }
@@ -91,6 +93,7 @@ export function LiveEmbed({
   streamPriority = "auto",
   viewportHeightPx,
   fastReveal = false,
+  iframeLoading = "eager",
   onIframeWindow,
 }: LiveEmbedProps) {
   const contextHeightPx = useFeedSlideHeightPx();
@@ -253,6 +256,7 @@ export function LiveEmbed({
           streamPriority,
           embedPlan,
           embedKey,
+          iframeLoading,
         );
       });
 
@@ -290,6 +294,7 @@ export function LiveEmbed({
           streamPriority,
           embedPlan,
           embedKey,
+          iframeLoading,
         );
         if (isStreamSlotLoaded(embedKey)) {
           markFrameDocumentLoaded();
@@ -319,6 +324,7 @@ export function LiveEmbed({
         streamPriority,
         embedPlan,
         embedKey,
+        iframeLoading,
       );
       adoptInCardStreamSlot(embedKey, initialSrc, iframe, false);
       iframeRef.current = iframe;
@@ -360,6 +366,7 @@ export function LiveEmbed({
     isActive,
     slideHeightPx,
     streamPriority,
+    iframeLoading,
     markFrameDocumentLoaded,
     parkIframeToDock,
     signalActiveHandoff,
@@ -384,11 +391,20 @@ export function LiveEmbed({
         streamPriority,
         embedPlan,
         embedKey,
+        iframeLoading,
       );
       return;
     }
     refreshStreamStageLayout(embedKey, slideHeightPx, true);
-  }, [isActive, mountIframe, slideHeightPx, streamPriority, embedPlan, embedKey]);
+  }, [
+    isActive,
+    mountIframe,
+    slideHeightPx,
+    streamPriority,
+    embedPlan,
+    embedKey,
+    iframeLoading,
+  ]);
 
   useEffect(() => {
     if (!isActive) {
