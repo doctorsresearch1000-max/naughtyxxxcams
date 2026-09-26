@@ -18,9 +18,9 @@ import {
   EXPLORE_CATEGORY_MAP,
   EXPLORE_CATEGORY_SLUGS,
   getDefaultExploreSeo,
-  resolveExploreCategory,
   type ExploreCategorySlug,
 } from "@/lib/explore/categorySlugs";
+import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
 import { explorePathForCategoryParam } from "@/lib/explore/paths";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 

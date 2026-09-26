@@ -4,8 +4,8 @@ import { ExploreMain } from "@/components/explore/ExploreMain";
 import {
   EXPLORE_CATEGORY_SLUGS,
   isExploreCategorySlug,
-  resolveExploreCategory,
 } from "@/lib/explore/categorySlugs";
+import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
 import { exploreCanonicalUrl } from "@/lib/seo/canonical";
 import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
 

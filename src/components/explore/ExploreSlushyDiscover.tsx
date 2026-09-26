@@ -19,10 +19,10 @@ import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmate
 import { ExploreSlushyGrid } from "@/components/explore/ExploreSlushyGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
-  EXPLORE_CATEGORY_MAP,
-  EXPLORE_CATEGORY_SLUGS,
+  EXPLORE_CATALOG_MENU,
   resolveExploreCategory,
-} from "@/lib/explore/categorySlugs";
+} from "@/lib/explore/exploreCatalog";
+import { EXPLORE_DISPLAY_LIMIT } from "@/lib/explore/exploreLimits";
 import {
   filterPerformersBySearch,
   filterPerformersByTagSlug,
@@ -41,8 +41,6 @@ type CacheEntry = {
   total: number;
 };
 
-const DISPLAY_LIMIT = 48;
-
 const SORT_CHIPS: { id: ExploreSortMode | "filter"; label: string }[] = [
   { id: "filter", label: "Filter" },
   { id: "hot", label: "Hottest" },
@@ -52,7 +50,6 @@ const SORT_CHIPS: { id: ExploreSortMode | "filter"; label: string }[] = [
 
 const TAG_CHIPS: { id: string | null; label: string }[] = [
   { id: "__categories__", label: "# Categories" },
-  { id: "uncensored", label: "uncensored" },
   { id: "booty", label: "booty" },
   { id: "boobs", label: "boobs" },
   { id: "milf", label: "milf" },
@@ -68,15 +65,14 @@ function buildCacheFromPool(pool: CrackPerformer[]): Map<string, CacheEntry> {
   const map = new Map<string, CacheEntry>();
   const all = filterPerformersForCategory(pool, null, pool.length);
   map.set("__all__", {
-    performers: all.slice(0, DISPLAY_LIMIT),
+    performers: all.slice(0, EXPLORE_DISPLAY_LIMIT),
     total: all.length,
   });
 
-  for (const slug of EXPLORE_CATEGORY_SLUGS) {
-    const config = EXPLORE_CATEGORY_MAP[slug];
+  for (const { slug, config } of EXPLORE_CATALOG_MENU) {
     const filtered = filterPerformersForCategory(pool, config, pool.length);
     map.set(slug, {
-      performers: filtered.slice(0, DISPLAY_LIMIT),
+      performers: filtered.slice(0, EXPLORE_DISPLAY_LIMIT),
       total: filtered.length,
     });
   }
@@ -324,14 +320,14 @@ export function ExploreSlushyDiscover({
           >
             All
           </button>
-          {EXPLORE_CATEGORY_SLUGS.map((slug) => (
+          {EXPLORE_CATALOG_MENU.map(({ slug, label }) => (
             <button
               key={slug}
               type="button"
               className={chipClass(activeCat === slug)}
               onClick={() => loadCategory(slug)}
             >
-              {EXPLORE_CATEGORY_MAP[slug].label}
+              {label}
             </button>
           ))}
         </div>

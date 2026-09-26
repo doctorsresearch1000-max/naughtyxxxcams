@@ -9,12 +9,9 @@ import {
   readExploreBootstrapCache,
 } from "@/lib/explore/exploreClientCache";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
-import {
-  resolveExploreCategory,
-  type ExploreCategoryConfig,
-} from "@/lib/explore/categorySlugs";
-
-const DISPLAY_LIMIT = 48;
+import type { ExploreCategoryConfig } from "@/lib/explore/categorySlugs";
+import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
+import { EXPLORE_DISPLAY_LIMIT } from "@/lib/explore/exploreLimits";
 
 function sliceForCategory(
   pool: CrackPerformer[],
@@ -22,7 +19,7 @@ function sliceForCategory(
 ) {
   const filtered = filterPerformersForCategory(pool, category, pool.length);
   return {
-    performers: filtered.slice(0, DISPLAY_LIMIT),
+    performers: filtered.slice(0, EXPLORE_DISPLAY_LIMIT),
     total: filtered.length,
   };
 }

@@ -3,6 +3,7 @@ import {
   type ExploreCategorySlug,
   isExploreCategorySlug,
 } from "@/lib/explore/categorySlugs";
+import { isExploreCatalogSlug } from "@/lib/explore/exploreCatalog";
 
 /** Path for a validated explore category slug (`/explore/latinas`). */
 export function explorePathForCategorySlug(
@@ -19,8 +20,13 @@ export function explorePathForCategoryParam(
 ): string {
   if (!slug?.trim()) return "/explore";
   const normalized = slug.trim().toLowerCase();
-  if (!isExploreCategorySlug(normalized)) return "/explore";
-  return explorePathForCategorySlug(normalized);
+  if (isExploreCategorySlug(normalized)) {
+    return explorePathForCategorySlug(normalized);
+  }
+  if (isExploreCatalogSlug(normalized)) {
+    return `/explore?cat=${encodeURIComponent(normalized)}`;
+  }
+  return "/explore";
 }
 
 /** Map API “popular category” cards to our fixed SEO category routes. */

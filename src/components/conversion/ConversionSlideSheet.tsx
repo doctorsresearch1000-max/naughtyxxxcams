@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { BodyPortal } from "@/components/layout/BodyPortal";
 import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
-import { MOBILE_BOTTOM_NAV_CLEARANCE } from "@/lib/layout/mobileChrome";
 import { Z_MODAL_PANEL, Z_MODAL_SCRIM } from "@/lib/layout/zIndexLayers";
 
 type ConversionSlideSheetProps = {
@@ -60,10 +59,14 @@ export function ConversionSlideSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="conversion-sheet-title"
-        className="fixed left-0 right-0 mx-auto w-full max-w-md transform transition-transform duration-300 ease-out translate-y-0"
+        className={
+          edgeAttached
+            ? "fixed inset-x-0 bottom-0 w-full max-w-none transform transition-transform duration-300 ease-out translate-y-0"
+            : "fixed left-0 right-0 mx-auto w-full max-w-md transform transition-transform duration-300 ease-out translate-y-0"
+        }
         style={{
           zIndex: Z_MODAL_PANEL,
-          bottom: edgeAttached ? MOBILE_BOTTOM_NAV_CLEARANCE : 0,
+          bottom: 0,
           paddingBottom: edgeAttached
             ? undefined
             : "max(1rem, env(safe-area-inset-bottom))",
@@ -72,8 +75,15 @@ export function ConversionSlideSheet({
         <div
           className={
             edgeAttached
-              ? "border-t border-white/10 bg-[#1C1C1E]/98 px-5 pb-4 pt-3 shadow-[0_-12px_48px_rgba(0,0,0,0.65)] backdrop-blur-xl rounded-t-2xl"
+              ? "border-t border-white/10 bg-[#1C1C1E]/98 px-5 pt-3 shadow-[0_-12px_48px_rgba(0,0,0,0.65)] backdrop-blur-xl rounded-t-2xl"
               : "mx-3 mb-3 rounded-3xl border border-white/10 bg-[#1C1C1E]/98 p-5 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+          }
+          style={
+            edgeAttached
+              ? {
+                  paddingBottom: "max(1rem, env(safe-area-inset-bottom, 0px))",
+                }
+              : undefined
           }
         >
           <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-zinc-600" />

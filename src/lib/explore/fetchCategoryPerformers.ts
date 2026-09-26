@@ -1,6 +1,10 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { fetchStreamatePerformers } from "@/lib/crackrevenue/api";
 import type { ExploreCategoryConfig } from "@/lib/explore/categorySlugs";
+import {
+  EXPLORE_DISPLAY_LIMIT,
+  EXPLORE_MASTER_POOL_PAGES,
+} from "@/lib/explore/exploreLimits";
 
 export function filterPerformersForCategory(
   pool: CrackPerformer[],
@@ -39,8 +43,12 @@ function matchesAgeBucket(performer: CrackPerformer, ages: string): boolean {
   const tags = (performer.customTags ?? []).map((t) => t.toLowerCase());
   if (tags.some((t) => t.includes(ages.toLowerCase()))) return true;
   const age = performer.characteristic?.age;
-  if (ages === "gc_18_19" && age != null && age <= 19) return true;
-  if (ages === "gc_20_29" && age != null && age >= 20 && age <= 29) return true;
+  if (age == null) return false;
+  if (ages === "gc_18_19") return age <= 19;
+  if (ages === "gc_20_29") return age >= 20 && age <= 29;
+  if (ages === "gc_30_39") return age >= 30 && age <= 39;
+  if (ages === "gc_40_49") return age >= 40 && age <= 49;
+  if (ages === "gc_50_plus") return age >= 50;
   return false;
 }
 
@@ -80,7 +88,7 @@ export type FetchPerformersParams = {
 };
 
 export async function fetchExploreMasterPool(
-  pages = 3,
+  pages = EXPLORE_MASTER_POOL_PAGES,
 ): Promise<CrackPerformer[]> {
   const responses = await Promise.all(
     Array.from({ length: pages }, (_, i) =>
@@ -107,11 +115,11 @@ export async function fetchCategoryPerformers(
   category: ExploreCategoryConfig | null,
   options?: { size?: number; masterPool?: CrackPerformer[] },
 ): Promise<{ performers: CrackPerformer[]; total: number }> {
-  const size = options?.size ?? 24;
+  const size = options?.size ?? EXPLORE_DISPLAY_LIMIT;
   const pool =
     options?.masterPool && options.masterPool.length > 0
       ? options.masterPool
-      : await fetchExploreMasterPool(3);
+      : await fetchExploreMasterPool();
 
   const filtered = filterPerformersForCategory(pool, category, pool.length);
   const performers = filtered.slice(0, size);

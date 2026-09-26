@@ -1,8 +1,9 @@
-import { resolveExploreCategory } from "@/lib/explore/categorySlugs";
+import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
 import {
   fetchCategoryPerformers,
   fetchExploreMasterPool,
 } from "@/lib/explore/fetchCategoryPerformers";
+import { EXPLORE_DISPLAY_LIMIT } from "@/lib/explore/exploreLimits";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +12,9 @@ export async function GET(request: Request) {
   const cat = searchParams.get("cat");
   const category = resolveExploreCategory(cat);
 
-  const masterPool = await fetchExploreMasterPool(3);
+  const masterPool = await fetchExploreMasterPool();
   const { performers, total } = await fetchCategoryPerformers(category, {
-    size: 24,
+    size: EXPLORE_DISPLAY_LIMIT,
     masterPool,
   });
 

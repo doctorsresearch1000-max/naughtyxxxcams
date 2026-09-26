@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ExploreMain } from "@/components/explore/ExploreMain";
 import { isExploreCategorySlug } from "@/lib/explore/categorySlugs";
+import { isExploreCatalogSlug } from "@/lib/explore/exploreCatalog";
 import { explorePathForCategorySlug } from "@/lib/explore/paths";
 import { exploreCanonicalUrl } from "@/lib/seo/canonical";
 import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
@@ -32,6 +33,11 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const { cat } = await searchParams;
   if (cat?.trim() && isExploreCategorySlug(cat)) {
     redirect(explorePathForCategorySlug(cat));
+  }
+
+  const catalogCat = cat?.trim().toLowerCase();
+  if (catalogCat && isExploreCatalogSlug(catalogCat)) {
+    return <ExploreMain categorySlug={catalogCat} />;
   }
 
   return <ExploreMain categorySlug={null} />;

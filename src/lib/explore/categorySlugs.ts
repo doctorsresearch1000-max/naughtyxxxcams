@@ -18,7 +18,7 @@ export const EXPLORE_CATEGORY_SLUGS = [
 export type ExploreCategorySlug = (typeof EXPLORE_CATEGORY_SLUGS)[number];
 
 export type ExploreCategoryConfig = {
-  slug: ExploreCategorySlug;
+  slug: string;
   label: string;
   headline: string;
   seoTitle: string;
@@ -116,15 +116,6 @@ export function isExploreCategorySlug(
 ): value is ExploreCategorySlug {
   if (!value) return false;
   return SLUG_SET.has(value.toLowerCase());
-}
-
-export function resolveExploreCategory(
-  catParam?: string | null,
-): ExploreCategoryConfig | null {
-  if (!catParam) return null;
-  const key = catParam.toLowerCase();
-  if (!isExploreCategorySlug(key)) return null;
-  return EXPLORE_CATEGORY_MAP[key];
 }
 
 export function getDefaultExploreSeo() {
