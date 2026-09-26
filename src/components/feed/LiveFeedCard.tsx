@@ -137,7 +137,7 @@ function LiveFeedCardInner({
       ) : null}
 
       <div
-        className="pointer-events-none absolute inset-0 z-[30] bg-gradient-to-b from-black/45 via-transparent to-black/75"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[30] h-[min(38%,11rem)] bg-gradient-to-b from-black/45 to-transparent"
         aria-hidden
       />
 
