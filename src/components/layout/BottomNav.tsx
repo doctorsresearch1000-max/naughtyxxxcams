@@ -105,21 +105,13 @@ export default function BottomNav() {
 
   const displayPath = pendingPath ?? pathname;
 
-  return (
-    <nav
-      className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[99999] mx-auto w-full max-w-md lg:hidden"
-      data-bottom-nav="v2-heart"
-      style={{
-        paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))",
-        touchAction: "manipulation",
-        WebkitTapHighlightColor: "transparent",
-      }}
-      aria-label="Primary navigation"
-    >
-      <div
-        className="mx-3 mb-1 flex h-[54px] items-stretch justify-around rounded-2xl border border-white/[0.08] bg-[#0A0A0A]/94 shadow-[0_-4px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl"
-      >
-        {NAV_ITEMS.map((item) => {
+  const navInsetStyle = {
+    paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))",
+    touchAction: "manipulation" as const,
+    WebkitTapHighlightColor: "transparent",
+  };
+
+  const navItems = NAV_ITEMS.map((item) => {
           const isActive = isPathActive(displayPath, item.href);
 
           return (
@@ -150,8 +142,30 @@ export default function BottomNav() {
               />
             </button>
           );
-        })}
+  });
+
+  return (
+    <>
+      <div
+        className="pointer-events-none fixed bottom-0 left-0 right-0 z-[99998] mx-auto w-full max-w-md lg:hidden"
+        data-bottom-nav-glass="true"
+        style={navInsetStyle}
+        aria-hidden
+      >
+        <div
+          className="mx-3 mb-1 h-[54px] rounded-2xl border border-white/[0.08] bg-[#0A0A0A]/94 shadow-[0_-4px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+        />
       </div>
-    </nav>
+      <nav
+        className="pointer-events-auto fixed bottom-0 left-0 right-0 z-[100000] mx-auto w-full max-w-md lg:hidden"
+        data-bottom-nav="v2-heart"
+        style={navInsetStyle}
+        aria-label="Primary navigation"
+      >
+        <div className="mx-3 mb-1 flex h-[54px] items-stretch justify-around rounded-2xl border border-transparent bg-transparent shadow-none">
+          {navItems}
+        </div>
+      </nav>
+    </>
   );
 }

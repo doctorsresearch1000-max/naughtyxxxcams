@@ -71,6 +71,18 @@ iframe[data-touch-blocked="true"] {
 }
 
 /* Mobile home: fixed stage from top edge; site header/nav float above */
+/* Conversion CTA: between bottom-nav glass (99998) and nav controls (100000) */
+#nx-feed-cta-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  pointer-events: none;
+}
+
 #nx-mobile-feed-stage {
   position: fixed;
   inset: 0;
