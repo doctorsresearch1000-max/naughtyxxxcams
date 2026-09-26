@@ -144,19 +144,55 @@ function canonicalFeedEmbedSrc(
   }
 }
 
-/** Whether the live iframe URL is explicitly in a muted-audio configuration. */
-function feedEmbedUrlSoundsMuted(raw: string): boolean {
+function readEmbedUrlAudioFlags(raw: string): {
+  muted: boolean | null;
+  volumelevel: boolean | null;
+} {
   try {
     const url = new URL(raw);
-    const muted = url.searchParams.get("muted");
-    if (muted === "0" || muted === "false") return false;
-    if (muted === "1" || muted === "true") return true;
-    const volumelevel = url.searchParams.get("volumelevel");
-    if (volumelevel === "1") return false;
-    if (volumelevel === "0") return true;
+    const mutedParam = url.searchParams.get("muted");
+    let muted: boolean | null = null;
+    if (mutedParam === "0" || mutedParam === "false") muted = false;
+    if (mutedParam === "1" || mutedParam === "true") muted = true;
+
+    const volParam = url.searchParams.get("volumelevel");
+    let volumelevel: boolean | null = null;
+    if (volParam === "0") volumelevel = false;
+    if (volParam === "1") volumelevel = true;
+
+    return { muted, volumelevel };
   } catch {
-    /* invalid URL */
+    return { muted: null, volumelevel: null };
   }
+}
+
+/** True when the live iframe is on the unmuted player entry (audible configuration). */
+function feedEmbedIsAudibleInPlace(
+  current: string,
+  embedPlan?: Pick<
+    PerformerEmbedPlan,
+    "playerSrcMuted" | "playerSrcUnmuted"
+  > | null,
+  iframe?: HTMLIFrameElement,
+): boolean {
+  const unmutedTarget = embedPlan?.playerSrcUnmuted
+    ? embedPlan.playerSrcUnmuted
+    : iframe
+      ? resolveEmbedSrc(iframe, true, embedPlan)
+      : null;
+  if (!unmutedTarget) return false;
+
+  if (current === unmutedTarget) return true;
+
+  const flags = readEmbedUrlAudioFlags(current);
+  if (flags.muted === false || flags.volumelevel === true) return true;
+
+  const canonCurrent = canonicalFeedEmbedSrc(current, true);
+  const canonUnmuted = canonicalFeedEmbedSrc(unmutedTarget, true);
+  if (canonCurrent && canonUnmuted && canonCurrent === canonUnmuted) {
+    if (flags.muted === true || flags.volumelevel === false) return false;
+  }
+
   return false;
 }
 
@@ -174,7 +210,7 @@ export function feedEmbedIsMutedInPlace(
     iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
   if (!current) return false;
 
-  if (!feedEmbedUrlSoundsMuted(current)) {
+  if (feedEmbedIsAudibleInPlace(current, embedPlan, iframe)) {
     return false;
   }
 

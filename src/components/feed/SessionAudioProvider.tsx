@@ -75,20 +75,20 @@ export function SessionAudioProvider({
       if (!isAudioUnlockedRef.current) {
         isAudioUnlockedRef.current = true;
         mutedRef.current = false;
-        silenceInactiveFeedEmbedIframes();
-        applyDirectPlayerAudioFromGesture(true, embedPlan);
         flushSync(() => {
           setIsAudioUnlocked(true);
           setMuted(false);
         });
+        silenceInactiveFeedEmbedIframes();
+        applyDirectPlayerAudioFromGesture(true, embedPlan);
         return;
       }
 
       if (mutedRef.current) {
         mutedRef.current = false;
+        flushSync(() => setMuted(false));
         silenceInactiveFeedEmbedIframes();
         applyDirectPlayerAudioFromGesture(true, embedPlan);
-        flushSync(() => setMuted(false));
         return;
       }
 
