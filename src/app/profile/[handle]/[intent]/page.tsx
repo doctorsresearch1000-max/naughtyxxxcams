@@ -9,19 +9,29 @@ import {
 import { resolveModelProfile } from "@/lib/profile/modelProfile";
 import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
-import { buildModelProfileNextMetadata } from "@/lib/seo/model-profile-metadata";
+import {
+  buildModelProfileNextMetadata,
+  isProfileIntentRoute,
+} from "@/lib/seo/model-profile-metadata";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 type PageProps = {
-  params: Promise<{ handle: string }>;
+  params: Promise<{ handle: string; intent: string }>;
 };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { handle } = await params;
+  const { handle, intent } = await params;
+  if (!isProfileIntentRoute(intent)) {
+    return {
+      title: "Model profile — NaughtyXXXCams",
+      robots: { index: false, follow: false },
+    };
+  }
+
   const model = await resolveModelProfile(handle);
   if (!model) {
     return {
@@ -31,14 +41,18 @@ export async function generateMetadata({
   }
 
   return buildModelProfileNextMetadata(modelViewToSeoInput(model), {
+    intent,
     bannerUrl: model.bannerUrl,
   });
 }
 
-export default async function ModelProfilePage({ params }: PageProps) {
-  const { handle } = await params;
-  const modelData = await resolveModelProfile(handle);
+export default async function ModelProfileIntentPage({ params }: PageProps) {
+  const { handle, intent } = await params;
+  if (!isProfileIntentRoute(intent)) {
+    notFound();
+  }
 
+  const modelData = await resolveModelProfile(handle);
   if (!modelData) {
     notFound();
   }

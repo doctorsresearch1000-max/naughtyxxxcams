@@ -1,3 +1,7 @@
+import {
+  buildModelProfileSeoDescription,
+  buildModelProfileSeoTitle,
+} from "@/lib/seo/model-profile-metadata";
 import { pickVariant, stableVariantIndex } from "@/lib/seo/seoVariants";
 
 export type ModelSEOInput = {
@@ -22,20 +26,6 @@ export type GeneratedProfileSEO = {
   visibleParagraphs: string[];
   highlightKeywords: string[];
 };
-
-const TITLE_TEMPLATES = [
-  "{name}{age} — {ethnicity} Nude Live Cam & VIP Private Show | NaughtyXXXCams",
-  "{name} ({handle}) Exclusive HD Webcam — {country} Adult Chat | NaughtyXXXCams",
-  "Watch {name} Live{age} — {ethnicity} Sex Cam & Private Room | NaughtyXXXCams",
-  "{name}{age} Streamate Profile — Exclusive Pics, VIP Chat & Live Nude | Naughty",
-  "{name} — {ethnicity} Live Adult Webcam{age} & Private Cam Pack | NaughtyXXXCams",
-] as const;
-
-const META_INTROS = [
-  "Watch {name} ({handle}) live: {ethnicity} nude cam, VIP private chat, and exclusive gallery on NaughtyXXXCams.",
-  "{name}{age} — HD {ethnicity} sex cam, private show entry, and verified Streamate room via NaughtyXXXCams.",
-  "High-intent {name} profile: live adult webcam, exclusive content pack, {language} chat — NaughtyXXXCams hub.",
-] as const;
 
 const VISIBLE_HEADINGS = [
   "{name} — live nude cam, VIP private chat & exclusive media",
@@ -136,13 +126,17 @@ export function generateUniqueSEOContent(
   );
   const formatHook = pickVariant(`${seed}-fmt`, FORMAT_HOOKS);
 
-  const title = fillTemplate(pickVariant(seed, TITLE_TEMPLATES), vars);
+  const seoModel = {
+    name: model.name,
+    handle: model.handle,
+    profileSlug: model.profileSlug,
+    status: model.status,
+  };
 
-  const intro = fillTemplate(pickVariant(`${seed}-intro`, META_INTROS), vars);
+  const title = buildModelProfileSeoTitle(seoModel);
+  const metaDescription = buildModelProfileSeoDescription(seoModel);
 
-  const metaDescription = `${intro} ${modifier}, ${formatHook}, tags: ${tagPhrase}.`
-    .replace(/\s+/g, " ")
-    .slice(0, 160);
+  const intro = metaDescription;
 
   const visibleHeading = fillTemplate(
     pickVariant(`${seed}-h`, VISIBLE_HEADINGS),
@@ -176,7 +170,7 @@ export function generateUniqueSEOContent(
   ];
 
   return {
-    title: title.slice(0, 120),
+    title,
     intro,
     longDescription,
     metaDescription,
