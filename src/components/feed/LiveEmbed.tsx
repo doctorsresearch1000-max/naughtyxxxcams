@@ -39,7 +39,6 @@ import {
 import {
   ensureFeedEmbedMutedInPlace,
   getFeedPlayerIframeForKey,
-  setFeedEmbedIframeAudible,
 } from "@/lib/feed/liveIframeAudio";
 
 export type StreamLoadPriority = "high" | "low" | "auto";
@@ -402,19 +401,13 @@ export function LiveEmbed({
 
   useLayoutEffect(() => {
     if (!mountIframe || !embedPlan.canMountInteractivePlayer) return;
+    if (isActive && !sessionMuted) return;
 
     const iframe =
       iframeRef.current ?? getFeedPlayerIframeForKey(embedKey);
     if (!iframe) return;
 
-    if (!isActive) {
-      ensureFeedEmbedMutedInPlace(iframe, embedPlan);
-      return;
-    }
-
-    if (sessionMuted) {
-      ensureFeedEmbedMutedInPlace(iframe, embedPlan);
-    }
+    ensureFeedEmbedMutedInPlace(iframe, embedPlan);
   }, [
     isActive,
     sessionMuted,

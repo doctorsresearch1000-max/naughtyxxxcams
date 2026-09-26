@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { useFeedBottomChrome } from "@/components/layout/FeedBottomChromeContext";
 import { syncFeedBottomClearanceCss } from "@/lib/layout/feedBottomClearance";
+import { Z_BOTTOM_CHROME } from "@/lib/layout/zIndexLayers";
 import { fetchExploreBootstrap } from "@/lib/explore/exploreClientCache";
 import { preloadLiveCommentPools } from "@/lib/engagement/liveCommentEngine";
 import {
@@ -86,7 +87,7 @@ function isPathActive(pathname: string, href: string): boolean {
 export default function MobileBottomChrome() {
   const pathname = usePathname();
   const router = useRouter();
-  const { cta } = useFeedBottomChrome();
+  const { cta, feedOverlayOpen } = useFeedBottomChrome();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const onHomeFeed = pathname === "/";
@@ -160,9 +161,12 @@ export default function MobileBottomChrome() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-0 left-0 right-0 z-[100000] mx-auto w-full max-w-md lg:hidden"
+      className={`pointer-events-none fixed bottom-0 left-0 right-0 mx-auto w-full max-w-md lg:hidden ${
+        feedOverlayOpen ? "invisible" : ""
+      }`}
       data-mobile-bottom-chrome="v1"
-      style={shellStyle}
+      style={{ ...shellStyle, zIndex: Z_BOTTOM_CHROME }}
+      aria-hidden={feedOverlayOpen}
     >
       {showFeedCta && cta ? (
         <div

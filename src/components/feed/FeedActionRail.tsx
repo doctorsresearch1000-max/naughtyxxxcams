@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { stashPendingFollow } from "@/lib/auth/telegramPendingFollow";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
+import { useFeedBottomChrome } from "@/components/layout/FeedBottomChromeContext";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { FeedPoster } from "@/components/feed/FeedPoster";
 import {
@@ -51,6 +52,7 @@ export function FeedActionRail({
   const [saved, setSaved] = useState(false);
   const [following, setFollowing] = useState(false);
   const [chatSheetOpen, setChatSheetOpen] = useState(false);
+  const { setFeedOverlayOpen } = useFeedBottomChrome();
   const displayName =
     modelName?.replace(/^@+/, "").trim() || profileLabel.replace(/^@+/, "");
 
@@ -79,6 +81,11 @@ export function FeedActionRail({
       setChatSheetOpen(false);
     }
   }, [isActive]);
+
+  useEffect(() => {
+    setFeedOverlayOpen(chatSheetOpen);
+    return () => setFeedOverlayOpen(false);
+  }, [chatSheetOpen, setFeedOverlayOpen]);
 
   const applyFollow = useCallback(() => {
     const next = toggleFollowing(modelRef);

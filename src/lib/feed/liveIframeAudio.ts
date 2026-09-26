@@ -19,6 +19,11 @@ const ALL_FEED_IFRAMES_SELECTOR = 'iframe[data-naughty-feed-embed="true"]';
 
 const AUDIO_RETRY_MS = [0, 40, 120, 320] as const;
 
+/** When in-place SM_UNMUTE fails, navigate to `playerSrcUnmuted` (legacy cf46eda path). */
+const UNMUTE_SRC_FALLBACK_MS = 600;
+
+export type FeedEmbedAudiblePolicy = "gesture" | "hard";
+
 function resolveEmbedSrc(
   iframe: HTMLIFrameElement,
   wantSound: boolean,
@@ -241,9 +246,21 @@ export function postPurePlayerMuteState(
   }
 }
 
+function muteEmbedInPlace(
+  iframe: HTMLIFrameElement,
+  action: FeedAudioAction = "session-audio-mute",
+): void {
+  postPurePlayerMuteState(iframe, true);
+  postLiveIframeAudio(iframe, action);
+}
+
+function unmuteEmbedInPlace(iframe: HTMLIFrameElement): void {
+  postPurePlayerMuteState(iframe, false);
+  postLiveIframeAudio(iframe, "session-audio-unlock");
+}
+
 /**
- * Mute without reloading when the embed is already on `playerSrcMuted`.
- * Preserves warmed Pure player sessions on swipe.
+ * Mute via postMessage only — no `iframe.src` navigation (user toggle + active slide).
  */
 export function ensureFeedEmbedMutedInPlace(
   iframe: HTMLIFrameElement | null,
@@ -253,12 +270,13 @@ export function ensureFeedEmbedMutedInPlace(
   > | null,
 ): boolean {
   if (!iframe) return false;
-  if (feedEmbedIsMutedInPlace(iframe, embedPlan)) {
-    postPurePlayerMuteState(iframe, true);
-    postLiveIframeAudio(iframe, "session-audio-mute");
-    return true;
+  const current =
+    iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+  if (!current || current === "about:blank") {
+    return false;
   }
-  return setFeedEmbedIframeAudible(iframe, false, embedPlan);
+  muteEmbedInPlace(iframe);
+  return true;
 }
 
 /**
@@ -270,7 +288,7 @@ export function silenceAllFeedEmbedIframes(
 ): void {
   for (const iframe of getAllFeedPlayerIframes()) {
     if (exceptIframe && iframe === exceptIframe) continue;
-    setFeedEmbedIframeAudible(iframe, false);
+    setFeedEmbedIframeAudible(iframe, false, undefined, "hard");
   }
 }
 
@@ -291,19 +309,17 @@ export function applyDirectPlayerAudioFromGesture(
 ): boolean {
   const iframe = getActiveFeedPlayerIframe();
   if (!iframe) return false;
-  return setFeedEmbedIframeAudible(iframe, wantSound, embedPlan);
+  return setFeedEmbedIframeAudible(iframe, wantSound, embedPlan, "gesture");
 }
 
-export function setFeedEmbedIframeAudible(
-  iframe: HTMLIFrameElement | null,
+function hardNavigateEmbedAudible(
+  iframe: HTMLIFrameElement,
   wantSound: boolean,
   embedPlan?: Pick<
     PerformerEmbedPlan,
     "playerSrcMuted" | "playerSrcUnmuted"
   > | null,
 ): boolean {
-  if (!iframe) return false;
-
   const action: FeedAudioAction = wantSound
     ? "session-audio-unlock"
     : "session-audio-mute";
@@ -314,44 +330,87 @@ export function setFeedEmbedIframeAudible(
   }
   if (!next) return false;
 
+  const current =
+    iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+
+  if (wantSound) {
+    if (iframe.src !== next) {
+      iframe.src = next;
+    }
+  } else if (feedEmbedIsAudibleInPlace(current, embedPlan, iframe)) {
+    iframe.src = next;
+  } else {
+    const canonNext = canonicalFeedEmbedSrc(next, false);
+    const canonCurrent = current ? canonicalFeedEmbedSrc(current, false) : null;
+    const sameSrc =
+      (canonNext && canonCurrent && canonNext === canonCurrent) ||
+      current === next;
+    if (!sameSrc) {
+      iframe.src = next;
+    }
+  }
+
+  postLiveIframeAudio(iframe, action);
+  postPurePlayerMuteState(iframe, !wantSound);
+  return true;
+}
+
+export function setFeedEmbedIframeAudible(
+  iframe: HTMLIFrameElement | null,
+  wantSound: boolean,
+  embedPlan?: Pick<
+    PerformerEmbedPlan,
+    "playerSrcMuted" | "playerSrcUnmuted"
+  > | null,
+  policy: FeedEmbedAudiblePolicy = "gesture",
+): boolean {
+  if (!iframe) return false;
+
+  if (policy === "hard") {
+    try {
+      return hardNavigateEmbedAudible(iframe, wantSound, embedPlan);
+    } catch {
+      return false;
+    }
+  }
+
   try {
-    if (!wantSound && feedEmbedIsMutedInPlace(iframe, embedPlan)) {
-      postPurePlayerMuteState(iframe, true);
-      postLiveIframeAudio(iframe, action);
+    if (!wantSound) {
+      // Phase 1: user mute — never reload the player document.
+      muteEmbedInPlace(iframe);
       return true;
     }
 
-    if (wantSound) {
-      // Unmute must navigate to `playerSrcUnmuted` (cf46eda). Canonical compare
-      // would treat muted vs unmuted URLs as equivalent and skip navigation.
-      if (iframe.src !== next) {
-        iframe.src = next;
-      }
-    } else {
-      const current =
-        iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
-      if (feedEmbedIsAudibleInPlace(current, embedPlan, iframe)) {
-        iframe.src = next;
-      } else {
-        const canonNext = canonicalFeedEmbedSrc(next, false);
-        const canonCurrent = current
-          ? canonicalFeedEmbedSrc(current, false)
-          : null;
-        const sameSrc =
-          (canonNext && canonCurrent && canonNext === canonCurrent) ||
-          current === next;
+    // Phase 2: try in-place unmute first (same document / muted entry URL).
+    unmuteEmbedInPlace(iframe);
 
-        if (!sameSrc) {
-          iframe.src = next;
-        }
+    const next = resolveEmbedSrc(iframe, true, embedPlan);
+    if (!next) return false;
+
+    const current =
+      iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+    if (
+      current === next ||
+      feedEmbedIsAudibleInPlace(current, embedPlan, iframe)
+    ) {
+      return true;
+    }
+
+    const unmutedTarget = next;
+    window.setTimeout(() => {
+      if (!iframe.isConnected) return;
+      const cur =
+        iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
+      if (feedEmbedIsAudibleInPlace(cur, embedPlan, iframe)) {
+        return;
       }
-    }
-    postLiveIframeAudio(iframe, action);
-    if (!wantSound) {
-      postPurePlayerMuteState(iframe, true);
-    } else {
+      if (iframe.src !== unmutedTarget) {
+        iframe.src = unmutedTarget;
+      }
+      postLiveIframeAudio(iframe, "session-audio-unlock");
       postPurePlayerMuteState(iframe, false);
-    }
+    }, UNMUTE_SRC_FALLBACK_MS);
+
     return true;
   } catch {
     return false;

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { BodyPortal } from "@/components/layout/BodyPortal";
 import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { MOBILE_BOTTOM_NAV_CLEARANCE } from "@/lib/layout/mobileChrome";
+import { Z_MODAL_PANEL, Z_MODAL_SCRIM } from "@/lib/layout/zIndexLayers";
 
 type ConversionSlideSheetProps = {
   open: boolean;
@@ -26,12 +28,12 @@ export function ConversionSlideSheet({
   description,
   ctaLabel,
 }: ConversionSlideSheetProps) {
-  const sheetTitle =
-    title ?? "Private chat";
+  const sheetTitle = title ?? "Private chat";
   const sheetDescription =
     description ??
     "Want to chat privately? Click the CTA below to start talking with her right now.";
   const sheetCta = ctaLabel ?? `Chat with ${modelName}`;
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -41,34 +43,31 @@ export function ConversionSlideSheet({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
+  if (!open) {
+    return null;
+  }
+
   return (
-    <>
+    <BodyPortal>
       <button
         type="button"
         aria-label="Dismiss"
-        className={`fixed inset-0 z-[100000] bg-black/30 transition-opacity duration-300 ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
+        className="fixed inset-0 bg-black/30 transition-opacity duration-300 opacity-100"
+        style={{ zIndex: Z_MODAL_SCRIM }}
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="conversion-sheet-title"
-        aria-hidden={!open}
-        className={`fixed left-0 right-0 z-[100001] mx-auto w-full max-w-md transform transition-transform duration-300 ease-out ${
-          edgeAttached ? "" : "bottom-0"
-        } ${
-          open ? "translate-y-0" : "translate-y-full pointer-events-none"
-        }`}
-        style={
-          edgeAttached
-            ? { bottom: MOBILE_BOTTOM_NAV_CLEARANCE }
-            : {
-                bottom: 0,
-                paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
-              }
-        }
+        className="fixed left-0 right-0 mx-auto w-full max-w-md transform transition-transform duration-300 ease-out translate-y-0"
+        style={{
+          zIndex: Z_MODAL_PANEL,
+          bottom: edgeAttached ? MOBILE_BOTTOM_NAV_CLEARANCE : 0,
+          paddingBottom: edgeAttached
+            ? undefined
+            : "max(1rem, env(safe-area-inset-bottom))",
+        }}
       >
         <div
           className={
@@ -102,6 +101,6 @@ export function ConversionSlideSheet({
           </button>
         </div>
       </div>
-    </>
+    </BodyPortal>
   );
 }

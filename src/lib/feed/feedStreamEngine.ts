@@ -285,7 +285,7 @@ export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
 export function silenceAllStreamSlots(exceptFeedKey?: string): void {
   for (const [key, slot] of slots.entries()) {
     if (exceptFeedKey && key === exceptFeedKey) continue;
-    setFeedEmbedIframeAudible(slot.iframe, false);
+    setFeedEmbedIframeAudible(slot.iframe, false, undefined, "hard");
   }
 }
 

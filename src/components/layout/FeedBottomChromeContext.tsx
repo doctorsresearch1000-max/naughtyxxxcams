@@ -18,6 +18,8 @@ export type FeedBottomCtaPayload = {
 type FeedBottomChromeContextValue = {
   cta: FeedBottomCtaPayload | null;
   setCta: (next: FeedBottomCtaPayload | null) => void;
+  feedOverlayOpen: boolean;
+  setFeedOverlayOpen: (open: boolean) => void;
 };
 
 const FeedBottomChromeContext =
@@ -25,11 +27,18 @@ const FeedBottomChromeContext =
 
 export function FeedBottomChromeProvider({ children }: { children: ReactNode }) {
   const [cta, setCtaState] = useState<FeedBottomCtaPayload | null>(null);
+  const [feedOverlayOpen, setFeedOverlayOpenState] = useState(false);
   const setCta = useCallback((next: FeedBottomCtaPayload | null) => {
     setCtaState(next);
   }, []);
+  const setFeedOverlayOpen = useCallback((open: boolean) => {
+    setFeedOverlayOpenState(open);
+  }, []);
 
-  const value = useMemo(() => ({ cta, setCta }), [cta, setCta]);
+  const value = useMemo(
+    () => ({ cta, setCta, feedOverlayOpen, setFeedOverlayOpen }),
+    [cta, setCta, feedOverlayOpen, setFeedOverlayOpen],
+  );
 
   return (
     <FeedBottomChromeContext.Provider value={value}>

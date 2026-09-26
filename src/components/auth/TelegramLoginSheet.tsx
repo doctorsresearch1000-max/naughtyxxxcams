@@ -8,6 +8,8 @@ import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
 import type { TelegramUser } from "@/lib/auth/telegramSession";
 import type { TelegramLoginPrompt } from "@/components/auth/telegramAuthTypes";
+import { BodyPortal } from "@/components/layout/BodyPortal";
+import { Z_MODAL_PANEL, Z_MODAL_SCRIM } from "@/lib/layout/zIndexLayers";
 
 type TelegramLoginSheetProps = {
   open: boolean;
@@ -77,25 +79,27 @@ export function TelegramLoginSheet({
   if (!open) return null;
 
   return (
-    <>
+    <BodyPortal>
       <button
         type="button"
         aria-label="Close"
-        className="fixed inset-0 z-[100000] bg-black/30 transition-opacity duration-300 opacity-100"
+        className="fixed inset-0 bg-black/30 transition-opacity duration-300 opacity-100"
+        style={{ zIndex: Z_MODAL_SCRIM }}
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="telegram-login-sheet-title"
-        className={`fixed bottom-0 left-0 right-0 z-[100001] mx-auto w-full max-w-md transform transition-transform duration-300 ease-out translate-y-0 ${
+        className={`fixed bottom-0 left-0 right-0 mx-auto w-full max-w-md transform transition-transform duration-300 ease-out translate-y-0 ${
           edgeAttached ? "" : "px-3 pb-3"
         }`}
-        style={
-          edgeAttached
-            ? { paddingBottom: "env(safe-area-inset-bottom, 0px)" }
-            : { paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }
-        }
+        style={{
+          zIndex: Z_MODAL_PANEL,
+          paddingBottom: edgeAttached
+            ? "env(safe-area-inset-bottom, 0px)"
+            : "max(1rem, env(safe-area-inset-bottom))",
+        }}
       >
         <div
           className={
@@ -141,6 +145,6 @@ export function TelegramLoginSheet({
           </button>
         </div>
       </div>
-    </>
+    </BodyPortal>
   );
 }
