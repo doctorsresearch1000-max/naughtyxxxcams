@@ -80,6 +80,7 @@ function dockSlot(slot: StreamSlot): void {
   if (!document.body.contains(slot.iframe)) {
     document.body.appendChild(slot.iframe);
   }
+  slot.iframe.setAttribute("data-feed-key-docked", slot.feedKey);
   slot.docked = true;
 }
 
@@ -165,6 +166,7 @@ export function claimStreamForStage(
   }
   void stage.offsetHeight;
   applyLayout(slot.iframe);
+  slot.iframe.removeAttribute("data-feed-key-docked");
   return { iframe: slot.iframe, loaded: slot.loaded };
 }
 

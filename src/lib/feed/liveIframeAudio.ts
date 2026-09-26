@@ -114,12 +114,17 @@ export function getAllFeedPlayerIframes(): HTMLIFrameElement[] {
 export function getFeedPlayerIframeForKey(
   feedKey: string,
 ): HTMLIFrameElement | null {
-  const docked = document.querySelector(
-    `iframe[data-nx-stream-slot="${feedKey}"]`,
-  ) as HTMLIFrameElement | null;
+  const escaped = CSS.escape(feedKey);
+  const docked =
+    (document.querySelector(
+      `iframe[data-nx-stream-slot="${escaped}"]`,
+    ) as HTMLIFrameElement | null) ??
+    (document.querySelector(
+      `iframe[data-feed-key-docked="${escaped}"][data-naughty-feed-embed="true"]`,
+    ) as HTMLIFrameElement | null);
   if (docked) return docked;
   return document.querySelector(
-    `[data-feed-key="${feedKey}"] iframe[data-naughty-feed-embed="true"]`,
+    `[data-feed-key="${escaped}"] iframe[data-naughty-feed-embed="true"]`,
   ) as HTMLIFrameElement | null;
 }
 
@@ -325,16 +330,20 @@ export function setFeedEmbedIframeAudible(
     } else {
       const current =
         iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
-      const canonNext = canonicalFeedEmbedSrc(next, false);
-      const canonCurrent = current
-        ? canonicalFeedEmbedSrc(current, false)
-        : null;
-      const sameSrc =
-        (canonNext && canonCurrent && canonNext === canonCurrent) ||
-        current === next;
-
-      if (!sameSrc) {
+      if (feedEmbedIsAudibleInPlace(current, embedPlan, iframe)) {
         iframe.src = next;
+      } else {
+        const canonNext = canonicalFeedEmbedSrc(next, false);
+        const canonCurrent = current
+          ? canonicalFeedEmbedSrc(current, false)
+          : null;
+        const sameSrc =
+          (canonNext && canonCurrent && canonNext === canonCurrent) ||
+          current === next;
+
+        if (!sameSrc) {
+          iframe.src = next;
+        }
       }
     }
     postLiveIframeAudio(iframe, action);
