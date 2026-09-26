@@ -150,7 +150,12 @@ function LiveFeedCardInner({
       />
 
       <div
-        className="pointer-events-none absolute bottom-4 left-3 z-[35] max-w-[calc(100%-5.5rem)] flex flex-col items-start pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))]"
+        className="pointer-events-none absolute bottom-4 left-3 z-[35] max-w-[calc(100%-5.5rem)] flex flex-col items-start"
+        style={{
+          paddingBottom: isActive
+            ? "var(--feed-bottom-clearance)"
+            : "calc(4.5rem + env(safe-area-inset-bottom, 0px))",
+        }}
       >
         {secondaryChromeReady ? (
           <LiveCommentTicker performer={performer} isActive={isActive} />

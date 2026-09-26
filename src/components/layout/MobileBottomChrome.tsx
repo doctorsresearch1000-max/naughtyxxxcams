@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { useFeedBottomChrome } from "@/components/layout/FeedBottomChromeContext";
+import { syncFeedBottomClearanceCss } from "@/lib/layout/feedBottomClearance";
 import { fetchExploreBootstrap } from "@/lib/explore/exploreClientCache";
 import { preloadLiveCommentPools } from "@/lib/engagement/liveCommentEngine";
 import {
@@ -89,6 +90,12 @@ export default function MobileBottomChrome() {
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const onHomeFeed = pathname === "/";
+  const showFeedCta = onHomeFeed && Boolean(cta);
+
+  useEffect(() => {
+    syncFeedBottomClearanceCss(showFeedCta);
+    return () => syncFeedBottomClearanceCss(false);
+  }, [showFeedCta]);
 
   useEffect(() => {
     setPendingPath(null);
@@ -157,7 +164,7 @@ export default function MobileBottomChrome() {
       data-mobile-bottom-chrome="v1"
       style={shellStyle}
     >
-      {onHomeFeed && cta ? (
+      {showFeedCta && cta ? (
         <div
           className="pointer-events-auto mb-2 px-3"
           data-feed-bottom-cta="true"

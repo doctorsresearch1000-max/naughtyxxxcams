@@ -21,6 +21,52 @@ const slots = new Map<string, StreamSlot>();
 
 const FEED_EMBED_SELECTOR = 'iframe[data-naughty-feed-embed="true"]';
 
+/** Defer pruning until the incoming active slide owns the stage (avoids claim/prune races). */
+const PRUNE_HANDOFF_MAX_MS = 10_000;
+
+let deferredKeepSet: ReadonlySet<string> | null = null;
+let handoffActiveFeedKey: string | null = null;
+let handoffPruneTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearHandoffPruneTimer(): void {
+  if (handoffPruneTimer !== null) {
+    clearTimeout(handoffPruneTimer);
+    handoffPruneTimer = null;
+  }
+}
+
+function runDeferredPrune(): void {
+  if (!deferredKeepSet) return;
+  const keep = deferredKeepSet;
+  deferredKeepSet = null;
+  handoffActiveFeedKey = null;
+  clearHandoffPruneTimer();
+  pruneStreamSlotsImmediate(keep);
+}
+
+function scheduleHandoffPruneFallback(): void {
+  clearHandoffPruneTimer();
+  handoffPruneTimer = setTimeout(() => {
+    runDeferredPrune();
+  }, PRUNE_HANDOFF_MAX_MS);
+}
+
+/**
+ * Active slide attached an iframe to its stage (claimed or created).
+ * Safe to prune slots outside the current N / N+1 window.
+ */
+export function confirmActiveStreamStageReady(feedKey: string): void {
+  if (!deferredKeepSet) return;
+  if (handoffActiveFeedKey && handoffActiveFeedKey !== feedKey) return;
+  runDeferredPrune();
+}
+
+export function cancelDeferredStreamPrune(): void {
+  deferredKeepSet = null;
+  handoffActiveFeedKey = null;
+  clearHandoffPruneTimer();
+}
+
 /** Off-screen dock — no visible strip at the viewport bottom (prevents video leak under nav). */
 const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
@@ -222,13 +268,18 @@ export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {
   evictSlot(feedKey);
 }
 
-export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
+function pruneStreamSlotsImmediate(keepFeedKeys: ReadonlySet<string>): void {
   for (const key of [...slots.keys()]) {
     if (!keepFeedKeys.has(key)) {
       evictSlot(key);
     }
   }
   purgeOrphanFeedEmbeds(keepFeedKeys);
+}
+
+/** Immediate prune (tear-down, tests). Swipe handoff uses deferred prune via sync. */
+export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
+  pruneStreamSlotsImmediate(keepFeedKeys);
 }
 
 export function silenceAllStreamSlots(exceptFeedKey?: string): void {
@@ -240,6 +291,7 @@ export function silenceAllStreamSlots(exceptFeedKey?: string): void {
 
 /** Remove body-level prefetch iframes when leaving home (prevents route overlay). */
 export function tearDownAllStreamSlots(): void {
+  cancelDeferredStreamPrune();
   const empty = new Set<string>();
   for (const key of [...slots.keys()]) {
     evictSlot(key);
@@ -287,5 +339,7 @@ export function syncFeedStreamNeighbors(
     ensureStreamWarming(prefetch.feedKey, prefetchSrc);
   }
 
-  pruneStreamSlots(keep);
+  handoffActiveFeedKey = active?.feedKey ?? null;
+  deferredKeepSet = keep;
+  scheduleHandoffPruneFallback();
 }

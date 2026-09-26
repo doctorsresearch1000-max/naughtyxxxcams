@@ -11,6 +11,7 @@ import {
 import {
   adoptInCardStreamSlot,
   claimStreamForStage,
+  confirmActiveStreamStageReady,
   ensureStreamWarming,
   isStreamSlotLoaded,
   peekStreamSlot,
@@ -203,6 +204,11 @@ export function LiveEmbed({
     return () => window.removeEventListener("message", onMessage);
   }, [mountIframe, isPureIframe, embedKey, isActive]);
 
+  const signalActiveHandoff = useCallback(() => {
+    if (!isActive) return;
+    confirmActiveStreamStageReady(embedKey);
+  }, [isActive, embedKey]);
+
   const parkIframeToDock = useCallback(() => {
     const iframe = iframeRef.current;
     const stage = stageRef.current;
@@ -213,9 +219,6 @@ export function LiveEmbed({
         iframe,
         frameLoaded || isStreamSlotLoaded(embedKey),
       );
-    }
-    if (peekStreamSlot(embedKey)) {
-      releaseStreamSlot(embedKey, false);
     }
     iframeRef.current = null;
     setUsingEngineSlot(false);
@@ -259,10 +262,23 @@ export function LiveEmbed({
         setUsingEngineSlot(true);
         if (claimed.loaded) {
           markFrameDocumentLoaded();
+          if (forActive) {
+            signalActiveHandoff();
+          }
         } else {
-          claimed.iframe.addEventListener("load", markFrameDocumentLoaded, {
-            once: true,
-          });
+          claimed.iframe.addEventListener(
+            "load",
+            () => {
+              markFrameDocumentLoaded();
+              if (forActive) {
+                signalActiveHandoff();
+              }
+            },
+            { once: true },
+          );
+          if (forActive) {
+            signalActiveHandoff();
+          }
         }
         return;
       }
@@ -278,6 +294,9 @@ export function LiveEmbed({
         );
         if (isStreamSlotLoaded(embedKey)) {
           markFrameDocumentLoaded();
+        }
+        if (forActive) {
+          signalActiveHandoff();
         }
         return;
       }
@@ -305,6 +324,18 @@ export function LiveEmbed({
       adoptInCardStreamSlot(embedKey, initialSrc, iframe, false);
       iframeRef.current = iframe;
       setUsingEngineSlot(false);
+      if (forActive) {
+        iframe.addEventListener(
+          "load",
+          () => {
+            if (forActive) {
+              signalActiveHandoff();
+            }
+          },
+          { once: true },
+        );
+        signalActiveHandoff();
+      }
     };
 
     if (warmInDock) {
@@ -332,6 +363,7 @@ export function LiveEmbed({
     streamPriority,
     markFrameDocumentLoaded,
     parkIframeToDock,
+    signalActiveHandoff,
   ]);
 
   useEffect(() => {

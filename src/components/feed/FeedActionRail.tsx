@@ -74,6 +74,12 @@ export function FeedActionRail({
     return () => window.removeEventListener("nx-library-update", onLib);
   }, [syncLibraryState]);
 
+  useEffect(() => {
+    if (!isActive) {
+      setChatSheetOpen(false);
+    }
+  }, [isActive]);
+
   const applyFollow = useCallback(() => {
     const next = toggleFollowing(modelRef);
     setFollowing(next);
@@ -141,7 +147,10 @@ export function FeedActionRail({
         className="pointer-events-none absolute bottom-0 right-0 top-0 z-[45] w-[4.75rem]"
         onPointerDownCapture={(e) => e.stopPropagation()}
       >
-        <div className="pointer-events-auto absolute bottom-4 right-3 flex flex-col items-center gap-4 touch-manipulation">
+        <div
+          className="pointer-events-auto absolute right-3 flex flex-col items-center gap-4 touch-manipulation"
+          style={{ bottom: "var(--feed-bottom-clearance)" }}
+        >
           <button
             type="button"
             onClick={(e) => {
@@ -248,16 +257,18 @@ export function FeedActionRail({
         </div>
       </div>
 
-      <ConversionSlideSheet
-        open={chatSheetOpen}
-        modelName={displayName}
-        affiliateUrl={affiliateUrl}
-        onClose={() => setChatSheetOpen(false)}
-        edgeAttached
-        title={`Want to chat with ${displayName}?`}
-        description="Join her private chat and start talking to her."
-        ctaLabel={`Chat with ${displayName}`}
-      />
+      {chatSheetOpen ? (
+        <ConversionSlideSheet
+          open
+          modelName={displayName}
+          affiliateUrl={affiliateUrl}
+          onClose={() => setChatSheetOpen(false)}
+          edgeAttached
+          title={`Want to chat with ${displayName}?`}
+          description="Join her private chat and start talking to her."
+          ctaLabel={`Chat with ${displayName}`}
+        />
+      ) : null}
     </>
   );
 }

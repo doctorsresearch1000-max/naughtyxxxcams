@@ -8,6 +8,14 @@
   --app-header-height: 3.75rem;
   /* Home vertical feed: true viewport (bottom nav floats above) */
   --feed-viewport-height: 100dvh;
+  /* MobileBottomChrome: nav block + optional conversion CTA + slide breathing room */
+  --feed-bottom-nav-block: calc(
+    3.625rem + 0.25rem + max(0.5rem, env(safe-area-inset-bottom, 0px))
+  );
+  --feed-bottom-cta-extra: 0px;
+  --feed-bottom-clearance: calc(
+    var(--feed-bottom-nav-block) + var(--feed-bottom-cta-extra) + 0.5rem
+  );
 }
 
 @media (min-width: 768px) {
