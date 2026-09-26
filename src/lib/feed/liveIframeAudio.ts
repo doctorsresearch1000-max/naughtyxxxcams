@@ -144,6 +144,22 @@ function canonicalFeedEmbedSrc(
   }
 }
 
+/** Whether the live iframe URL is explicitly in a muted-audio configuration. */
+function feedEmbedUrlSoundsMuted(raw: string): boolean {
+  try {
+    const url = new URL(raw);
+    const muted = url.searchParams.get("muted");
+    if (muted === "0" || muted === "false") return false;
+    if (muted === "1" || muted === "true") return true;
+    const volumelevel = url.searchParams.get("volumelevel");
+    if (volumelevel === "1") return false;
+    if (volumelevel === "0") return true;
+  } catch {
+    /* invalid URL */
+  }
+  return false;
+}
+
 /** True when the iframe is already on the muted player URL (no navigation needed). */
 export function feedEmbedIsMutedInPlace(
   iframe: HTMLIFrameElement,
@@ -152,15 +168,20 @@ export function feedEmbedIsMutedInPlace(
     "playerSrcMuted" | "playerSrcUnmuted"
   > | null,
 ): boolean {
-  const target = resolveEmbedSrc(iframe, false, embedPlan);
-  if (!target) return false;
+  const mutedTarget = resolveEmbedSrc(iframe, false, embedPlan);
+  if (!mutedTarget) return false;
   const current =
     iframe.getAttribute("src")?.trim() || iframe.src?.trim() || "";
   if (!current) return false;
-  const canonTarget = canonicalFeedEmbedSrc(target, false);
+
+  if (!feedEmbedUrlSoundsMuted(current)) {
+    return false;
+  }
+
+  const canonTarget = canonicalFeedEmbedSrc(mutedTarget, false);
   const canonCurrent = canonicalFeedEmbedSrc(current, false);
   if (canonTarget && canonCurrent) return canonTarget === canonCurrent;
-  return current === target;
+  return current === mutedTarget;
 }
 
 /** Naiad Pure client listens for `{ name: "SM_MUTE" | "SM_UNMUTE" }`. */
