@@ -6,8 +6,7 @@ import { saveContinueWatching } from "@/lib/feed/continueWatchingStorage";
 import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
-import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
-import { FeedElevatedConversionCta } from "@/components/feed/FeedElevatedConversionCta";
+import { useRegisterFeedBottomCta } from "@/components/layout/FeedBottomChromeContext";
 import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
 import {
   performerDisplayHandle,
@@ -71,6 +70,13 @@ function LiveFeedCardInner({
     performer.nameClean || performer.name,
   );
   const affiliateUrl = performer.embedPlan.roomAffiliateUrl;
+
+  useRegisterFeedBottomCta(
+    conversionCtaVisible,
+    modelName,
+    affiliateUrl,
+  );
+
   const modelRef = useMemo(
     () => ({
       feedKey: performer.feedKey,
@@ -143,7 +149,9 @@ function LiveFeedCardInner({
         aria-hidden
       />
 
-      <div className="pointer-events-none absolute bottom-4 left-3 z-[35] max-w-[calc(100%-5.5rem)] flex flex-col items-start">
+      <div
+        className="pointer-events-none absolute bottom-4 left-3 z-[35] max-w-[calc(100%-5.5rem)] flex flex-col items-start pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))]"
+      >
         {secondaryChromeReady ? (
           <LiveCommentTicker performer={performer} isActive={isActive} />
         ) : null}
@@ -161,31 +169,6 @@ function LiveFeedCardInner({
           </span>
         )}
         <div className="pointer-events-none mt-2 flex w-full max-w-[78%] flex-col gap-2">
-          {conversionCtaVisible ? (
-            <div
-              className="invisible max-w-full"
-              aria-hidden
-              data-feed-cta-placeholder="true"
-            >
-              <ChatWithModelCta
-                modelName={modelName}
-                affiliateUrl={affiliateUrl}
-                visible
-                className="mb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]"
-              />
-            </div>
-          ) : (
-            <ChatWithModelCta
-              modelName={modelName}
-              affiliateUrl={affiliateUrl}
-              visible={false}
-            />
-          )}
-          <FeedElevatedConversionCta
-            modelName={modelName}
-            affiliateUrl={affiliateUrl}
-            show={conversionCtaVisible}
-          />
           {!isActive ? (
             <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
               Swipe · next model

@@ -4,7 +4,6 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 const PORTAL_ID = "nx-mobile-feed-stage";
-const CTA_PORTAL_ID = "nx-feed-cta-layer";
 
 type MobileFeedFullscreenPortalProps = {
   /** Keep the stage mounted (e.g. when user left home but feed stays warm). */
@@ -58,7 +57,6 @@ export function MobileFeedFullscreenPortal({
 
     return () => {
       node.remove();
-      document.getElementById(CTA_PORTAL_ID)?.remove();
     };
   }, [active]);
 

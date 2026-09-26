@@ -215,7 +215,7 @@ export function LiveEmbed({
       );
     }
     if (peekStreamSlot(embedKey)) {
-      releaseStreamSlot(embedKey, true);
+      releaseStreamSlot(embedKey, false);
     }
     iframeRef.current = null;
     setUsingEngineSlot(false);

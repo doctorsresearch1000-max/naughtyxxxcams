@@ -3,13 +3,13 @@ import { useMemo } from "react";
 const DEFAULT_RADIUS = 1;
 
 /**
- * Sliding window: mount players for N-1, N, N+1 only.
+ * Sliding window: mount players for N and N+1 only (no N-1 retention).
  * Indices outside this range should tear down embed sources (see LiveEmbed).
  */
 export function useVideoFeedBuffer(
   activeIndex: number,
   total: number,
-  radius = DEFAULT_RADIUS,
+  _radius = DEFAULT_RADIUS,
 ): {
   armedIndices: Set<number>;
   isArmed: (index: number) => boolean;
@@ -20,8 +20,8 @@ export function useVideoFeedBuffer(
     const prefetch = new Set<number>();
     if (total <= 0) return { armedIndices: armed, prefetchIndices: prefetch };
 
-    const lo = Math.max(0, activeIndex - radius);
-    const hi = Math.min(total - 1, activeIndex + radius);
+    const lo = activeIndex;
+    const hi = Math.min(total - 1, activeIndex + 1);
     for (let i = lo; i <= hi; i += 1) {
       armed.add(i);
     }
@@ -32,7 +32,7 @@ export function useVideoFeedBuffer(
     }
 
     return { armedIndices: armed, prefetchIndices: prefetch };
-  }, [activeIndex, total, radius]);
+  }, [activeIndex, total]);
 
   const isArmed = (index: number) => armedIndices.has(index);
 

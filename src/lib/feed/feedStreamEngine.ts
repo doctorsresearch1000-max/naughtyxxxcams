@@ -19,25 +19,60 @@ type StreamSlot = {
 
 const slots = new Map<string, StreamSlot>();
 
-/** Viewport dock — opaque with a 4px strip (avoids background media throttle). */
+const FEED_EMBED_SELECTOR = 'iframe[data-naughty-feed-embed="true"]';
+
+/** Off-screen dock — no visible strip at the viewport bottom (prevents video leak under nav). */
 const DOCK_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
-  left: "0",
-  bottom: "0",
-  width: "100vw",
-  height: "100dvh",
-  maxHeight: "100dvh",
+  left: "-9999px",
+  top: "0",
+  width: "4px",
+  height: "4px",
+  maxHeight: "4px",
   margin: "0",
   padding: "0",
   border: "0",
-  opacity: "1",
-  visibility: "visible",
+  opacity: "0",
+  visibility: "hidden",
   pointerEvents: "none",
-  zIndex: "1",
-  clipPath: "inset(calc(100% - 4px) 0 0 0)",
+  zIndex: "-1",
+  clipPath: "none",
   transform: "translateZ(0)",
-  background: "#000",
+  background: "transparent",
 };
+
+export function destroyFeedEmbedIframe(iframe: HTMLIFrameElement): void {
+  try {
+    iframe.src = "about:blank";
+    iframe.removeAttribute("src");
+    iframe.remove();
+  } catch {
+    /* ignore */
+  }
+}
+
+function resolveIframeFeedKey(iframe: HTMLIFrameElement): string | null {
+  const docked = iframe.getAttribute("data-feed-key-docked");
+  if (docked) return docked;
+  const slotKey = iframe.getAttribute("data-nx-stream-slot");
+  if (slotKey) return slotKey;
+  const card = iframe.closest("[data-feed-key]");
+  return card?.getAttribute("data-feed-key") ?? null;
+}
+
+function purgeOrphanFeedEmbeds(keepFeedKeys: ReadonlySet<string>): void {
+  if (typeof document === "undefined") return;
+
+  for (const iframe of document.querySelectorAll(FEED_EMBED_SELECTOR)) {
+    if (!(iframe instanceof HTMLIFrameElement)) continue;
+    const key = resolveIframeFeedKey(iframe);
+    if (key && keepFeedKeys.has(key)) continue;
+    destroyFeedEmbedIframe(iframe);
+    if (key) {
+      slots.delete(key);
+    }
+  }
+}
 
 function createSlot(feedKey: string, src: string): StreamSlot {
   injectStreamPreconnects();
@@ -87,12 +122,7 @@ function dockSlot(slot: StreamSlot): void {
 function evictSlot(feedKey: string): void {
   const slot = slots.get(feedKey);
   if (!slot) return;
-  try {
-    slot.iframe.src = "";
-    slot.iframe.remove();
-  } catch {
-    /* ignore */
-  }
+  destroyFeedEmbedIframe(slot.iframe);
   slots.delete(feedKey);
 }
 
@@ -126,7 +156,7 @@ export function adoptInCardStreamSlot(
   });
 }
 
-/** Prefetch-only (N±1). Do not warm the active slide in the dock. */
+/** Prefetch-only (N+1). Do not warm the active slide in the dock. */
 export function ensureStreamWarming(feedKey: string, src: string): void {
   if (typeof document === "undefined" || !feedKey || !src) return;
 
@@ -193,11 +223,12 @@ export function releaseStreamSlot(feedKey: string, keepAlive: boolean): void {
 }
 
 export function pruneStreamSlots(keepFeedKeys: ReadonlySet<string>): void {
-  for (const key of slots.keys()) {
+  for (const key of [...slots.keys()]) {
     if (!keepFeedKeys.has(key)) {
       evictSlot(key);
     }
   }
+  purgeOrphanFeedEmbeds(keepFeedKeys);
 }
 
 export function silenceAllStreamSlots(exceptFeedKey?: string): void {
@@ -209,9 +240,11 @@ export function silenceAllStreamSlots(exceptFeedKey?: string): void {
 
 /** Remove body-level prefetch iframes when leaving home (prevents route overlay). */
 export function tearDownAllStreamSlots(): void {
+  const empty = new Set<string>();
   for (const key of [...slots.keys()]) {
     evictSlot(key);
   }
+  purgeOrphanFeedEmbeds(empty);
 }
 
 function performerSrc(performer: {
@@ -230,6 +263,7 @@ function performerSrc(performer: {
   );
 }
 
+/** Retain only active (N) and next (N+1) stream embeds. */
 export function syncFeedStreamNeighbors(
   slides: Array<{
     feedKey: string;
@@ -251,13 +285,6 @@ export function syncFeedStreamNeighbors(
   if (prefetch && prefetchSrc) {
     keep.add(prefetch.feedKey);
     ensureStreamWarming(prefetch.feedKey, prefetchSrc);
-  }
-
-  const retain = slides[activeIndex - 1];
-  const retainSrc = retain ? performerSrc(retain) : null;
-  if (retain && retainSrc) {
-    keep.add(retain.feedKey);
-    ensureStreamWarming(retain.feedKey, retainSrc);
   }
 
   pruneStreamSlots(keep);
