@@ -80,8 +80,7 @@ function isPathActive(pathname: string, href: string): boolean {
 }
 
 /**
- * Single fixed bottom shell: opaque safe-area floor + optional feed CTA + glass nav pill.
- * Must not fork or portal when feed/video state changes.
+ * Single fixed bottom shell: optional feed CTA + one glass nav pill (video bleeds behind).
  */
 export default function MobileBottomChrome() {
   const pathname = usePathname();
@@ -154,7 +153,7 @@ export default function MobileBottomChrome() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-0 left-0 right-0 z-[100000] mx-auto w-full max-w-md bg-black lg:hidden"
+      className="pointer-events-none fixed bottom-0 left-0 right-0 z-[100000] mx-auto w-full max-w-md lg:hidden"
       data-mobile-bottom-chrome="v1"
       style={shellStyle}
     >
@@ -172,20 +171,11 @@ export default function MobileBottomChrome() {
       ) : null}
 
       <nav
-        className="pointer-events-auto w-full"
+        className="pointer-events-auto mx-3 mb-1 flex h-[54px] items-stretch justify-around rounded-2xl border border-white/[0.08] bg-[#0A0A0A]/94 shadow-[0_-4px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl"
         data-bottom-nav="v2-heart"
         aria-label="Primary navigation"
       >
-        <div className="relative mx-3 mb-1">
-          <div
-            className="pointer-events-none absolute inset-0 rounded-2xl border border-white/[0.08] bg-[#0A0A0A]/94 shadow-[0_-4px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl"
-            data-bottom-nav-glass="true"
-            aria-hidden
-          />
-          <div className="relative flex h-[54px] items-stretch justify-around">
-            {navItems}
-          </div>
-        </div>
+        {navItems}
       </nav>
     </div>
   );

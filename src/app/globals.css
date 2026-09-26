@@ -227,6 +227,16 @@ img.feed-embed-poster {
   -webkit-user-drag: none;
 }
 
+/* iOS still delivers touch to cross-origin iframes unless a pan-y layer sits above. */
+#nx-mobile-feed-stage .feed-swipe-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: auto;
+  touch-action: pan-y;
+  background: transparent;
+}
+
 .feed-embed-iframe--docked {
   position: fixed !important;
   pointer-events: none !important;

@@ -115,7 +115,7 @@ function LiveFeedCardInner({
 
   return (
     <article
-      className="tele-card feed-slide relative z-10 w-full shrink-0 snap-start snap-always overflow-hidden bg-black"
+      className="tele-card feed-slide relative z-10 w-full shrink-0 snap-start snap-always overflow-hidden bg-black touch-pan-y"
       style={feedSlideBoxStyle(slideHeightPx)}
       data-slide-index={index}
       data-feed-key={performer.feedKey}

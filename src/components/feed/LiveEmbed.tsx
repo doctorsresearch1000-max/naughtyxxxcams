@@ -460,6 +460,13 @@ export function LiveEmbed({
         style={stageStyle}
         aria-hidden={!isActive}
       />
+      {isActive ? (
+        <div
+          className="feed-swipe-shield"
+          aria-hidden
+          data-feed-swipe-shield="true"
+        />
+      ) : null}
     </div>
   );
 }
