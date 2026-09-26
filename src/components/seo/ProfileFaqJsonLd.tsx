@@ -1,10 +1,13 @@
+import Script from "next/script";
 import type { ProfileFaqItem } from "@/lib/profile/profileFaq";
 
 type ProfileFaqJsonLdProps = {
   items: ProfileFaqItem[];
+  /** Stable id for the script tag (per profile). */
+  scriptId: string;
 };
 
-export function ProfileFaqJsonLd({ items }: ProfileFaqJsonLdProps) {
+export function ProfileFaqJsonLd({ items, scriptId }: ProfileFaqJsonLdProps) {
   if (items.length === 0) return null;
 
   const schema = {
@@ -20,10 +23,14 @@ export function ProfileFaqJsonLd({ items }: ProfileFaqJsonLdProps) {
     })),
   };
 
+  const json = JSON.stringify(schema);
+
   return (
-    <script
+    <Script
+      id={scriptId}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{ __html: json }}
     />
   );
 }

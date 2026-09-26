@@ -71,7 +71,10 @@ export default async function ModelProfileIntentPage({ params }: PageProps) {
 
   return (
     <>
-      <ProfileFaqJsonLd items={seoContent.faqItems} />
+      <ProfileFaqJsonLd
+        items={seoContent.faqItems}
+        scriptId={`profile-faq-jsonld-${modelData.profileSlug}`}
+      />
       <ModelProfileJsonLd
         model={modelData}
         canonicalUrl={canonical}

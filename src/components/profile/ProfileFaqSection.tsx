@@ -16,7 +16,7 @@ export function ProfileFaqSection({ items, className = "" }: ProfileFaqSectionPr
       <h2 className="text-sm font-black text-zinc-100">FAQ</h2>
       <ul className="mt-3 space-y-3">
         {items.map((item) => (
-          <li key={item.question}>
+          <li key={item.id}>
             <h3 className="text-xs font-bold leading-snug text-zinc-200">
               {item.question}
             </h3>
