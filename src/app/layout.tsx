@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { AppChrome } from "@/components/layout/AppChrome";
-
-const GA_MEASUREMENT_ID = "G-3RHSY9JWVC";
 import { AppProviders } from "@/components/layout/AppProviders";
 import { ConditionalSiteChrome } from "@/components/layout/ConditionalSiteChrome";
 import { Header } from "@/components/layout/Header";
@@ -11,6 +9,10 @@ import { HomeFeedWarm } from "@/components/feed/HomeFeedWarm";
 import { HomeFeedServerBridge } from "@/components/layout/HomeFeedServerBridge";
 import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
 import "./globals.css";
+
+/** GA4 — override via `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Cloudflare / `.env.local`. */
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || "G-CH205SN6QR";
 
 export const metadata: Metadata = {
   title: "NaughtyXxxCams — Live Feed",
