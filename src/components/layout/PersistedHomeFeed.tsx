@@ -2,7 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
-import { HomeTubeCatalog } from "@/components/home/HomeTubeCatalog";
+import { DesktopHomeCatalog } from "@/components/desktop/DesktopHomeCatalog";
+import { HomeTabletTubeCatalog } from "@/components/home/HomeTabletTubeCatalog";
+import { MobileHomeDenseGrid } from "@/components/home/MobileHomeDenseGrid";
+import { useHomePerformers } from "@/hooks/useHomePerformers";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 
 type PersistedHomeFeedProps = {
@@ -14,6 +18,9 @@ export function PersistedHomeFeed({
 }: PersistedHomeFeedProps) {
   const pathname = usePathname();
   const everHome = useRef(false);
+  const isMobileDense = useMediaQuery("(max-width: 767px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const { performers, ready } = useHomePerformers(initialPerformers);
 
   if (pathname === "/") {
     everHome.current = true;
@@ -36,7 +43,13 @@ export function PersistedHomeFeed({
       aria-hidden={!onHome}
       {...(!onHome ? { inert: true as const } : {})}
     >
-      <HomeTubeCatalog initialPerformers={initialPerformers} />
+      {isDesktop ? (
+        <DesktopHomeCatalog />
+      ) : isMobileDense ? (
+        <MobileHomeDenseGrid performers={performers} ready={ready} />
+      ) : (
+        <HomeTabletTubeCatalog performers={performers} ready={ready} />
+      )}
     </div>
   );
 }

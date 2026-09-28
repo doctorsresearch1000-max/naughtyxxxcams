@@ -121,7 +121,7 @@ export default function MobileBottomChrome() {
   const displayPath = pendingPath ?? pathname;
 
   const shellStyle = {
-    paddingBottom: "max(0.5rem, env(safe-area-inset-bottom, 0px))",
+    paddingBottom: "env(safe-area-inset-bottom, 0px)",
     touchAction: "manipulation" as const,
     WebkitTapHighlightColor: "transparent",
   };
@@ -161,16 +161,16 @@ export default function MobileBottomChrome() {
 
   return (
     <div
-      className={`pointer-events-none fixed bottom-0 left-0 right-0 mx-auto w-full max-w-md lg:hidden ${
+      className={`pointer-events-none fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md lg:hidden ${
         feedOverlayOpen ? "invisible" : ""
       }`}
-      data-mobile-bottom-chrome="v1"
+      data-mobile-bottom-chrome="v2-fixed"
       style={{ ...shellStyle, zIndex: Z_BOTTOM_CHROME }}
       aria-hidden={feedOverlayOpen}
     >
       {showFeedCta && cta ? (
         <div
-          className="pointer-events-auto mb-2 px-3"
+          className="pointer-events-auto border-t border-white/10 bg-black/95 px-3 py-2"
           data-feed-bottom-cta="true"
         >
           <ChatWithModelCta
@@ -183,8 +183,8 @@ export default function MobileBottomChrome() {
       ) : null}
 
       <nav
-        className="pointer-events-auto mx-3 mb-1 flex h-[54px] items-stretch justify-around rounded-2xl border border-white/[0.08] bg-[#0A0A0A]/94 shadow-[0_-4px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl"
-        data-bottom-nav="v2-heart"
+        className="pointer-events-auto flex h-[58px] items-stretch justify-around border-t border-white/10 bg-black/95 px-1 shadow-[0_-8px_32px_rgba(0,0,0,0.55)]"
+        data-bottom-nav="v3-fixed-bar"
         aria-label="Primary navigation"
       >
         {navItems}

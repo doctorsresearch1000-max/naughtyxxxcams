@@ -10,6 +10,7 @@ import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideShe
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useConversionAttentionPulse } from "@/hooks/useConversionAttentionPulse";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
+import { ProfileMobileLiveHeader } from "@/components/profile/ProfileMobileLiveHeader";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
@@ -118,27 +119,9 @@ export function ModelProfileSlushyView({
       />
       <div className="mx-auto max-w-md">
         <section className="relative">
-          <div className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10">
-            {model.bannerUrl?.trim() ? (
-              <Image
-                src={model.bannerUrl}
-                alt={model.displayName}
-                fill
-                priority
-                unoptimized
-                sizes="100vw"
-                className="object-cover"
-              />
-            ) : null}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-[#0A0A0A]" />
+          <ProfileMobileLiveHeader model={model} />
 
-            {isLive && (
-              <span className="absolute left-4 top-4 rounded-full bg-[#39FF14] px-3 py-1 text-[11px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
-                • LIVE
-              </span>
-            )}
-
-            <div className="absolute right-3 top-16 flex flex-col gap-2">
+            <div className="absolute right-3 top-16 z-20 flex flex-col gap-2 pointer-events-none">
               {model.badges.map((badge) => (
                 <span
                   key={badge}
@@ -152,7 +135,6 @@ export function ModelProfileSlushyView({
                 </span>
               ))}
             </div>
-          </div>
 
           <div className="relative z-10 -mt-14 flex justify-center">
             <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#0A0A0A] ring-2 ring-[#39FF14]/40">
