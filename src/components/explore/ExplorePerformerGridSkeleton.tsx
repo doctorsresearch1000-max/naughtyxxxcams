@@ -3,12 +3,18 @@ export function ExplorePerformerGridSkeleton({
   columns = 2,
 }: {
   count?: number;
-  columns?: 2 | 3;
+  columns?: 2 | 3 | 4;
 }) {
   const gridClass =
-    columns === 3 ? "grid grid-cols-3 gap-1.5 sm:gap-2" : "grid grid-cols-2 gap-3";
-  const aspectClass = columns === 3 ? "aspect-[3/5]" : "aspect-[3/4]";
-  const radiusClass = columns === 3 ? "rounded-[18px]" : "rounded-2xl";
+    columns === 4
+      ? "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
+      : columns === 3
+        ? "grid grid-cols-3 gap-1.5 sm:gap-2"
+        : "grid grid-cols-2 gap-3";
+  const aspectClass =
+    columns === 4 ? "aspect-[9/16]" : columns === 3 ? "aspect-[3/5]" : "aspect-[3/4]";
+  const radiusClass =
+    columns === 4 ? "rounded-xl" : columns === 3 ? "rounded-[18px]" : "rounded-2xl";
 
   return (
     <div
