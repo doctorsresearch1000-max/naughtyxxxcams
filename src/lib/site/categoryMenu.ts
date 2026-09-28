@@ -19,7 +19,10 @@ export function categoryPath(slug: string): string {
 }
 
 export const DRAWER_PRIMARY_LINKS: DrawerNavLink[] = [
-  { label: "Home", href: "/", accent: true, icon: "home" },
+  { label: "Home", href: "/", icon: "home" },
+  { label: "Explore", href: "/explore", icon: "explore" },
+  { label: "Following", href: "/following", icon: "following" },
+  { label: "Profile", href: "/profile", icon: "profile" },
   { label: "Female", href: categoryPath("female"), icon: "female" },
   { label: "Male", href: categoryPath("male"), icon: "male" },
   { label: "Couples", href: explorePathForCategorySlug("couples"), icon: "couples" },

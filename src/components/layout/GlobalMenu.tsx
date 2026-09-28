@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -94,6 +95,37 @@ function DrawerRowIcon({ kind }: { kind?: string }) {
       </svg>
     );
   }
+  if (kind === "explore") {
+    return (
+      <svg {...common}>
+        <circle cx="11" cy="11" r="7" stroke={stroke} strokeWidth="1.6" />
+        <path d="M20 20l-3.5-3.5" stroke={stroke} strokeWidth="1.6" />
+      </svg>
+    );
+  }
+  if (kind === "following") {
+    return (
+      <svg {...common}>
+        <path
+          d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10Z"
+          stroke={stroke}
+          strokeWidth="1.6"
+        />
+      </svg>
+    );
+  }
+  if (kind === "profile") {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="8" r="4" stroke={stroke} strokeWidth="1.6" />
+        <path
+          d="M5 20c0-4 3-7 7-7s7 3 7 7"
+          stroke={stroke}
+          strokeWidth="1.6"
+        />
+      </svg>
+    );
+  }
   return (
     <svg {...common}>
       <circle cx="12" cy="12" r="8" stroke={stroke} strokeWidth="1.6" />
@@ -102,7 +134,13 @@ function DrawerRowIcon({ kind }: { kind?: string }) {
   );
 }
 
+function isDrawerLinkActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function GlobalMenu() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -162,20 +200,28 @@ export function GlobalMenu() {
 
         <nav className="flex-1 overflow-y-auto">
           <ul className="border-b border-white/10 py-1">
-            {DRAWER_PRIMARY_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={close}
-                  className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold transition hover:bg-white/5 ${
-                    link.accent ? "text-red-500" : "text-white"
-                  }`}
-                >
-                  <DrawerRowIcon kind={link.icon} />
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {DRAWER_PRIMARY_LINKS.map((link) => {
+              const active = isDrawerLinkActive(pathname, link.href);
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={close}
+                    className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold transition hover:bg-white/5 ${
+                      active
+                        ? "text-[#39FF14]"
+                        : link.href === "/"
+                          ? "text-red-400"
+                          : "text-white"
+                    }`}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    <DrawerRowIcon kind={link.icon} />
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           {DRAWER_ACCORDION_SECTIONS.map((section) => {

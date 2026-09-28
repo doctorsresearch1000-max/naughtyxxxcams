@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -13,16 +13,16 @@ import {
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
-import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
   EXPLORE_CATALOG_MENU,
   resolveExploreCategory,
 } from "@/lib/explore/exploreCatalog";
+import { buildExploreInFeedPromo } from "@/lib/explore/exploreInFeedPromo";
 import { EXPLORE_DISPLAY_LIMIT } from "@/lib/explore/exploreLimits";
+import { subscribeExploreSearch } from "@/lib/explore/exploreSearchSync";
 import {
   filterPerformersBySearch,
   filterPerformersByTagSlug,
@@ -80,13 +80,12 @@ function buildCacheFromPool(pool: CrackPerformer[]): Map<string, CacheEntry> {
   return map;
 }
 
-function horizontalScrollClass(): string {
-  return "flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
-}
+const horizontalScrollClass =
+  "flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
 function chipClass(active: boolean): string {
   return [
-    "shrink-0 cursor-pointer rounded-full px-3.5 py-2 text-[11px] font-bold transition active:scale-[0.98] touch-manipulation select-none",
+    "shrink-0 cursor-pointer rounded-full px-3.5 py-2 text-[11px] font-bold transition active:scale-[0.98] touch-manipulation select-none lg:px-3 lg:py-1.5 lg:text-[10px]",
     active
       ? "bg-white text-black shadow-sm"
       : "bg-[#1a1a1e] text-zinc-300 ring-1 ring-white/[0.06] hover:bg-[#25252a]",
@@ -110,6 +109,7 @@ export function ExploreSlushyDiscover({
   poolLoading = false,
 }: ExploreSlushyDiscoverProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(initialCat);
@@ -126,6 +126,13 @@ export function ExploreSlushyDiscover({
   useEffect(() => {
     setActiveCat(initialCat);
   }, [initialCat]);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q != null) setSearch(q);
+  }, [searchParams]);
+
+  useEffect(() => subscribeExploreSearch(setSearch), []);
 
   useEffect(() => {
     const built = buildCacheFromPool(masterPool);
@@ -208,9 +215,10 @@ export function ExploreSlushyDiscover({
       .slice(0, 14);
   }, [masterPool]);
 
-  const promoModel = liveStories[0] ?? basePerformers[0];
-  const promoUrl = promoModel ? buildModelAffiliateUrl(promoModel) : "/";
-  const promoImage = promoModel ? pickCoverUrl(promoModel) : null;
+  const inFeedPromo = useMemo(
+    () => buildExploreInFeedPromo(liveStories[0] ?? basePerformers[0]),
+    [liveStories, basePerformers],
+  );
 
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
@@ -239,9 +247,80 @@ export function ExploreSlushyDiscover({
     setActiveTag((prev) => (prev === id ? null : id));
   };
 
+  const sortChipButtons = SORT_CHIPS.map((chip) => {
+    const active =
+      chip.id === "filter"
+        ? !search && !activeTag && sortMode === "all" && !activeCat
+        : chip.id === sortMode;
+    return (
+      <button
+        key={chip.label}
+        type="button"
+        onClick={() => onSortChip(chip.id)}
+        className={chipClass(active)}
+      >
+        {chip.id === "filter" ? (
+          <span className="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="M4 6h16M7 12h10M10 18h4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            {chip.label}
+          </span>
+        ) : (
+          chip.label
+        )}
+      </button>
+    );
+  });
+
+  const tagChipButtons = TAG_CHIPS.map((chip) => {
+    const active =
+      chip.id === "__categories__"
+        ? showCategoryPicker
+        : activeTag === chip.id;
+    return (
+      <button
+        key={chip.label}
+        type="button"
+        onClick={() => onTagChip(chip.id)}
+        className={chipClass(active)}
+      >
+        {chip.label}
+      </button>
+    );
+  });
+
+  const categoryChipButtons =
+    showCategoryPicker &&
+    [
+      <button
+        key="all-cat"
+        type="button"
+        className={chipClass(!activeCat)}
+        onClick={() => loadCategory(null)}
+      >
+        All
+      </button>,
+      ...EXPLORE_CATALOG_MENU.map(({ slug, label }) => (
+        <button
+          key={slug}
+          type="button"
+          className={chipClass(activeCat === slug)}
+          onClick={() => loadCategory(slug)}
+        >
+          {label}
+        </button>
+      )),
+    ];
+
   return (
-    <div className="space-y-4 pb-1">
-      <div className="relative">
+    <div className="space-y-4 pb-1 lg:space-y-2">
+      <div className="relative lg:hidden">
         <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -259,82 +338,26 @@ export function ExploreSlushyDiscover({
         />
       </div>
 
-      <div className={horizontalScrollClass()}>
-        {SORT_CHIPS.map((chip) => {
-          const active =
-            chip.id === "filter"
-              ? !search && !activeTag && sortMode === "all" && !activeCat
-              : chip.id === sortMode;
-          return (
-            <button
-              key={chip.label}
-              type="button"
-              onClick={() => onSortChip(chip.id)}
-              className={chipClass(active)}
-            >
-              {chip.id === "filter" ? (
-                <span className="flex items-center gap-1.5">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path
-                      d="M4 6h16M7 12h10M10 18h4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  {chip.label}
-                </span>
-              ) : (
-                chip.label
-              )}
-            </button>
-          );
-        })}
+      <div className={`${horizontalScrollClass} hidden lg:flex`}>
+        {sortChipButtons}
+        {tagChipButtons}
+        {showCategoryPicker ? categoryChipButtons : null}
       </div>
 
-      <div className={horizontalScrollClass()}>
-        {TAG_CHIPS.map((chip) => {
-          const active =
-            chip.id === "__categories__"
-              ? showCategoryPicker
-              : activeTag === chip.id;
-          return (
-            <button
-              key={chip.label}
-              type="button"
-              onClick={() => onTagChip(chip.id)}
-              className={chipClass(active)}
-            >
-              {chip.label}
-            </button>
-          );
-        })}
+      <div className={`${horizontalScrollClass} lg:hidden`}>
+        {sortChipButtons}
       </div>
+
+      <div className={`${horizontalScrollClass} lg:hidden`}>{tagChipButtons}</div>
 
       {showCategoryPicker && (
-        <div className={horizontalScrollClass()}>
-          <button
-            type="button"
-            className={chipClass(!activeCat)}
-            onClick={() => loadCategory(null)}
-          >
-            All
-          </button>
-          {EXPLORE_CATALOG_MENU.map(({ slug, label }) => (
-            <button
-              key={slug}
-              type="button"
-              className={chipClass(activeCat === slug)}
-              onClick={() => loadCategory(slug)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className={`${horizontalScrollClass} lg:hidden`}>
+          {categoryChipButtons}
         </div>
       )}
 
       {liveStories.length > 0 && (
-        <div className={horizontalScrollClass()}>
+        <div className={`${horizontalScrollClass} lg:py-0`}>
           {liveStories.map((performer) => {
             const path = performerProfilePathFromPerformer(performer);
             const handle = performerDisplayHandle(
@@ -342,15 +365,15 @@ export function ExploreSlushyDiscover({
             );
             const thumb = pickCoverUrl(performer);
             const inner = (
-              <div className="flex w-[76px] flex-col items-center gap-1.5">
+              <div className="flex w-[76px] flex-col items-center gap-1.5 lg:w-[58px] lg:gap-1">
                 <div
-                  className="rounded-[24px] p-[2px]"
+                  className="rounded-[24px] p-[2px] lg:rounded-[18px]"
                   style={{
                     background:
                       "linear-gradient(135deg, #ff2d92 0%, #e879f9 40%, #a855f7 100%)",
                   }}
                 >
-                  <div className="relative h-[72px] w-[72px] overflow-hidden rounded-[22px] bg-[#1C1C1E]">
+                  <div className="relative h-[72px] w-[72px] overflow-hidden rounded-[22px] bg-[#1C1C1E] lg:h-[52px] lg:w-[52px] lg:rounded-[16px]">
                     {thumb ? (
                       <Image
                         src={thumb}
@@ -363,12 +386,12 @@ export function ExploreSlushyDiscover({
                     ) : (
                       <div className="h-full w-full bg-zinc-800" />
                     )}
-                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pb-1 pt-3 text-center text-[8px] font-black uppercase tracking-wide text-white">
+                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pb-1 pt-3 text-center text-[8px] font-black uppercase tracking-wide text-white lg:pb-0.5 lg:pt-2 lg:text-[7px]">
                       Live
                     </span>
                   </div>
                 </div>
-                <span className="max-w-[76px] truncate text-[10px] font-bold text-zinc-100">
+                <span className="max-w-[76px] truncate text-[10px] font-bold text-zinc-100 lg:max-w-[58px] lg:text-[9px]">
                   {handle.replace(/^@/, "")}
                 </span>
               </div>
@@ -386,15 +409,8 @@ export function ExploreSlushyDiscover({
         </div>
       )}
 
-      {promoModel && (
-        <ExploreJerkmatePromoBanner
-          affiliateUrl={promoUrl}
-          coverUrl={promoImage}
-        />
-      )}
-
-      <section>
-        <div className="mb-2.5 flex items-center justify-between px-0.5">
+      <section className="lg:-mt-1">
+        <div className="mb-2.5 flex items-center justify-between px-0.5 lg:mb-1">
           <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
             {category ? category.label : "For you"}
           </h2>
@@ -407,7 +423,10 @@ export function ExploreSlushyDiscover({
         {showSkeleton ? (
           <ExplorePerformerGridSkeleton count={12} />
         ) : (
-          <ExploreTubeGrid performers={displayedPerformers} />
+          <ExploreTubeGrid
+            performers={displayedPerformers}
+            inFeedPromo={inFeedPromo}
+          />
         )}
       </section>
     </div>

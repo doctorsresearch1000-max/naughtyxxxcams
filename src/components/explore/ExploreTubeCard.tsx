@@ -3,11 +3,15 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { formatExploreViews } from "@/lib/explore/exploreGrid";
+import {
+  formatCardViewLabel,
+  performerLanguagePills,
+} from "@/lib/media/performerCardMeta";
 import {
   estimateViewerCount,
   formatViewerCount,
 } from "@/lib/feed/viewerCount";
+import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { useDebouncedHover } from "@/hooks/useDebouncedHover";
 import { performerDisplayHandle } from "@/lib/profile/performerHandle";
 
@@ -16,14 +20,24 @@ type ExploreTubeCardProps = {
   onSelect: () => void;
 };
 
-function performerLanguages(performer: FeedPerformer): string {
-  const langs = performer.characteristic?.languages ?? [];
-  if (langs.length === 0) return "en";
-  return langs
-    .slice(0, 2)
-    .map((lang) => lang.trim().slice(0, 2).toLowerCase())
-    .filter(Boolean)
-    .join(", ");
+function EyeIcon() {
+  return (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      className="shrink-0 opacity-90"
+    >
+      <path
+        d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
 }
 
 function hasHdTag(performer: FeedPerformer): boolean {
@@ -44,7 +58,8 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
   const handle = performerDisplayHandle(
     performer.nameClean || performer.name,
   ).replace(/^@/, "");
-  const views = formatExploreViews(performer);
+  const viewsLabel = formatCardViewLabel(performer);
+  const langPills = performerLanguagePills(performer);
   const viewers = formatViewerCount(
     estimateViewerCount(performer, performer.feedKey),
   );
@@ -62,6 +77,19 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  useEffect(() => {
+    if (!showHoverPreview) return;
+    warmPerformerStream(performer.feedKey, performer.embedPlan);
+  }, [showHoverPreview, performer.feedKey, performer.embedPlan]);
+
+  const handlePointerEnter = () => {
+    if (finePointerHover) onPointerEnter();
+  };
+
+  const handlePointerLeave = () => {
+    if (finePointerHover) onPointerLeave();
+  };
+
   return (
     <article
       className="group flex flex-col overflow-hidden rounded-lg bg-[#141416] ring-1 ring-white/[0.05] transition hover:ring-[#39FF14]/35"
@@ -69,9 +97,9 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
       <button
         type="button"
         onClick={onSelect}
-        onMouseEnter={finePointerHover ? onPointerEnter : undefined}
-        onMouseLeave={finePointerHover ? onPointerLeave : undefined}
-        className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-900 text-left"
+        onMouseEnter={handlePointerEnter}
+        onMouseLeave={handlePointerLeave}
+        className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-900 text-left lg:aspect-[4/5]"
       >
         <Image
           src={performer.posterUrl}
@@ -95,7 +123,7 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
             aria-hidden
             className={`pointer-events-none object-cover transition-opacity duration-200 ${
               showHoverPreview ? "opacity-100" : "opacity-0"
-            }`}
+            } ${showHoverPreview ? "lg:animate-pulse" : ""}`}
             loading="lazy"
             decoding="async"
             unoptimized
@@ -115,7 +143,8 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
           </span>
         ) : null}
 
-        <span className="absolute right-1.5 top-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[10px] font-bold text-[#39FF14]">
+        <span className="absolute right-1.5 top-1.5 flex items-center gap-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white">
+          <EyeIcon />
           {viewers}
         </span>
 
@@ -125,14 +154,25 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
       </button>
 
       <div className="px-2 py-2">
-        <p className="truncate text-sm font-extrabold text-white">
+        <p className="truncate text-sm font-extrabold text-white lg:font-medium">
           {handle}
           <span className="ml-1 text-[10px] font-black text-[#39FF14]">F</span>
         </p>
-        <p className="mt-0.5 flex items-center justify-between gap-2 text-[11px] text-zinc-500">
-          <span>{views} views</span>
-          <span className="shrink-0 uppercase">{performerLanguages(performer)}</span>
-        </p>
+        <div className="mt-0.5 flex items-center justify-between gap-2">
+          <span className="text-[11px] text-zinc-400 lg:text-zinc-300">
+            {viewsLabel}
+          </span>
+          <div className="flex shrink-0 gap-1">
+            {langPills.slice(0, 2).map((code) => (
+              <span
+                key={code}
+                className="rounded bg-zinc-800/90 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-300 ring-1 ring-white/10"
+              >
+                {code}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </article>
   );
