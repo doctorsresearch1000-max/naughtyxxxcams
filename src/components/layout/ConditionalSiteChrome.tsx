@@ -19,11 +19,9 @@ export function ConditionalSiteChrome({
     pathname.startsWith("/profile/") ||
     LEGAL_ROUTES.has(pathname);
 
-  const isHome = pathname === "/";
-
   return (
     <div
-      className={`flex min-h-0 flex-1 flex-col overflow-x-hidden ${isHome ? "" : "pt-[var(--app-header-height)]"}`}
+      className="flex min-h-0 flex-1 flex-col overflow-x-hidden pt-[var(--app-header-height)]"
     >
       <div className="relative z-10 flex min-h-0 flex-1 flex-col">{children}</div>
       {showFooter ? <Footer /> : null}

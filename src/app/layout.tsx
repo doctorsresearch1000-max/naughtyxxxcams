@@ -15,9 +15,9 @@ const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || "G-CH205SN6QR";
 
 export const metadata: Metadata = {
-  title: "NaughtyXxxCams — Live Feed",
+  title: "NaughtyXxxCams — Live Cams",
   description:
-    "Discover verified Streamate models in HD. Mobile live feed, category browse, and official performer profiles on NaughtyXXXCams.",
+    "Discover verified Streamate models in HD. Browse live cams, explore categories, and official performer profiles on NaughtyXXXCams.",
 };
 
 export const viewport: Viewport = {
