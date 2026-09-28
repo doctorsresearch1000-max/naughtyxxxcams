@@ -1,36 +1,26 @@
+import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
+
 export function ExplorePerformerGridSkeleton({
-  count = 6,
-  columns = 2,
+  count = 12,
 }: {
   count?: number;
-  columns?: 2 | 3 | 4;
+  columns?: number;
 }) {
-  const gridClass =
-    columns === 4
-      ? "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
-      : columns === 3
-        ? "grid grid-cols-3 gap-1.5 sm:gap-2"
-        : "grid grid-cols-2 gap-3";
-  const aspectClass =
-    columns === 4 ? "aspect-[9/16]" : columns === 3 ? "aspect-[3/5]" : "aspect-[3/4]";
-  const radiusClass =
-    columns === 4 ? "rounded-xl" : columns === 3 ? "rounded-[18px]" : "rounded-2xl";
-
   return (
     <div
-      className={gridClass}
+      className={EXPLORE_TUBE_GRID_CLASS}
       aria-busy="true"
       aria-label="Loading models"
     >
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className={`relative ${aspectClass} overflow-hidden ${radiusClass} border border-zinc-800/60 bg-[#1C1C1E]`}
+          className="overflow-hidden rounded-lg border border-zinc-800/60 bg-[#141416]"
         >
-          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950" />
-          <div className="absolute bottom-2 left-2 right-2 space-y-2">
-            <div className="h-4 w-12 animate-pulse rounded-md bg-zinc-700/80" />
-            <div className="h-3 w-24 animate-pulse rounded bg-zinc-700/70" />
+          <div className="relative aspect-[3/4] animate-pulse bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950" />
+          <div className="space-y-2 px-2 py-2">
+            <div className="h-4 w-2/3 animate-pulse rounded bg-zinc-700/80" />
+            <div className="h-3 w-full animate-pulse rounded bg-zinc-800/80" />
           </div>
         </div>
       ))}

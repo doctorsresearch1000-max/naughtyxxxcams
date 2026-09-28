@@ -16,8 +16,7 @@ import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
-import { ExploreDesktopGrid } from "@/components/explore/desktop/ExploreDesktopGrid";
-import { ExploreSlushyGrid } from "@/components/explore/ExploreSlushyGrid";
+import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
   EXPLORE_CATALOG_MENU,
@@ -406,23 +405,9 @@ export function ExploreSlushyDiscover({
           </span>
         </div>
         {showSkeleton ? (
-          <>
-            <div className="lg:hidden">
-              <ExplorePerformerGridSkeleton count={8} columns={2} />
-            </div>
-            <div className="hidden lg:block">
-              <ExplorePerformerGridSkeleton count={15} columns={4} />
-            </div>
-          </>
+          <ExplorePerformerGridSkeleton count={12} />
         ) : (
-          <>
-            <div className="lg:hidden">
-              <ExploreSlushyGrid performers={displayedPerformers} />
-            </div>
-            <div className="hidden lg:block">
-              <ExploreDesktopGrid performers={displayedPerformers} />
-            </div>
-          </>
+          <ExploreTubeGrid performers={displayedPerformers} />
         )}
       </section>
     </div>
