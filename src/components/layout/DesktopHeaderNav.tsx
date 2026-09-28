@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { JerkmateFreePassPill } from "@/components/conversion/JerkmateFreePassPill";
 import { IconSearchOutline } from "@/components/icons/LineIcons";
 import { dispatchExploreSearch } from "@/lib/explore/exploreSearchSync";
 
@@ -68,8 +67,6 @@ export function DesktopHeaderNav() {
           );
         })}
       </nav>
-
-      <JerkmateFreePassPill className="shrink-0" />
 
       <div className="relative min-w-0 flex-1 max-w-sm">
         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">

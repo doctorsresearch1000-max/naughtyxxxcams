@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import { JerkmateMobileGifBanner } from "@/components/conversion/JerkmateMobileGifBanner";
 import { MobileHomeDenseCard } from "@/components/home/MobileHomeDenseCard";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { filterHomeMobilePerformers } from "@/lib/feed/filterHomeMobilePerformers";
@@ -49,6 +50,8 @@ export function MobileHomeDenseGrid({
           i
         </span>
       </header>
+
+      <JerkmateMobileGifBanner />
 
       {!ready ? (
         <ExplorePerformerGridSkeleton />
