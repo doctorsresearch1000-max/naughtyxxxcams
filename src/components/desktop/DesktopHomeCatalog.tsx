@@ -14,6 +14,8 @@ import {
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
+import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
+import { HomeCatalogSeoFooter } from "@/components/home/HomeCatalogSeoFooter";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
@@ -127,7 +129,9 @@ export function DesktopHomeCatalog() {
         onClose={() => setRoomPerformer(null)}
       />
 
-      <div className="border-b border-zinc-800/80 bg-zinc-950/95 px-4 pb-3 pt-[calc(var(--app-header-height)+0.75rem)] backdrop-blur-md">
+      <JerkmateHomeWideBanner />
+
+      <div className="border-b border-zinc-800/80 bg-zinc-950/95 px-4 pb-3 pt-2 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3">
           <div className="relative">
             <span
@@ -225,15 +229,8 @@ export function DesktopHomeCatalog() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-5">
-        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-          <div>
-            <h1 className="text-2xl font-black tracking-tight">Live cams</h1>
-            <p className="text-sm text-zinc-500">
-              Hover a card to pre-load the stream · Click for instant live
-              player · Sign up for chat & premium tools
-            </p>
-          </div>
+      <div className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-3">
+        <div className="mb-3 flex flex-wrap items-baseline justify-end gap-2">
           <p className="text-xs font-semibold text-zinc-500">
             Showing {visiblePerformers.length} of {filtered.length} ·{" "}
             {performers.length} live in catalog
@@ -275,6 +272,7 @@ export function DesktopHomeCatalog() {
                 Loading more models…
               </p>
             ) : null}
+            <HomeCatalogSeoFooter />
           </>
         ) : null}
       </div>

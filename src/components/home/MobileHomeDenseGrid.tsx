@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { JerkmateMobileGifBanner } from "@/components/conversion/JerkmateMobileGifBanner";
+import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
+import { HomeCatalogSeoFooter } from "@/components/home/HomeCatalogSeoFooter";
 import { MobileHomeDenseCard } from "@/components/home/MobileHomeDenseCard";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { filterHomeMobilePerformers } from "@/lib/feed/filterHomeMobilePerformers";
@@ -36,22 +37,10 @@ export function MobileHomeDenseGrid({
 
   return (
     <main
-      className="mx-auto min-h-[var(--feed-viewport-height,100dvh)] w-full max-w-md flex-1 overflow-y-auto bg-black pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-white md:hidden"
-      data-home-mobile-dense="v2-dark"
+      className="mx-auto min-h-0 w-full max-w-md flex-1 overflow-y-auto bg-black pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-white md:hidden"
+      data-home-mobile-dense="v3-wide-banner"
     >
-      <header className="sticky top-0 z-10 flex items-center gap-2 border-b border-white/10 bg-black/95 px-2 py-2 backdrop-blur-sm">
-        <h1 className="text-[13px] font-black uppercase tracking-tight text-white">
-          Free live porn cams
-        </h1>
-        <span
-          className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-bold text-zinc-400 ring-1 ring-white/10"
-          aria-hidden
-        >
-          i
-        </span>
-      </header>
-
-      <JerkmateMobileGifBanner />
+      <JerkmateHomeWideBanner />
 
       {!ready ? (
         <ExplorePerformerGridSkeleton />
@@ -61,7 +50,7 @@ export function MobileHomeDenseGrid({
         </p>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-x-1.5 gap-y-2 p-1.5">
+          <div className="grid grid-cols-2 gap-x-1.5 gap-y-2 p-1.5 pt-0">
             {visible.map((performer) => (
               <MobileHomeDenseCard
                 key={performer.feedKey}
@@ -75,6 +64,7 @@ export function MobileHomeDenseGrid({
               Loading more…
             </p>
           ) : null}
+          <HomeCatalogSeoFooter />
         </>
       )}
     </main>

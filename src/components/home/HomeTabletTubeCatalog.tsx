@@ -1,5 +1,7 @@
 "use client";
 
+import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
+import { HomeCatalogSeoFooter } from "@/components/home/HomeCatalogSeoFooter";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
@@ -16,19 +18,17 @@ export function HomeTabletTubeCatalog({
 }: HomeTabletTubeCatalogProps) {
   return (
     <main
-      className="mx-auto hidden min-h-[var(--feed-viewport-height,100dvh)] w-full max-w-md flex-1 overflow-y-auto bg-[#0d0d0f] pb-24 text-white [-webkit-overflow-scrolling:touch] md:block lg:hidden"
-      data-home-tablet-tube="v1"
+      className="mx-auto hidden min-h-0 w-full max-w-md flex-1 overflow-y-auto bg-black pb-24 text-white [-webkit-overflow-scrolling:touch] md:block lg:hidden"
+      data-home-tablet-tube="v2"
     >
-      <div className="px-3.5 pt-3">
-        <h1 className="text-lg font-black tracking-tight">Live cams</h1>
-        <p className="text-[11px] text-zinc-500">
-          Browse models · Tap for profile
-        </p>
-      </div>
+      <JerkmateHomeWideBanner />
       {!ready ? (
         <ExplorePerformerGridSkeleton />
       ) : (
-        <ExploreTubeGrid performers={performers} />
+        <>
+          <ExploreTubeGrid performers={performers} />
+          <HomeCatalogSeoFooter />
+        </>
       )}
     </main>
   );
