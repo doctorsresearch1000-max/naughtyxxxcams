@@ -8,7 +8,7 @@ import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutbound
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
-import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
+import { useConversionAttentionPulse } from "@/hooks/useConversionAttentionPulse";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
@@ -34,11 +34,18 @@ function PrimaryCta({
   href,
   live,
   label,
+  attentionPulse = false,
 }: {
   href: string;
   live: boolean;
   label: string;
+  attentionPulse?: boolean;
 }) {
+  const pulseClass =
+    attentionPulse && live
+      ? "animate-[cta-glow_1.8s_ease-in-out_infinite] ring-2 ring-[#39FF14]/55"
+      : "";
+
   if (!live) {
     return (
       <AffiliateOutboundLink
@@ -54,7 +61,7 @@ function PrimaryCta({
   return (
     <AffiliateOutboundLink
       href={href}
-      className="flex w-full items-center justify-between rounded-full bg-[#39FF14] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[#00FF7F] active:scale-[0.99]"
+      className={`flex w-full items-center justify-between rounded-full bg-[#39FF14] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[#00FF7F] active:scale-[0.99] ${pulseClass}`}
     >
       <span>{label}</span>
       <span aria-hidden>💬</span>
@@ -70,7 +77,7 @@ export function ModelProfileSlushyView({
   const isLive = model.status === "live";
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const conversionReady = useDelayedConversionCta(true, 15_000);
+  const conversionAttentionPulse = useConversionAttentionPulse(true);
   const chatCtaLabel = `Chat with ${model.displayName}`;
   const likeKey = `profile-${model.profileSlug}`;
 
@@ -100,6 +107,7 @@ export function ModelProfileSlushyView({
         model={model}
         seo={seo}
         recommended={recommended}
+        conversionAttentionPulse={conversionAttentionPulse}
       />
     <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white lg:hidden">
       <ConversionSlideSheet
@@ -175,7 +183,8 @@ export function ModelProfileSlushyView({
             <ChatWithModelCta
               modelName={model.displayName}
               affiliateUrl={model.affiliateUrl}
-              visible={conversionReady}
+              visible
+              attentionPulse={conversionAttentionPulse}
             />
           </div>
 
@@ -195,22 +204,12 @@ export function ModelProfileSlushyView({
         </section>
 
         <section className="space-y-3 px-4 pt-8">
-          {conversionReady ? (
-            <PrimaryCta
-              href={model.affiliateUrl}
-              live={isLive}
-              label={chatCtaLabel}
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={openSheet}
-              className="flex w-full items-center justify-between rounded-full border border-[#39FF14]/35 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 ring-1 ring-white/5 transition active:scale-[0.99]"
-            >
-              <span>Chat unlocks in a moment…</span>
-              <span aria-hidden>💬</span>
-            </button>
-          )}
+          <PrimaryCta
+            href={model.affiliateUrl}
+            live={isLive}
+            label={chatCtaLabel}
+            attentionPulse={conversionAttentionPulse}
+          />
           <button
             type="button"
             className="flex w-full items-center justify-between rounded-full border border-white/10 bg-[#1C1C1E] px-5 py-4 text-sm font-semibold text-white ring-1 ring-white/5"

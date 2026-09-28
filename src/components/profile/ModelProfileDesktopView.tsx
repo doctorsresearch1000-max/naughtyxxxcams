@@ -25,12 +25,14 @@ type ModelProfileDesktopViewProps = {
   model: ModelProfileView;
   seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
+  conversionAttentionPulse?: boolean;
 };
 
 export function ModelProfileDesktopView({
   model,
   seo,
   recommended,
+  conversionAttentionPulse = false,
 }: ModelProfileDesktopViewProps) {
   const likeKey = `profile-${model.profileSlug}`;
 
@@ -66,7 +68,8 @@ export function ModelProfileDesktopView({
           <ChatWithModelCta
             modelName={model.displayName}
             affiliateUrl={model.affiliateUrl}
-            visible={true}
+            visible
+            attentionPulse={conversionAttentionPulse}
             className="w-full !py-3.5 !text-sm"
           />
           <AffiliateOutboundLink
