@@ -126,7 +126,7 @@ export function DesktopHomeCatalog() {
   };
 
   return (
-    <main className={`${CATALOG_PAGE_PADDING} hidden min-h-0 w-full max-w-none flex-1 flex-col overflow-x-hidden bg-zinc-950 text-white lg:flex`}>
+    <main className={`${CATALOG_PAGE_PADDING} hidden w-full max-w-none flex-col overflow-x-hidden bg-zinc-950 text-white lg:flex`}>
       <DesktopImmersiveRoomDialog
         performer={roomPerformer}
         onClose={() => setRoomPerformer(null)}

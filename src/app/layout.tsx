@@ -58,14 +58,16 @@ export default function RootLayout({
       </head>
       <body className="min-h-dvh bg-black">
         <AppProviders>
-        <div className="relative mx-auto flex min-h-dvh w-full max-w-full flex-col overflow-x-hidden bg-black pb-16 [touch-action:pan-y] lg:pb-0">
+        <div className="relative mx-auto flex min-h-dvh w-full max-w-full flex-col bg-black pb-16 [touch-action:pan-y] lg:pb-0">
           <ExploreBootstrapWarm />
           <HomeFeedWarm />
           <Header />
-          <ConditionalSiteChrome>
-            <HomeFeedServerBridge />
-            <SecondaryPageLayer>{children}</SecondaryPageLayer>
-          </ConditionalSiteChrome>
+          <div className="flex min-h-0 flex-1 flex-col overflow-x-clip overflow-x-hidden">
+            <ConditionalSiteChrome>
+              <HomeFeedServerBridge />
+              <SecondaryPageLayer>{children}</SecondaryPageLayer>
+            </ConditionalSiteChrome>
+          </div>
         </div>
         <AppChrome />
         </AppProviders>

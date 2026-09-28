@@ -8,7 +8,7 @@ import { HeaderMobileSearch } from "@/components/layout/HeaderMobileSearch";
 export function Header() {
   return (
     <header
-      className="pointer-events-none sticky top-0 z-50 w-full border-b border-zinc-800/60 bg-zinc-950/90 backdrop-blur-md"
+      className="pointer-events-none sticky top-0 z-50 w-full shrink-0 border-b border-zinc-800/60 bg-zinc-950/90 backdrop-blur-md pt-[env(safe-area-inset-top,0px)]"
     >
       {/* Mobile: hamburger | logo center | search right */}
       <div className="pointer-events-auto flex h-14 items-center px-3 lg:hidden">

@@ -62,7 +62,7 @@ export function MobileHomeDenseGrid({
 
   return (
     <main
-      className={`${CATALOG_PAGE_PADDING} min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-black pb-[calc(4.75rem+env(safe-area-inset-bottom))] text-white md:hidden`}
+      className={`${CATALOG_PAGE_PADDING} w-full overflow-x-hidden bg-black pb-[calc(4.75rem+env(safe-area-inset-bottom))] text-white md:hidden`}
       data-home-mobile-dense="v5-camb3-ref"
     >
       <HomeCatalogSectionTitle />

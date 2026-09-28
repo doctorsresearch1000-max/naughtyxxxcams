@@ -19,7 +19,7 @@ export function HomeTabletTubeCatalog({
 }: HomeTabletTubeCatalogProps) {
   return (
     <main
-      className={`${CATALOG_PAGE_PADDING} hidden min-h-0 w-full flex-1 overflow-x-hidden overflow-y-auto bg-black pb-20 text-white md:block lg:hidden`}
+      className={`${CATALOG_PAGE_PADDING} hidden w-full overflow-x-hidden bg-black pb-20 text-white md:block lg:hidden`}
       data-home-tablet-tube="v3-camb3"
     >
       <HomeCatalogSectionTitle />
