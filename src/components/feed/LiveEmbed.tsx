@@ -16,6 +16,7 @@ import {
   isStreamSlotLoaded,
   peekStreamSlot,
   refreshStreamStageLayout,
+  destroyFeedEmbedIframe,
   releaseStreamSlot,
 } from "@/lib/feed/feedStreamEngine";
 import { applyStreamIframeStagePresentation } from "@/lib/feed/feedStreamPresentation";
@@ -379,6 +380,18 @@ export function LiveEmbed({
       onIframeWindow?.(null);
     }
   }, [mountIframe, embedKey, onIframeWindow]);
+
+  useEffect(() => {
+    return () => {
+      const iframe = iframeRef.current;
+      if (iframe) {
+        destroyFeedEmbedIframe(iframe);
+        iframeRef.current = null;
+      }
+      releaseStreamSlot(embedKey, false);
+      onIframeWindow?.(null);
+    };
+  }, [embedKey, onIframeWindow]);
 
   useLayoutEffect(() => {
     if (!isActive || !mountIframe) return;

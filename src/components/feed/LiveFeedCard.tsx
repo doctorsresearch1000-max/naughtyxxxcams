@@ -7,7 +7,7 @@ import { useSessionAudio } from "@/components/feed/SessionAudioProvider";
 import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
 import { useRegisterFeedBottomCta } from "@/components/layout/FeedBottomChromeContext";
-import { useDelayedConversionCta } from "@/hooks/useDelayedConversionCta";
+import { useConversionAttentionPulse } from "@/hooks/useConversionAttentionPulse";
 import {
   performerDisplayHandle,
   performerProfilePath,
@@ -47,8 +47,8 @@ function LiveFeedCardInner({
   const [secondaryChromeReady, setSecondaryChromeReady] = useState(
     !deferSecondaryChrome,
   );
-  const conversionReady = useDelayedConversionCta(isActive, 15_000);
-  const conversionCtaVisible = isActive && conversionReady;
+  const conversionCtaVisible = isActive;
+  const conversionAttentionPulse = useConversionAttentionPulse(isActive);
 
   useEffect(() => {
     if (!isActive || !deferSecondaryChrome) {
@@ -75,6 +75,7 @@ function LiveFeedCardInner({
     conversionCtaVisible,
     modelName,
     affiliateUrl,
+    conversionAttentionPulse,
   );
 
   const modelRef = useMemo(
@@ -201,3 +202,4 @@ function LiveFeedCardInner({
 }
 
 export const LiveFeedCard = memo(LiveFeedCardInner);
+LiveFeedCard.displayName = "LiveFeedCard";

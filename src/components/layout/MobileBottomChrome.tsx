@@ -177,6 +177,7 @@ export default function MobileBottomChrome() {
             modelName={cta.modelName}
             affiliateUrl={cta.affiliateUrl}
             visible
+            attentionPulse={cta.attentionPulse}
           />
         </div>
       ) : null}

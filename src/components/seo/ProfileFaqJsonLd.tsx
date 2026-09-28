@@ -1,4 +1,3 @@
-import Script from "next/script";
 import type { ProfileFaqItem } from "@/lib/profile/profileFaq";
 
 type ProfileFaqJsonLdProps = {
@@ -7,6 +6,9 @@ type ProfileFaqJsonLdProps = {
   scriptId: string;
 };
 
+/**
+ * FAQPage JSON-LD — must use the same `items` array as ProfileFaqSection.
+ */
 export function ProfileFaqJsonLd({ items, scriptId }: ProfileFaqJsonLdProps) {
   if (items.length === 0) return null;
 
@@ -23,14 +25,11 @@ export function ProfileFaqJsonLd({ items, scriptId }: ProfileFaqJsonLdProps) {
     })),
   };
 
-  const json = JSON.stringify(schema);
-
   return (
-    <Script
+    <script
       id={scriptId}
       type="application/ld+json"
-      strategy="beforeInteractive"
-      dangerouslySetInnerHTML={{ __html: json }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
   );
 }

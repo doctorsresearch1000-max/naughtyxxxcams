@@ -7,6 +7,7 @@ import {
   postLiveIframeAudio,
   setFeedEmbedIframeAudible,
 } from "@/lib/feed/liveIframeAudio";
+import { FEED_BUFFER_AHEAD, FEED_BUFFER_BEHIND } from "@/lib/feed/feedBufferConstants";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 type StreamSlot = {
@@ -315,7 +316,7 @@ function performerSrc(performer: {
   );
 }
 
-/** Retain only active (N) and next (N+1) stream embeds. */
+/** Retain active (N), behind (N-1), and ahead (N+1) stream embeds. */
 export function syncFeedStreamNeighbors(
   slides: Array<{
     feedKey: string;
@@ -332,11 +333,20 @@ export function syncFeedStreamNeighbors(
   const active = slides[activeIndex];
   if (active) keep.add(active.feedKey);
 
-  const prefetch = slides[activeIndex + 1];
-  const prefetchSrc = prefetch ? performerSrc(prefetch) : null;
-  if (prefetch && prefetchSrc) {
-    keep.add(prefetch.feedKey);
-    ensureStreamWarming(prefetch.feedKey, prefetchSrc);
+  for (let offset = 1; offset <= FEED_BUFFER_BEHIND; offset += 1) {
+    const behind = slides[activeIndex - offset];
+    if (behind) keep.add(behind.feedKey);
+  }
+
+  for (let offset = 1; offset <= FEED_BUFFER_AHEAD; offset += 1) {
+    const ahead = slides[activeIndex + offset];
+    const aheadSrc = ahead ? performerSrc(ahead) : null;
+    if (ahead && aheadSrc) {
+      keep.add(ahead.feedKey);
+      if (offset === 1) {
+        ensureStreamWarming(ahead.feedKey, aheadSrc);
+      }
+    }
   }
 
   handoffActiveFeedKey = active?.feedKey ?? null;

@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 
 const CARD_SELECTOR = "[data-slide-index]";
 
-/** Minimum visible ratio when refining via IntersectionObserver. */
-const ACTIVE_VISIBILITY_THRESHOLD = 0.55;
+/** Pick the slide with the largest visible intersection ratio (passive IO only). */
+const ACTIVE_VISIBILITY_THRESHOLD = 0.6;
+
+const IO_THRESHOLDS = [0, 0.25, 0.5, 0.6, 0.75, 0.9, 1] as const;
 
 export function useFeedActiveIndex(
   scrollRef: React.RefObject<HTMLElement | null>,
@@ -22,14 +24,7 @@ export function useFeedActiveIndex(
 
     const ratios = new Map<number, number>();
 
-    const syncFromScrollTop = () => {
-      const h = root.clientHeight;
-      if (h <= 0) return;
-      const approx = clamp(Math.round(root.scrollTop / h));
-      setActiveIndex((prev) => (prev === approx ? prev : approx));
-    };
-
-    const refineFromIntersection = () => {
+    const syncActiveFromRatios = () => {
       let bestIdx = 0;
       let bestRatio = 0;
       ratios.forEach((ratio, idx) => {
@@ -38,12 +33,11 @@ export function useFeedActiveIndex(
           bestIdx = idx;
         }
       });
-      if (bestRatio >= ACTIVE_VISIBILITY_THRESHOLD) {
-        setActiveIndex((prev) => {
-          const next = clamp(bestIdx);
-          return prev === next ? prev : next;
-        });
-      }
+      if (bestRatio < ACTIVE_VISIBILITY_THRESHOLD) return;
+      setActiveIndex((prev) => {
+        const next = clamp(bestIdx);
+        return prev === next ? prev : next;
+      });
     };
 
     const observer = new IntersectionObserver(
@@ -52,31 +46,22 @@ export function useFeedActiveIndex(
           const el = entry.target as HTMLElement;
           const idx = Number(el.dataset.slideIndex);
           if (Number.isNaN(idx)) continue;
-          ratios.set(idx, entry.intersectionRatio);
+          ratios.set(idx, entry.isIntersecting ? entry.intersectionRatio : 0);
         }
-        refineFromIntersection();
+        syncActiveFromRatios();
       },
       {
         root,
-        threshold: [0, 0.35, 0.55, 0.7, 0.85, 1],
+        threshold: [...IO_THRESHOLDS],
       },
     );
 
     const slides = root.querySelectorAll<HTMLElement>(CARD_SELECTOR);
     slides.forEach((slide) => observer.observe(slide));
 
-    const onScroll = () => {
-      syncFromScrollTop();
-    };
-
-    root.addEventListener("scroll", onScroll, { passive: true });
-    root.addEventListener("scrollend", syncFromScrollTop);
-    syncFromScrollTop();
-
     return () => {
       observer.disconnect();
-      root.removeEventListener("scroll", onScroll);
-      root.removeEventListener("scrollend", syncFromScrollTop);
+      ratios.clear();
     };
   }, [scrollRef, slideCount]);
 

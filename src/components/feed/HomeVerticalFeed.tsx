@@ -176,11 +176,7 @@ function HomeVerticalFeedInner({
 
   const slideCount = slides.length > 0 ? slides.length : 1;
   const { activeIndex } = useFeedActiveIndex(scrollRef, slideCount);
-  const { isArmed } = useVideoFeedBuffer(
-    activeIndex,
-    slideCount,
-    1,
-  );
+  const { isArmed } = useVideoFeedBuffer(activeIndex, slideCount);
 
   const prevActiveIndexRef = useRef(activeIndex);
 

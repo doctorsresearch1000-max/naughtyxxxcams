@@ -6,6 +6,8 @@ type ChatWithModelCtaProps = {
   modelName: string;
   affiliateUrl: string;
   visible: boolean;
+  /** Optional glow pulse after dwell time (CTA remains visible). */
+  attentionPulse?: boolean;
   className?: string;
 };
 
@@ -13,6 +15,7 @@ export function ChatWithModelCta({
   modelName,
   affiliateUrl,
   visible,
+  attentionPulse = false,
   className = "",
 }: ChatWithModelCtaProps) {
   return (
@@ -22,6 +25,10 @@ export function ChatWithModelCta({
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0"
+      } ${
+        attentionPulse && visible
+          ? "animate-[cta-glow_1.8s_ease-in-out_infinite] ring-2 ring-[#39FF14]/55"
+          : ""
       } ${className}`}
     >
       Chat with {modelName}

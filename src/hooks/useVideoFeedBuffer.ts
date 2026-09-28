@@ -1,15 +1,16 @@
 import { useMemo } from "react";
-
-const DEFAULT_RADIUS = 1;
+import {
+  FEED_BUFFER_AHEAD,
+  FEED_BUFFER_BEHIND,
+} from "@/lib/feed/feedBufferConstants";
 
 /**
- * Sliding window: mount players for N and N+1 only (no N-1 retention).
- * Indices outside this range should tear down embed sources (see LiveEmbed).
+ * Sliding window: mount players for [active - BEHIND … active + AHEAD].
+ * Default keeps at most 3 embeds armed (mobile RAM).
  */
 export function useVideoFeedBuffer(
   activeIndex: number,
   total: number,
-  _radius = DEFAULT_RADIUS,
 ): {
   armedIndices: Set<number>;
   isArmed: (index: number) => boolean;
@@ -20,15 +21,15 @@ export function useVideoFeedBuffer(
     const prefetch = new Set<number>();
     if (total <= 0) return { armedIndices: armed, prefetchIndices: prefetch };
 
-    const lo = activeIndex;
-    const hi = Math.min(total - 1, activeIndex + 1);
+    const lo = Math.max(0, activeIndex - FEED_BUFFER_BEHIND);
+    const hi = Math.min(total - 1, activeIndex + FEED_BUFFER_AHEAD);
     for (let i = lo; i <= hi; i += 1) {
       armed.add(i);
     }
 
-    const next = activeIndex + 1;
-    if (next <= total - 1) {
-      prefetch.add(next);
+    for (let i = 1; i <= FEED_BUFFER_AHEAD; i += 1) {
+      const next = activeIndex + i;
+      if (next <= total - 1) prefetch.add(next);
     }
 
     return { armedIndices: armed, prefetchIndices: prefetch };
