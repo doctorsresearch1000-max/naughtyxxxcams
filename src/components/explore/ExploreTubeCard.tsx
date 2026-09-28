@@ -3,10 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import {
-  formatCardViewLabel,
-  performerLanguagePills,
-} from "@/lib/media/performerCardMeta";
+import { CamCardMeta } from "@/components/cams/CamCardMeta";
 import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { useDebouncedHover } from "@/hooks/useDebouncedHover";
 import { performerDisplayHandle } from "@/lib/profile/performerHandle";
@@ -16,14 +13,6 @@ type ExploreTubeCardProps = {
   onSelect: () => void;
 };
 
-function roomTitle(performer: FeedPerformer): string {
-  const custom = performer.customTags?.[0]?.trim();
-  if (custom) return custom;
-  const auto = performer.autoTags?.find((t) => t.length > 8)?.trim();
-  if (auto) return auto;
-  return "Live now";
-}
-
 export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
   const [finePointerHover, setFinePointerHover] = useState(false);
   const { active: hoverPreview, onPointerEnter, onPointerLeave } =
@@ -32,8 +21,6 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
   const handle = performerDisplayHandle(
     performer.nameClean || performer.name,
   ).replace(/^@/, "");
-  const viewsLabel = formatCardViewLabel(performer);
-  const langs = performerLanguagePills(performer).join(" · ");
   const isLive = performer.live !== false;
   const hoverStill =
     performer.liveSnapshotURL?.trim() || performer.posterUrl || "";
@@ -108,22 +95,8 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
           </span>
         </div>
 
-        <div className="space-y-0.5 bg-transparent px-0.5 pb-1 pt-1.5">
-          <div className="flex min-w-0 items-center justify-between gap-1">
-            <p className="min-w-0 truncate text-xs font-semibold text-white">
-              {handle}
-            </p>
-            <span className="shrink-0 text-[10px] font-bold text-[#39FF14]">
-              F
-            </span>
-          </div>
-          <p className="truncate text-[11px] text-zinc-400">
-            {viewsLabel}
-            {langs ? ` · ${langs}` : ""}
-          </p>
-          <p className="truncate text-[10px] text-zinc-500">
-            {roomTitle(performer)}
-          </p>
+        <div className="bg-transparent px-0.5 pb-1 pt-1.5">
+          <CamCardMeta performer={performer} variant="tube" />
         </div>
       </button>
     </article>

@@ -2,10 +2,8 @@
 
 import Image from "next/image";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import {
-  performerMetaLine,
-  performerStarRating,
-} from "@/lib/desktop/desktopCatalogFilters";
+import { CamCardMeta } from "@/components/cams/CamCardMeta";
+import { performerStarRating } from "@/lib/desktop/desktopCatalogFilters";
 import {
   estimateViewerCount,
   formatViewerCount,
@@ -59,7 +57,6 @@ export function DesktopLiveModelCard({
   const handle = performerDisplayHandle(
     performer.nameClean || performer.name,
   ).replace(/^@/, "");
-  const age = performer.characteristic?.age;
   const viewers = formatViewerCount(
     estimateViewerCount(performer, performer.feedKey),
   );
@@ -133,16 +130,10 @@ export function DesktopLiveModelCard({
         </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-2 pb-2 pt-8">
-          <p className="truncate text-sm font-bold text-white">
-            {handle}
-            {typeof age === "number" ? `, ${age}` : ""}
-          </p>
-          <div className="mt-0.5 flex items-center justify-between gap-1">
+          <CamCardMeta performer={performer} variant="desktop" />
+          <div className="mt-1 flex items-center justify-between gap-1">
             <StarRow rating={rating} />
           </div>
-          <p className="mt-1 truncate text-[10px] text-zinc-400">
-            {performerMetaLine(performer)}
-          </p>
         </div>
       </div>
     </button>

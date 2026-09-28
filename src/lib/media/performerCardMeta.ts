@@ -75,3 +75,15 @@ export function formatCardViewLabel(performer: CrackPerformer): string {
   const compact = formatExploreViews(performer);
   return `${compact} views`;
 }
+
+/** Primary language pill for card footers (EN, ES, …). */
+export function performerPrimaryLanguageCode(
+  performer: CrackPerformer,
+): string {
+  return performerLanguagePills(performer)[0] ?? "EN";
+}
+
+/** Second line under cam cards: `450K views · EN`. */
+export function formatCardMetaSubtitle(performer: CrackPerformer): string {
+  return `${formatCardViewLabel(performer)} · ${performerPrimaryLanguageCode(performer)}`;
+}
