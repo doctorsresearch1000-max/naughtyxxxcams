@@ -8,9 +8,13 @@ import {
   type FeedPerformer,
 } from "@/lib/feed/filterPerformers";
 import { performerHasNativeEmbedFeed } from "@/lib/feed/nativeIframeFeed";
+import {
+  HOME_FEED_MAX_PAGES_CEILING,
+  HOME_FEED_MAX_PAGES_DEFAULT,
+  HOME_FEED_PAGE_SIZE,
+} from "@/lib/feed/feedLimits";
 
-const MAX_PAGES = 20;
-const PAGE_SIZE = 100;
+const PAGE_SIZE = HOME_FEED_PAGE_SIZE;
 
 /**
  * Paginates performers-ext until all live models with a native `iframeFeedURL`
@@ -28,8 +32,8 @@ export async function fetchHomeFeedPerformers(
   const opts: FetchHomeFeedOptions =
     typeof options === "number" ? { targetCount: options } : (options ?? {});
   const maxPages = Math.min(
-    Math.max(opts.maxPages ?? MAX_PAGES, 1),
-    MAX_PAGES,
+    Math.max(opts.maxPages ?? HOME_FEED_MAX_PAGES_DEFAULT, 1),
+    HOME_FEED_MAX_PAGES_CEILING,
   );
   const targetCount = opts.targetCount;
 
@@ -51,6 +55,14 @@ export async function fetchHomeFeedPerformers(
       if (seen.has(key)) continue;
       seen.add(key);
       pool.push(performer);
+    }
+
+    if (
+      typeof targetCount === "number" &&
+      targetCount > 0 &&
+      filterFeedPerformers(pool).length >= targetCount
+    ) {
+      break;
     }
 
     if (batch.length < PAGE_SIZE) break;

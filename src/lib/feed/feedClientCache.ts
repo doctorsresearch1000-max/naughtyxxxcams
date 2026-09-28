@@ -1,4 +1,5 @@
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { HOME_FEED_MAX_PAGES_DEFAULT } from "@/lib/feed/feedLimits";
 
 type FeedCachePayload = {
   performers: FeedPerformer[];
@@ -67,7 +68,9 @@ export async function fetchFeedFullPerformers(): Promise<FeedCachePayload> {
   if (fullPromise) return fullPromise;
 
   fullPromise = (async () => {
-    const performers = await fetchPerformersJson("");
+    const performers = await fetchPerformersJson(
+      `?maxPages=${HOME_FEED_MAX_PAGES_DEFAULT}`,
+    );
     const payload: FeedCachePayload = {
       performers,
       complete: true,

@@ -1,6 +1,10 @@
 import { cache } from "react";
 import { fetchHomeFeedPerformers } from "@/lib/crackrevenue/fetchHomeFeedPerformers";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import {
+  HOME_BOOTSTRAP_TARGET,
+  HOME_SSR_PERFORMER_CAP,
+} from "@/lib/feed/feedLimits";
 
 /**
  * Server-only bootstrap list (first API page). Deduped per request via `cache()`.
@@ -9,7 +13,11 @@ import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 export const getBootstrapFeedPerformers = cache(
   async (): Promise<FeedPerformer[]> => {
     try {
-      return await fetchHomeFeedPerformers({ maxPages: 1 });
+      const list = await fetchHomeFeedPerformers({
+        maxPages: 1,
+        targetCount: HOME_BOOTSTRAP_TARGET,
+      });
+      return list.slice(0, HOME_SSR_PERFORMER_CAP);
     } catch {
       return [];
     }

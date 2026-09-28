@@ -7,7 +7,7 @@ import {
 
 const SLUG_CACHE = new Map<string, { performer: CrackPerformer; at: number }>();
 const CACHE_TTL_MS = 5 * 60 * 1000;
-const MAX_PAGES = 12;
+const MAX_PAGES = 6;
 
 function slugFromPerformer(p: CrackPerformer): string {
   return (
@@ -29,7 +29,7 @@ function findInPool(pool: CrackPerformer[], slug: string): CrackPerformer | null
 }
 
 async function scanLivePages(slug: string): Promise<CrackPerformer | null> {
-  const pageBatch = [1, 2, 3, 4];
+  const pageBatch = [1, 2, 3];
   const responses = await Promise.all(
     pageBatch.map((page) =>
       fetchStreamatePerformers({ live: true, size: 100, page }),

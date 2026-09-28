@@ -4,6 +4,7 @@ import {
   CRACKREVENUE_USER_AGENT,
   STREAMATE_BRAND,
 } from "./config";
+import { edgeCachedUpstreamInit } from "@/lib/http/edgeCachedFetch";
 
 const API_BASE = "https://performersext-api.pcvdaa.com/performers-ext";
 const FETCH_TIMEOUT_MS = 6_000;
@@ -62,10 +63,13 @@ async function fetchWithTimeout(
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
   try {
-    return await fetch(url, {
-      ...init,
-      signal: controller.signal,
-    });
+    return await fetch(
+      url,
+      edgeCachedUpstreamInit({
+        ...init,
+        signal: controller.signal,
+      }),
+    );
   } catch {
     return null;
   } finally {
@@ -114,7 +118,6 @@ export async function fetchStreamatePerformers(
         "x-api-key": CRACKREVENUE_API_KEY,
         "User-Agent": CRACKREVENUE_USER_AGENT,
       },
-      cache: "no-store",
     });
 
     if (!res || !res.ok) {
