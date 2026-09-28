@@ -14,6 +14,7 @@ import {
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
+import { JerkmateExploreGifBanner } from "@/components/explore/JerkmateExploreGifBanner";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
@@ -408,6 +409,8 @@ export function ExploreSlushyDiscover({
           })}
         </div>
       )}
+
+      <JerkmateExploreGifBanner />
 
       <section className="lg:-mt-1">
         <div className="mb-2.5 flex items-center justify-between px-0.5 lg:mb-1">
