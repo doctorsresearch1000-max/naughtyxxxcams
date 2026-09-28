@@ -20,9 +20,7 @@ export function ConditionalSiteChrome({
     LEGAL_ROUTES.has(pathname);
 
   return (
-    <div
-      className="flex min-h-0 flex-1 flex-col overflow-x-hidden pt-[var(--app-header-height)]"
-    >
+    <div className="flex min-h-0 flex-1 flex-col overflow-x-hidden">
       <div className="relative z-10 flex min-h-0 flex-1 flex-col">{children}</div>
       {showFooter ? <Footer /> : null}
     </div>

@@ -7,7 +7,7 @@ import {
 /** Full-width responsive leaderboard (728×90 / 970×90 style) — home catalog. */
 export function JerkmateHomeWideBanner() {
   return (
-    <div className="my-2 flex w-full justify-center overflow-hidden px-2">
+    <div className="mb-2 flex w-full justify-center overflow-hidden px-2 pt-0">
       <a
         href={JERKMATE_MOBILE_GIF_TRACKING_URL}
         target="_blank"
