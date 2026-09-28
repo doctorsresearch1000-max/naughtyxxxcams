@@ -15,3 +15,10 @@ export const JERKMATE_EXPLORE_GIF_BANNER_URL =
 
 export const JERKMATE_EXPLORE_GIF_TRACKING_URL =
   "https://t.ajrkmx5.com/214769/8780/32516?file_id=598462&po=6533&aff_sub5=SF_006OG000004lmDN&aff_sub4=AT_0002";
+
+/** Following page 300×100 GIF banner. */
+export const JERKMATE_FOLLOWING_GIF_BANNER_URL =
+  "https://www.imglnky.com/8780/PMKT-1157_DESIGN-16618_BannersWebinar_HBD_300100.gif";
+
+export const JERKMATE_FOLLOWING_GIF_TRACKING_URL =
+  "https://t.ajrkmx5.com/214769/8780/32516?file_id=600151&po=6533&aff_sub5=SF_006OG000004lmDN&aff_sub4=AT_0002";
