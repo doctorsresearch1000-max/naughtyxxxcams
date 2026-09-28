@@ -2,8 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { formatExploreViews } from "@/lib/explore/exploreGrid";
+import {
+  formatCardViewLabel,
+  performerLanguagePills,
+} from "@/lib/media/performerCardMeta";
+import { prefetchPerformerOnIntent } from "@/lib/feed/prefetchPerformerNavigation";
 import {
   performerDisplayHandle,
   performerProfilePathFromPerformer,
@@ -12,16 +18,6 @@ import {
 type MobileHomeDenseCardProps = {
   performer: FeedPerformer;
 };
-
-function performerLanguages(performer: FeedPerformer): string {
-  const langs = performer.characteristic?.languages ?? [];
-  if (langs.length === 0) return "en";
-  return langs
-    .slice(0, 3)
-    .map((lang) => lang.trim().slice(0, 2).toLowerCase())
-    .filter(Boolean)
-    .join(", ");
-}
 
 function roomTitle(performer: FeedPerformer): string {
   const custom = performer.customTags?.[0]?.trim();
@@ -32,21 +28,33 @@ function roomTitle(performer: FeedPerformer): string {
 }
 
 export function MobileHomeDenseCard({ performer }: MobileHomeDenseCardProps) {
+  const router = useRouter();
   const href = performerProfilePathFromPerformer(performer) ?? "/explore";
   const handle = performerDisplayHandle(
     performer.nameClean || performer.name,
   ).replace(/^@/, "");
-  const views = formatExploreViews(performer);
+  const viewsLabel = formatCardViewLabel(performer);
+  const langPills = performerLanguagePills(performer);
   const thumb =
     performer.liveSnapshotURL?.trim() ||
     performer.posterUrl ||
     performer.thumbnailUrl ||
     "";
 
+  const warmRoute = useCallback(() => {
+    prefetchPerformerOnIntent(performer, (path) => router.prefetch(path));
+  }, [performer, router]);
+
   return (
-    <article className="overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-black/5">
-      <Link href={href} prefetch className="block">
-        <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-200">
+    <article className="mb-1 overflow-hidden rounded-md bg-zinc-950 ring-1 ring-white/[0.06]">
+      <Link
+        href={href}
+        prefetch
+        className="block"
+        onPointerDown={warmRoute}
+        onTouchStart={warmRoute}
+      >
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-900">
           {thumb ? (
             <Image
               src={thumb}
@@ -65,25 +73,34 @@ export function MobileHomeDenseCard({ performer }: MobileHomeDenseCardProps) {
             Live
           </span>
 
-          <span className="absolute bottom-1 right-1 rounded bg-black px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-white">
+          <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-zinc-200">
             Streamate
           </span>
         </div>
 
-        <div className="px-2 py-1.5">
+        <div className="space-y-1 px-2 pb-2.5 pt-1.5">
           <div className="flex items-center justify-between gap-1">
-            <p className="min-w-0 truncate text-[12px] font-extrabold text-black">
+            <p className="min-w-0 truncate text-sm font-medium text-white">
               {handle}
             </p>
-            <span className="shrink-0 text-[10px] font-black text-pink-600">
+            <span className="shrink-0 text-[10px] font-black text-[#39FF14]">
               F
             </span>
           </div>
-          <p className="mt-0.5 flex items-center justify-between gap-1 text-[9px] text-zinc-500">
-            <span>{views} views</span>
-            <span className="uppercase">{performerLanguages(performer)}</span>
-          </p>
-          <p className="mt-1 line-clamp-2 text-[10px] font-medium leading-snug text-zinc-800">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs text-zinc-400">{viewsLabel}</span>
+            <div className="flex shrink-0 gap-1">
+              {langPills.map((code) => (
+                <span
+                  key={code}
+                  className="rounded bg-zinc-800 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-zinc-300 ring-1 ring-white/10"
+                >
+                  {code}
+                </span>
+              ))}
+            </div>
+          </div>
+          <p className="line-clamp-2 text-xs leading-snug text-zinc-400">
             {roomTitle(performer)}
           </p>
         </div>

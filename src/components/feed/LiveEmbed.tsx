@@ -56,7 +56,13 @@ type LiveEmbedProps = {
   viewportHeightPx?: number;
   fastReveal?: boolean;
   iframeLoading?: "lazy" | "eager";
+  /** Parent owns poster/loader UI (e.g. profile header). */
+  externalPosterControl?: boolean;
+  /** Cap poster fallback delay (ms), e.g. profile 5000. */
+  posterFallbackMaxMs?: number;
   onIframeWindow?: (win: Window | null) => void;
+  onFrameDocumentLoad?: () => void;
+  onStreamRevealed?: () => void;
 };
 
 function wireIframeChrome(
@@ -95,7 +101,11 @@ export function LiveEmbed({
   viewportHeightPx,
   fastReveal = false,
   iframeLoading = "eager",
+  externalPosterControl = false,
+  posterFallbackMaxMs,
   onIframeWindow,
+  onFrameDocumentLoad,
+  onStreamRevealed,
 }: LiveEmbedProps) {
   const contextHeightPx = useFeedSlideHeightPx();
   const slideHeightPx = viewportHeightPx ?? contextHeightPx;
@@ -156,10 +166,13 @@ export function LiveEmbed({
 
     const docReadyAtActivation =
       frameLoaded || isStreamSlotLoaded(embedKey);
-    const delayMs = feedPosterFallbackDelayMs(
+    let delayMs = feedPosterFallbackDelayMs(
       docReadyAtActivation,
       fastReveal,
     );
+    if (posterFallbackMaxMs != null) {
+      delayMs = Math.min(delayMs, posterFallbackMaxMs);
+    }
 
     const fallbackId = window.setTimeout(() => {
       if (blockPosterDismissRef.current) return;
@@ -169,7 +182,22 @@ export function LiveEmbed({
     return () => {
       window.clearTimeout(fallbackId);
     };
-  }, [isActive, mountIframe, embedKey, frameLoaded, fastReveal]);
+  }, [
+    isActive,
+    mountIframe,
+    embedKey,
+    frameLoaded,
+    fastReveal,
+    posterFallbackMaxMs,
+  ]);
+
+  useEffect(() => {
+    if (frameLoaded) onFrameDocumentLoad?.();
+  }, [frameLoaded, onFrameDocumentLoad]);
+
+  useEffect(() => {
+    if (posterDismissed && isActive) onStreamRevealed?.();
+  }, [posterDismissed, isActive, onStreamRevealed]);
 
   useEffect(() => {
     if (!mountIframe || !isPureIframe) return;
@@ -458,14 +486,16 @@ export function LiveEmbed({
     pointerEvents: "none",
   };
 
-  const posterStyleWithFade: CSSProperties = {
-    ...posterStyle,
-    zIndex: 2,
-    opacity: streamRevealed ? 0 : 1,
-    transition: streamRevealed
-      ? `opacity ${posterFadeMs}ms ease-out`
-      : "none",
-  };
+  const posterStyleWithFade: CSSProperties = externalPosterControl
+    ? { ...posterStyle, zIndex: 0, opacity: 0, pointerEvents: "none" }
+    : {
+        ...posterStyle,
+        zIndex: 2,
+        opacity: streamRevealed ? 0 : 1,
+        transition: streamRevealed
+          ? `opacity ${posterFadeMs}ms ease-out`
+          : "none",
+      };
 
   const posterClass = "feed-embed-poster";
 
@@ -500,13 +530,15 @@ export function LiveEmbed({
       data-feed-layout-v="16"
       data-engine-slot={usingEngineSlot ? "1" : "0"}
     >
-      <FeedPoster
-        feedKey={embedKey}
-        posterUrl={posterUrl}
-        priority={posterPriority}
-        className={`pointer-events-none ${posterClass}`}
-        style={posterStyleWithFade}
-      />
+      {externalPosterControl ? null : (
+        <FeedPoster
+          feedKey={embedKey}
+          posterUrl={posterUrl}
+          priority={posterPriority}
+          className={`pointer-events-none ${posterClass}`}
+          style={posterStyleWithFade}
+        />
+      )}
 
       <div
         ref={stageRef}
