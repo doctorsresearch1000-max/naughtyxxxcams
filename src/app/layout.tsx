@@ -58,7 +58,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-dvh bg-black">
         <AppProviders>
-        <div className="relative mx-auto flex min-h-dvh max-w-md flex-col bg-black pb-16 [touch-action:pan-y] lg:max-w-none lg:pb-0">
+        <div className="relative mx-auto flex min-h-dvh w-full max-w-full flex-col overflow-x-hidden bg-black pb-16 [touch-action:pan-y] lg:pb-0">
           <ExploreBootstrapWarm />
           <HomeFeedWarm />
           <Header />

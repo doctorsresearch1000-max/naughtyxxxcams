@@ -5,7 +5,7 @@
 :root {
   color-scheme: dark;
   /* Header global (logo h-10 + padding); bottom nav = 4rem */
-  --app-header-height: 3.75rem;
+  --app-header-height: 3.5rem;
   /* Home vertical feed: true viewport (bottom nav floats above) */
   --feed-viewport-height: 100dvh;
   /* MobileBottomChrome: nav block + optional conversion CTA + slide breathing room */
@@ -18,11 +18,6 @@
   );
 }
 
-@media (min-width: 768px) {
-  :root {
-    --app-header-height: 4rem;
-  }
-}
 
 html,
 body {

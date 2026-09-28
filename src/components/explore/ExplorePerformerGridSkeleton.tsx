@@ -17,7 +17,7 @@ export function ExplorePerformerGridSkeleton({
           key={i}
           className="overflow-hidden rounded-lg border border-zinc-800/60 bg-[#141416]"
         >
-          <div className="relative aspect-[3/4] animate-pulse bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950" />
+          <div className="relative aspect-[4/5] animate-pulse rounded-lg bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950" />
           <div className="space-y-2 px-2 py-2">
             <div className="h-4 w-2/3 animate-pulse rounded bg-zinc-700/80" />
             <div className="h-3 w-full animate-pulse rounded bg-zinc-800/80" />

@@ -1,9 +1,10 @@
 "use client";
 
 import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
-import { HomeCatalogSeoFooter } from "@/components/home/HomeCatalogSeoFooter";
+import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
+import { CATALOG_PAGE_PADDING } from "@/lib/layout/catalogGridLayout";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 
 type HomeTabletTubeCatalogProps = {
@@ -18,17 +19,15 @@ export function HomeTabletTubeCatalog({
 }: HomeTabletTubeCatalogProps) {
   return (
     <main
-      className="mx-auto hidden min-h-0 w-full max-w-md flex-1 overflow-y-auto bg-black pb-24 text-white [-webkit-overflow-scrolling:touch] md:block lg:hidden"
-      data-home-tablet-tube="v2"
+      className={`${CATALOG_PAGE_PADDING} hidden min-h-0 w-full flex-1 overflow-x-hidden overflow-y-auto bg-black pb-20 text-white md:block lg:hidden`}
+      data-home-tablet-tube="v3-camb3"
     >
+      <HomeCatalogSectionTitle />
       <JerkmateHomeWideBanner />
       {!ready ? (
         <ExplorePerformerGridSkeleton />
       ) : (
-        <>
-          <ExploreTubeGrid performers={performers} />
-          <HomeCatalogSeoFooter />
-        </>
+        <ExploreTubeGrid performers={performers} />
       )}
     </main>
   );

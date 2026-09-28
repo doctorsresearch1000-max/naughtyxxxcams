@@ -2,11 +2,15 @@
 
 import { useMemo } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
-import { HomeCatalogSeoFooter } from "@/components/home/HomeCatalogSeoFooter";
+import { JerkmateHomeMobileGifBanner } from "@/components/conversion/JerkmateHomeMobileGifBanner";
+import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
 import { MobileHomeDenseCard } from "@/components/home/MobileHomeDenseCard";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { filterHomeMobilePerformers } from "@/lib/feed/filterHomeMobilePerformers";
+import {
+  CATALOG_GRID_CLASS,
+  CATALOG_PAGE_PADDING,
+} from "@/lib/layout/catalogGridLayout";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 
 const BATCH = 40;
@@ -37,10 +41,11 @@ export function MobileHomeDenseGrid({
 
   return (
     <main
-      className="mx-auto min-h-0 w-full max-w-md flex-1 overflow-y-auto bg-black pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-white md:hidden"
-      data-home-mobile-dense="v3-wide-banner"
+      className={`${CATALOG_PAGE_PADDING} min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-black pb-[calc(5rem+env(safe-area-inset-bottom))] text-white md:hidden`}
+      data-home-mobile-dense="v4-camb3"
     >
-      <JerkmateHomeWideBanner />
+      <HomeCatalogSectionTitle />
+      <JerkmateHomeMobileGifBanner />
 
       {!ready ? (
         <ExplorePerformerGridSkeleton />
@@ -50,7 +55,7 @@ export function MobileHomeDenseGrid({
         </p>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-x-1.5 gap-y-2 p-1.5 pt-0">
+          <div className={CATALOG_GRID_CLASS}>
             {visible.map((performer) => (
               <MobileHomeDenseCard
                 key={performer.feedKey}
@@ -64,7 +69,6 @@ export function MobileHomeDenseGrid({
               Loading more…
             </p>
           ) : null}
-          <HomeCatalogSeoFooter />
         </>
       )}
     </main>

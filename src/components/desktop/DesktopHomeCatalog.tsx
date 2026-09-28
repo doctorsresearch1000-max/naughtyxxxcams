@@ -15,7 +15,8 @@ import {
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
-import { HomeCatalogSeoFooter } from "@/components/home/HomeCatalogSeoFooter";
+import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
+import { CATALOG_PAGE_PADDING } from "@/lib/layout/catalogGridLayout";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
@@ -123,15 +124,16 @@ export function DesktopHomeCatalog() {
   };
 
   return (
-    <main className="hidden min-h-0 w-full flex-1 flex-col bg-zinc-950 text-white lg:flex">
+    <main className={`${CATALOG_PAGE_PADDING} hidden min-h-0 w-full max-w-none flex-1 flex-col overflow-x-hidden bg-zinc-950 text-white lg:flex`}>
       <DesktopImmersiveRoomDialog
         performer={roomPerformer}
         onClose={() => setRoomPerformer(null)}
       />
 
+      <HomeCatalogSectionTitle />
       <JerkmateHomeWideBanner />
 
-      <div className="border-b border-zinc-800/80 bg-zinc-950/95 px-4 pb-3 pt-2 backdrop-blur-md">
+      <div className="border-b border-zinc-800/80 bg-zinc-950/95 pb-3 pt-2 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3">
           <div className="relative">
             <span
@@ -229,7 +231,7 @@ export function DesktopHomeCatalog() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-3">
+      <div className="mx-auto w-full max-w-[1800px] flex-1 py-3">
         <div className="mb-3 flex flex-wrap items-baseline justify-end gap-2">
           <p className="text-xs font-semibold text-zinc-500">
             Showing {visiblePerformers.length} of {filtered.length} ·{" "}
@@ -272,7 +274,6 @@ export function DesktopHomeCatalog() {
                 Loading more models…
               </p>
             ) : null}
-            <HomeCatalogSeoFooter />
           </>
         ) : null}
       </div>

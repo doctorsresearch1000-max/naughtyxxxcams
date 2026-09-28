@@ -20,7 +20,7 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
         href={promo.affiliateUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative block aspect-[3/4] w-full overflow-hidden bg-zinc-900 text-left lg:aspect-[4/5]"
+        className="relative block aspect-[4/5] w-full overflow-hidden rounded-lg bg-zinc-900 text-left"
       >
         <Image
           src={cover}

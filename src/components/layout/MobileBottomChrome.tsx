@@ -161,7 +161,7 @@ export default function MobileBottomChrome() {
 
   return (
     <div
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md lg:hidden ${
+      className={`pointer-events-none fixed inset-x-0 bottom-0 z-50 w-full lg:hidden ${
         feedOverlayOpen ? "invisible" : ""
       }`}
       data-mobile-bottom-chrome="v2-fixed"
@@ -183,8 +183,8 @@ export default function MobileBottomChrome() {
       ) : null}
 
       <nav
-        className="pointer-events-auto flex h-[58px] items-stretch justify-around border-t border-white/10 bg-black/95 px-1 shadow-[0_-8px_32px_rgba(0,0,0,0.55)]"
-        data-bottom-nav="v3-fixed-bar"
+        className="pointer-events-auto flex h-[58px] items-stretch justify-around border-t border-zinc-800/80 bg-zinc-950/95 px-1 backdrop-blur-md"
+        data-bottom-nav="v4-glass"
         aria-label="Primary navigation"
       >
         {navItems}
