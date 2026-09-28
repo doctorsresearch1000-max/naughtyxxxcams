@@ -8,17 +8,32 @@ import { MobileHomeDenseCard } from "@/components/home/MobileHomeDenseCard";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { filterHomeMobilePerformers } from "@/lib/feed/filterHomeMobilePerformers";
 import {
-  CATALOG_GRID_CLASS,
   CATALOG_PAGE_PADDING,
+  MOBILE_HOME_GRID_CLASS,
 } from "@/lib/layout/catalogGridLayout";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 
 const BATCH = 40;
+const LEAD_CARD_COUNT = 4;
 
 type MobileHomeDenseGridProps = {
   performers: CrackPerformer[];
   ready: boolean;
 };
+
+function MobileCardGrid({
+  performers,
+}: {
+  performers: ReturnType<typeof filterHomeMobilePerformers>;
+}) {
+  return (
+    <div className={MOBILE_HOME_GRID_CLASS}>
+      {performers.map((performer) => (
+        <MobileHomeDenseCard key={performer.feedKey} performer={performer} />
+      ))}
+    </div>
+  );
+}
 
 export function MobileHomeDenseGrid({
   performers,
@@ -39,13 +54,18 @@ export function MobileHomeDenseGrid({
     [cards, visibleCount],
   );
 
+  const leadCards = visible.slice(0, LEAD_CARD_COUNT);
+  const restCards = visible.slice(LEAD_CARD_COUNT);
+  const showMidBanner =
+    visible.length >= LEAD_CARD_COUNT ||
+    (!hasMore && visible.length > 0 && visible.length < LEAD_CARD_COUNT);
+
   return (
     <main
-      className={`${CATALOG_PAGE_PADDING} min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-black pb-[calc(5rem+env(safe-area-inset-bottom))] text-white md:hidden`}
-      data-home-mobile-dense="v4-camb3"
+      className={`${CATALOG_PAGE_PADDING} min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-black pb-[calc(4.75rem+env(safe-area-inset-bottom))] text-white md:hidden`}
+      data-home-mobile-dense="v5-camb3-ref"
     >
       <HomeCatalogSectionTitle />
-      <JerkmateHomeMobileGifBanner />
 
       {!ready ? (
         <ExplorePerformerGridSkeleton />
@@ -55,17 +75,17 @@ export function MobileHomeDenseGrid({
         </p>
       ) : (
         <>
-          <div className={CATALOG_GRID_CLASS}>
-            {visible.map((performer) => (
-              <MobileHomeDenseCard
-                key={performer.feedKey}
-                performer={performer}
-              />
-            ))}
-          </div>
-          <div ref={sentinelRef} className="h-6 w-full" aria-hidden />
+          {leadCards.length > 0 ? <MobileCardGrid performers={leadCards} /> : null}
+
+          {showMidBanner ? <JerkmateHomeMobileGifBanner /> : null}
+
+          {restCards.length > 0 ? (
+            <MobileCardGrid performers={restCards} />
+          ) : null}
+
+          <div ref={sentinelRef} className="h-8 w-full" aria-hidden />
           {hasMore ? (
-            <p className="py-2 text-center text-[11px] font-semibold text-zinc-500">
+            <p className="py-3 text-center text-[11px] font-medium text-zinc-500">
               Loading more…
             </p>
           ) : null}

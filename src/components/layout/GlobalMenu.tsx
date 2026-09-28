@@ -308,7 +308,7 @@ export function GlobalMenu() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-black/80 transition active:scale-95"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-zinc-600/80 bg-zinc-900/90 transition active:scale-95"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
       >

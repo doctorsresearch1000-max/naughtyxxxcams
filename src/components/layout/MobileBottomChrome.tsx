@@ -134,7 +134,7 @@ export default function MobileBottomChrome() {
         key={item.href}
         type="button"
         onClick={() => navigate(item.href)}
-        className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1"
+        className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1"
         style={{ touchAction: "manipulation" }}
         aria-current={isActive ? "page" : undefined}
         aria-label={item.label}
@@ -183,8 +183,8 @@ export default function MobileBottomChrome() {
       ) : null}
 
       <nav
-        className="pointer-events-auto flex h-[58px] items-stretch justify-around border-t border-zinc-800/80 bg-zinc-950/95 px-1 backdrop-blur-md"
-        data-bottom-nav="v4-glass"
+        className="pointer-events-auto flex h-[52px] items-stretch justify-around border-t border-zinc-800/80 bg-zinc-950/95 px-2 pb-0.5 backdrop-blur-md"
+        data-bottom-nav="v5-clean"
         aria-label="Primary navigation"
       >
         {navItems}
