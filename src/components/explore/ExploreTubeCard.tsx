@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { CamCardMeta } from "@/components/cams/CamCardMeta";
+import { prefetchPerformerOnIntent } from "@/lib/feed/prefetchPerformerNavigation";
 import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { useDebouncedHover } from "@/hooks/useDebouncedHover";
 import { performerDisplayHandle } from "@/lib/profile/performerHandle";
@@ -45,8 +46,16 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
       <button
         type="button"
         onClick={onSelect}
-        onMouseEnter={finePointerHover ? onPointerEnter : undefined}
+        onMouseEnter={
+          finePointerHover
+            ? () => {
+                onPointerEnter();
+                prefetchPerformerOnIntent(performer);
+              }
+            : undefined
+        }
         onMouseLeave={finePointerHover ? onPointerLeave : undefined}
+        onPointerDown={() => prefetchPerformerOnIntent(performer)}
         className="relative block w-full min-w-0 text-left"
       >
         <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-zinc-900">
@@ -88,11 +97,6 @@ export function ExploreTubeCard({ performer, onSelect }: ExploreTubeCardProps) {
             </span>
           ) : null}
 
-          <span
-            className="absolute bottom-2 right-2 rounded bg-black/70 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-zinc-300 backdrop-blur-sm"
-          >
-            Streamate
-          </span>
         </div>
 
         <div className="bg-transparent px-0.5 pb-1 pt-1.5">

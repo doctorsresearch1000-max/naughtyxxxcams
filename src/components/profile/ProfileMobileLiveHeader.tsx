@@ -6,7 +6,7 @@ import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutbound
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
-import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
+import { crackPerformerToFeedPerformer } from "@/lib/feed/filterPerformers";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import {
   injectStreamPreconnects,
@@ -25,9 +25,15 @@ type RevealPhase = "loading" | "playing" | "fallback";
 export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps) {
   const feedPerformer = useMemo(() => {
     if (!model.performer) return null;
-    const list = filterFeedPerformers([model.performer]);
-    return list[0] ?? null;
-  }, [model.performer]);
+    const row = crackPerformerToFeedPerformer(model.performer, {
+      requirePoster: false,
+    });
+    if (!row) return null;
+    if (row.posterUrl) return row;
+    const fallback =
+      model.bannerUrl?.trim() || model.avatar?.trim() || "";
+    return fallback ? { ...row, posterUrl: fallback } : row;
+  }, [model.performer, model.bannerUrl, model.avatar]);
 
   const [armed, setArmed] = useState(false);
   const [phase, setPhase] = useState<RevealPhase>("loading");
@@ -41,7 +47,23 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
   useEffect(() => {
     injectStreamPreconnects();
     setArmed(true);
-  }, []);
+    try {
+      const raw = sessionStorage.getItem("nx-last-warm-feed-key");
+      if (!raw || !feedPerformer) return;
+      const parsed = JSON.parse(raw) as { feedKey?: string; at?: number };
+      if (
+        parsed.feedKey === feedPerformer.feedKey &&
+        typeof parsed.at === "number" &&
+        Date.now() - parsed.at < 120_000
+      ) {
+        warmPerformerStream(feedPerformer.feedKey, feedPerformer.embedPlan, {
+          pin: true,
+        });
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [feedPerformer]);
 
   useEffect(() => {
     if (!armed || !feedPerformer) return;

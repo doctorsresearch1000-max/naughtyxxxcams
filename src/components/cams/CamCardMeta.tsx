@@ -1,6 +1,8 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { formatCardMetaSubtitle } from "@/lib/media/performerCardMeta";
-import { performerDisplayHandle } from "@/lib/profile/performerHandle";
+import {
+  camCardUsername,
+  formatCardMetaSubtitle,
+} from "@/lib/media/performerCardMeta";
 
 type CamCardMetaProps = {
   performer: CrackPerformer;
@@ -8,13 +10,6 @@ type CamCardMetaProps = {
   variant?: "home" | "tube" | "desktop";
   className?: string;
 };
-
-function displayHandle(performer: CrackPerformer): string {
-  return performerDisplayHandle(performer.nameClean || performer.name).replace(
-    /^@/,
-    "",
-  );
-}
 
 const usernameClass: Record<NonNullable<CamCardMetaProps["variant"]>, string> = {
   home: "truncate text-[13px] font-bold leading-tight text-white",
@@ -35,7 +30,7 @@ export function CamCardMeta({
   variant = "tube",
   className = "",
 }: CamCardMetaProps) {
-  const handle = displayHandle(performer);
+  const handle = camCardUsername(performer);
   const subtitle = formatCardMetaSubtitle(performer);
 
   return (

@@ -15,6 +15,7 @@ import {
   type GalleryMediaItem,
 } from "@/lib/profile/profilePresentation";
 import { dedupeImageUrls } from "@/lib/media/imageDedupe";
+import { isLanguageMetaTag } from "@/lib/media/performerCardMeta";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 export type ModelProfileView = {
@@ -61,6 +62,7 @@ function collectTraits(p: CrackPerformer): string[] {
   for (const tag of buckets) {
     const t = tag?.trim();
     if (!t) continue;
+    if (isLanguageMetaTag(t) || /^f$/i.test(t)) continue;
     const key = t.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);

@@ -23,6 +23,18 @@ export function prefetchPerformerOnIntent(
   injectStreamPreconnects();
   warmPerformerStream(performer.feedKey, performer.embedPlan, { pin: true });
 
+  try {
+    sessionStorage.setItem(
+      "nx-last-warm-feed-key",
+      JSON.stringify({
+        feedKey: performer.feedKey,
+        at: Date.now(),
+      }),
+    );
+  } catch {
+    /* private mode */
+  }
+
   const path = performerProfilePathFromPerformer(performer);
   if (path && routerPrefetch) {
     routerPrefetch(path);

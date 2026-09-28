@@ -65,11 +65,6 @@ export function MobileHomeDenseCard({ performer }: MobileHomeDenseCardProps) {
             Live
           </span>
 
-          <span
-            className="absolute bottom-2 right-2 rounded-md bg-black/75 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white backdrop-blur-sm"
-          >
-            Streamate
-          </span>
         </div>
 
         <div className="px-2 pb-2.5 pt-2">

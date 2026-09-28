@@ -1,4 +1,5 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import { isLanguageMetaTag } from "@/lib/media/performerCardMeta";
 
 /** API tag fields only — excludes hair/body to avoid false category matches. */
 export function performerApiTags(performer: CrackPerformer): string[] {
@@ -8,7 +9,7 @@ export function performerApiTags(performer: CrackPerformer): string[] {
     ...(performer.customTags ?? []),
   ]
     .map((t) => t.trim().toLowerCase())
-    .filter(Boolean);
+    .filter((t) => Boolean(t) && !isLanguageMetaTag(t) && t !== "f");
 }
 
 export function performerTagBlob(performer: CrackPerformer): string {

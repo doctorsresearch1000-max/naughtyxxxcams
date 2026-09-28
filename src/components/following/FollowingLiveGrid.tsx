@@ -52,7 +52,7 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
                   <h3 className="text-sm font-extrabold text-white">{handle}</h3>
                 )}
                 <span className="inline-flex text-[10px] font-bold text-[#39FF14]">
-                  STREAMATE · Watch live
+                  Watch live
                 </span>
               </div>
             </div>

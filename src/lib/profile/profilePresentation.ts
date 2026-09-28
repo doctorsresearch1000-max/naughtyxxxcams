@@ -2,6 +2,7 @@ import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
+import { isLanguageMetaTag } from "@/lib/media/performerCardMeta";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 export type AboutCard = {
@@ -120,8 +121,9 @@ export function buildGalleryItems(
   traits: string[],
 ): GalleryMediaItem[] {
   const tagSlugs = traits
+    .filter((t) => !isLanguageMetaTag(t))
     .map(slugifyTag)
-    .filter((t) => t.length > 2)
+    .filter((t) => t.length > 2 && !isLanguageMetaTag(t))
     .slice(0, 12);
 
   const seen = new Set<string>();

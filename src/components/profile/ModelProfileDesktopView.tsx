@@ -13,7 +13,7 @@ import {
   performerDisplayTags,
   performerShortBio,
 } from "@/lib/desktop/performerCatalogMeta";
-import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
+import { crackPerformerToFeedPerformer } from "@/lib/feed/filterPerformers";
 import { buildTipMenu } from "@/lib/profile/buildTipMenu";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
@@ -38,9 +38,15 @@ export function ModelProfileDesktopView({
 
   const feedPerformer = useMemo(() => {
     if (!model.performer) return null;
-    const list = filterFeedPerformers([model.performer]);
-    return list[0] ?? null;
-  }, [model.performer]);
+    const row = crackPerformerToFeedPerformer(model.performer, {
+      requirePoster: false,
+    });
+    if (!row) return null;
+    if (row.posterUrl) return row;
+    const fallback =
+      model.bannerUrl?.trim() || model.avatar?.trim() || "";
+    return fallback ? { ...row, posterUrl: fallback } : row;
+  }, [model.performer, model.bannerUrl, model.avatar]);
 
   const tags = model.performer
     ? performerDisplayTags(model.performer)
@@ -83,7 +89,11 @@ export function ModelProfileDesktopView({
 
         <div className="relative h-[min(72vh,820px)] min-h-[480px] overflow-hidden rounded-2xl border border-zinc-800 bg-black ring-1 ring-[#39FF14]/15">
           {feedPerformer ? (
-            <DesktopLivePlayerShell performer={feedPerformer} fillParent />
+            <DesktopLivePlayerShell
+              performer={feedPerformer}
+              fillParent
+              eager
+            />
           ) : null}
         </div>
 

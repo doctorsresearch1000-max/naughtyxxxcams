@@ -7,7 +7,7 @@ import {
   filterFeedPerformers,
   type FeedPerformer,
 } from "@/lib/feed/filterPerformers";
-import { performerHasNativeEmbedFeed } from "@/lib/feed/nativeIframeFeed";
+import { resolvePerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import {
   HOME_FEED_MAX_PAGES_CEILING,
   HOME_FEED_MAX_PAGES_DEFAULT,
@@ -50,8 +50,10 @@ export async function fetchHomeFeedPerformers(
     if (batch.length === 0) break;
 
     for (const performer of batch) {
-      if (!performerHasNativeEmbedFeed(performer)) continue;
+      if (performer.live === false) continue;
       const key = getPerformerKey(performer);
+      const plan = resolvePerformerEmbedPlan(performer, key);
+      if (!plan.canMountInteractivePlayer) continue;
       if (seen.has(key)) continue;
       seen.add(key);
       pool.push(performer);

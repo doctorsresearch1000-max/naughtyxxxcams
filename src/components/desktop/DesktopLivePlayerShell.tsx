@@ -11,6 +11,8 @@ type DesktopLivePlayerShellProps = {
   sessionMuted?: boolean;
   /** Size to the parent flex/grid cell (room dialog, profile layout). */
   fillParent?: boolean;
+  /** Profile / hero: mount player without waiting for scroll intersection. */
+  eager?: boolean;
 };
 
 export function DesktopLivePlayerShell({
@@ -18,12 +20,14 @@ export function DesktopLivePlayerShell({
   className = "",
   sessionMuted = true,
   fillParent = false,
+  eager = false,
 }: DesktopLivePlayerShellProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heightPx, setHeightPx] = useState(640);
-  const [playerReady, setPlayerReady] = useState(false);
+  const [playerReady, setPlayerReady] = useState(eager);
 
   useEffect(() => {
+    if (eager) return;
     const el = containerRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -36,12 +40,12 @@ export function DesktopLivePlayerShell({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [eager]);
 
   useEffect(() => {
     if (!playerReady) return;
-    warmPerformerStream(performer.feedKey, performer.embedPlan);
-  }, [playerReady, performer.feedKey, performer.embedPlan]);
+    warmPerformerStream(performer.feedKey, performer.embedPlan, { pin: eager });
+  }, [playerReady, eager, performer.feedKey, performer.embedPlan]);
 
   useEffect(() => {
     if (fillParent) {
@@ -83,8 +87,8 @@ export function DesktopLivePlayerShell({
           sessionMuted={sessionMuted}
           viewportHeightPx={heightPx}
           fastReveal
-          iframeLoading="lazy"
-          streamPriority="low"
+          iframeLoading={eager ? "eager" : "lazy"}
+          streamPriority={eager ? "high" : "low"}
         />
       ) : null}
     </div>

@@ -1,6 +1,21 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { formatExploreViews } from "@/lib/explore/exploreGrid";
 
+/** API tags like `langenglish`, `langspanish` — never show as card copy. */
+export function isLanguageMetaTag(raw?: string | null): boolean {
+  if (!raw?.trim()) return false;
+  const t = raw.trim().toLowerCase().replace(/[^a-z]/g, "");
+  if (!t) return false;
+  if (t.startsWith("lang") && t.length > 4) return true;
+  return (
+    t === "english" ||
+    t === "spanish" ||
+    t === "french" ||
+    t === "german" ||
+    t === "language"
+  );
+}
+
 const LANGUAGE_ALIASES: Record<string, string> = {
   en: "EN",
   english: "EN",
@@ -48,27 +63,42 @@ function normalizeLanguageToken(raw: string): string | null {
   return token.slice(0, 2).toUpperCase();
 }
 
-/** Up to 3 ISO-style pills for grid cards (e.g. EN, ES). */
-export function performerLanguagePills(performer: CrackPerformer): string[] {
+/** ISO-style language code for cards — only from API `languages`, never raw tags. */
+export function performerPrimaryLanguageCode(
+  performer: CrackPerformer,
+): string {
   const fromCharacteristic = performer.characteristic?.languages ?? [];
-  const fromTags = [
-    ...(performer.characteristicsTags ?? []),
-    ...(performer.autoTags ?? []),
-  ].filter((t) => /lang|english|spanish|french|russian/i.test(t));
-
-  const seen = new Set<string>();
-  const out: string[] = [];
-
-  for (const raw of [...fromCharacteristic, ...fromTags]) {
+  for (const raw of fromCharacteristic) {
+    if (isLanguageMetaTag(raw)) {
+      const code = normalizeLanguageToken(raw);
+      if (code) return code;
+      continue;
+    }
     const code = normalizeLanguageToken(raw);
-    if (!code || seen.has(code)) continue;
-    seen.add(code);
-    out.push(code);
-    if (out.length >= 3) break;
+    if (code) return code;
   }
+  return "EN";
+}
 
-  if (out.length === 0) out.push("EN");
-  return out;
+/** @deprecated Prefer {@link performerPrimaryLanguageCode} for card footers. */
+export function performerLanguagePills(performer: CrackPerformer): string[] {
+  return [performerPrimaryLanguageCode(performer)];
+}
+
+/** Username line for cam cards (never tag blobs like `langenglish`). */
+export function camCardUsername(performer: CrackPerformer): string {
+  const candidates = [
+    performer.nameClean,
+    performer.name,
+    performer.itemId,
+  ];
+  for (const raw of candidates) {
+    const clean = raw?.trim().replace(/^@+/, "").replace(/\s+/g, "");
+    if (!clean || isLanguageMetaTag(clean)) continue;
+    if (/^f$/i.test(clean)) continue;
+    return clean;
+  }
+  return "model";
 }
 
 export function formatCardViewLabel(performer: CrackPerformer): string {
@@ -76,14 +106,8 @@ export function formatCardViewLabel(performer: CrackPerformer): string {
   return `${compact} views`;
 }
 
-/** Primary language pill for card footers (EN, ES, …). */
-export function performerPrimaryLanguageCode(
-  performer: CrackPerformer,
-): string {
-  return performerLanguagePills(performer)[0] ?? "EN";
-}
-
 /** Second line under cam cards: `450K views · EN`. */
 export function formatCardMetaSubtitle(performer: CrackPerformer): string {
-  return `${formatCardViewLabel(performer)} · ${performerPrimaryLanguageCode(performer)}`;
+  const lang = performerPrimaryLanguageCode(performer);
+  return `${formatCardViewLabel(performer)} · ${lang}`;
 }

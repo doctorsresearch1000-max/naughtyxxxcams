@@ -1,7 +1,6 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { getPerformerKey } from "@/lib/crackrevenue/api";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
-import { performerHasNativeEmbedFeed } from "@/lib/feed/nativeIframeFeed";
 import {
   resolvePerformerEmbedPlan,
   type PerformerEmbedPlan,
@@ -50,7 +49,32 @@ export function pickFeedPosterUrl(performer: CrackPerformer): string | null {
   return `${base}${sep}nx_feed=${encodeURIComponent(id)}`;
 }
 
-/** Home feed: Streamate + póster HTTPS único por tarjeta. */
+export type FeedPerformerOptions = {
+  /** Home grid requires a poster; profile player can use banner fallback. */
+  requirePoster?: boolean;
+};
+
+/** Build a playable feed row (api iframe or Crack widget). */
+export function crackPerformerToFeedPerformer(
+  p: CrackPerformer,
+  options?: FeedPerformerOptions,
+): FeedPerformer | null {
+  if (p.live === false) return null;
+
+  const feedKey = getPerformerKey(p);
+  const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
+  if (!embedPlan.canMountInteractivePlayer) return null;
+  if (embedPlan.mode !== "api-iframe" && embedPlan.mode !== "widget") {
+    return null;
+  }
+
+  const posterUrl = pickFeedPosterUrl(p) ?? "";
+  if (options?.requirePoster !== false && !posterUrl) return null;
+
+  return { ...p, feedKey, posterUrl, embedPlan };
+}
+
+/** Home feed: embed-capable live models + unique HTTPS poster per card. */
 export function filterFeedPerformers(
   performers: CrackPerformer[],
 ): FeedPerformer[] {
@@ -60,13 +84,17 @@ export function filterFeedPerformers(
 
   for (const p of performers) {
     if (p.live === false) continue;
-    if (!performerHasNativeEmbedFeed(p)) continue;
-
     const feedKey = getPerformerKey(p);
     if (seenKeys.has(feedKey)) continue;
 
     const posterUrl = pickFeedPosterUrl(p);
     if (!posterUrl) continue;
+
+    const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
+    if (!embedPlan.canMountInteractivePlayer) continue;
+    if (embedPlan.mode !== "api-iframe" && embedPlan.mode !== "widget") {
+      continue;
+    }
 
     const base = posterBaseKey(posterUrl);
     if (seenPosterBases.has(base)) {
@@ -79,20 +107,12 @@ export function filterFeedPerformers(
       if (!onlySnap || seenPosterBases.has(posterBaseKey(onlySnap))) continue;
       seenPosterBases.add(posterBaseKey(onlySnap));
       seenKeys.add(feedKey);
-      const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
-      if (embedPlan.mode !== "api-iframe" || !embedPlan.canMountInteractivePlayer) {
-        continue;
-      }
       out.push({ ...p, feedKey, posterUrl: onlySnap, embedPlan });
       continue;
     }
 
     seenPosterBases.add(base);
     seenKeys.add(feedKey);
-    const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
-    if (embedPlan.mode !== "api-iframe" || !embedPlan.canMountInteractivePlayer) {
-      continue;
-    }
     out.push({ ...p, feedKey, posterUrl, embedPlan });
   }
 

@@ -131,11 +131,11 @@ export function performerHasNativeEmbedFeed(performer: {
   systemSource?: string;
 }): boolean {
   if (performer.live === false) return false;
-  if (
-    typeof performer.systemSource === "string" &&
-    performer.systemSource.trim().toLowerCase() !== "streamate"
-  ) {
-    return false;
+  if (typeof performer.systemSource === "string") {
+    const source = performer.systemSource.trim().toLowerCase();
+    if (source !== "streamate" && source !== "jerkmate") {
+      return false;
+    }
   }
   return pickNativeIframeFeedUrl(performer) !== null;
 }
