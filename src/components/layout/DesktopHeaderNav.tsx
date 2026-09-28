@@ -3,45 +3,18 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import {
-  IconHeartOutline,
-  IconHomeOutline,
-  IconProfileOutline,
-  IconSearchOutline,
-} from "@/components/icons/LineIcons";
+import { JerkmateFreePassPill } from "@/components/conversion/JerkmateFreePassPill";
+import { IconSearchOutline } from "@/components/icons/LineIcons";
 import { dispatchExploreSearch } from "@/lib/explore/exploreSearchSync";
 
-const NAV = [
-  { href: "/", label: "Home", icon: "home" as const },
-  { href: "/explore", label: "Explore", icon: "explore" as const },
-  { href: "/following", label: "Following", icon: "heart" as const },
-  { href: "/profile", label: "Profile", icon: "profile" as const },
+const DESKTOP_LINKS = [
+  { href: "/explore", label: "Explore" },
+  { href: "/following", label: "Following" },
+  { href: "/profile", label: "Profile" },
 ];
 
 function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
-}
-
-function NavIcon({
-  kind,
-  active,
-}: {
-  kind: (typeof NAV)[number]["icon"];
-  active: boolean;
-}) {
-  const className = active ? "text-[#39FF14]" : "text-zinc-300";
-  const size = 20;
-  if (kind === "home") {
-    return <IconHomeOutline className={className} size={size} />;
-  }
-  if (kind === "explore") {
-    return <IconSearchOutline className={className} size={size} />;
-  }
-  if (kind === "heart") {
-    return <IconHeartOutline className={className} size={size} />;
-  }
-  return <IconProfileOutline className={className} size={size} />;
 }
 
 export function DesktopHeaderNav() {
@@ -74,30 +47,31 @@ export function DesktopHeaderNav() {
   );
 
   return (
-    <div className="pointer-events-auto hidden min-w-0 flex-1 items-center gap-4 lg:flex">
+    <div className="pointer-events-auto hidden min-w-0 flex-1 items-center gap-3 lg:flex">
       <nav
-        className="flex shrink-0 items-center gap-1"
+        className="flex shrink-0 items-center gap-0.5"
         aria-label="Desktop primary"
       >
-        {NAV.map((item) => {
+        {DESKTOP_LINKS.map((item) => {
           const active = isActive(pathname, item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold transition hover:bg-white/5 ${
+              className={`rounded-lg px-2.5 py-2 text-xs font-bold transition hover:bg-white/5 ${
                 active ? "text-[#39FF14]" : "text-zinc-300"
               }`}
               aria-current={active ? "page" : undefined}
             >
-              <NavIcon kind={item.icon} active={active} />
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="relative min-w-0 flex-1 max-w-md">
+      <JerkmateFreePassPill className="shrink-0" />
+
+      <div className="relative min-w-0 flex-1 max-w-sm">
         <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">
           <IconSearchOutline size={18} className="text-zinc-500" />
         </span>

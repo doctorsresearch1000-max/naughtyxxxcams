@@ -1,11 +1,12 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { buildJerkmateAffiliateUrlByName } from "@/lib/crackrevenue/jerkmateAffiliate";
+import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
 
 export type ExploreInFeedPromo = {
   affiliateUrl: string;
   coverUrl: string | null;
   title: string;
   subtitle: string;
+  ctaLabel: string;
 };
 
 /** Insert at 5th slot when possible, else 3rd (0-based indices 4 / 2). */
@@ -25,9 +26,10 @@ export function buildExploreInFeedPromo(
     null;
 
   return {
-    affiliateUrl: buildJerkmateAffiliateUrlByName("Jerkmate"),
+    affiliateUrl: JERKMATE_TRACKING_URL,
     coverUrl,
     title: "Jerkmate",
-    subtitle: "Watch free with top models",
+    subtitle: "Free pass — top live models",
+    ctaLabel: "CLAIM FREE PASS",
   };
 }
