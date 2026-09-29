@@ -32,6 +32,19 @@ export async function GET(_request: Request, context: RouteContext) {
   const feedKey = getPerformerKey(performer);
   const embedPlan = resolvePerformerEmbedPlan(performer, feedKey);
   const nativeIframe = pickNativeIframeFeedUrl(performer);
+  const rawIframe = performer.iframeFeedURL?.trim() ?? "";
+
+  if (!nativeIframe || !embedPlan.playerSrcMuted) {
+    console.warn("[profile-live]", {
+      slug,
+      ms,
+      live: performer.live,
+      rawIframe: rawIframe.slice(0, 160),
+      nativeIframe: nativeIframe?.slice(0, 160) ?? null,
+      embedMode: embedPlan.mode,
+      canMount: embedPlan.canMountInteractivePlayer,
+    });
+  }
 
   return Response.json(
     {

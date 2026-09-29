@@ -5,28 +5,27 @@ import { useEffect, useState } from "react";
 import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import { useProfileStreamPlayer } from "@/lib/profile/useProfileStreamPlayer";
-import { PROFILE_STREAM_IFRAME_TIMEOUT_MS } from "@/lib/profile/profileStreamTiming";
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
+import { useMediaMinWidth } from "@/hooks/useMediaMinWidth";
 
 type ProfileDesktopLivePanelProps = {
   model: ModelProfileView;
 };
 
 export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps) {
+  const isDesktopViewport = useMediaMinWidth(1024);
   const {
     catalogLive,
     feedPerformer,
     posterUrl,
-    showStreamLayer,
     showConversionUi,
-    showLoadingOverlay,
-    needsHardConversion,
     armed,
     onFrameDocumentLoad,
     onStreamDisconnected,
   } = useProfileStreamPlayer(model, "desktop");
 
-  const canMountStream = catalogLive && Boolean(feedPerformer);
+  const canMountStream =
+    isDesktopViewport && catalogLive && Boolean(feedPerformer);
   const [heightPx, setHeightPx] = useState(640);
 
   useEffect(() => {
@@ -73,11 +72,7 @@ export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps)
         />
       ) : null}
 
-      <div
-        className={`absolute inset-0 transition-opacity duration-500 ${
-          showStreamLayer ? "opacity-100" : "opacity-0"
-        }`}
-      >
+      <div className="absolute inset-0 opacity-100">
         <LiveEmbed
           embedKey={feedPerformer!.feedKey}
           posterUrl={feedPerformer!.posterUrl}
@@ -89,8 +84,6 @@ export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps)
           fastReveal
           iframeLoading="eager"
           streamPriority="high"
-          externalPosterControl
-          posterFallbackMaxMs={PROFILE_STREAM_IFRAME_TIMEOUT_MS}
           onFrameDocumentLoad={onFrameDocumentLoad}
           onStreamDisconnected={onStreamDisconnected}
         />
@@ -99,7 +92,7 @@ export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps)
       {showConversionUi ? (
         <ProfileStreamConversionOverlay
           affiliateUrl={model.affiliateUrl}
-          loading={showLoadingOverlay && !needsHardConversion}
+          loading={false}
         />
       ) : null}
     </div>

@@ -8,7 +8,7 @@ import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
 import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import { useProfileStreamPlayer } from "@/lib/profile/useProfileStreamPlayer";
-import { PROFILE_STREAM_IFRAME_TIMEOUT_MS } from "@/lib/profile/profileStreamTiming";
+import { useMediaMinWidth } from "@/hooks/useMediaMinWidth";
 import {
   camPlayerAudit,
   camPlayerAuditSince,
@@ -21,20 +21,19 @@ type ProfileMobileLiveHeaderProps = {
 };
 
 export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps) {
+  const isDesktopViewport = useMediaMinWidth(1024);
   const {
     catalogLive,
     feedPerformer,
     posterUrl,
-    showStreamLayer,
     showConversionUi,
-    showLoadingOverlay,
-    needsHardConversion,
     armed,
     onFrameDocumentLoad,
     onStreamDisconnected,
   } = useProfileStreamPlayer(model, "mobile");
 
-  const canMountStream = catalogLive && Boolean(feedPerformer);
+  const canMountStream =
+    !isDesktopViewport && catalogLive && Boolean(feedPerformer);
 
   const onPosterError = useCallback(() => {
     camPlayerAudit("poster.error", {
@@ -70,11 +69,7 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
       {canMountStream && feedPerformer ? (
         <SessionAudioProvider>
           <FeedViewportProvider heightPx={HEADER_HEIGHT_PX}>
-            <div
-              className={`absolute inset-0 transition-opacity duration-500 ${
-                showStreamLayer ? "opacity-100" : "opacity-0"
-              }`}
-            >
+            <div className="absolute inset-0 opacity-100">
               <LiveEmbed
                 embedKey={feedPerformer.feedKey}
                 posterUrl={feedPerformer.posterUrl}
@@ -86,8 +81,6 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
                 fastReveal
                 iframeLoading="eager"
                 streamPriority="high"
-                externalPosterControl
-                posterFallbackMaxMs={PROFILE_STREAM_IFRAME_TIMEOUT_MS}
                 onFrameDocumentLoad={onFrameDocumentLoad}
                 onStreamDisconnected={onStreamDisconnected}
               />
@@ -99,7 +92,7 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
       {showConversionUi ? (
         <ProfileStreamConversionOverlay
           affiliateUrl={model.affiliateUrl}
-          loading={showLoadingOverlay && !needsHardConversion}
+          loading={false}
         />
       ) : null}
 
