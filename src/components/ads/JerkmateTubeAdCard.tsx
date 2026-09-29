@@ -3,13 +3,17 @@
 import Image from "next/image";
 import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
 import { pickJerkmateGridCreative } from "@/lib/ads/jerkmateGridCreatives";
+import {
+  SponsoredAdOverlays,
+  SponsoredFreePromoLine,
+} from "@/components/ads/SponsoredAdOverlays";
 
 type JerkmateTubeAdCardProps = {
   adSlotIndex: number;
 };
 
 /**
- * In-grid Jerkmate slot — same footprint as ModelTubeCard, image only + highlight border.
+ * In-grid Jerkmate slot — same footprint as ModelTubeCard + sponsored metadata.
  */
 export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
   const src = pickJerkmateGridCreative(adSlotIndex);
@@ -25,6 +29,11 @@ export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
       >
         <div
           className="relative aspect-[4/3] overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 p-[2px] shadow-[0_0_20px_rgba(236,72,153,0.28)] ring-2 ring-pink-500 ring-offset-1 ring-offset-black transition duration-300 group-hover:shadow-[0_0_26px_rgba(34,211,238,0.35)] group-hover:ring-cyan-400"
+          style={{
+            contentVisibility: "auto",
+            containIntrinsicSize: "300px",
+            willChange: "transform",
+          }}
         >
           <div
             className="relative h-full w-full overflow-hidden rounded-[calc(var(--nx-radius-card)-3px)] bg-zinc-900"
@@ -39,7 +48,15 @@ export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
               decoding="async"
               unoptimized
             />
+            <SponsoredAdOverlays badge="AD" />
           </div>
+        </div>
+
+        <div className="space-y-0.5 px-0.5 pb-1 pt-1.5">
+          <p className="truncate text-[13px] font-bold leading-tight text-white">
+            Jerkmate Live
+          </p>
+          <SponsoredFreePromoLine />
         </div>
       </a>
     </article>

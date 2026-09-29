@@ -1,4 +1,3 @@
-import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
 import { IN_FEED_AD_EVERY_N_CARDS } from "@/lib/cams/inFeedAdConfig";
 
@@ -18,17 +17,10 @@ export function resolveInFeedPromoIndex(visibleCount: number): number | null {
   return Math.min(2, visibleCount - 1);
 }
 
-export function buildExploreInFeedPromo(
-  coverModel?: CrackPerformer | null,
-): ExploreInFeedPromo {
-  const coverUrl =
-    coverModel?.liveSnapshotURL?.trim() ||
-    coverModel?.thumbnailUrl?.trim() ||
-    null;
-
+export function buildExploreInFeedPromo(): ExploreInFeedPromo {
   return {
     affiliateUrl: JERKMATE_TRACKING_URL,
-    coverUrl,
+    coverUrl: null,
     title: "Jerkmate",
     subtitle: "Free pass — top live models",
     ctaLabel: "CLAIM FREE PASS",

@@ -18,10 +18,11 @@ import {
   useLikedModels,
   usePlaylists,
 } from "@/hooks/useUserLibrary";
-import { createPlaylist } from "@/lib/user/userLibrary";
+import { useSaveToCollection } from "@/components/collections/SaveToCollectionProvider";
 
 export function ProfilePageView() {
   const { user, isAuthenticated, login } = useTelegramAuth();
+  const { openCreateCollectionModal } = useSaveToCollection();
   const likes = useLikedModels();
   const bookmarks = useBookmarkedModels();
   const following = useFollowingModels();
@@ -42,8 +43,7 @@ export function ProfilePageView() {
       login();
       return;
     }
-    const name = window.prompt("Collection name", "Favorites");
-    if (name) createPlaylist(name);
+    openCreateCollectionModal();
   };
 
   return (

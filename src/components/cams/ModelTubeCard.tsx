@@ -148,13 +148,18 @@ export function ModelTubeCard({
       >
         <div
           className="relative aspect-[4/3] overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-900 ring-1 ring-zinc-800/80"
+          style={{
+            contentVisibility: "auto",
+            containIntrinsicSize: "300px",
+            willChange: "transform",
+          }}
         >
           {thumb ? (
             <CamCardImage
               src={thumb}
               alt={username}
               priority={priority}
-              fetchPriority={gridIndex === 0 ? "high" : priority ? "auto" : "low"}
+              fetchPriority={gridIndex < 4 ? "high" : priority ? "auto" : "low"}
               hoverSrc={hoverStill}
               showHoverLayer={showHoverPreview}
               className="object-cover transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"

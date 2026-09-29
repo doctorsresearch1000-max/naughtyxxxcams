@@ -2,16 +2,18 @@
 
 import Image from "next/image";
 import type { ExploreInFeedPromo } from "@/lib/explore/exploreInFeedPromo";
-import { uiStrings } from "@/lib/i18n/uiStrings";
+import { pickJerkmateGridCreative } from "@/lib/ads/jerkmateGridCreatives";
+import {
+  SponsoredAdOverlays,
+  SponsoredFreePromoLine,
+} from "@/components/ads/SponsoredAdOverlays";
 
 type ExploreInFeedPromoCardProps = {
   promo: ExploreInFeedPromo;
 };
 
 export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
-  const cover =
-    promo.coverUrl ||
-    "https://www.imglnky.com/8780/PMKT-1157_DESIGN-16618_BannersWebinar_AmyPose_300100.gif";
+  const cover = pickJerkmateGridCreative(0);
 
   return (
     <article
@@ -32,9 +34,7 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
           unoptimized
         />
 
-        <span className="absolute left-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-zinc-200">
-          {uiStrings.adLabel}
-        </span>
+        <SponsoredAdOverlays badge="AD" />
 
         <span className="absolute inset-x-2 bottom-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 py-2 text-center text-[10px] font-extrabold uppercase tracking-wide text-white shadow-lg shadow-pink-500/30">
           {promo.ctaLabel}
@@ -48,9 +48,7 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
             Partner
           </span>
         </p>
-        <p className="mt-0.5 text-[11px] font-medium text-zinc-300">
-          {promo.subtitle}
-        </p>
+        <SponsoredFreePromoLine className="mt-0.5" />
       </div>
     </article>
   );

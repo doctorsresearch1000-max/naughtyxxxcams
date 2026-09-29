@@ -15,6 +15,7 @@ import {
   IconVolumeOff,
   IconVolumeOn,
 } from "@/components/icons/LineIcons";
+import { useSaveToCollection } from "@/components/collections/SaveToCollectionProvider";
 import {
   isBookmarked,
   isFollowing,
@@ -49,6 +50,7 @@ export function FeedActionRail({
   onToggleMute,
 }: FeedActionRailProps) {
   const { requireAuth, isAuthenticated } = useTelegramAuth();
+  const { openSaveModal } = useSaveToCollection();
   const [saved, setSaved] = useState(false);
   const [following, setFollowing] = useState(false);
   const [chatSheetOpen, setChatSheetOpen] = useState(false);
@@ -96,8 +98,12 @@ export function FeedActionRail({
 
   const onToggleSave = () => {
     if (!requireAuth("Sign in with Telegram to bookmark models")) return;
-    const next = toggleBookmark(modelRef);
-    setSaved(next);
+    if (saved) {
+      const next = toggleBookmark(modelRef);
+      setSaved(next);
+      return;
+    }
+    openSaveModal(modelRef, () => setSaved(true));
   };
 
   const onToggleFollow = () => {

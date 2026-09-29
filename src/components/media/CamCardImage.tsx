@@ -47,9 +47,11 @@ export function CamCardImage({
           srcSet={responsive!.srcSet}
           sizes={responsive!.sizes}
           alt={alt}
+          width={400}
+          height={300}
           decoding="async"
           loading={priority ? "eager" : "lazy"}
-          fetchPriority={fetchPriority}
+          fetchPriority={priority ? "high" : fetchPriority}
           className={`absolute inset-0 h-full w-full transition-opacity duration-200 motion-reduce:transition-none ${
             showHoverLayer ? "opacity-0" : "opacity-100"
           } ${className}`}
@@ -64,7 +66,7 @@ export function CamCardImage({
             showHoverLayer ? "opacity-0" : "opacity-100"
           } ${className}`}
           loading={priority ? "eager" : "lazy"}
-          fetchPriority={fetchPriority}
+          fetchPriority={priority ? "high" : fetchPriority}
           decoding="async"
           unoptimized
         />

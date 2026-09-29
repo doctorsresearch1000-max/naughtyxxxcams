@@ -19,6 +19,7 @@ import { affiliateClaims } from "@/copy/model-page";
 import { uiStrings } from "@/lib/i18n/uiStrings";
 import { profileFollowersLabel } from "@/lib/profile/followersDisplay";
 import { SaveToFavoritesButton } from "@/components/profile/SaveToFavoritesButton";
+import { savedModelRefFromProfile } from "@/lib/user/savedModelRef";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
@@ -109,6 +110,11 @@ export function ModelProfileSlushyView({
     if (!activeTag) return model.galleryItems;
     return model.galleryItems.filter((item) => item.tags.includes(activeTag));
   }, [activeTag, model.galleryItems]);
+
+  const libraryRef = useMemo(
+    () => savedModelRefFromProfile(model),
+    [model],
+  );
 
   const nextProfilePath =
     recommended.find((r) => r.slug !== model.profileSlug)?.profilePath ??
@@ -214,7 +220,7 @@ export function ModelProfileSlushyView({
         </section>
 
         <section className="px-4 pt-4">
-          <SaveToFavoritesButton profileSlug={model.profileSlug} />
+          <SaveToFavoritesButton modelRef={libraryRef} />
         </section>
 
         <section className="px-4 pt-8">

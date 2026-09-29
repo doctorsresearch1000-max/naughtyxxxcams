@@ -105,10 +105,6 @@ export function toggleBookmark(ref: SavedModelRef): boolean {
     removeFromNamedPlaylist(lib, SAVED_COLLECTION, ref.feedKey);
   } else {
     lib.bookmarks[ref.feedKey] = stamped;
-    const collection = ensureSavedPlaylist(lib);
-    if (!collection.items.some((i) => i.feedKey === ref.feedKey)) {
-      collection.items = [stamped, ...collection.items];
-    }
     pushHistory(lib, { ...stamped, action: "bookmark" });
   }
   writeUserLibrary(lib);
@@ -147,15 +143,6 @@ function ensureNamedPlaylist(lib: UserLibrary, name: string, idPrefix: string): 
 
 function ensureFavoritesPlaylist(lib: UserLibrary): Playlist {
   return ensureNamedPlaylist(lib, FAVORITES_COLLECTION, "pl-favorites");
-}
-
-function ensureSavedPlaylist(lib: UserLibrary): Playlist {
-  if (lib.playlists.length === 0) {
-    return ensureNamedPlaylist(lib, SAVED_COLLECTION, "pl-saved");
-  }
-  const named = lib.playlists.find((p) => p.name === SAVED_COLLECTION);
-  if (named) return named;
-  return ensureNamedPlaylist(lib, SAVED_COLLECTION, "pl-saved");
 }
 
 function removeFromNamedPlaylist(
@@ -206,6 +193,23 @@ export function addToPlaylist(playlistId: string, ref: SavedModelRef): void {
   if (!pl.items.some((i) => i.feedKey === ref.feedKey)) {
     pl.items = [{ ...ref, savedAt: Date.now() }, ...pl.items];
   }
+  writeUserLibrary(lib);
+}
+
+/** Bookmark + add to a user collection (required save flow). */
+export function saveModelToCollection(
+  playlistId: string,
+  ref: SavedModelRef,
+): void {
+  const lib = readUserLibrary();
+  const pl = lib.playlists.find((p) => p.id === playlistId);
+  if (!pl) return;
+  const stamped = { ...ref, savedAt: Date.now() };
+  lib.bookmarks[ref.feedKey] = stamped;
+  if (!pl.items.some((i) => i.feedKey === ref.feedKey)) {
+    pl.items = [stamped, ...pl.items];
+  }
+  pushHistory(lib, { ...stamped, action: "bookmark" });
   writeUserLibrary(lib);
 }
 

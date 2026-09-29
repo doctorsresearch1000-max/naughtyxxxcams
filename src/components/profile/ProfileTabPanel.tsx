@@ -63,49 +63,34 @@ function ModelThumbGrid({
   );
 }
 
-function CollectionCard({ playlist }: { playlist: Playlist }) {
+function CollectionSquareTile({ playlist }: { playlist: Playlist }) {
   const count = playlist.items.length;
-  const thumbs = playlist.items.slice(0, 4);
+  const latest = playlist.items[0];
 
   return (
     <Link
       href={`/profile/playlists/${playlist.id}`}
-      className="block overflow-hidden rounded-2xl bg-[#1C1C1E]"
+      className="flex aspect-square flex-col justify-between overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900 p-2"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-900">
-        {thumbs.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-zinc-600">
-            <span className="text-2xl">+</span>
-          </div>
-        ) : thumbs.length === 1 ? (
+      <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-lg bg-zinc-950">
+        {latest?.posterUrl ? (
           <Image
-            src={thumbs[0].posterUrl}
+            src={latest.posterUrl}
             alt=""
             fill
             className="object-cover"
+            sizes="(max-width: 640px) 45vw, 120px"
             unoptimized
           />
         ) : (
-          <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-px bg-black">
-            {thumbs.map((item) => (
-              <div key={item.feedKey} className="relative min-h-0">
-                <Image
-                  src={item.posterUrl}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-            ))}
+          <div className="flex h-full items-center justify-center text-2xl text-zinc-600">
+            +
           </div>
         )}
       </div>
-      <div className="px-3 py-2.5">
-        <p className="text-sm font-bold text-white">{playlist.name}</p>
-        <p className="text-xs text-zinc-500">
-          {count} saved
-        </p>
+      <div className="pt-2">
+        <p className="truncate text-xs font-bold text-white">{playlist.name}</p>
+        <p className="text-[10px] text-zinc-500">{count} saved</p>
       </div>
     </Link>
   );
@@ -130,32 +115,32 @@ export function ProfileTabPanel({
         <button
           type="button"
           onClick={onNewCollection}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2A2A2E] py-3.5 text-sm font-semibold text-white transition active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-700 bg-zinc-900 py-3 text-sm font-semibold text-white transition active:scale-[0.99]"
         >
           <span className="text-lg leading-none">+</span>
           New collection
         </button>
         {playlists.length > 0 ? (
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {playlists.map((pl) => (
-              <CollectionCard key={pl.id} playlist={pl} />
+              <CollectionSquareTile key={pl.id} playlist={pl} />
             ))}
           </div>
-        ) : null}
+        ) : (
+          <p className="py-6 text-center text-sm text-zinc-500">
+            Save streams from the feed or create a collection.
+          </p>
+        )}
         {bookmarks.length > 0 ? (
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Bookmarked
+              All saved
             </p>
             <ModelThumbGrid
               items={bookmarks}
               emptyLabel="No saved models yet."
             />
           </div>
-        ) : playlists.length === 0 ? (
-          <p className="py-6 text-center text-sm text-zinc-500">
-            Save streams from the feed or create a collection.
-          </p>
         ) : null}
       </div>
     );

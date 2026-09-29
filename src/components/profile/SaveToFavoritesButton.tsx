@@ -2,39 +2,49 @@
 
 import { useEffect, useState } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
+import { useSaveToCollection } from "@/components/collections/SaveToCollectionProvider";
 import { uiStrings } from "@/lib/i18n/uiStrings";
-import {
-  isProfileFavorited,
-  toggleProfileFavorite,
-} from "@/lib/user/cardFollowStorage";
+import type { SavedModelRef } from "@/lib/user/userLibrary";
+import { isBookmarked, toggleBookmark } from "@/lib/user/userLibrary";
 
 type SaveToFavoritesButtonProps = {
-  profileSlug: string;
+  modelRef: SavedModelRef;
 };
 
-export function SaveToFavoritesButton({
-  profileSlug,
-}: SaveToFavoritesButtonProps) {
+export function SaveToFavoritesButton({ modelRef }: SaveToFavoritesButtonProps) {
   const { isAuthenticated, requireAuth } = useTelegramAuth();
+  const { openSaveModal } = useSaveToCollection();
+  const feedKey = modelRef.feedKey;
   const [saved, setSaved] = useState(false);
   const [flash, setFlash] = useState<string | null>(null);
 
+  const syncSaved = () => setSaved(isBookmarked(feedKey));
+
   useEffect(() => {
-    setSaved(isProfileFavorited(profileSlug));
-    const onUpdate = () => setSaved(isProfileFavorited(profileSlug));
-    window.addEventListener("nx-favorites-update", onUpdate);
-    return () => window.removeEventListener("nx-favorites-update", onUpdate);
-  }, [profileSlug]);
+    syncSaved();
+    const onUpdate = () => syncSaved();
+    window.addEventListener("nx-library-update", onUpdate);
+    return () => window.removeEventListener("nx-library-update", onUpdate);
+  }, [feedKey]);
 
   return (
     <div className="space-y-1">
       <button
         type="button"
         onClick={() => {
-          const next = toggleProfileFavorite(profileSlug);
-          setSaved(next);
-          setFlash(next ? "Saved locally" : "Removed");
-          window.setTimeout(() => setFlash(null), 2000);
+          if (!requireAuth("Sign in with Telegram to save models")) return;
+          if (saved) {
+            const next = toggleBookmark(modelRef);
+            setSaved(next);
+            setFlash(next ? null : "Removed");
+            window.setTimeout(() => setFlash(null), 2000);
+            return;
+          }
+          openSaveModal(modelRef, () => {
+            setSaved(true);
+            setFlash("Saved");
+            window.setTimeout(() => setFlash(null), 2000);
+          });
         }}
         className={`flex w-full items-center justify-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold transition ${
           saved
@@ -47,7 +57,10 @@ export function SaveToFavoritesButton({
         {saved ? "Saved" : uiStrings.saveFavorites}
       </button>
       {flash ? (
-        <p className="text-center text-[11px] font-medium text-[var(--nx-action)]" role="status">
+        <p
+          className="text-center text-[11px] font-medium text-[var(--nx-action)]"
+          role="status"
+        >
           {flash}
         </p>
       ) : null}
@@ -58,7 +71,7 @@ export function SaveToFavoritesButton({
             requireAuth({
               title: "Sync with Telegram",
               description:
-                "Favorites are saved on this device. Sign in to sync across sessions.",
+                "Collections are saved on this device. Sign in to sync across sessions.",
               ctaLabel: "Continue with Telegram",
             })
           }
