@@ -7,8 +7,6 @@ import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
-import { JerkmateLogoMark } from "@/components/cams/JerkmateLogoMark";
-import { PLATFORM_BADGE_PILL_CLASS } from "@/components/cams/PlatformBadgePill";
 import { getSyntheticViewsLabel } from "@/lib/media/getSyntheticViews";
 
 type JerkmateTubeAdCardProps = {
@@ -81,12 +79,6 @@ export function JerkmateTubeAdCard({
               className="absolute inset-0 z-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
             />
             <SponsoredAdOverlays badge="AD" />
-            <span
-              className={PLATFORM_BADGE_PILL_CLASS}
-              data-platform-badge="jerkmate"
-            >
-              <JerkmateLogoMark className="h-3.5 w-auto object-contain" />
-            </span>
           </div>
         </div>
 

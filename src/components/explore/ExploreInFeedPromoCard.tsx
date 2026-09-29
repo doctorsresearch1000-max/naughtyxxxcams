@@ -7,7 +7,6 @@ import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
-import { PlatformBadgePill } from "@/components/cams/PlatformBadgePill";
 
 type ExploreInFeedPromoCardProps = {
   promo: ExploreInFeedPromo;
@@ -36,7 +35,6 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
         />
 
         <SponsoredAdOverlays badge="AD" />
-        <PlatformBadgePill jerkmate />
 
         <span className="absolute inset-x-2 bottom-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 py-2 text-center text-[10px] font-extrabold uppercase tracking-wide text-white shadow-lg shadow-pink-500/30">
           {promo.ctaLabel}
