@@ -2,7 +2,7 @@
 export const JERKMATE_LOGO_SRC = "/logos/jerkmate.png";
 
 export const JERKMATE_LOGO_BADGE_CLASS =
-  "block h-4.5 w-auto object-contain md:h-5.5";
+  "block h-3.5 w-auto max-h-full max-w-full object-contain md:h-4";
 
 type JerkmateLogoMarkProps = {
   className?: string;
@@ -17,8 +17,8 @@ export function JerkmateLogoMark({
       src={JERKMATE_LOGO_SRC}
       className={className}
       alt="Jerkmate"
-      width={96}
-      height={20}
+      width={56}
+      height={14}
       decoding="async"
     />
   );
