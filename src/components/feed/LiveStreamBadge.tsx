@@ -1,10 +1,6 @@
 "use client";
 
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import {
-  estimateViewerCount,
-  formatViewerCount,
-} from "@/lib/feed/viewerCount";
 
 type LiveStreamBadgeProps = {
   performer: CrackPerformer;
@@ -14,12 +10,10 @@ type LiveStreamBadgeProps = {
 
 export function LiveStreamBadge({
   performer,
-  feedKey,
   visible,
 }: LiveStreamBadgeProps) {
   if (!visible) return null;
 
-  const viewers = formatViewerCount(estimateViewerCount(performer, feedKey));
   const isLive = performer.live !== false;
 
   return (
@@ -38,26 +32,6 @@ export function LiveStreamBadge({
           Live
         </span>
       ) : null}
-      <span
-        className="inline-flex items-center gap-1 rounded-md bg-black/55 px-2 py-1 text-[10px] font-semibold text-white backdrop-blur-md"
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden
-          className="text-neutral-300"
-        >
-          <path
-            d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"
-            stroke="currentColor"
-            strokeWidth="1.75"
-          />
-          <circle cx="12" cy="12" r="2.5" stroke="currentColor" strokeWidth="1.75" />
-        </svg>
-        {viewers}
-      </span>
     </div>
   );
 }

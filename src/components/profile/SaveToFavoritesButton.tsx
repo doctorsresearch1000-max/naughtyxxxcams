@@ -35,14 +35,6 @@ export function SaveToFavoritesButton({
           setSaved(next);
           setFlash(next ? "Saved locally" : "Removed");
           window.setTimeout(() => setFlash(null), 2000);
-          if (next && !isAuthenticated) {
-            requireAuth({
-              title: "Sync with Telegram",
-              description:
-                "Favorites are saved on this device. Sign in to sync across sessions.",
-              ctaLabel: "Continue with Telegram",
-            });
-          }
         }}
         className={`flex w-full items-center justify-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold transition ${
           saved
@@ -59,11 +51,26 @@ export function SaveToFavoritesButton({
           {flash}
         </p>
       ) : null}
-      <p className="text-center text-[10px] text-zinc-500">
-        {isAuthenticated
-          ? "Synced when you use Telegram login."
-          : "Stored on this device until you connect Telegram."}
-      </p>
+      {!isAuthenticated ? (
+        <button
+          type="button"
+          onClick={() =>
+            requireAuth({
+              title: "Sync with Telegram",
+              description:
+                "Favorites are saved on this device. Sign in to sync across sessions.",
+              ctaLabel: "Continue with Telegram",
+            })
+          }
+          className="mx-auto block text-center text-[10px] font-medium text-zinc-500 underline-offset-2 hover:text-zinc-400 hover:underline"
+        >
+          Stored on this device — sync with Telegram
+        </button>
+      ) : (
+        <p className="text-center text-[10px] text-zinc-500">
+          Synced with your Telegram session.
+        </p>
+      )}
     </div>
   );
 }

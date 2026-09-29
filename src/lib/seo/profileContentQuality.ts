@@ -25,7 +25,9 @@ export function pickIntroVariant(model: ModelSEOInput): string {
   );
   const template = introTemplateVariants[idx];
   const live = model.status === "live";
-  return template(model.name, model.language, model.country, live);
+  const language = model.language?.trim() || "English";
+  const country = model.country?.trim() || "";
+  return template(model.name, language, country, live);
 }
 
 export function buildReducedIntroParagraphs(model: ModelSEOInput): string[] {
