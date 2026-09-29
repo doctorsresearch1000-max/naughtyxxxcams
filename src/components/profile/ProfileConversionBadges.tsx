@@ -19,7 +19,7 @@ export function ProfileConversionBadges({
       data-profile-conversion-badges="v1"
     >
       <span
-        className="bg-emerald-500/90 text-white text-[10px] md:text-xs font-black tracking-wider px-2.5 py-1 rounded-full uppercase shadow-md"
+        className="bg-emerald-500/95 text-white text-[9px] leading-tight sm:text-[10px] md:text-xs font-black tracking-wide px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase shadow-md ring-1 ring-black/20"
       >
         JOIN FREE
       </span>
@@ -29,7 +29,7 @@ export function ProfileConversionBadges({
           e.stopPropagation();
           openRoom();
         }}
-        className="bg-rose-600/90 text-white text-[10px] md:text-xs font-bold tracking-wider px-2.5 py-1 rounded-full uppercase shadow-md animate-pulse"
+        className="bg-rose-600/95 text-white text-[9px] leading-tight sm:text-[10px] md:text-xs font-bold tracking-wide px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full uppercase shadow-md ring-1 ring-black/20 animate-pulse text-left"
       >
         JERK OFF WITH SOUND 🔊
       </button>

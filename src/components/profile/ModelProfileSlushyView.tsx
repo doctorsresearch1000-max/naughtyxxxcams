@@ -9,7 +9,6 @@ import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideShe
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useConversionAttentionPulse } from "@/hooks/useConversionAttentionPulse";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
-import { ProfileConversionBadges } from "@/components/profile/ProfileConversionBadges";
 import { ProfileMobileLiveHeader } from "@/components/profile/ProfileMobileLiveHeader";
 import { ProfileStickyCta } from "@/components/profile/ProfileStickyCta";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
@@ -143,12 +142,7 @@ export function ModelProfileSlushyView({
         <section className="relative">
           <ProfileMobileLiveHeader model={model} />
 
-            <ProfileConversionBadges
-              affiliateUrl={model.affiliateUrl}
-              className="absolute right-2 top-14 z-20 max-w-[min(100%,220px)]"
-            />
-
-          <div className="relative z-10 -mt-14 flex justify-center">
+          <div className="relative z-10 -mt-11 flex justify-center">
             <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[#0A0A0A] ring-2 ring-[#39FF14]/40">
               <ApiAvatar
                 src={model.avatar}

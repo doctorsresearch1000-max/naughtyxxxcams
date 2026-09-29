@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
+import { ProfileConversionBadges } from "@/components/profile/ProfileConversionBadges";
 import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import { useProfileStreamPlayer } from "@/lib/profile/useProfileStreamPlayer";
@@ -14,7 +15,8 @@ import {
   camPlayerAuditSince,
 } from "@/lib/audit/camPlayerAudit";
 
-const HEADER_HEIGHT_PX = 420;
+/** Fallback until ResizeObserver reports the compact 16:9 box. */
+const PROFILE_MOBILE_STAGE_FALLBACK_PX = 300;
 
 type ProfileMobileLiveHeaderProps = {
   model: ModelProfileView;
@@ -22,6 +24,11 @@ type ProfileMobileLiveHeaderProps = {
 
 export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps) {
   const isDesktopViewport = useMediaMinWidth(1024);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [stageHeightPx, setStageHeightPx] = useState(
+    PROFILE_MOBILE_STAGE_FALLBACK_PX,
+  );
+
   const {
     catalogLive,
     feedPerformer,
@@ -34,6 +41,25 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
 
   const canMountStream =
     !isDesktopViewport && catalogLive && Boolean(feedPerformer);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el || isDesktopViewport) return;
+
+    const measure = () => {
+      const h = Math.round(el.getBoundingClientRect().height);
+      if (h > 0) setStageHeightPx(h);
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [isDesktopViewport]);
 
   const onPosterError = useCallback(() => {
     camPlayerAudit("poster.error", {
@@ -50,7 +76,8 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
 
   return (
     <div
-      className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10"
+      ref={stageRef}
+      className="relative mx-3 mt-2 w-[calc(100%-1.5rem)] max-h-[min(44vh,352px)] aspect-video overflow-hidden rounded-[24px] bg-[#0A0A0A] ring-1 ring-white/10"
     >
       {posterUrl ? (
         <Image
@@ -60,7 +87,7 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
           priority
           unoptimized
           sizes="100vw"
-          className="object-cover"
+          className="object-cover object-center"
           onLoad={onPosterLoad}
           onError={onPosterError}
         />
@@ -68,8 +95,8 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
 
       {canMountStream && feedPerformer ? (
         <SessionAudioProvider>
-          <FeedViewportProvider heightPx={HEADER_HEIGHT_PX}>
-            <div className="absolute inset-0 opacity-100">
+          <FeedViewportProvider heightPx={stageHeightPx}>
+            <div className="absolute inset-0">
               <LiveEmbed
                 embedKey={feedPerformer.feedKey}
                 posterUrl={feedPerformer.posterUrl}
@@ -77,7 +104,7 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
                 isActive
                 isArmed={armed}
                 sessionMuted
-                viewportHeightPx={HEADER_HEIGHT_PX}
+                viewportHeightPx={stageHeightPx}
                 fastReveal
                 iframeLoading="eager"
                 streamPriority="high"
@@ -96,10 +123,15 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
         />
       ) : null}
 
-      <div className="pointer-events-none absolute inset-0 z-[5] bg-gradient-to-b from-black/25 via-transparent to-[#0A0A0A]" />
+      <ProfileConversionBadges
+        affiliateUrl={model.affiliateUrl}
+        className="pointer-events-auto absolute right-2.5 top-2.5 z-30 max-w-[min(100%-5rem,200px)]"
+      />
+
+      <div className="pointer-events-none absolute inset-0 z-[5] bg-gradient-to-b from-black/20 via-transparent to-black/50" />
 
       {catalogLive && !showConversionUi ? (
-        <span className="pointer-events-none absolute left-4 top-4 z-20 rounded-full bg-[#39FF14] px-3 py-1 text-[11px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
+        <span className="pointer-events-none absolute left-2.5 top-2.5 z-20 rounded-full bg-[#39FF14] px-2.5 py-0.5 text-[10px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
           • LIVE
         </span>
       ) : null}
