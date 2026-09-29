@@ -60,6 +60,7 @@ iframe[data-touch-blocked="true"] {
 
 .nx-chip-scroll {
   position: relative;
+  overflow-y: visible;
   mask-image: linear-gradient(
     to right,
     transparent,

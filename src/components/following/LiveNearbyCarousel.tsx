@@ -21,7 +21,7 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
 
   return (
     <div
-      className="nx-chip-scroll hide-scrollbar -mx-1 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth pb-2 pl-0.5 pr-3"
+      className="nx-chip-scroll hide-scrollbar -mx-1 flex min-h-[108px] snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-visible scroll-smooth pb-2 pl-0.5 pr-3 lg:min-h-[116px] lg:gap-4"
     >
       {visible.map((item) => {
         const href = item.profilePath ?? item.affiliateUrl;

@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
@@ -12,10 +10,8 @@ import {
   useTransition,
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
-import { LiveBadge } from "@/components/cams/LiveBadge";
-import { StoryAvatarRing } from "@/components/cams/StoryAvatarRing";
+import { ExploreLiveStoriesRow } from "@/components/explore/ExploreLiveStoriesRow";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
@@ -35,10 +31,6 @@ import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerforme
 import { dedupeById } from "@/lib/feed/dedupeById";
 import { getPerformerKey } from "@/lib/crackrevenue/api";
 import { explorePathForCategoryParam } from "@/lib/explore/paths";
-import {
-  performerDisplayHandle,
-  performerProfilePathFromPerformer,
-} from "@/lib/profile/performerHandle";
 
 type CacheEntry = {
   performers: CrackPerformer[];
@@ -84,7 +76,7 @@ function buildCacheFromPool(pool: CrackPerformer[]): Map<string, CacheEntry> {
 }
 
 const horizontalScrollClass =
-  "nx-chip-scroll hide-scrollbar flex gap-2 overflow-x-auto pb-0.5";
+  "nx-chip-scroll hide-scrollbar flex gap-2 overflow-x-auto overflow-y-visible pb-0.5";
 
 function chipClass(active: boolean): string {
   return [
@@ -373,54 +365,9 @@ export function ExploreSlushyDiscover({
         ) : null}
       </div>
 
-      {liveStories.length > 0 && (
-        <div className={`${horizontalScrollClass} lg:py-0`}>
-          {liveStories.map((performer) => {
-            const path = performerProfilePathFromPerformer(performer);
-            const handle = performerDisplayHandle(
-              performer.nameClean || performer.name,
-            );
-            const thumb = pickCoverUrl(performer);
-            const inner = (
-              <div className="flex w-[76px] flex-col items-center gap-1.5 lg:w-[58px] lg:gap-1">
-                <StoryAvatarRing>
-                  <div className="relative h-[72px] w-[72px] overflow-hidden rounded-[22px] bg-[#1C1C1E] lg:h-[52px] lg:w-[52px] lg:rounded-[16px]">
-                    {thumb ? (
-                      <Image
-                        src={thumb}
-                        alt={handle}
-                        fill
-                        className="object-cover"
-                        sizes="76px"
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-zinc-800" />
-                    )}
-                    <span className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/80 to-transparent pb-0.5 pt-2 lg:pt-1.5">
-                      <LiveBadge size="sm" className="scale-[0.85] origin-bottom" />
-                    </span>
-                  </div>
-                </StoryAvatarRing>
-                <span className="max-w-[76px] truncate text-[10px] font-bold text-zinc-100 lg:max-w-[58px] lg:text-[9px]">
-                  {handle.replace(/^@/, "")}
-                </span>
-              </div>
-            );
-            return path ? (
-              <Link key={performer.itemId ?? handle} href={path} className="shrink-0">
-                {inner}
-              </Link>
-            ) : (
-              <div key={performer.itemId ?? handle} className="shrink-0">
-                {inner}
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <ExploreLiveStoriesRow performers={liveStories} />
 
-      <section className="lg:-mt-1">
+      <section className="mt-2 lg:mt-4">
         <div className="mb-2.5 px-0.5 lg:mb-1">
           <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
             {category ? category.label : "For you"}
