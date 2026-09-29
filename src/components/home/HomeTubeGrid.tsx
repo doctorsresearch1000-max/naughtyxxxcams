@@ -10,7 +10,8 @@ import { buildHomeGridItems } from "@/lib/home/homeGridWithAds";
 import { MOBILE_HOME_GRID_CLASS } from "@/lib/layout/catalogGridLayout";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 
-const BATCH = 40;
+/** Smaller batches on mobile reduce parallel image decodes (Android GPU). */
+const BATCH = 16;
 
 type HomeTubeGridProps = {
   performers: CrackPerformer[];

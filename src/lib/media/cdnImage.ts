@@ -2,7 +2,13 @@
  * Responsive performer thumbnails (LCP / grid). Uses CDN transforms when available.
  */
 
-const DEFAULT_WIDTHS = [320, 480, 640] as const;
+/** Mobile 2-col grid (~45vw) — keep payloads small on Android. */
+export const MOBILE_CARD_WIDTHS = [160, 240, 320] as const;
+export const DESKTOP_CARD_WIDTHS = [320, 480, 640] as const;
+
+const DEFAULT_WIDTHS = MOBILE_CARD_WIDTHS;
+
+export const MOBILE_CARD_SIZES_ATTR = "(max-width: 768px) 46vw, 240px";
 
 function parseUrl(raw: string): URL | null {
   try {
@@ -32,7 +38,7 @@ export function buildCdnImageUrl(
     const next = new URL(parsed.href);
     next.searchParams.set("width", String(Math.round(width)));
     next.searchParams.set("format", format);
-    next.searchParams.set("quality", "82");
+    next.searchParams.set("quality", width <= 240 ? "76" : "80");
     return next.toString();
   }
 
@@ -58,7 +64,7 @@ export function buildResponsiveCardImage(
   if (!trimmed) return null;
 
   const widths = options?.widths ?? DEFAULT_WIDTHS;
-  const sizes = options?.sizes ?? "(max-width: 640px) 50vw, 16vw";
+  const sizes = options?.sizes ?? MOBILE_CARD_SIZES_ATTR;
   const format = options?.format ?? "webp";
 
   const entries = widths.map((w) => ({
@@ -66,7 +72,7 @@ export function buildResponsiveCardImage(
     url: buildCdnImageUrl(trimmed, w, format),
   }));
 
-  const src = entries[Math.min(1, entries.length - 1)]?.url ?? trimmed;
+  const src = entries[0]?.url ?? trimmed;
   const srcSet = entries.map((e) => `${e.url} ${e.w}w`).join(", ");
 
   return { src, srcSet, sizes };

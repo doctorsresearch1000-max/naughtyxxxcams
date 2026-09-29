@@ -18,8 +18,8 @@ export function PersistedHomeFeed({
 }: PersistedHomeFeedProps) {
   const pathname = usePathname();
   const everHome = useRef(false);
-  const isMobileDense = useMediaQuery("(max-width: 767px)");
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isMobileDense = useMediaQuery("(max-width: 767px)", true);
+  const isDesktop = useMediaQuery("(min-width: 1024px)", false);
   const { performers, ready } = useHomePerformers(initialPerformers);
 
   if (pathname === "/") {

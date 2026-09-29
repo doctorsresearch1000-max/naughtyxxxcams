@@ -115,6 +115,18 @@ function main() {
     throw new Error("Expected at least 4 in-grid Jerkmate creatives");
   }
 
+  for (const rel of gridPaths) {
+    const abs = path.join(root, "public", rel.replace(/^\//, ""));
+    const buf = fs.readFileSync(abs);
+    const isGif = rel.toLowerCase().endsWith(".gif");
+    const maxBytes = isGif ? 250_000 : 80_000;
+    if (buf.length > maxBytes) {
+      throw new Error(
+        `${rel}: ${buf.length} bytes — exceeds in-grid limit ${maxBytes}`,
+      );
+    }
+  }
+
   verifyList("grid", gridPaths);
   verifyList("banner", bannerPaths);
 

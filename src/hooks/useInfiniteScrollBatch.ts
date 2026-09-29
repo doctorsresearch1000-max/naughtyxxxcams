@@ -29,7 +29,7 @@ export function useInfiniteScrollBatch(
           loadMore();
         }
       },
-      { rootMargin: "400px 0px" },
+      { rootMargin: "280px 0px" },
     );
 
     observer.observe(node);

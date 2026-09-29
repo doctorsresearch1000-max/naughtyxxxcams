@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
 import { pickJerkmateGridCreative } from "@/lib/ads/jerkmateGridCreatives";
 import {
@@ -17,6 +17,7 @@ type JerkmateTubeAdCardProps = {
  */
 export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
   const src = pickJerkmateGridCreative(adSlotIndex);
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <article className="min-w-0">
@@ -29,24 +30,28 @@ export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
       >
         <div
           className="relative aspect-[4/3] overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 p-[2px] shadow-[0_0_20px_rgba(236,72,153,0.28)] ring-2 ring-pink-500 ring-offset-1 ring-offset-black transition duration-300 group-hover:shadow-[0_0_26px_rgba(34,211,238,0.35)] group-hover:ring-cyan-400"
-          style={{
-            contentVisibility: "auto",
-            containIntrinsicSize: "300px",
-            willChange: "transform",
-          }}
         >
           <div
             className="relative h-full w-full overflow-hidden rounded-[calc(var(--nx-radius-card)-3px)] bg-zinc-900"
           >
-            <Image
+            {!loaded ? (
+              <div
+                className="absolute inset-0 animate-pulse bg-zinc-800"
+                aria-hidden
+              />
+            ) : null}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={src}
               alt=""
-              fill
-              sizes="(max-width: 640px) 50vw, 16vw"
-              className="object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
-              loading="lazy"
+              width={320}
+              height={240}
               decoding="async"
-              unoptimized
+              loading="lazy"
+              onLoad={() => setLoaded(true)}
+              className={`absolute inset-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100 ${
+                loaded ? "opacity-100" : "opacity-0"
+              }`}
             />
             <SponsoredAdOverlays badge="AD" />
           </div>
