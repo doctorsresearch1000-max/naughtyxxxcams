@@ -237,6 +237,24 @@ html.feed-home-active body {
   object-fit: cover;
 }
 
+/* Grid card Jerkmate pill — never inherit full-bleed poster img rules */
+img[data-jerkmate-badge="true"] {
+  display: block;
+  width: auto !important;
+  height: 13px !important;
+  max-height: 13px !important;
+  max-width: 4.25rem !important;
+  object-fit: contain !important;
+}
+
+@media (min-width: 768px) {
+  img[data-jerkmate-badge="true"] {
+    height: 15px !important;
+    max-height: 15px !important;
+    max-width: 4.75rem !important;
+  }
+}
+
 /* Tailwind preflight sets img { height: auto } — breaks full-bleed posters */
 img.feed-embed-poster {
   height: 100% !important;
