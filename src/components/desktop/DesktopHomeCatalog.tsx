@@ -79,7 +79,7 @@ export function DesktopHomeCatalog() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/performers?maxPages=3", {
+        const res = await fetch("/api/performers?maxPages=2", {
           cache: "no-store",
         });
         const json = (await res.json()) as { performers?: FeedPerformer[] };

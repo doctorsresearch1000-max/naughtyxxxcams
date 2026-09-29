@@ -32,7 +32,7 @@ export type FollowingOfflineItem = {
 };
 
 /** Fewer upstream pages on Following to reduce Worker timeouts (“Connection closed”). */
-const FOLLOWING_MASTER_POOL_PAGES = 2;
+const FOLLOWING_MASTER_POOL_PAGES = 1;
 
 const NEARBY_STORY_COUNT = 18;
 const LIVE_CARD_COUNT = 6;

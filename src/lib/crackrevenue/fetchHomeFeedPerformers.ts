@@ -40,10 +40,15 @@ export async function fetchHomeFeedPerformers(
   const seen = new Set<string>();
   const pool: CrackPerformer[] = [];
 
+  const pageSize =
+    typeof targetCount === "number" && targetCount > 0
+      ? Math.min(PAGE_SIZE, Math.max(targetCount * 2, 48))
+      : PAGE_SIZE;
+
   for (let page = 1; page <= maxPages; page += 1) {
     const data = await fetchStreamatePerformers({
       live: true,
-      size: PAGE_SIZE,
+      size: pageSize,
       page,
     });
     const batch = data.performers ?? [];
@@ -67,7 +72,7 @@ export async function fetchHomeFeedPerformers(
       break;
     }
 
-    if (batch.length < PAGE_SIZE) break;
+    if (batch.length < pageSize) break;
   }
 
   const all = filterFeedPerformers(pool);

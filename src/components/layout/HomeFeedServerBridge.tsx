@@ -1,8 +1,13 @@
 import { PersistedHomeFeed } from "@/components/layout/PersistedHomeFeed";
-import { getBootstrapFeedPerformers } from "@/lib/feed/getBootstrapFeedPerformers";
+import {
+  getBootstrapFeedPerformers,
+  shouldServerBootstrapHomeFeed,
+} from "@/lib/feed/getBootstrapFeedPerformers";
 
-/** Injects SSR bootstrap performers into the persisted home feed (mobile + desktop). */
+/** Injects SSR bootstrap performers into the persisted home feed (home route only). */
 export async function HomeFeedServerBridge() {
-  const initialPerformers = await getBootstrapFeedPerformers();
+  const isHome = await shouldServerBootstrapHomeFeed();
+  const initialPerformers = isHome ? await getBootstrapFeedPerformers() : [];
+
   return <PersistedHomeFeed initialPerformers={initialPerformers} />;
 }
