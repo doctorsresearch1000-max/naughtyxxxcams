@@ -1,7 +1,10 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import { resolveRoomTitle } from "@/lib/cams/roomTitleFilter";
 import {
   camCardUsername,
-  formatCardMetaSubtitle,
+  formatCardViewLabel,
+  performerGenderAgeSuffix,
+  performerPrimaryLanguageCode,
 } from "@/lib/media/performerCardMeta";
 
 type CamCardMetaProps = {
@@ -12,31 +15,40 @@ type CamCardMetaProps = {
 };
 
 const usernameClass: Record<NonNullable<CamCardMetaProps["variant"]>, string> = {
-  home: "truncate text-[13px] font-bold leading-tight text-white",
-  tube: "min-w-0 truncate text-xs font-semibold text-white",
-  desktop: "truncate text-sm font-bold text-white",
+  home: "truncate font-bold text-white text-xs md:text-sm",
+  tube: "min-w-0 truncate font-bold text-white text-xs md:text-sm",
+  desktop: "truncate font-bold text-white text-xs md:text-sm",
 };
 
-const subtitleClass: Record<NonNullable<CamCardMetaProps["variant"]>, string> =
-  {
-    home: "truncate text-[11px] text-zinc-500",
-    tube: "truncate text-[11px] text-zinc-400",
-    desktop: "truncate text-[11px] text-zinc-400",
-  };
-
-/** Username + views · language (shared across home / explore / desktop cards). */
+/** Username + views row + room title (shared across home / explore / desktop cards). */
 export function CamCardMeta({
   performer,
   variant = "tube",
   className = "",
 }: CamCardMetaProps) {
   const handle = camCardUsername(performer);
-  const subtitle = formatCardMetaSubtitle(performer);
+  const ageGender = performerGenderAgeSuffix(performer);
+  const views = formatCardViewLabel(performer);
+  const lang = performerPrimaryLanguageCode(performer);
+  const roomTitle = resolveRoomTitle(performer);
 
   return (
     <div className={`min-w-0 space-y-0.5 ${className}`}>
-      <p className={usernameClass[variant]}>{handle}</p>
-      <p className={subtitleClass[variant]}>{subtitle}</p>
+      <p className={usernameClass[variant]}>
+        {handle}
+        <span className="font-semibold text-zinc-500">{ageGender}</span>
+      </p>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[11px] font-medium text-zinc-400">{views}</span>
+        <span className="shrink-0 text-[11px] font-semibold uppercase text-zinc-400">
+          {lang}
+        </span>
+      </div>
+      {roomTitle ? (
+        <p className="truncate text-[11px] font-normal text-zinc-400">
+          {roomTitle}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -7,6 +7,8 @@ import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
+import { PlatformBadgePill } from "@/components/cams/PlatformBadgePill";
+import { getSyntheticViewsLabel } from "@/lib/media/getSyntheticViews";
 
 type JerkmateTubeAdCardProps = {
   adSlotIndex: number;
@@ -78,13 +80,22 @@ export function JerkmateTubeAdCard({
               className="absolute inset-0 z-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
             />
             <SponsoredAdOverlays badge="AD" />
+            <PlatformBadgePill jerkmate />
           </div>
         </div>
 
         <div className="space-y-0.5 px-0.5 pb-1 pt-1.5">
-          <p className="truncate text-[13px] font-bold leading-tight text-white">
+          <p className="truncate font-bold text-white text-xs md:text-sm">
             Jerkmate Live
           </p>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] font-medium text-zinc-400">
+              {getSyntheticViewsLabel(`jerkmate-ad-${adSlotIndex}`)}
+            </span>
+            <span className="shrink-0 text-[11px] font-semibold uppercase text-zinc-400">
+              EN
+            </span>
+          </div>
           <SponsoredFreePromoLine />
         </div>
       </a>

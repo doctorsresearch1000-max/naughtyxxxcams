@@ -101,15 +101,16 @@ export function camCardUsername(performer: CrackPerformer): string {
   return "model";
 }
 
-export function formatCardViewLabel(performer: CrackPerformer): string | null {
-  const metric = performerCardMetricLabel(performer);
-  if (!metric) return null;
-  return metric;
+export function formatCardViewLabel(performer: CrackPerformer): string {
+  return performerCardMetricLabel(performer);
 }
 
-/** Second line under cam cards: `450K views · EN`. */
-export function formatCardMetaSubtitle(performer: CrackPerformer): string {
-  const lang = performerPrimaryLanguageCode(performer);
-  const views = formatCardViewLabel(performer);
-  return views ? `${views} · ${lang}` : lang;
+/** Age/gender suffix for username row, e.g. ` · 24F`. */
+export function performerGenderAgeSuffix(performer: CrackPerformer): string {
+  const age = performer.characteristic?.age;
+  const gender = performer.characteristic?.gender?.trim();
+  const parts: string[] = [];
+  if (typeof age === "number" && age >= 18 && age <= 99) parts.push(String(age));
+  if (gender && /^[fmt]$/i.test(gender)) parts.push(gender.toUpperCase());
+  return parts.length ? ` · ${parts.join("")}` : "";
 }

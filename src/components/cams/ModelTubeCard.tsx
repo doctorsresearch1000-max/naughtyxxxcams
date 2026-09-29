@@ -2,24 +2,17 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { CardBookmarkButton } from "@/components/cams/CardBookmarkButton";
+import { CamCardMeta } from "@/components/cams/CamCardMeta";
 import { LiveBadge } from "@/components/cams/LiveBadge";
-import { IconHeartFilled, IconHeartOutline } from "@/components/icons/LineIcons";
+import { PlatformBadgePill } from "@/components/cams/PlatformBadgePill";
 import { CamCardImage } from "@/components/media/CamCardImage";
 import { trackCardClick } from "@/lib/analytics/track";
-import { resolveRoomTitle } from "@/lib/cams/roomTitleFilter";
 import { uiStrings } from "@/lib/i18n/uiStrings";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import {
-  camCardUsername,
-  performerPrimaryLanguageCode,
-} from "@/lib/media/performerCardMeta";
 import { prefetchPerformerOnIntent } from "@/lib/feed/prefetchPerformerNavigation";
 import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
-import {
-  isCardFollowed,
-  toggleCardFollow,
-} from "@/lib/user/cardFollowStorage";
 import { useDebouncedHover } from "@/hooks/useDebouncedHover";
 
 type ModelTubeCardProps = {
@@ -32,21 +25,6 @@ type ModelTubeCardProps = {
   enableDesktopPreview?: boolean;
 };
 
-function platformLabel(performer: FeedPerformer): string | null {
-  const src = performer.systemSource?.trim().toLowerCase();
-  if (src === "jerkmate") return uiStrings.platformJerkmate;
-  return null;
-}
-
-function genderAgeSuffix(performer: FeedPerformer): string {
-  const age = performer.characteristic?.age;
-  const gender = performer.characteristic?.gender?.trim();
-  const parts: string[] = [];
-  if (typeof age === "number" && age >= 18 && age <= 99) parts.push(String(age));
-  if (gender && /^[fmt]$/i.test(gender)) parts.push(gender.toUpperCase());
-  return parts.length ? ` · ${parts.join("")}` : "";
-}
-
 export function ModelTubeCard({
   performer,
   gridIndex,
@@ -56,14 +34,9 @@ export function ModelTubeCard({
 }: ModelTubeCardProps) {
   const href = performerProfilePathFromPerformer(performer) ?? "/explore";
   const isLive = performer.live !== false;
-  const username = camCardUsername(performer);
-  const roomTitle = resolveRoomTitle(performer);
-  const lang = performerPrimaryLanguageCode(performer);
-  const platform = platformLabel(performer);
+  const username =
+    performer.nameClean || performer.name || "model";
 
-  const [followed, setFollowed] = useState(() =>
-    isCardFollowed(performer.feedKey),
-  );
   const [finePointerHover, setFinePointerHover] = useState(false);
   const { active: hoverPreview, onPointerEnter, onPointerLeave } =
     useDebouncedHover(180);
@@ -99,16 +72,6 @@ export function ModelTubeCard({
     prefetchPerformerOnIntent(performer);
     trackCardClick(gridIndex, performer.feedKey);
   }, [gridIndex, performer]);
-
-  const toggleFollow = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const next = toggleCardFollow(performer.feedKey);
-      setFollowed(next);
-    },
-    [performer.feedKey],
-  );
 
   const openQuickView = useCallback(
     (e: React.MouseEvent) => {
@@ -172,18 +135,7 @@ export function ModelTubeCard({
             </button>
           ) : null}
 
-          <button
-            type="button"
-            onClick={toggleFollow}
-            className="absolute left-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm"
-            aria-label={followed ? "Unfollow" : "Follow"}
-          >
-            {followed ? (
-              <IconHeartFilled size={16} className="text-[var(--nx-action)]" />
-            ) : (
-              <IconHeartOutline size={16} className="text-white" strokeWidth={1.5} />
-            )}
-          </button>
+          <CardBookmarkButton performer={performer} />
 
           {isLive ? (
             <span className="absolute right-1.5 top-1.5 z-10">
@@ -195,24 +147,11 @@ export function ModelTubeCard({
             </span>
           )}
 
-          {platform ? (
-            <span className="absolute bottom-1.5 right-1.5 z-10 rounded bg-black/70 px-1.5 py-0.5 text-[8px] font-bold uppercase text-zinc-300">
-              {platform}
-            </span>
-          ) : null}
+          <PlatformBadgePill performer={performer} />
         </div>
 
-        <div className="space-y-0.5 px-0.5 pb-1 pt-1.5">
-          <p className="truncate text-[13px] font-bold leading-tight text-white">
-            {username}
-            <span className="font-semibold text-zinc-500">{genderAgeSuffix(performer)}</span>
-          </p>
-          <p className="text-right text-[11px] font-semibold uppercase text-zinc-400">
-            {lang}
-          </p>
-          {roomTitle ? (
-            <p className="truncate text-[11px] text-zinc-400">{roomTitle}</p>
-          ) : null}
+        <div className="px-0.5 pb-1 pt-1.5">
+          <CamCardMeta performer={performer} variant="tube" />
         </div>
       </Link>
       {!isLive ? (

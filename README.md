@@ -1,62 +1,64 @@
-# NaughtyXxxCams — UI Skeleton (Next.js)
+# NaughtyXXXCams
 
-Esqueleto visual **TikTok-style** para NaughtyXxxCams.com. Datos **mock** únicamente — sin APIs, DB ni sitemaps en esta fase.
+Live cam discovery on **Next.js 15** (App Router) with Streamate/CrakRevenue catalog data, in-feed Jerkmate promos, and device-local collections synced via Telegram auth.
+
+## Architecture (current)
+
+| Area | Behavior |
+|------|----------|
+| **Home (`/`)** | Responsive dense grid (CAMB3-style): `MobileHomeDenseGrid` on small screens, `HomeTubeGrid` on desktop. SSR bootstrap via `HomeFeedServerBridge` + optional client warm (`HomeFeedWarm`). |
+| **In-feed ads** | Native Jerkmate slots (`JerkmateTubeAdCard`) with logo watermark, sponsored overlays, and tracking URL. |
+| **Collections** | Save-to-collection modal (`SaveToCollectionProvider`, `AddToCollectionModal`); bookmarks in `localStorage` with `nx-library-update` events. Grid/profile hearts use the same flow (`CardBookmarkButton`). |
+| **Explore (`/explore`)** | Category search + grid; explore bootstrap prefetched on `/explore` (`ExploreBootstrapWarm` / `ExplorePageClient`), not from global bottom chrome. |
+| **Compliance** | 18+ age gate (`AgeGate`) — confirmation stored as `localStorage.age_verified = 'true'`. |
+| **Legacy feed** | `HomeVerticalFeed` (TikTok-style vertical snap) is **not** the home route; kept for reference only. |
 
 ## Stack
 
-- **Next.js 15** (App Router, `src/app`)
-- **Tailwind CSS** — paleta neón `#0B0F19` / `#FF007F` / `#00F0FF`
-- **lucide-react** — iconografía
+- **Next.js 15** + **Tailwind CSS**
+- **OpenNext / Cloudflare Workers** (`wrangler.jsonc`, KV cache namespace)
+- **Telegram** login for cross-session library sync
 
-## Rutas
-
-| Ruta | Vista |
-|------|--------|
-| `/` | Feed vertical full-screen con scroll snap |
-| `/explore` | Búsqueda, pills de categorías, grid Trending |
-| `/following` | Carrusel Live Nearby + lista Your models |
-| `/profile` | Cuenta Telegram mock, banner sponsored, Continue Watching |
-
-## Desarrollo
+## Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
-## Producción
+## Production
 
 ```bash
 npm run build
 npm start
 ```
 
-Las vistas principales exportan `dynamic = 'force-dynamic'` y `fetchCache = 'force-no-store'` para evitar prerender estático en Cloudflare/OpenNext.
+For Cloudflare: `opennextjs-cloudflare build` then deploy with Wrangler per `wrangler.jsonc`.
 
-## Cloudflare (OpenNext + Wrangler)
+Key routes use `dynamic = 'force-dynamic'` where needed to avoid stale prerender on the edge.
 
-- `wrangler.jsonc` apunta a `.open-next/worker.js` y define `NEXT_CACHE_WORKERS_KV` (sustituye `cache_placeholder` por el ID real del namespace en tu cuenta).
-- Tras `opennextjs-cloudflare build`, despliega con Wrangler usando ese manifiesto.
-
-## Estructura de componentes
+## Project layout (high level)
 
 ```
 src/
+  app/                 # App Router pages
   components/
-    BottomNav.tsx
-    BrandLogo.tsx
-    feed/
-    explore/
-    following/
-  data/mock.ts
-  app/
+    home/              # Dense mobile home grid + cards
+    cams/              # Tube cards, meta, platform badges, bookmarks
+    collections/       # Save modal + provider
+    compliance/        # Age gate
+    ads/               # Jerkmate in-grid creatives
+  lib/
+    feed/              # Filtering, prefetch, bootstrap
+    media/             # Card meta, synthetic view counts, CDN helpers
+    user/              # Bookmarks, playlists, saved model refs
+public/
+  logos/jerkmate.png   # Jerkmate watermark for ad/catalog badges
 ```
 
-Edita `src/data/mock.ts` para cambiar streams, trending y perfiles de prueba.
+## Scripts
 
-## Cloudflare Pages (opcional)
-
-- **Build command:** `npm run build`
-- **Output directory:** `.next` → usar adapter o export según tu pipeline; para Node estándar, despliega en Vercel/Node o configura `@cloudflare/next-on-pages`.
+- `npm run test:ads` — ad creative / policy checks
+- `npm run build:next` — Next production build (used in CI)

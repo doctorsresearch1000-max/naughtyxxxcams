@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { CardBookmarkButton } from "@/components/cams/CardBookmarkButton";
 import { CamCardMeta } from "@/components/cams/CamCardMeta";
+import { PlatformBadgePill } from "@/components/cams/PlatformBadgePill";
 import { prefetchPerformerOnIntent } from "@/lib/feed/prefetchPerformerNavigation";
 import {
   performerDisplayHandle,
@@ -55,6 +57,8 @@ export function MobileHomeDenseCard({ performer }: MobileHomeDenseCardProps) {
             />
           ) : null}
 
+          <CardBookmarkButton performer={performer} />
+
           <span
             className="absolute right-2 top-2 flex items-center gap-1 rounded-full border border-zinc-700/80 bg-zinc-950/90 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm"
           >
@@ -65,6 +69,7 @@ export function MobileHomeDenseCard({ performer }: MobileHomeDenseCardProps) {
             Live
           </span>
 
+          <PlatformBadgePill performer={performer} />
         </div>
 
         <div className="px-2 pb-2.5 pt-2">

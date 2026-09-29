@@ -6,7 +6,6 @@ import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { useFeedBottomChrome } from "@/components/layout/FeedBottomChromeContext";
 import { syncFeedBottomClearanceCss } from "@/lib/layout/feedBottomClearance";
 import { Z_BOTTOM_CHROME } from "@/lib/layout/zIndexLayers";
-import { fetchExploreBootstrap } from "@/lib/explore/exploreClientCache";
 import { preloadLiveCommentPools } from "@/lib/engagement/liveCommentEngine";
 import {
   IconHeartFilled,
@@ -110,7 +109,6 @@ export default function MobileBottomChrome() {
   }, [pathname]);
 
   useEffect(() => {
-    void fetchExploreBootstrap().catch(() => {});
     preloadLiveCommentPools();
   }, []);
 
