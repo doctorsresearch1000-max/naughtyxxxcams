@@ -1,5 +1,4 @@
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { JERKMATE_LOGO_SRC } from "@/components/cams/JerkmateLogoMark";
 
 type PlatformBadgePillProps = {
   performer: FeedPerformer;
@@ -19,7 +18,7 @@ export function PlatformBadgePill({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={JERKMATE_LOGO_SRC}
+        src="/logos/jerkmate.png"
         className="block h-3.5 w-auto object-contain md:h-4"
         alt="Jerkmate"
         width={64}
