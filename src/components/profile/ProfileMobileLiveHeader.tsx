@@ -2,14 +2,17 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
-import { ProfilePlayerPosterFallback } from "@/components/profile/ProfilePlayerPosterFallback";
+import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
 import { crackPerformerToFeedPerformer } from "@/lib/feed/filterPerformers";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
-import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
+import {
+  camPlayerAudit,
+  camPlayerAuditMark,
+  camPlayerAuditSince,
+} from "@/lib/audit/camPlayerAudit";
 import {
   injectStreamPreconnects,
   warmPerformerStream,
@@ -21,8 +24,6 @@ const STREAM_TIMEOUT_MS = 5_000;
 type ProfileMobileLiveHeaderProps = {
   model: ModelProfileView;
 };
-
-type RevealPhase = "loading" | "playing" | "fallback";
 
 export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps) {
   const feedPerformer = useMemo(() => {
@@ -38,7 +39,9 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
   }, [model.performer, model.bannerUrl, model.avatar]);
 
   const [armed, setArmed] = useState(false);
-  const [phase, setPhase] = useState<RevealPhase>("loading");
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [disconnected, setDisconnected] = useState(false);
+  const [loadTimedOut, setLoadTimedOut] = useState(false);
 
   const posterUrl =
     feedPerformer?.posterUrl ||
@@ -49,13 +52,36 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
   const catalogLive = model.status === "live";
   const canMountStream = catalogLive && Boolean(feedPerformer);
 
-  const openAffiliate = useCallback(() => {
-    openAffiliateOutbound(model.affiliateUrl);
-  }, [model.affiliateUrl]);
+  const needsConversion =
+    !catalogLive ||
+    !feedPerformer ||
+    disconnected ||
+    loadTimedOut;
+
+  const showStreamLayer =
+    canMountStream && iframeLoaded && !disconnected && !loadTimedOut;
+
+  const showLoadingOverlay =
+    canMountStream && !iframeLoaded && !loadTimedOut && !disconnected;
+
+  const showConversionUi = needsConversion || showLoadingOverlay;
+
+  useEffect(() => {
+    camPlayerAuditMark(`profile:${model.profileSlug}`);
+    camPlayerAudit("profile.mount", {
+      slug: model.profileSlug,
+      catalogLive,
+      canMountStream,
+      embedMode: feedPerformer?.embedPlan.mode,
+    });
+  }, [model.profileSlug, catalogLive, canMountStream, feedPerformer?.embedPlan.mode]);
 
   useEffect(() => {
     injectStreamPreconnects();
     setArmed(true);
+    setIframeLoaded(false);
+    setDisconnected(false);
+    setLoadTimedOut(false);
     try {
       const raw = sessionStorage.getItem("nx-last-warm-feed-key");
       if (!raw || !feedPerformer) return;
@@ -82,38 +108,80 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
   }, [armed, feedPerformer]);
 
   useEffect(() => {
-    setPhase("loading");
-  }, [feedPerformer?.feedKey, catalogLive]);
-
-  useEffect(() => {
-    if (!canMountStream || phase !== "loading") return;
+    if (!canMountStream) return;
     const id = window.setTimeout(() => {
-      setPhase((current) => (current === "loading" ? "fallback" : current));
+      if (!iframeLoaded) {
+        setLoadTimedOut(true);
+        camPlayerAuditSince(`profile:${model.profileSlug}`, "iframe.timeout", {
+          feedKey: feedPerformer?.feedKey,
+          msBudget: STREAM_TIMEOUT_MS,
+        });
+      }
     }, STREAM_TIMEOUT_MS);
     return () => window.clearTimeout(id);
-  }, [canMountStream, phase, feedPerformer?.feedKey]);
+  }, [
+    canMountStream,
+    iframeLoaded,
+    feedPerformer?.feedKey,
+    model.profileSlug,
+  ]);
 
-  const handleStreamRevealed = useCallback(() => {
-    setPhase("playing");
-  }, []);
+  const handleFrameDocumentLoad = useCallback(() => {
+    setIframeLoaded(true);
+    camPlayerAuditSince(`profile:${model.profileSlug}`, "iframe.documentLoad", {
+      feedKey: feedPerformer?.feedKey,
+    });
+  }, [feedPerformer?.feedKey, model.profileSlug]);
 
-  const handleStreamDisconnected = useCallback(() => {
-    setPhase("fallback");
-  }, []);
+  const handleStreamDisconnected = useCallback(
+    (reason: string) => {
+      setDisconnected(true);
+      camPlayerAudit("pure.SM_DISCONNECTED", {
+        slug: model.profileSlug,
+        feedKey: feedPerformer?.feedKey,
+        reason,
+      });
+    },
+    [feedPerformer?.feedKey, model.profileSlug],
+  );
 
-  const showOverlay = canMountStream && phase !== "playing";
-  const showFallbackCta = phase === "fallback" && catalogLive;
+  const onPosterError = useCallback(() => {
+    camPlayerAudit("poster.error", {
+      slug: model.profileSlug,
+      posterUrl,
+    });
+  }, [model.profileSlug, posterUrl]);
+
+  const onPosterLoad = useCallback(() => {
+    camPlayerAuditSince(`profile:${model.profileSlug}`, "poster.loaded", {
+      posterUrl,
+    });
+  }, [model.profileSlug, posterUrl]);
 
   return (
     <div
       className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10"
     >
+      {posterUrl ? (
+        <Image
+          src={posterUrl}
+          alt={model.displayName}
+          fill
+          priority
+          unoptimized
+          sizes="100vw"
+          className="object-cover"
+          onLoad={onPosterLoad}
+          onError={onPosterError}
+        />
+      ) : null}
+
       {canMountStream && feedPerformer ? (
         <SessionAudioProvider>
           <FeedViewportProvider heightPx={HEADER_HEIGHT_PX}>
             <div
               className={`absolute inset-0 transition-opacity duration-500 ${
-                phase === "playing" ? "opacity-100" : "opacity-0"
+                showStreamLayer ? "opacity-100" : "opacity-0"
               }`}
             >
               <LiveEmbed
@@ -129,84 +197,24 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
                 streamPriority="high"
                 externalPosterControl
                 posterFallbackMaxMs={STREAM_TIMEOUT_MS}
-                onStreamRevealed={handleStreamRevealed}
+                onFrameDocumentLoad={handleFrameDocumentLoad}
                 onStreamDisconnected={handleStreamDisconnected}
               />
             </div>
           </FeedViewportProvider>
         </SessionAudioProvider>
-      ) : (
-        <ProfilePlayerPosterFallback
-          posterUrl={posterUrl}
-          displayName={model.displayName}
-          affiliateUrl={model.affiliateUrl}
-          live={catalogLive}
-          className="absolute inset-0"
-        />
-      )}
-
-      {canMountStream && showOverlay ? (
-        <div
-          className="absolute inset-0 z-10 flex flex-col items-center justify-center transition-opacity duration-500"
-          aria-busy={phase === "loading"}
-        >
-          {posterUrl ? (
-            <Image
-              src={posterUrl}
-              alt=""
-              fill
-              priority
-              unoptimized
-              sizes="100vw"
-              className="object-cover"
-              aria-hidden
-            />
-          ) : null}
-          <div className="absolute inset-0 bg-black/35" />
-
-          {phase === "loading" ? (
-            <div
-              className="relative z-10 flex flex-col items-center gap-3"
-              role="status"
-              aria-label="Loading live stream"
-            >
-              <div
-                className="h-9 w-9 animate-spin rounded-full border-2 border-[#39FF14]/25 border-t-[#39FF14]"
-              />
-              <span className="text-[11px] font-semibold text-zinc-200">
-                Connecting live…
-              </span>
-            </div>
-          ) : null}
-
-          {showFallbackCta ? (
-            <div className="relative z-10 w-[min(100%,280px)] px-4">
-              <AffiliateOutboundLink
-                href={model.affiliateUrl}
-                className="flex w-full items-center justify-center rounded-full bg-[#39FF14] px-5 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)]"
-              >
-                Enter show / Chat
-              </AffiliateOutboundLink>
-              <p className="mt-2 text-center text-[10px] text-zinc-300">
-                Stream unavailable — open the room directly
-              </p>
-            </div>
-          ) : null}
-        </div>
       ) : null}
 
-      {catalogLive ? (
-        <button
-          type="button"
-          className="absolute inset-0 z-[12] cursor-pointer bg-transparent"
-          aria-label="Open live room in new tab"
-          onClick={openAffiliate}
+      {showConversionUi ? (
+        <ProfileStreamConversionOverlay
+          affiliateUrl={model.affiliateUrl}
+          loading={showLoadingOverlay && !needsConversion}
         />
       ) : null}
 
       <div className="pointer-events-none absolute inset-0 z-[5] bg-gradient-to-b from-black/25 via-transparent to-[#0A0A0A]" />
 
-      {catalogLive ? (
+      {catalogLive && !showConversionUi ? (
         <span className="pointer-events-none absolute left-4 top-4 z-20 rounded-full bg-[#39FF14] px-3 py-1 text-[11px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
           • LIVE
         </span>

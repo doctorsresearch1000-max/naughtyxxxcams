@@ -3,10 +3,8 @@
 import { useMemo } from "react";
 import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
-import { DesktopLivePlayerShell } from "@/components/desktop/DesktopLivePlayerShell";
 import { ProfileConversionBadges } from "@/components/profile/ProfileConversionBadges";
-import { ProfilePlayerPosterFallback } from "@/components/profile/ProfilePlayerPosterFallback";
-import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
+import { ProfileDesktopLivePanel } from "@/components/profile/ProfileDesktopLivePanel";
 import { ProfileGallerySection } from "@/components/profile/desktop/ProfileGallerySection";
 import { ProfileInterestsSection } from "@/components/profile/desktop/ProfileInterestsSection";
 import { ProfileRecommendedGrid } from "@/components/profile/desktop/ProfileRecommendedGrid";
@@ -95,33 +93,11 @@ export function ModelProfileDesktopView({
             affiliateUrl={model.affiliateUrl}
             className="absolute right-4 top-4 z-30"
           />
-          {feedPerformer ? (
-            <>
-              <DesktopLivePlayerShell
-                performer={feedPerformer}
-                fillParent
-                eager
-              />
-              {model.status === "live" ? (
-                <button
-                  type="button"
-                  className="absolute inset-0 z-20 cursor-pointer bg-transparent"
-                  aria-label="Open live room in new tab"
-                  onClick={() => openAffiliateOutbound(model.affiliateUrl)}
-                />
-              ) : null}
-            </>
-          ) : (
-            <ProfilePlayerPosterFallback
-              posterUrl={
-                model.bannerUrl || model.avatar || ""
-              }
-              displayName={model.displayName}
-              affiliateUrl={model.affiliateUrl}
-              live={model.status === "live"}
-              className="h-full min-h-[480px]"
-            />
-          )}
+          <ProfileDesktopLivePanel
+            model={model}
+            feedPerformer={feedPerformer}
+            posterUrl={model.bannerUrl || model.avatar || ""}
+          />
         </div>
 
         <ProfileSeoContentBlock seo={seo} />

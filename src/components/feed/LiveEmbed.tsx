@@ -41,6 +41,11 @@ import {
   ensureFeedEmbedMutedInPlace,
   getFeedPlayerIframeForKey,
 } from "@/lib/feed/liveIframeAudio";
+import {
+  camPlayerAudit,
+  camPlayerAuditMark,
+  camPlayerAuditSince,
+} from "@/lib/audit/camPlayerAudit";
 
 export type StreamLoadPriority = "high" | "low" | "auto";
 
@@ -148,7 +153,11 @@ export function LiveEmbed({
   /** Iframe document loaded — does NOT mean the stream has painted yet. */
   const markFrameDocumentLoaded = useCallback(() => {
     setFrameLoaded(true);
-  }, []);
+    camPlayerAuditSince(`embed:${embedKey}`, "iframe.documentLoad", {
+      embedKey,
+      mode: embedPlan.mode,
+    });
+  }, [embedKey, embedPlan.mode]);
 
   useEffect(() => {
     posterDismissedRef.current = posterDismissed;
@@ -158,7 +167,21 @@ export function LiveEmbed({
     clearPurePlayerDisconnect(embedKey);
     setPureDisconnectReason(null);
     blockPosterDismissRef.current = false;
-  }, [embedKey, initialSrc]);
+    camPlayerAuditMark(`embed:${embedKey}`);
+    camPlayerAudit("embed.mount", {
+      embedKey,
+      mode: embedPlan.mode,
+      srcHost: initialSrc
+        ? (() => {
+            try {
+              return new URL(initialSrc).host;
+            } catch {
+              return "invalid";
+            }
+          })()
+        : null,
+    });
+  }, [embedKey, initialSrc, embedPlan.mode]);
 
   useEffect(() => {
     if (!isActive || !mountIframe) {
@@ -233,6 +256,11 @@ export function LiveEmbed({
         beforePosterDismissed,
       });
       setPureDisconnectReason(disconnectData.reason);
+      camPlayerAudit("pure.SM_DISCONNECTED", {
+        embedKey,
+        reason: disconnectData.reason,
+        beforePosterDismissed,
+      });
 
       if (beforePosterDismissed) {
         blockPosterDismissRef.current = true;
@@ -353,6 +381,13 @@ export function LiveEmbed({
       iframe.allow = WIDGET_IFRAME_ALLOW;
       iframe.referrerPolicy = "strict-origin-when-cross-origin";
       iframe.addEventListener("load", markFrameDocumentLoaded, { once: true });
+      iframe.addEventListener(
+        "error",
+        () => {
+          camPlayerAudit("iframe.error", { embedKey, src: initialSrc });
+        },
+        { once: true },
+      );
       stage.appendChild(iframe);
       void stage.offsetHeight;
       wireIframeChrome(
