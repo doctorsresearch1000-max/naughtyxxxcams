@@ -2,14 +2,11 @@
 
 import { useCallback, useMemo, useState } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { JerkmateNaturalBanner } from "@/components/ads/JerkmateNaturalBanner";
+import { JerkmateTubeAdCard } from "@/components/ads/JerkmateTubeAdCard";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { ExploreDesktopTheaterModal } from "@/components/explore/desktop/ExploreDesktopTheaterModal";
+import { buildGridWithJerkmateAds } from "@/lib/ads/inGridJerkmateAds";
 import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
-import {
-  JERKMATE_EXPLORE_GIF_BANNER_URL,
-  JERKMATE_EXPLORE_GIF_TRACKING_URL,
-} from "@/lib/crackrevenue/jerkmateTracking";
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
@@ -20,30 +17,6 @@ type ExploreTubeGridProps = {
 };
 
 const TUBE_BATCH = 48;
-const EXPLORE_BANNER_AFTER_MODELS = 4;
-
-type GridItem =
-  | { kind: "performer"; key: string; performer: FeedPerformer; index: number }
-  | { kind: "explore-banner"; key: string };
-
-function buildExploreGridItems(cards: FeedPerformer[]): GridItem[] {
-  const items: GridItem[] = [];
-
-  cards.forEach((performer, index) => {
-    items.push({
-      kind: "performer",
-      key: performer.feedKey,
-      performer,
-      index,
-    });
-
-    if (index === EXPLORE_BANNER_AFTER_MODELS - 1) {
-      items.push({ kind: "explore-banner", key: "explore-jerkmate-natural" });
-    }
-  });
-
-  return items;
-}
 
 export function ExploreTubeGrid({
   performers,
@@ -75,7 +48,7 @@ export function ExploreTubeGrid({
   );
 
   const gridItems = useMemo(
-    () => buildExploreGridItems(visibleCards),
+    () => buildGridWithJerkmateAds(visibleCards, { keyPrefix: "explore" }),
     [visibleCards],
   );
 
@@ -98,23 +71,22 @@ export function ExploreTubeGrid({
         />
       ) : null}
 
-      <div className={EXPLORE_TUBE_GRID_CLASS} data-explore-tube-grid="v4-natural-banner">
+      <div
+        className={EXPLORE_TUBE_GRID_CLASS}
+        data-explore-tube-grid="v5-jm-in-grid"
+      >
         {gridItems.map((item) =>
-          item.kind === "explore-banner" ? (
-            <div key={item.key} className="col-span-full">
-              <JerkmateNaturalBanner
-                href={JERKMATE_EXPLORE_GIF_TRACKING_URL}
-                imageSrc={JERKMATE_EXPLORE_GIF_BANNER_URL}
-                alt="Jerkmate explore offer"
-                className="my-1"
-              />
-            </div>
+          item.kind === "jerkmate-ad" ? (
+            <JerkmateTubeAdCard
+              key={item.key}
+              adSlotIndex={item.adSlotIndex}
+            />
           ) : (
             <ModelTubeCard
               key={item.key}
               performer={item.performer}
-              gridIndex={item.index}
-              priority={item.index < 4}
+              gridIndex={item.performerIndex}
+              priority={item.performerIndex < 4}
               enableDesktopPreview
               onQuickView={openTheater}
             />

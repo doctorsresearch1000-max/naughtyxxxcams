@@ -292,9 +292,9 @@ export function ExploreSlushyDiscover({
     );
   });
 
-  const categoryChipButtons =
-    showCategoryPicker &&
-    [
+  const categoryChipButtons = useMemo(() => {
+    if (!showCategoryPicker) return null;
+    return [
       <button
         key="all-cat"
         type="button"
@@ -314,6 +314,7 @@ export function ExploreSlushyDiscover({
         </button>
       )),
     ];
+  }, [showCategoryPicker, activeCat, loadCategory]);
 
   return (
     <div className="space-y-4 pb-1 lg:space-y-2">
