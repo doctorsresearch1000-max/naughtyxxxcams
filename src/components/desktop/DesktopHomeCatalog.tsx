@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DesktopImmersiveRoomDialog } from "@/components/desktop/DesktopImmersiveRoomDialog";
-import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
+import { HomeTubeGrid } from "@/components/home/HomeTubeGrid";
 import {
   applyDesktopCatalogFilters,
   DESKTOP_CATEGORY_PILLS,
@@ -13,7 +13,6 @@ import {
   type DesktopShowTypeFilter,
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
 import {
   CATALOG_GRID_CLASS,
@@ -30,8 +29,6 @@ const DEFAULT_FILTERS: DesktopCatalogFilters = {
   categorySlug: "trending",
   sort: "trending",
 };
-
-const GRID_BATCH = 36;
 
 function SelectField<T extends string>({
   label,
@@ -102,16 +99,6 @@ export function DesktopHomeCatalog() {
   const filtered = useMemo(
     () => applyDesktopCatalogFilters(performers, filters),
     [performers, filters],
-  );
-
-  const { visibleCount, sentinelRef, hasMore } = useInfiniteScrollBatch(
-    filtered.length,
-    GRID_BATCH,
-  );
-
-  const visiblePerformers = useMemo(
-    () => filtered.slice(0, visibleCount),
-    [filtered, visibleCount],
   );
 
   const liveCount = useMemo(
@@ -237,7 +224,7 @@ export function DesktopHomeCatalog() {
       <div className="mx-auto w-full max-w-[1800px] flex-1 py-3">
         <div className="mb-3 flex flex-wrap items-baseline justify-end gap-2">
           <p className="text-xs font-semibold text-zinc-500">
-            Showing {visiblePerformers.length} of {filtered.length} ·{" "}
+            Showing {filtered.length} of {filtered.length} ·{" "}
             {performers.length} live in catalog
           </p>
         </div>
@@ -260,27 +247,14 @@ export function DesktopHomeCatalog() {
           </p>
         ) : null}
 
-        {visiblePerformers.length > 0 ? (
-          <>
-            <div className={CATALOG_GRID_CLASS}>
-              {visiblePerformers.map((performer, index) => (
-                <ModelTubeCard
-                  key={performer.feedKey}
-                  performer={performer}
-                  gridIndex={index}
-                  priority={index < 4}
-                  enableDesktopPreview
-                  onQuickView={openLiveRoom}
-                />
-              ))}
-            </div>
-            <div ref={sentinelRef} className="h-8 w-full" aria-hidden />
-            {hasMore ? (
-              <p className="py-4 text-center text-xs font-semibold text-zinc-500">
-                Loading more models…
-              </p>
-            ) : null}
-          </>
+        {filtered.length > 0 ? (
+          <HomeTubeGrid
+            performers={filtered}
+            gridClassName={CATALOG_GRID_CLASS}
+            enableDesktopPreview
+            onQuickView={openLiveRoom}
+            emptyMessage="No models match your filters."
+          />
         ) : null}
       </div>
     </main>

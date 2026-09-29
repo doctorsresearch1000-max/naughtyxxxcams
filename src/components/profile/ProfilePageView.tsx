@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { TelegramProfileConnect } from "@/components/auth/TelegramProfileConnect";
+import { ProfileSponsorAdCard } from "@/components/profile/ProfileSponsorAdCard";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { ContinueWatchingCard } from "@/components/profile/ContinueWatchingCard";
 import {
@@ -19,11 +19,6 @@ import {
   usePlaylists,
 } from "@/hooks/useUserLibrary";
 import { createPlaylist } from "@/lib/user/userLibrary";
-
-const SPONSOR_BANNER_HREF =
-  "https://t.ajrkmx3.com/214769/8780/0?file_id=598462&po=6533&aff_sub5=SF_006OG000004lmDN&aff_sub4=AT_0002";
-const SPONSOR_BANNER_SRC =
-  "https://www.imglnky.com/8780/PMKT-1157_DESIGN-16618_BannersWebinar_AmyPose_300100.gif";
 
 export function ProfilePageView() {
   const { user, isAuthenticated, login } = useTelegramAuth();
@@ -103,26 +98,7 @@ export function ProfilePageView() {
         />
       </section>
 
-      <section className="mt-10" aria-label="Sponsored offer">
-        <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-zinc-500">
-          Ad
-        </p>
-        <Link
-          href={SPONSOR_BANNER_HREF}
-          target="_blank"
-          rel="nofollow noopener sponsored"
-          className="block overflow-hidden rounded-[var(--nx-radius-card)] ring-1 ring-zinc-800"
-        >
-          <Image
-            src={SPONSOR_BANNER_SRC}
-            alt="Sponsored live cam offer"
-            width={300}
-            height={100}
-            unoptimized
-            className="aspect-[4/3] h-auto w-full object-cover"
-          />
-        </Link>
-      </section>
+      <ProfileSponsorAdCard className="mt-10" />
     </main>
   );
 }

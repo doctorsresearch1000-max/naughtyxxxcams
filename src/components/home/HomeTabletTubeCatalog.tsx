@@ -1,7 +1,7 @@
 "use client";
 
 import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
-import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
+import { HomeTubeGrid } from "@/components/home/HomeTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { CATALOG_PAGE_PADDING } from "@/lib/layout/catalogGridLayout";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
@@ -25,7 +25,7 @@ export function HomeTabletTubeCatalog({
       {!ready ? (
         <ExplorePerformerGridSkeleton />
       ) : (
-        <ExploreTubeGrid performers={performers} />
+        <HomeTubeGrid performers={performers} />
       )}
     </main>
   );
