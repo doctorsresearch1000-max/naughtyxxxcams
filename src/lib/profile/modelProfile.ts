@@ -17,6 +17,7 @@ import {
 import { dedupeImageUrls } from "@/lib/media/imageDedupe";
 import { isLanguageMetaTag } from "@/lib/media/performerCardMeta";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
+import { sanitizeProfileTraits } from "@/lib/profile/validateProfileTraits";
 
 export type ModelProfileView = {
   name: string;
@@ -93,7 +94,13 @@ function toViewModel(
   handleSlug: string,
 ): ModelProfileView {
   const name = displayName(p);
-  const traits = collectTraits(p);
+  const slug =
+    handleSlug ||
+    performerProfileSlug(p.nameClean || p.name) ||
+    name.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const traits = sanitizeProfileTraits(collectTraits(p), {
+    profileSlug: slug,
+  });
   const avatar = pickCoverUrl(p) ?? "";
   const bannerUrl = pickProfileBannerUrl(p) ?? avatar;
   const thumb = p.thumbnailUrl?.trim();
@@ -105,10 +112,6 @@ function toViewModel(
   );
 
   const landingId = resolveWidgetLandingId();
-  const slug =
-    handleSlug ||
-    performerProfileSlug(p.nameClean || p.name) ||
-    name.toLowerCase().replace(/[^a-z0-9]+/g, "");
 
   const traitSlugs = traits
     .map((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, ""))

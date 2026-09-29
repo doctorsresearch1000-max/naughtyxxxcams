@@ -206,7 +206,7 @@ export function DesktopHomeCatalog() {
             </label>
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="nx-chip-scroll flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {DESKTOP_CATEGORY_PILLS.map((pill) => {
               const active = filters.categorySlug === pill.id;
               return (
@@ -269,6 +269,8 @@ export function DesktopHomeCatalog() {
                   performer={performer}
                   gridIndex={index}
                   priority={index < 4}
+                  enableDesktopPreview
+                  onQuickView={openLiveRoom}
                 />
               ))}
             </div>

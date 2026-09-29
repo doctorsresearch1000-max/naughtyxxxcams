@@ -38,6 +38,11 @@ const NATIVE_PLAYER_HOST_RULES: ReadonlyArray<{
   {
     hostSuffix: "streamateaccess.com",
   },
+  {
+    hostSuffix: "hybridclient.naiadsystems.com",
+    pathPrefix: "/purecam",
+    requireQuery: ["performer", "performerid"],
+  },
 ];
 
 function parseHttpsUrl(raw: string): URL | null {
@@ -118,8 +123,8 @@ export function pickNativeIframeFeedUrl(
   if (!feed || !isNativeEmbeddableIframeFeedUrl(feed)) return null;
 
   const room = performer.roomUrl?.trim() ?? "";
-  if (room && feed === room) return null;
   if (room && isAffiliateOrLandingUrl(feed)) return null;
+  if (room && feed === room && isAffiliateOrLandingUrl(room)) return null;
 
   return feed;
 }
@@ -131,11 +136,5 @@ export function performerHasNativeEmbedFeed(performer: {
   systemSource?: string;
 }): boolean {
   if (performer.live === false) return false;
-  if (typeof performer.systemSource === "string") {
-    const source = performer.systemSource.trim().toLowerCase();
-    if (source !== "streamate" && source !== "jerkmate") {
-      return false;
-    }
-  }
   return pickNativeIframeFeedUrl(performer) !== null;
 }

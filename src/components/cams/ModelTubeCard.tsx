@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LiveBadge } from "@/components/cams/LiveBadge";
 import { IconHeartFilled, IconHeartOutline } from "@/components/icons/LineIcons";
+import { CamCardImage } from "@/components/media/CamCardImage";
 import { trackCardClick } from "@/lib/analytics/track";
 import { resolveRoomTitle } from "@/lib/cams/roomTitleFilter";
 import { uiStrings } from "@/lib/i18n/uiStrings";
@@ -14,17 +14,22 @@ import {
   performerPrimaryLanguageCode,
 } from "@/lib/media/performerCardMeta";
 import { prefetchPerformerOnIntent } from "@/lib/feed/prefetchPerformerNavigation";
+import { warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
 import {
   isCardFollowed,
   toggleCardFollow,
 } from "@/lib/user/cardFollowStorage";
+import { useDebouncedHover } from "@/hooks/useDebouncedHover";
 
 type ModelTubeCardProps = {
   performer: FeedPerformer;
   gridIndex: number;
   /** First visible row — LCP hints */
   priority?: boolean;
+  /** Desktop quick-view modal (immersive room). */
+  onQuickView?: (performer: FeedPerformer) => void;
+  enableDesktopPreview?: boolean;
 };
 
 function platformLabel(performer: FeedPerformer): string | null {
@@ -46,6 +51,8 @@ export function ModelTubeCard({
   performer,
   gridIndex,
   priority = false,
+  onQuickView,
+  enableDesktopPreview = false,
 }: ModelTubeCardProps) {
   const href = performerProfilePathFromPerformer(performer) ?? "/explore";
   const isLive = performer.live !== false;
@@ -57,12 +64,36 @@ export function ModelTubeCard({
   const [followed, setFollowed] = useState(() =>
     isCardFollowed(performer.feedKey),
   );
+  const [finePointerHover, setFinePointerHover] = useState(false);
+  const { active: hoverPreview, onPointerEnter, onPointerLeave } =
+    useDebouncedHover(180);
 
   const thumb =
     performer.posterUrl ||
     performer.liveSnapshotURL?.trim() ||
     performer.thumbnailUrl ||
     "";
+  const hoverStill =
+    performer.liveSnapshotURL?.trim() || performer.posterUrl || "";
+  const showHoverPreview =
+    enableDesktopPreview &&
+    finePointerHover &&
+    hoverPreview &&
+    Boolean(hoverStill) &&
+    isLive;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const sync = () => setFinePointerHover(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (!showHoverPreview) return;
+    warmPerformerStream(performer.feedKey, performer.embedPlan, { pin: true });
+  }, [showHoverPreview, performer.feedKey, performer.embedPlan]);
 
   const onIntent = useCallback(() => {
     prefetchPerformerOnIntent(performer);
@@ -79,6 +110,16 @@ export function ModelTubeCard({
     [performer.feedKey],
   );
 
+  const openQuickView = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      prefetchPerformerOnIntent(performer);
+      onQuickView?.(performer);
+    },
+    [onQuickView, performer],
+  );
+
   return (
     <article className="min-w-0">
       <Link
@@ -87,22 +128,47 @@ export function ModelTubeCard({
         className="group block min-w-0"
         onPointerDown={onIntent}
         onTouchStart={onIntent}
+        onClick={(e) => {
+          if (onQuickView && (e.metaKey || e.ctrlKey || e.shiftKey)) {
+            e.preventDefault();
+            onQuickView(performer);
+          }
+        }}
+        onMouseEnter={
+          enableDesktopPreview && finePointerHover
+            ? () => {
+                onPointerEnter();
+                prefetchPerformerOnIntent(performer);
+              }
+            : undefined
+        }
+        onMouseLeave={
+          enableDesktopPreview && finePointerHover ? onPointerLeave : undefined
+        }
       >
         <div
           className="relative aspect-[4/3] overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-900 ring-1 ring-zinc-800/80"
         >
           {thumb ? (
-            <Image
+            <CamCardImage
               src={thumb}
               alt={username}
-              fill
-              sizes="(max-width: 640px) 50vw, 16vw"
-              className="object-cover transition duration-300 group-hover:scale-[1.02]"
-              loading={priority ? "eager" : "lazy"}
+              priority={priority}
               fetchPriority={gridIndex === 0 ? "high" : priority ? "auto" : "low"}
-              decoding="async"
-              unoptimized
+              hoverSrc={hoverStill}
+              showHoverLayer={showHoverPreview}
+              className="object-cover transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
             />
+          ) : null}
+
+          {onQuickView && enableDesktopPreview ? (
+            <button
+              type="button"
+              onClick={openQuickView}
+              className="absolute bottom-2 left-2 z-10 hidden rounded-md bg-black/75 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white opacity-0 ring-1 ring-white/10 transition group-hover:opacity-100 lg:block"
+            >
+              Quick view
+            </button>
           ) : null}
 
           <button

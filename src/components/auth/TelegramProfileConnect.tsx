@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { getPublicTelegramBotUsername } from "@/lib/auth/telegramBotUsername";
+import { startTelegramLoginRedirect } from "@/lib/auth/telegramLoginRedirect";
 import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import { verifyTelegramWidgetLogin } from "@/lib/auth/telegramClient";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
@@ -94,12 +95,17 @@ export function TelegramProfileConnect() {
             playlists. Works in any mobile or desktop browser — no Mini App
             required.
           </p>
-          <p className="text-center text-xs font-bold text-[#2AABEE]">
-            Continue with Telegram
-          </p>
+          <button
+            type="button"
+            onClick={startTelegramLoginRedirect}
+            className="w-full rounded-full bg-[#2AABEE] py-3 text-sm font-bold text-white shadow-[0_8px_24px_rgba(42,171,238,0.35)] transition hover:bg-[#229ED9]"
+          >
+            Log in with Telegram
+          </button>
           <div
             ref={widgetRef}
-            className="flex min-h-[52px] items-center justify-center"
+            className="sr-only flex min-h-0 items-center justify-center overflow-hidden"
+            aria-hidden
           />
           {!botUsername ? (
             <button

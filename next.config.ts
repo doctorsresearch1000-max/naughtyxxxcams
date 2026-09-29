@@ -62,6 +62,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "**.icfcdn.com",
+      },
+      {
+        protocol: "https",
+        hostname: "hybridclient.naiadsystems.com",
+      },
+      {
+        protocol: "https",
         hostname: "www.imglnky.com",
       },
     ],

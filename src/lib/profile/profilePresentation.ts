@@ -146,12 +146,8 @@ export function buildGalleryItems(
   }));
 }
 
-export function buildFollowersLabel(performer: CrackPerformer): string {
-  const score = performer.systemScore ?? 0;
-  const base = 18_000 + Math.round(score * 240_000);
-  if (base >= 1_000_000) return `${(base / 1_000_000).toFixed(1)}M`;
-  if (base >= 10_000) return `${(base / 1000).toFixed(1)}K`;
-  return `${(base / 1000).toFixed(1)}K`;
+export function buildFollowersLabel(_performer: CrackPerformer): string {
+  return "Verified";
 }
 
 export function buildProfileBadges(performer: CrackPerformer): string[] {

@@ -148,6 +148,20 @@ function createSlot(feedKey: string, src: string): StreamSlot {
     { once: true },
   );
 
+  let retried = false;
+  iframe.addEventListener("error", () => {
+    if (retried) return;
+    retried = true;
+    window.setTimeout(() => {
+      try {
+        const bust = src.includes("?") ? "&" : "?";
+        iframe.src = `${src}${bust}nx_retry=${Date.now()}`;
+      } catch {
+        /* ignore */
+      }
+    }, 400);
+  });
+
   return slot;
 }
 

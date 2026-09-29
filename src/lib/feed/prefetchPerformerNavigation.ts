@@ -1,5 +1,9 @@
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { injectStreamPreconnects, warmPerformerStream } from "@/lib/feed/streamEmbedWarmup";
+import {
+  rememberCatalogScroll,
+  type CatalogScrollRoute,
+} from "@/lib/navigation/catalogScrollRestore";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
 
 let lastPrefetchKey = "";
@@ -23,6 +27,17 @@ export function prefetchPerformerOnIntent(
   injectStreamPreconnects();
   warmPerformerStream(performer.feedKey, performer.embedPlan, { pin: true });
 
+  const path = window.location.pathname;
+  const catalogRoute: CatalogScrollRoute | null =
+    path === "/"
+      ? "home"
+      : path === "/explore" || path.startsWith("/explore/")
+        ? "explore"
+        : null;
+  if (catalogRoute) {
+    rememberCatalogScroll(catalogRoute);
+  }
+
   try {
     sessionStorage.setItem(
       "nx-last-warm-feed-key",
@@ -35,8 +50,19 @@ export function prefetchPerformerOnIntent(
     /* private mode */
   }
 
-  const path = performerProfilePathFromPerformer(performer);
-  if (path && routerPrefetch) {
-    routerPrefetch(path);
+  const profilePath = performerProfilePathFromPerformer(performer);
+  if (profilePath) {
+    if (routerPrefetch) {
+      routerPrefetch(profilePath);
+    }
+    try {
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = profilePath;
+      link.as = "document";
+      document.head.appendChild(link);
+    } catch {
+      /* ignore */
+    }
   }
 }

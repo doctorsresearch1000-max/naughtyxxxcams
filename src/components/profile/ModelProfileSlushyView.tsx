@@ -200,7 +200,7 @@ export function ModelProfileSlushyView({
         </section>
 
         <section className="px-4 pt-3">
-          <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-1">
+          <div className="nx-chip-scroll hide-scrollbar flex gap-2 overflow-x-auto pb-1">
             <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
               {followersCount}
             </span>
@@ -223,7 +223,7 @@ export function ModelProfileSlushyView({
           </h2>
 
           {model.galleryItems.length >= 8 && galleryTags.length > 0 ? (
-            <div className="hide-scrollbar mb-3 flex gap-2 overflow-x-auto pb-2">
+            <div className="nx-chip-scroll hide-scrollbar mb-3 flex gap-2 overflow-x-auto pb-2">
               <button
                 type="button"
                 onClick={() => setActiveTag(null)}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
+import { ExploreDesktopTheaterModal } from "@/components/explore/desktop/ExploreDesktopTheaterModal";
 import { ExploreInFeedPromoCard } from "@/components/explore/ExploreInFeedPromoCard";
 import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
 import {
@@ -52,9 +53,19 @@ export function ExploreTubeGrid({
   emptyMessage = "No results. Try another filter or search.",
   inFeedPromo,
 }: ExploreTubeGridProps) {
+  const [theaterIndex, setTheaterIndex] = useState<number | null>(null);
+
   const cards = useMemo(
     () => filterFeedPerformers(performers),
     [performers],
+  );
+
+  const openTheater = useCallback(
+    (performer: FeedPerformer) => {
+      const idx = cards.findIndex((p) => p.feedKey === performer.feedKey);
+      setTheaterIndex(idx >= 0 ? idx : 0);
+    },
+    [cards],
   );
 
   const promo = useMemo(
@@ -87,6 +98,15 @@ export function ExploreTubeGrid({
 
   return (
     <>
+      {theaterIndex !== null && cards.length > 0 ? (
+        <ExploreDesktopTheaterModal
+          performers={cards}
+          activeIndex={theaterIndex}
+          onClose={() => setTheaterIndex(null)}
+          onChangeIndex={setTheaterIndex}
+        />
+      ) : null}
+
       <div className={EXPLORE_TUBE_GRID_CLASS} data-explore-tube-grid="v3-tube-card">
         {gridItems.map((item) =>
           item.kind === "promo" ? (
@@ -97,6 +117,8 @@ export function ExploreTubeGrid({
               performer={item.performer}
               gridIndex={item.index}
               priority={item.index < 4}
+              enableDesktopPreview
+              onQuickView={openTheater}
             />
           ),
         )}

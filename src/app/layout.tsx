@@ -8,6 +8,7 @@ import { ExploreBootstrapWarm } from "@/components/explore/ExploreBootstrapWarm"
 import { HomeFeedWarm } from "@/components/feed/HomeFeedWarm";
 import { HomeFeedServerBridge } from "@/components/layout/HomeFeedServerBridge";
 import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
+import { CatalogScrollRestore } from "@/components/navigation/CatalogScrollRestore";
 import "./globals.css";
 
 /** GA4 — override via `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Cloudflare / `.env.local`. */
@@ -58,6 +59,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-dvh bg-black">
         <AppProviders>
+        <CatalogScrollRestore />
         <div className="relative mx-auto flex min-h-dvh w-full max-w-full flex-col bg-black pb-16 [touch-action:pan-y] lg:pb-0">
           <ExploreBootstrapWarm />
           <HomeFeedWarm />

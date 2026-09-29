@@ -34,6 +34,9 @@ export function mountTelegramLoginWidget(
   }
 
   container.innerHTML = "";
+  container.setAttribute("lang", "en");
+  container.setAttribute("translate", "no");
+
   const script = document.createElement("script");
   script.src = "https://telegram.org/js/telegram-widget.js?22";
   script.async = true;
@@ -42,6 +45,7 @@ export function mountTelegramLoginWidget(
   script.setAttribute("data-radius", "12");
   script.setAttribute("data-request-access", "write");
   script.setAttribute("data-lang", "en");
+  script.setAttribute("data-userpic", "false");
 
   if (useRedirect) {
     script.setAttribute("data-auth-url", getTelegramWidgetAuthUrl());

@@ -349,23 +349,29 @@ export function ExploreSlushyDiscover({
         />
       </div>
 
-      <div className={`${horizontalScrollClass} hidden lg:flex`}>
-        {sortChipButtons}
-        {tagChipButtons}
-        {showCategoryPicker ? categoryChipButtons : null}
-      </div>
-
-      <div className={`${horizontalScrollClass} lg:hidden`}>
-        {sortChipButtons}
-      </div>
-
-      <div className={`${horizontalScrollClass} lg:hidden`}>{tagChipButtons}</div>
-
-      {showCategoryPicker && (
-        <div className={`${horizontalScrollClass} lg:hidden`}>
-          {categoryChipButtons}
+      <div
+        className="sticky top-[calc(var(--app-header-height,0px)+2px)] z-20 -mx-1 space-y-2 bg-[#0d0d0f]/95 py-2 backdrop-blur-md supports-[backdrop-filter]:bg-[#0d0d0f]/80"
+      >
+        <div className={`${horizontalScrollClass} hidden lg:flex`}>
+          {sortChipButtons}
+          {tagChipButtons}
+          {showCategoryPicker ? categoryChipButtons : null}
         </div>
-      )}
+
+        <div className={`${horizontalScrollClass} lg:hidden`}>
+          {sortChipButtons}
+        </div>
+
+        <div className={`${horizontalScrollClass} lg:hidden`}>
+          {tagChipButtons}
+        </div>
+
+        {showCategoryPicker ? (
+          <div className={`${horizontalScrollClass} lg:hidden`}>
+            {categoryChipButtons}
+          </div>
+        ) : null}
+      </div>
 
       {liveStories.length > 0 && (
         <div className={`${horizontalScrollClass} lg:py-0`}>
