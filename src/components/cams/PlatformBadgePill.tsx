@@ -1,22 +1,42 @@
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import { JerkmateLogoMark } from "@/components/cams/JerkmateLogoMark";
 
-const PILL_CLASS =
-  "absolute bottom-1.5 right-1.5 z-10 flex items-center justify-center rounded border border-white/10 bg-black/80 px-2 py-1 backdrop-blur-xs";
+export const PLATFORM_BADGE_PILL_CLASS =
+  "pointer-events-none absolute bottom-1.5 right-1.5 z-20 flex items-center justify-center rounded border border-white/10 bg-black/80 px-2 py-1 backdrop-blur-xs";
 
 type PlatformBadgePillProps = {
   performer?: FeedPerformer | null;
-  /** Native Jerkmate ad slot (no performer record). */
+  /** Native Jerkmate ad / promo slot (no performer record). */
   jerkmate?: boolean;
   className?: string;
 };
 
-function providerTextLabel(performer: FeedPerformer): string {
+export function isJerkmatePlatformContext(
+  performer?: FeedPerformer | null,
+  jerkmateSlot = false,
+): boolean {
+  if (jerkmateSlot) return true;
+  if (!performer) return false;
+
+  const src = performer.systemSource?.trim().toLowerCase() ?? "";
+  if (src.includes("jerk")) return true;
+
+  const key = performer.feedKey?.trim().toLowerCase() ?? "";
+  if (key.includes("jerkmate")) return true;
+
+  const room = performer.roomUrl?.trim().toLowerCase() ?? "";
+  if (room.includes("jerkmate")) return true;
+
+  return false;
+}
+
+function catalogProviderTextLabel(performer: FeedPerformer): string | null {
   const src = performer.systemSource?.trim();
-  if (!src) return "STREAMATE";
+  if (!src) return null;
   const lower = src.toLowerCase();
-  if (lower === "jerkmate") return "JERKMATE";
+  if (lower.includes("jerk")) return null;
   const cleaned = src.replace(/[^a-z0-9]/gi, "").toUpperCase();
-  return cleaned || "STREAMATE";
+  return cleaned.length > 0 ? cleaned : null;
 }
 
 export function PlatformBadgePill({
@@ -24,29 +44,29 @@ export function PlatformBadgePill({
   jerkmate = false,
   className = "",
 }: PlatformBadgePillProps) {
-  const isJerkmate =
-    jerkmate ||
-    performer?.systemSource?.trim().toLowerCase() === "jerkmate";
+  const showJerkmateLogo = isJerkmatePlatformContext(performer, jerkmate);
 
-  if (isJerkmate) {
+  if (showJerkmateLogo) {
     return (
-      <span className={`${PILL_CLASS} ${className}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logos/jerkmate.png"
-          className="h-3.5 w-auto object-contain"
-          alt="Jerkmate"
-          width={72}
-          height={14}
-        />
+      <span
+        className={`${PLATFORM_BADGE_PILL_CLASS} ${className}`}
+        data-platform-badge="jerkmate"
+      >
+        <JerkmateLogoMark />
       </span>
     );
   }
 
-  const label = performer ? providerTextLabel(performer) : "STREAMATE";
+  if (!performer) return null;
+
+  const label = catalogProviderTextLabel(performer);
+  if (!label) return null;
 
   return (
-    <span className={`${PILL_CLASS} ${className}`}>
+    <span
+      className={`${PLATFORM_BADGE_PILL_CLASS} ${className}`}
+      data-platform-badge="provider"
+    >
       <span className="text-[9px] font-extrabold uppercase text-zinc-200">
         {label}
       </span>
