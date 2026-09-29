@@ -1,28 +1,25 @@
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 
+const PILL_CLASS =
+  "absolute bottom-1.5 right-1.5 left-auto top-auto z-10 m-0 bg-black/85 backdrop-blur-xs border border-white/15 rounded-full px-2.5 py-1 flex items-center justify-center h-6.5 md:h-7 w-auto shrink-0 pointer-events-none";
+
 type PlatformBadgePillProps = {
   performer: FeedPerformer;
-  className?: string;
 };
 
-/** Stripchat-scale Jerkmate watermark — model cards only. */
-export function PlatformBadgePill({
-  performer,
-  className = "",
-}: PlatformBadgePillProps) {
+/** Jerkmate watermark — compact corner pill on model grid cards only. */
+export function PlatformBadgePill({ performer }: PlatformBadgePillProps) {
   return (
     <span
-      className={`absolute bottom-1.5 right-1.5 left-auto top-auto z-10 m-0 flex h-6.5 w-auto shrink-0 items-center justify-center rounded-full border border-white/15 bg-black/85 px-2.5 py-1 backdrop-blur-xs pointer-events-none md:h-7 ${className}`}
+      className={PILL_CLASS}
       data-platform-badge="jerkmate"
       data-feed-key={performer.feedKey}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/logos/jerkmate.png"
-        className="block h-4.5 w-auto object-contain md:h-5"
+        className="h-4.5 md:h-5 w-auto object-contain block"
         alt="Jerkmate"
-        width={72}
-        height={18}
         decoding="async"
       />
     </span>
