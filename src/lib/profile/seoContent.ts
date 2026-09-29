@@ -9,6 +9,11 @@ import {
 } from "@/lib/profile/profileLanderContent";
 import { PROFILE_COMPETITIVE_GAP_KEYWORDS } from "@/lib/profile/profileCompetitiveGaps";
 import { pickVariant, stableVariantIndex } from "@/lib/seo/seoVariants";
+import {
+  buildReducedIntroParagraphs,
+  countProfileDataFields,
+  PROFILE_LONG_INTRO_MIN_FIELDS,
+} from "@/lib/seo/profileContentQuality";
 
 export type ModelSEOInput = {
   name: string;
@@ -113,7 +118,18 @@ export function generateUniqueSEOContent(
     },
   );
 
-  const visibleParagraphs = buildProfileLanderParagraphs(seed, landerVars);
+  const fieldCount = countProfileDataFields(model);
+  const useLongIntro = fieldCount >= PROFILE_LONG_INTRO_MIN_FIELDS;
+  const visibleParagraphs = useLongIntro
+    ? buildProfileLanderParagraphs(seed, landerVars)
+    : buildReducedIntroParagraphs(model);
+
+  if (process.env.NODE_ENV === "development" && !useLongIntro) {
+    // eslint-disable-next-line no-console
+    console.info(
+      `[seo] reduced intro for /profile/${model.profileSlug} (${fieldCount} fields)`,
+    );
+  }
 
   const gapHighlights = PROFILE_COMPETITIVE_GAP_KEYWORDS.filter(
     (_, i) => stableVariantIndex(`${seed}-kw-${i}`, 3) === 0,
@@ -130,7 +146,7 @@ export function generateUniqueSEOContent(
     name: model.name,
     handle: model.handle,
     profileSlug: model.profileSlug,
-  });
+  }).slice(0, useLongIntro ? 4 : 2);
 
   const longDescription = [
     landerH1,

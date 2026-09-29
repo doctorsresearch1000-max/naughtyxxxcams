@@ -19,6 +19,7 @@ export default async function FollowingPage() {
     data = {
       nearby: [],
       liveCards: [],
+      liveGrid: [],
       offline: [],
       liveCount: 0,
       followedTotal: 0,

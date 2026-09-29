@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ApiAvatar } from "@/components/media/ApiAvatar";
+import { LiveBadge } from "@/components/cams/LiveBadge";
+import { StoryAvatarRing } from "@/components/cams/StoryAvatarRing";
 import type { FollowingNearbyItem } from "@/lib/following/followingPageData";
 
 type LiveNearbyCarouselProps = {
@@ -19,20 +21,14 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
 
   return (
     <div
-      className="hide-scrollbar -mx-1 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth pb-2 pl-0.5 pr-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="nx-chip-scroll hide-scrollbar -mx-1 flex snap-x snap-mandatory gap-3.5 overflow-x-auto scroll-smooth pb-2 pl-0.5 pr-3"
     >
       {visible.map((item) => {
         const href = item.profilePath ?? item.affiliateUrl;
         const external = !item.profilePath;
 
         const avatar = (
-          <div
-            className={`relative rounded-full p-[2px] shadow-md ${
-              item.isLive
-                ? "bg-gradient-to-tr from-[#39FF14] via-[#00FF7F] to-emerald-400 shadow-[#39FF14]/25"
-                : "bg-zinc-700/80"
-            }`}
-          >
+          <StoryAvatarRing>
             <div className="relative h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border-2 border-[#0A0A0A] bg-[#1C1C1E]">
               <ApiAvatar
                 src={item.image}
@@ -41,13 +37,13 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
                 sizes="60px"
                 className="object-cover"
               />
+              {item.isLive ? (
+                <span className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/80 to-transparent pb-0.5 pt-2">
+                  <LiveBadge className="scale-[0.72] origin-bottom" />
+                </span>
+              ) : null}
             </div>
-            {item.isLive && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full border border-[#0A0A0A] bg-[#39FF14] px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wide text-black">
-                LIVE
-              </span>
-            )}
-          </div>
+          </StoryAvatarRing>
         );
 
         const content = (

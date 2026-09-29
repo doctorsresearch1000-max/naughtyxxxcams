@@ -58,7 +58,6 @@ const TAG_CHIPS: { id: string | null; label: string }[] = [
   { id: "boobs", label: "boobs" },
   { id: "milf", label: "milf" },
   { id: "latina", label: "latina" },
-  { id: "teen", label: "teen" },
 ];
 
 function cacheKey(cat: string | null): string {
@@ -85,7 +84,7 @@ function buildCacheFromPool(pool: CrackPerformer[]): Map<string, CacheEntry> {
 }
 
 const horizontalScrollClass =
-  "flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+  "nx-chip-scroll hide-scrollbar flex gap-2 overflow-x-auto pb-0.5";
 
 function chipClass(active: boolean): string {
   return [

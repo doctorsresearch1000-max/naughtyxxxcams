@@ -77,24 +77,6 @@ export function ProfilePageView() {
 
       <TelegramProfileConnect />
 
-      <section className="mt-5 flex justify-center" aria-label="Sponsored offer">
-        <Link
-          href={SPONSOR_BANNER_HREF}
-          target="_blank"
-          rel="nofollow noopener sponsored"
-          className="block overflow-hidden rounded-2xl ring-1 ring-white/10 transition active:scale-[0.99]"
-        >
-          <Image
-            src={SPONSOR_BANNER_SRC}
-            alt="Sponsored live cam offer"
-            width={300}
-            height={100}
-            unoptimized
-            className="h-auto w-full max-w-[300px]"
-          />
-        </Link>
-      </section>
-
       <section className="mt-8" aria-labelledby="activity-heading">
         <span className="text-[10px] font-black uppercase tracking-widest text-[#39FF14]">
           Your activity
@@ -119,6 +101,27 @@ export function ProfilePageView() {
           playlists={playlists}
           onNewCollection={onCreatePlaylist}
         />
+      </section>
+
+      <section className="mt-10" aria-label="Sponsored offer">
+        <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+          Ad
+        </p>
+        <Link
+          href={SPONSOR_BANNER_HREF}
+          target="_blank"
+          rel="nofollow noopener sponsored"
+          className="block overflow-hidden rounded-[var(--nx-radius-card)] ring-1 ring-zinc-800"
+        >
+          <Image
+            src={SPONSOR_BANNER_SRC}
+            alt="Sponsored live cam offer"
+            width={300}
+            height={100}
+            unoptimized
+            className="aspect-[4/3] h-auto w-full object-cover"
+          />
+        </Link>
       </section>
     </main>
   );

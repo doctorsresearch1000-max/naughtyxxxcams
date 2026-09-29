@@ -18,6 +18,7 @@ import { trackCtaClickOut, trackModelPageView } from "@/lib/analytics/track";
 import { affiliateClaims } from "@/copy/model-page";
 import { uiStrings } from "@/lib/i18n/uiStrings";
 import { profileFollowersLabel } from "@/lib/profile/followersDisplay";
+import { SaveToFavoritesButton } from "@/components/profile/SaveToFavoritesButton";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
@@ -89,10 +90,7 @@ export function ModelProfileSlushyView({
   const conversionAttentionPulse = useConversionAttentionPulse(true);
   const likeKey = `profile-${model.profileSlug}`;
   const primaryCtaRef = useRef<HTMLDivElement>(null);
-  const followersCount = profileFollowersLabel(
-    model.performer,
-    model.followersLabel,
-  );
+  const followersCount = profileFollowersLabel();
   const liveCtaLabel = uiStrings.watchLiveCta(model.name);
 
   useEffect(() => {
@@ -204,10 +202,7 @@ export function ModelProfileSlushyView({
         <section className="px-4 pt-3">
           <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-1">
             <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
-              {followersCount} followers
-            </span>
-            <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
-              {uiStrings.verified}
+              {followersCount}
             </span>
             <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
               {model.language}
@@ -219,13 +214,7 @@ export function ModelProfileSlushyView({
         </section>
 
         <section className="px-4 pt-4">
-          <button
-            type="button"
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-[#1C1C1E] px-4 py-3 text-sm font-semibold text-white"
-          >
-            <span aria-hidden>🔖</span>
-            {uiStrings.saveFavorites}
-          </button>
+          <SaveToFavoritesButton profileSlug={model.profileSlug} />
         </section>
 
         <section className="px-4 pt-8">

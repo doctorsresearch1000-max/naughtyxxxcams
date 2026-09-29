@@ -11,17 +11,14 @@ import { uiStrings } from "@/lib/i18n/uiStrings";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import {
   camCardUsername,
-  formatCardViewLabel,
   performerPrimaryLanguageCode,
 } from "@/lib/media/performerCardMeta";
-import {
-  estimateViewerCount,
-  formatViewerCount,
-} from "@/lib/feed/viewerCount";
 import { prefetchPerformerOnIntent } from "@/lib/feed/prefetchPerformerNavigation";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
-
-const FOLLOW_KEY_PREFIX = "nx-card-follow-";
+import {
+  isCardFollowed,
+  toggleCardFollow,
+} from "@/lib/user/cardFollowStorage";
 
 type ModelTubeCardProps = {
   performer: FeedPerformer;
@@ -45,16 +42,6 @@ function genderAgeSuffix(performer: FeedPerformer): string {
   return parts.length ? ` · ${parts.join("")}` : "";
 }
 
-function metricsLine(performer: FeedPerformer): string | null {
-  const viewers = formatViewerCount(
-    estimateViewerCount(performer, performer.feedKey),
-  );
-  if (viewers && viewers !== "0") return viewers;
-  const views = formatCardViewLabel(performer);
-  if (views) return views;
-  return null;
-}
-
 export function ModelTubeCard({
   performer,
   gridIndex,
@@ -65,17 +52,11 @@ export function ModelTubeCard({
   const username = camCardUsername(performer);
   const roomTitle = resolveRoomTitle(performer);
   const lang = performerPrimaryLanguageCode(performer);
-  const metrics = metricsLine(performer);
   const platform = platformLabel(performer);
 
-  const [followed, setFollowed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return localStorage.getItem(`${FOLLOW_KEY_PREFIX}${performer.feedKey}`) === "1";
-    } catch {
-      return false;
-    }
-  });
+  const [followed, setFollowed] = useState(() =>
+    isCardFollowed(performer.feedKey),
+  );
 
   const thumb =
     performer.posterUrl ||
@@ -92,18 +73,8 @@ export function ModelTubeCard({
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      setFollowed((prev) => {
-        const next = !prev;
-        try {
-          localStorage.setItem(
-            `${FOLLOW_KEY_PREFIX}${performer.feedKey}`,
-            next ? "1" : "0",
-          );
-        } catch {
-          /* TODO: sync favorites when auth ships */
-        }
-        return next;
-      });
+      const next = toggleCardFollow(performer.feedKey);
+      setFollowed(next);
     },
     [performer.feedKey],
   );
@@ -169,12 +140,9 @@ export function ModelTubeCard({
             {username}
             <span className="font-semibold text-zinc-500">{genderAgeSuffix(performer)}</span>
           </p>
-          <div className="flex min-w-0 items-center justify-between gap-2 text-[11px] text-zinc-500">
-            {metrics ? <span className="truncate">{metrics}</span> : <span />}
-            <span className="shrink-0 font-semibold uppercase text-zinc-400">
-              {lang}
-            </span>
-          </div>
+          <p className="text-right text-[11px] font-semibold uppercase text-zinc-400">
+            {lang}
+          </p>
           {roomTitle ? (
             <p className="truncate text-[11px] text-zinc-400">{roomTitle}</p>
           ) : null}

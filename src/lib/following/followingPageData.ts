@@ -70,6 +70,8 @@ function takeUniquePerformers(
 export type FollowingPageData = {
   nearby: FollowingNearbyItem[];
   liveCards: FollowingLiveCard[];
+  /** Live models for tube grid (excludes story row). */
+  liveGrid: CrackPerformer[];
   offline: FollowingOfflineItem[];
   liveCount: number;
   followedTotal: number;
@@ -116,6 +118,9 @@ export async function getFollowingPageData(): Promise<FollowingPageData> {
     usedImageBases,
   );
 
+  const storyKeys = new Set(nearbyPerformers.map((p) => getPerformerKey(p)));
+  const liveGrid = livePool.filter((p) => !storyKeys.has(getPerformerKey(p)));
+
   const liveCards: FollowingLiveCard[] = livePerformers.map((p) => ({
     id: getPerformerKey(p),
     username: p.nameClean || p.name || "Model",
@@ -146,6 +151,7 @@ export async function getFollowingPageData(): Promise<FollowingPageData> {
   return {
     nearby,
     liveCards,
+    liveGrid,
     offline,
     liveCount: liveCards.length,
     followedTotal,

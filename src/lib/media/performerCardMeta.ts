@@ -1,5 +1,5 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { formatExploreViews } from "@/lib/explore/exploreGrid";
+import { performerCardMetricLabel } from "@/lib/media/performerCardMetrics";
 
 /** API tags like `langenglish`, `langspanish` — never show as card copy. */
 export function isLanguageMetaTag(raw?: string | null): boolean {
@@ -101,13 +101,15 @@ export function camCardUsername(performer: CrackPerformer): string {
   return "model";
 }
 
-export function formatCardViewLabel(performer: CrackPerformer): string {
-  const compact = formatExploreViews(performer);
-  return `${compact} views`;
+export function formatCardViewLabel(performer: CrackPerformer): string | null {
+  const metric = performerCardMetricLabel(performer);
+  if (!metric) return null;
+  return metric;
 }
 
 /** Second line under cam cards: `450K views · EN`. */
 export function formatCardMetaSubtitle(performer: CrackPerformer): string {
   const lang = performerPrimaryLanguageCode(performer);
-  return `${formatCardViewLabel(performer)} · ${lang}`;
+  const views = formatCardViewLabel(performer);
+  return views ? `${views} · ${lang}` : lang;
 }

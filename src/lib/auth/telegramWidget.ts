@@ -41,6 +41,7 @@ export function mountTelegramLoginWidget(
   script.setAttribute("data-size", "large");
   script.setAttribute("data-radius", "12");
   script.setAttribute("data-request-access", "write");
+  script.setAttribute("data-lang", "en");
 
   if (useRedirect) {
     script.setAttribute("data-auth-url", getTelegramWidgetAuthUrl());
