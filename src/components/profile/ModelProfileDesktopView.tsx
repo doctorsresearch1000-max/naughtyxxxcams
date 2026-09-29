@@ -14,7 +14,6 @@ import {
   performerDisplayTags,
   performerShortBio,
 } from "@/lib/desktop/performerCatalogMeta";
-import { crackPerformerToFeedPerformer } from "@/lib/feed/filterPerformers";
 import { buildTipMenu } from "@/lib/profile/buildTipMenu";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
@@ -36,18 +35,6 @@ export function ModelProfileDesktopView({
   conversionAttentionPulse = false,
 }: ModelProfileDesktopViewProps) {
   const likeKey = `profile-${model.profileSlug}`;
-
-  const feedPerformer = useMemo(() => {
-    if (!model.performer) return null;
-    const row = crackPerformerToFeedPerformer(model.performer, {
-      requirePoster: false,
-    });
-    if (!row) return null;
-    if (row.posterUrl) return row;
-    const fallback =
-      model.bannerUrl?.trim() || model.avatar?.trim() || "";
-    return fallback ? { ...row, posterUrl: fallback } : row;
-  }, [model.performer, model.bannerUrl, model.avatar]);
 
   const tags = model.performer
     ? performerDisplayTags(model.performer)
@@ -93,11 +80,7 @@ export function ModelProfileDesktopView({
             affiliateUrl={model.affiliateUrl}
             className="absolute right-4 top-4 z-30"
           />
-          <ProfileDesktopLivePanel
-            model={model}
-            feedPerformer={feedPerformer}
-            posterUrl={model.bannerUrl || model.avatar || ""}
-          />
+          <ProfileDesktopLivePanel model={model} />
         </div>
 
         <ProfileSeoContentBlock seo={seo} />

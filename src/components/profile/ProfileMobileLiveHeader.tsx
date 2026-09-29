@@ -1,149 +1,40 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback } from "react";
 import Image from "next/image";
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
 import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
-import { crackPerformerToFeedPerformer } from "@/lib/feed/filterPerformers";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import { useProfileStreamPlayer } from "@/lib/profile/useProfileStreamPlayer";
+import { PROFILE_STREAM_IFRAME_TIMEOUT_MS } from "@/lib/profile/profileStreamTiming";
 import {
   camPlayerAudit,
-  camPlayerAuditMark,
   camPlayerAuditSince,
 } from "@/lib/audit/camPlayerAudit";
-import {
-  injectStreamPreconnects,
-  warmPerformerStream,
-} from "@/lib/feed/streamEmbedWarmup";
 
 const HEADER_HEIGHT_PX = 420;
-const STREAM_TIMEOUT_MS = 5_000;
 
 type ProfileMobileLiveHeaderProps = {
   model: ModelProfileView;
 };
 
 export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps) {
-  const feedPerformer = useMemo(() => {
-    if (!model.performer) return null;
-    const row = crackPerformerToFeedPerformer(model.performer, {
-      requirePoster: false,
-    });
-    if (!row) return null;
-    if (row.posterUrl) return row;
-    const fallback =
-      model.bannerUrl?.trim() || model.avatar?.trim() || "";
-    return fallback ? { ...row, posterUrl: fallback } : row;
-  }, [model.performer, model.bannerUrl, model.avatar]);
+  const {
+    catalogLive,
+    feedPerformer,
+    posterUrl,
+    showStreamLayer,
+    showConversionUi,
+    showLoadingOverlay,
+    needsHardConversion,
+    armed,
+    onFrameDocumentLoad,
+    onStreamDisconnected,
+  } = useProfileStreamPlayer(model, "mobile");
 
-  const [armed, setArmed] = useState(false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
-  const [disconnected, setDisconnected] = useState(false);
-  const [loadTimedOut, setLoadTimedOut] = useState(false);
-
-  const posterUrl =
-    feedPerformer?.posterUrl ||
-    model.bannerUrl ||
-    model.avatar ||
-    "";
-
-  const catalogLive = model.status === "live";
   const canMountStream = catalogLive && Boolean(feedPerformer);
-
-  const needsConversion =
-    !catalogLive ||
-    !feedPerformer ||
-    disconnected ||
-    loadTimedOut;
-
-  const showStreamLayer =
-    canMountStream && iframeLoaded && !disconnected && !loadTimedOut;
-
-  const showLoadingOverlay =
-    canMountStream && !iframeLoaded && !loadTimedOut && !disconnected;
-
-  const showConversionUi = needsConversion || showLoadingOverlay;
-
-  useEffect(() => {
-    camPlayerAuditMark(`profile:${model.profileSlug}`);
-    camPlayerAudit("profile.mount", {
-      slug: model.profileSlug,
-      catalogLive,
-      canMountStream,
-      embedMode: feedPerformer?.embedPlan.mode,
-    });
-  }, [model.profileSlug, catalogLive, canMountStream, feedPerformer?.embedPlan.mode]);
-
-  useEffect(() => {
-    injectStreamPreconnects();
-    setArmed(true);
-    setIframeLoaded(false);
-    setDisconnected(false);
-    setLoadTimedOut(false);
-    try {
-      const raw = sessionStorage.getItem("nx-last-warm-feed-key");
-      if (!raw || !feedPerformer) return;
-      const parsed = JSON.parse(raw) as { feedKey?: string; at?: number };
-      if (
-        parsed.feedKey === feedPerformer.feedKey &&
-        typeof parsed.at === "number" &&
-        Date.now() - parsed.at < 120_000
-      ) {
-        warmPerformerStream(feedPerformer.feedKey, feedPerformer.embedPlan, {
-          pin: true,
-        });
-      }
-    } catch {
-      /* ignore */
-    }
-  }, [feedPerformer]);
-
-  useEffect(() => {
-    if (!armed || !feedPerformer) return;
-    warmPerformerStream(feedPerformer.feedKey, feedPerformer.embedPlan, {
-      pin: true,
-    });
-  }, [armed, feedPerformer]);
-
-  useEffect(() => {
-    if (!canMountStream) return;
-    const id = window.setTimeout(() => {
-      if (!iframeLoaded) {
-        setLoadTimedOut(true);
-        camPlayerAuditSince(`profile:${model.profileSlug}`, "iframe.timeout", {
-          feedKey: feedPerformer?.feedKey,
-          msBudget: STREAM_TIMEOUT_MS,
-        });
-      }
-    }, STREAM_TIMEOUT_MS);
-    return () => window.clearTimeout(id);
-  }, [
-    canMountStream,
-    iframeLoaded,
-    feedPerformer?.feedKey,
-    model.profileSlug,
-  ]);
-
-  const handleFrameDocumentLoad = useCallback(() => {
-    setIframeLoaded(true);
-    camPlayerAuditSince(`profile:${model.profileSlug}`, "iframe.documentLoad", {
-      feedKey: feedPerformer?.feedKey,
-    });
-  }, [feedPerformer?.feedKey, model.profileSlug]);
-
-  const handleStreamDisconnected = useCallback(
-    (reason: string) => {
-      setDisconnected(true);
-      camPlayerAudit("pure.SM_DISCONNECTED", {
-        slug: model.profileSlug,
-        feedKey: feedPerformer?.feedKey,
-        reason,
-      });
-    },
-    [feedPerformer?.feedKey, model.profileSlug],
-  );
 
   const onPosterError = useCallback(() => {
     camPlayerAudit("poster.error", {
@@ -153,7 +44,7 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
   }, [model.profileSlug, posterUrl]);
 
   const onPosterLoad = useCallback(() => {
-    camPlayerAuditSince(`profile:${model.profileSlug}`, "poster.loaded", {
+    camPlayerAuditSince(`profile-mobile:${model.profileSlug}`, "poster.loaded", {
       posterUrl,
     });
   }, [model.profileSlug, posterUrl]);
@@ -196,9 +87,9 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
                 iframeLoading="eager"
                 streamPriority="high"
                 externalPosterControl
-                posterFallbackMaxMs={STREAM_TIMEOUT_MS}
-                onFrameDocumentLoad={handleFrameDocumentLoad}
-                onStreamDisconnected={handleStreamDisconnected}
+                posterFallbackMaxMs={PROFILE_STREAM_IFRAME_TIMEOUT_MS}
+                onFrameDocumentLoad={onFrameDocumentLoad}
+                onStreamDisconnected={onStreamDisconnected}
               />
             </div>
           </FeedViewportProvider>
@@ -208,7 +99,7 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
       {showConversionUi ? (
         <ProfileStreamConversionOverlay
           affiliateUrl={model.affiliateUrl}
-          loading={showLoadingOverlay && !needsConversion}
+          loading={showLoadingOverlay && !needsHardConversion}
         />
       ) : null}
 

@@ -54,6 +54,7 @@ async function scanLivePages(slug: string): Promise<CrackPerformer | null> {
 
 export async function findPerformerByProfileSlug(
   slug: string,
+  options?: { fresh?: boolean },
 ): Promise<CrackPerformer | null> {
   const normalized = performerProfileSlug(slug);
   if (!normalized) return null;
@@ -62,6 +63,12 @@ export async function findPerformerByProfileSlug(
     normalized,
     performerProfileSlugLegacyCompact(normalized),
   ].filter((value, index, arr) => value && arr.indexOf(value) === index);
+
+  if (options?.fresh) {
+    for (const key of lookupSlugs) {
+      SLUG_CACHE.delete(key);
+    }
+  }
 
   for (const key of lookupSlugs) {
     const cached = SLUG_CACHE.get(key);
