@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { LiveBadge } from "@/components/cams/LiveBadge";
 import { FollowingOfflineList } from "@/components/following/FollowingOfflineList";
+import { JerkmateFollowingGifBanner } from "@/components/following/JerkmateFollowingGifBanner";
 import { LiveNearbyCarousel } from "@/components/following/LiveNearbyCarousel";
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import {
@@ -69,6 +70,10 @@ export function FollowingPageView({
           <LiveNearbyCarousel items={nearby} />
         </div>
       </section>
+
+      <div className="mb-2 lg:col-span-12">
+        <JerkmateFollowingGifBanner />
+      </div>
 
       <section className="lg:col-span-8 xl:col-span-9">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--nx-action)]">

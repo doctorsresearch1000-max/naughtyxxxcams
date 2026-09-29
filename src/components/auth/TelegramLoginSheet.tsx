@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getPublicTelegramBotUsername } from "@/lib/auth/telegramBotUsername";
 import { verifyTelegramWidgetLogin } from "@/lib/auth/telegramClient";
-import { rememberTelegramLoginReturnPath } from "@/lib/auth/telegramLoginReturn";
-import { startTelegramLoginRedirect } from "@/lib/auth/telegramLoginRedirect";
+import { prepareTelegramLoginAttempt } from "@/lib/auth/telegramLoginRedirect";
 import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
 import type { TelegramUser } from "@/lib/auth/telegramSession";
@@ -55,7 +54,7 @@ export function TelegramLoginSheet({
 
   useEffect(() => {
     if (!open || !widgetRef.current || !botUsername) return;
-    rememberTelegramLoginReturnPath();
+    prepareTelegramLoginAttempt();
     setError(null);
     const teardown = mountTelegramLoginWidget(
       widgetRef.current,
@@ -121,20 +120,14 @@ export function TelegramLoginSheet({
           </p>
 
           <div className="mt-5 flex min-h-[52px] flex-col items-center justify-center gap-3">
-            {botUsername ? (
-              <button
-                type="button"
-                onClick={startTelegramLoginRedirect}
-                className="w-full rounded-full bg-[#2AABEE] py-3.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(42,171,238,0.35)] transition hover:bg-[#229ED9]"
-              >
-                {ctaLabel}
-              </button>
-            ) : null}
+            <p className="text-center text-xs font-bold text-[#2AABEE]">
+              {ctaLabel}
+            </p>
             {botUsername ? (
               <div
                 ref={widgetRef}
-                className="sr-only overflow-hidden"
-                aria-hidden
+                className="flex w-full justify-center"
+                lang="en"
               />
             ) : (
               <p className="text-center text-xs text-red-400">

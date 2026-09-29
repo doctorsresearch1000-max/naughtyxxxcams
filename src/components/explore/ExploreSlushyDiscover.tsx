@@ -18,7 +18,6 @@ import {
   EXPLORE_CATALOG_MENU,
   resolveExploreCategory,
 } from "@/lib/explore/exploreCatalog";
-import { buildExploreInFeedPromo } from "@/lib/explore/exploreInFeedPromo";
 import { EXPLORE_DISPLAY_LIMIT } from "@/lib/explore/exploreLimits";
 import { subscribeExploreSearch } from "@/lib/explore/exploreSearchSync";
 import {
@@ -218,11 +217,6 @@ export function ExploreSlushyDiscover({
     );
   }, [displayedPerformers, liveStories]);
 
-  const inFeedPromo = useMemo(
-    () => buildExploreInFeedPromo(liveStories[0] ?? basePerformers[0]),
-    [liveStories, basePerformers],
-  );
-
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
 
@@ -376,10 +370,7 @@ export function ExploreSlushyDiscover({
         {showSkeleton ? (
           <ExplorePerformerGridSkeleton count={12} />
         ) : (
-          <ExploreTubeGrid
-            performers={gridPerformers}
-            inFeedPromo={inFeedPromo}
-          />
+          <ExploreTubeGrid performers={gridPerformers} />
         )}
       </section>
     </div>

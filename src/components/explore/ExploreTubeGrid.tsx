@@ -2,15 +2,14 @@
 
 import { useCallback, useMemo, useState } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import { JerkmateNaturalBanner } from "@/components/ads/JerkmateNaturalBanner";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { ExploreDesktopTheaterModal } from "@/components/explore/desktop/ExploreDesktopTheaterModal";
-import { ExploreInFeedPromoCard } from "@/components/explore/ExploreInFeedPromoCard";
 import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
 import {
-  buildExploreInFeedPromo,
-  resolveInFeedPromoIndex,
-  type ExploreInFeedPromo,
-} from "@/lib/explore/exploreInFeedPromo";
+  JERKMATE_EXPLORE_GIF_BANNER_URL,
+  JERKMATE_EXPLORE_GIF_TRACKING_URL,
+} from "@/lib/crackrevenue/jerkmateTracking";
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
@@ -18,40 +17,37 @@ import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 type ExploreTubeGridProps = {
   performers: CrackPerformer[];
   emptyMessage?: string;
-  inFeedPromo?: ExploreInFeedPromo | null;
 };
 
 const TUBE_BATCH = 48;
+const EXPLORE_BANNER_AFTER_MODELS = 4;
 
 type GridItem =
   | { kind: "performer"; key: string; performer: FeedPerformer; index: number }
-  | { kind: "promo"; key: string };
+  | { kind: "explore-banner"; key: string };
 
-function buildGridItems(
-  cards: FeedPerformer[],
-  promo: ExploreInFeedPromo | null | undefined,
-): GridItem[] {
-  const items: GridItem[] = cards.map((performer, index) => ({
-    kind: "performer",
-    key: performer.feedKey,
-    performer,
-    index,
-  }));
+function buildExploreGridItems(cards: FeedPerformer[]): GridItem[] {
+  const items: GridItem[] = [];
 
-  if (!promo) return items;
+  cards.forEach((performer, index) => {
+    items.push({
+      kind: "performer",
+      key: performer.feedKey,
+      performer,
+      index,
+    });
 
-  const insertAt = resolveInFeedPromoIndex(cards.length);
-  if (insertAt == null) return items;
+    if (index === EXPLORE_BANNER_AFTER_MODELS - 1) {
+      items.push({ kind: "explore-banner", key: "explore-jerkmate-natural" });
+    }
+  });
 
-  const withPromo = [...items];
-  withPromo.splice(insertAt, 0, { kind: "promo", key: "in-feed-promo" });
-  return withPromo;
+  return items;
 }
 
 export function ExploreTubeGrid({
   performers,
   emptyMessage = "No results. Try another filter or search.",
-  inFeedPromo,
 }: ExploreTubeGridProps) {
   const [theaterIndex, setTheaterIndex] = useState<number | null>(null);
 
@@ -68,11 +64,6 @@ export function ExploreTubeGrid({
     [cards],
   );
 
-  const promo = useMemo(
-    () => inFeedPromo ?? buildExploreInFeedPromo(performers[0]),
-    [inFeedPromo, performers],
-  );
-
   const { visibleCount, sentinelRef, hasMore } = useInfiniteScrollBatch(
     cards.length,
     TUBE_BATCH,
@@ -84,8 +75,8 @@ export function ExploreTubeGrid({
   );
 
   const gridItems = useMemo(
-    () => buildGridItems(visibleCards, promo),
-    [visibleCards, promo],
+    () => buildExploreGridItems(visibleCards),
+    [visibleCards],
   );
 
   if (cards.length === 0) {
@@ -107,10 +98,17 @@ export function ExploreTubeGrid({
         />
       ) : null}
 
-      <div className={EXPLORE_TUBE_GRID_CLASS} data-explore-tube-grid="v3-tube-card">
+      <div className={EXPLORE_TUBE_GRID_CLASS} data-explore-tube-grid="v4-natural-banner">
         {gridItems.map((item) =>
-          item.kind === "promo" ? (
-            <ExploreInFeedPromoCard key={item.key} promo={promo} />
+          item.kind === "explore-banner" ? (
+            <div key={item.key} className="col-span-full">
+              <JerkmateNaturalBanner
+                href={JERKMATE_EXPLORE_GIF_TRACKING_URL}
+                imageSrc={JERKMATE_EXPLORE_GIF_BANNER_URL}
+                alt="Jerkmate explore offer"
+                className="my-1"
+              />
+            </div>
           ) : (
             <ModelTubeCard
               key={item.key}

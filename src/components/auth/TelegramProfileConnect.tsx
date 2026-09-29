@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTelegramAuth } from "@/components/auth/TelegramAuthProvider";
 import { getPublicTelegramBotUsername } from "@/lib/auth/telegramBotUsername";
-import { startTelegramLoginRedirect } from "@/lib/auth/telegramLoginRedirect";
+import { prepareTelegramLoginAttempt } from "@/lib/auth/telegramLoginRedirect";
 import { mountTelegramLoginWidget } from "@/lib/auth/telegramWidget";
 import { verifyTelegramWidgetLogin } from "@/lib/auth/telegramClient";
 import type { TelegramWidgetAuthPayload } from "@/lib/auth/verifyTelegram";
@@ -16,6 +16,7 @@ export function TelegramProfileConnect() {
   const widgetRef = useRef<HTMLDivElement>(null);
   const [widgetError, setWidgetError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [widgetReady, setWidgetReady] = useState(false);
   const botUsername = getPublicTelegramBotUsername();
 
   useTelegramMiniAppBootstrap(completeLoginVerified, !isAuthenticated);
@@ -37,7 +38,16 @@ export function TelegramProfileConnect() {
 
   useEffect(() => {
     if (isAuthenticated || !widgetRef.current) return;
-    if (!botUsername) return;
+    if (!botUsername) {
+      setWidgetError(
+        "Telegram login is not configured (missing bot username).",
+      );
+      return;
+    }
+
+    setWidgetReady(false);
+    setWidgetError(null);
+    prepareTelegramLoginAttempt();
 
     const teardown = mountTelegramLoginWidget(
       widgetRef.current,
@@ -47,7 +57,12 @@ export function TelegramProfileConnect() {
       },
       { useRedirectAuth: true },
     );
-    return teardown;
+
+    const readyTimer = window.setTimeout(() => setWidgetReady(true), 400);
+    return () => {
+      window.clearTimeout(readyTimer);
+      teardown();
+    };
   }, [isAuthenticated, onWidgetAuth, botUsername]);
 
   const avatarSrc =
@@ -95,19 +110,16 @@ export function TelegramProfileConnect() {
             playlists. Works in any mobile or desktop browser — no Mini App
             required.
           </p>
-          <button
-            type="button"
-            onClick={startTelegramLoginRedirect}
-            className="w-full rounded-full bg-[#2AABEE] py-3 text-sm font-bold text-white shadow-[0_8px_24px_rgba(42,171,238,0.35)] transition hover:bg-[#229ED9]"
-          >
+          <p className="text-center text-xs font-bold text-[#2AABEE]">
             Log in with Telegram
-          </button>
-          <div
-            ref={widgetRef}
-            className="sr-only flex min-h-0 items-center justify-center overflow-hidden"
-            aria-hidden
-          />
-          {!botUsername ? (
+          </p>
+          {botUsername ? (
+            <div
+              ref={widgetRef}
+              className="flex min-h-[52px] w-full items-center justify-center"
+              lang="en"
+            />
+          ) : (
             <button
               type="button"
               onClick={login}
@@ -115,12 +127,19 @@ export function TelegramProfileConnect() {
             >
               Open Telegram login
             </button>
+          )}
+          {!widgetReady && botUsername ? (
+            <p className="text-center text-xs text-zinc-500">
+              Loading Telegram widget…
+            </p>
           ) : null}
           {verifying ? (
             <p className="text-center text-xs text-zinc-500">Verifying…</p>
           ) : null}
           {widgetError ? (
-            <p className="text-center text-xs text-red-400">{widgetError}</p>
+            <p className="text-center text-xs text-red-400" role="alert">
+              {widgetError}
+            </p>
           ) : null}
         </div>
       )}

@@ -1,41 +1,36 @@
-/** Rotating in-grid Jerkmate copy for Home (tube card footer lines). */
+/** Rotating in-grid Jerkmate copy (Home native tube cards). */
 
 export type JerkmateHomeAdCopy = {
   brandLine: string;
   ctaLine: string;
-  subtitle: string;
+  heroLine: string;
 };
 
 export const JERKMATE_HOME_AD_VARIANTS: readonly JerkmateHomeAdCopy[] = [
   {
     brandLine: "Jerkmate",
-    ctaLine: "Jerkmate free",
-    subtitle: "Top live models tonight",
+    ctaLine: "Join free",
+    heroLine: "Free live cams",
+  },
+  {
+    brandLine: "Jerkmate",
+    ctaLine: "Jerkmate models",
+    heroLine: "Top models online",
+  },
+  {
+    brandLine: "Jerkmate",
+    ctaLine: "Jerk with Jerkmate models",
+    heroLine: "FREE PROMO",
   },
   {
     brandLine: "Jerkmate",
     ctaLine: "Join free",
-    subtitle: "Free pass — limited slots",
+    heroLine: "Limited free pass",
   },
   {
     brandLine: "Jerkmate",
-    ctaLine: "Watch live now",
-    subtitle: "HD cams & instant chat",
-  },
-  {
-    brandLine: "Jerkmate",
-    ctaLine: "Jerk off with Jerkmate models",
-    subtitle: "Private & public shows",
-  },
-  {
-    brandLine: "Jerkmate",
-    ctaLine: "Claim free access",
-    subtitle: "Partner offer — 18+ only",
-  },
-  {
-    brandLine: "Jerkmate",
-    ctaLine: "Try Jerkmate live",
-    subtitle: "New models every hour",
+    ctaLine: "Jerkmate models",
+    heroLine: "HD chat & cams",
   },
 ] as const;
 
