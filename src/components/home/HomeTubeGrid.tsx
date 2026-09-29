@@ -13,6 +13,8 @@ import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 /** Smaller batches on mobile reduce parallel image decodes (Android GPU). */
 const BATCH = 16;
 
+const VIEWPORT_EAGER_COUNT = 6;
+
 type HomeTubeGridProps = {
   performers: CrackPerformer[];
   emptyMessage?: string;
@@ -58,23 +60,31 @@ export function HomeTubeGrid({
   return (
     <>
       <div className={gridClassName} data-home-tube-grid="v1-jm-ads">
-        {gridItems.map((item) =>
-          item.kind === "jerkmate-ad" ? (
-            <JerkmateTubeAdCard
-              key={item.key}
-              adSlotIndex={item.adSlotIndex}
-            />
-          ) : (
+        {gridItems.map((item, visualIndex) => {
+          const viewportPriority = visualIndex < VIEWPORT_EAGER_COUNT;
+
+          if (item.kind === "jerkmate-ad") {
+            const promoPriority = item.adSlotIndex === 0;
+            return (
+              <JerkmateTubeAdCard
+                key={item.key}
+                adSlotIndex={item.adSlotIndex}
+                priority={promoPriority}
+              />
+            );
+          }
+
+          return (
             <ModelTubeCard
               key={item.key}
               performer={item.performer}
               gridIndex={item.performerIndex}
-              priority={item.performerIndex < 4}
+              priority={viewportPriority}
               onQuickView={onQuickView}
               enableDesktopPreview={enableDesktopPreview}
             />
-          ),
-        )}
+          );
+        })}
       </div>
 
       <div ref={sentinelRef} className="h-8 w-full" aria-hidden />

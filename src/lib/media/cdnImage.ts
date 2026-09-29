@@ -2,7 +2,8 @@
  * Responsive performer thumbnails (LCP / grid). Uses CDN transforms when available.
  */
 
-/** Mobile 2-col grid (~45vw) — keep payloads small on Android. */
+/** Mobile 2-col grid: one request per card (~46vw). */
+export const MOBILE_CARD_OPTIMIZED_WIDTH = 280;
 export const MOBILE_CARD_WIDTHS = [160, 240, 320] as const;
 export const DESKTOP_CARD_WIDTHS = [320, 480, 640] as const;
 
@@ -46,9 +47,19 @@ export function buildCdnImageUrl(
   return `${parsed.href}${sep}w=${Math.round(width)}`;
 }
 
+/** Single optimized URL for mobile catalog (avoids triple srcset connection storms). */
+export function buildMobileCardImageSrc(
+  rawUrl: string,
+  format: "webp" | "jpeg" = "webp",
+): string {
+  const trimmed = rawUrl?.trim();
+  if (!trimmed) return "";
+  return buildCdnImageUrl(trimmed, MOBILE_CARD_OPTIMIZED_WIDTH, format);
+}
+
 export type ResponsiveImageSources = {
   src: string;
-  srcSet: string;
+  srcSet: string | null;
   sizes: string;
 };
 
@@ -58,14 +69,25 @@ export function buildResponsiveCardImage(
     widths?: readonly number[];
     sizes?: string;
     format?: "webp" | "jpeg";
+    /** Mobile: one ~280px URL, no srcset. */
+    mobileSingle?: boolean;
   },
 ): ResponsiveImageSources | null {
   const trimmed = rawUrl?.trim();
   if (!trimmed) return null;
 
-  const widths = options?.widths ?? DEFAULT_WIDTHS;
   const sizes = options?.sizes ?? MOBILE_CARD_SIZES_ATTR;
   const format = options?.format ?? "webp";
+
+  if (options?.mobileSingle) {
+    return {
+      src: buildMobileCardImageSrc(trimmed, format),
+      srcSet: null,
+      sizes,
+    };
+  }
+
+  const widths = options?.widths ?? DEFAULT_WIDTHS;
 
   const entries = widths.map((w) => ({
     w,

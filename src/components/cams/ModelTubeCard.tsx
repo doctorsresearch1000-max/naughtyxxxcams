@@ -154,7 +154,7 @@ export function ModelTubeCard({
               src={thumb}
               alt={username}
               priority={priority}
-              fetchPriority={gridIndex < 4 ? "high" : priority ? "auto" : "low"}
+              fetchPriority={priority ? "high" : "low"}
               desktopWidths={enableDesktopPreview}
               hoverSrc={hoverStill}
               showHoverLayer={showHoverPreview}

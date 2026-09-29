@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
 import { pickJerkmateGridCreative } from "@/lib/ads/jerkmateGridCreatives";
 import {
@@ -10,14 +10,38 @@ import {
 
 type JerkmateTubeAdCardProps = {
   adSlotIndex: number;
+  /** First viewport / first in-grid promo slot */
+  priority?: boolean;
 };
 
 /**
  * In-grid Jerkmate slot — same footprint as ModelTubeCard + sponsored metadata.
  */
-export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
-  const src = pickJerkmateGridCreative(adSlotIndex);
+export function JerkmateTubeAdCard({
+  adSlotIndex,
+  priority = false,
+}: JerkmateTubeAdCardProps) {
+  const [src, setSrc] = useState(() => pickJerkmateGridCreative(adSlotIndex));
   const [loaded, setLoaded] = useState(false);
+  const [triedAlternate, setTriedAlternate] = useState(false);
+
+  useEffect(() => {
+    setSrc(pickJerkmateGridCreative(adSlotIndex));
+    setLoaded(false);
+    setTriedAlternate(false);
+  }, [adSlotIndex]);
+
+  const onError = () => {
+    if (!triedAlternate) {
+      setTriedAlternate(true);
+      setSrc(pickJerkmateGridCreative(adSlotIndex + 7));
+      return;
+    }
+    setLoaded(true);
+  };
+
+  const loadingAttr = priority ? "eager" : "lazy";
+  const fetchPri = priority ? "high" : "auto";
 
   return (
     <article className="min-w-0">
@@ -36,7 +60,7 @@ export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
           >
             {!loaded ? (
               <div
-                className="absolute inset-0 animate-pulse bg-zinc-800"
+                className="pointer-events-none absolute inset-0 -z-10 animate-pulse bg-zinc-800/90"
                 aria-hidden
               />
             ) : null}
@@ -47,11 +71,11 @@ export function JerkmateTubeAdCard({ adSlotIndex }: JerkmateTubeAdCardProps) {
               width={320}
               height={240}
               decoding="async"
-              loading="lazy"
+              loading={loadingAttr}
+              fetchPriority={fetchPri}
               onLoad={() => setLoaded(true)}
-              className={`absolute inset-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100 ${
-                loaded ? "opacity-100" : "opacity-0"
-              }`}
+              onError={onError}
+              className="absolute inset-0 z-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
             />
             <SponsoredAdOverlays badge="AD" />
           </div>
