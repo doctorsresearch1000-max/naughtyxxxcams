@@ -4,6 +4,20 @@
 
 :root {
   color-scheme: dark;
+  /* TeleHub / NX design tokens */
+  --nx-action: #39ff14;
+  --nx-action-hover: #00ff7f;
+  --nx-live: #39ff14;
+  --nx-live-fg: #0a0a0a;
+  --nx-story-ring: linear-gradient(
+    135deg,
+    #ff2d92 0%,
+    #e879f9 45%,
+    #a855f7 100%
+  );
+  --nx-radius-card: 0.5rem;
+  --nx-radius-pill: 9999px;
+  --nx-shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
   /* Header global (logo h-10 + padding); bottom nav = 4rem */
   --app-header-height: 3.5rem;
   /* Home vertical feed: true viewport (bottom nav floats above) */

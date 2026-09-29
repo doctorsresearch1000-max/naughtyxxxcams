@@ -13,6 +13,12 @@ const DESKTOP_LINKS = [
 ];
 
 function isActive(pathname: string, href: string): boolean {
+  if (href === "/profile") {
+    return (
+      pathname === "/profile" ||
+      pathname.startsWith("/profile/playlists")
+    );
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

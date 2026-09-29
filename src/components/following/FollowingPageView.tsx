@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FollowingLiveGrid } from "@/components/following/FollowingLiveGrid";
 import { FollowingOfflineList } from "@/components/following/FollowingOfflineList";
-import { JerkmateFollowingGifBanner } from "@/components/following/JerkmateFollowingGifBanner";
 import { LiveNearbyCarousel } from "@/components/following/LiveNearbyCarousel";
 import type { FollowingPageData } from "@/lib/following/followingPageData";
 
@@ -98,7 +97,6 @@ export function FollowingPageView({
           <FollowingLiveGrid cards={liveCards} />
         </div>
 
-        <JerkmateFollowingGifBanner />
       </section>
 
       <section>

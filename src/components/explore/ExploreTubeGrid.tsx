@@ -1,11 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { ExploreDesktopTheaterModal } from "@/components/explore/desktop/ExploreDesktopTheaterModal";
+import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { ExploreInFeedPromoCard } from "@/components/explore/ExploreInFeedPromoCard";
-import { ExploreTubeCard } from "@/components/explore/ExploreTubeCard";
 import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
 import {
   buildExploreInFeedPromo,
@@ -15,7 +13,6 @@ import {
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
-import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
 
 type ExploreTubeGridProps = {
   performers: CrackPerformer[];
@@ -26,17 +23,18 @@ type ExploreTubeGridProps = {
 const TUBE_BATCH = 48;
 
 type GridItem =
-  | { kind: "performer"; key: string; performer: FeedPerformer }
+  | { kind: "performer"; key: string; performer: FeedPerformer; index: number }
   | { kind: "promo"; key: string };
 
 function buildGridItems(
   cards: FeedPerformer[],
   promo: ExploreInFeedPromo | null | undefined,
 ): GridItem[] {
-  const items: GridItem[] = cards.map((performer) => ({
+  const items: GridItem[] = cards.map((performer, index) => ({
     kind: "performer",
     key: performer.feedKey,
     performer,
+    index,
   }));
 
   if (!promo) return items;
@@ -54,7 +52,6 @@ export function ExploreTubeGrid({
   emptyMessage = "No results. Try another filter or search.",
   inFeedPromo,
 }: ExploreTubeGridProps) {
-  const router = useRouter();
   const cards = useMemo(
     () => filterFeedPerformers(performers),
     [performers],
@@ -80,24 +77,6 @@ export function ExploreTubeGrid({
     [visibleCards, promo],
   );
 
-  const [theaterIndex, setTheaterIndex] = useState<number | null>(null);
-
-  const onSelectCard = useCallback(
-    (performer: FeedPerformer) => {
-      const useTheater = window.matchMedia("(min-width: 1024px)").matches;
-      if (useTheater) {
-        const idx = cards.findIndex((p) => p.feedKey === performer.feedKey);
-        setTheaterIndex(idx >= 0 ? idx : 0);
-        return;
-      }
-      const path = performerProfilePathFromPerformer(performer);
-      if (path) router.push(path);
-    },
-    [cards, router],
-  );
-
-  const closeTheater = useCallback(() => setTheaterIndex(null), []);
-
   if (cards.length === 0) {
     return (
       <p className="mx-3 rounded-lg bg-[#1C1C1E] p-6 text-center text-sm text-zinc-400">
@@ -108,15 +87,16 @@ export function ExploreTubeGrid({
 
   return (
     <>
-      <div className={EXPLORE_TUBE_GRID_CLASS} data-explore-tube-grid="v2">
+      <div className={EXPLORE_TUBE_GRID_CLASS} data-explore-tube-grid="v3-tube-card">
         {gridItems.map((item) =>
           item.kind === "promo" ? (
             <ExploreInFeedPromoCard key={item.key} promo={promo} />
           ) : (
-            <ExploreTubeCard
+            <ModelTubeCard
               key={item.key}
               performer={item.performer}
-              onSelect={() => onSelectCard(item.performer)}
+              gridIndex={item.index}
+              priority={item.index < 4}
             />
           ),
         )}
@@ -127,15 +107,6 @@ export function ExploreTubeGrid({
         <p className="py-3 text-center text-xs font-semibold text-zinc-500">
           Loading more models…
         </p>
-      ) : null}
-
-      {theaterIndex !== null ? (
-        <ExploreDesktopTheaterModal
-          performers={cards}
-          activeIndex={theaterIndex}
-          onClose={closeTheater}
-          onChangeIndex={setTheaterIndex}
-        />
       ) : null}
     </>
   );

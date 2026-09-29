@@ -14,7 +14,8 @@ import {
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
-import { JerkmateExploreGifBanner } from "@/components/explore/JerkmateExploreGifBanner";
+import { LiveBadge } from "@/components/cams/LiveBadge";
+import { StoryAvatarRing } from "@/components/cams/StoryAvatarRing";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import {
@@ -31,6 +32,8 @@ import {
   type ExploreSortMode,
 } from "@/lib/explore/exploreGrid";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
+import { dedupeById } from "@/lib/feed/dedupeById";
+import { getPerformerKey } from "@/lib/crackrevenue/api";
 import { explorePathForCategoryParam } from "@/lib/explore/paths";
 import {
   performerDisplayHandle,
@@ -210,11 +213,19 @@ export function ExploreSlushyDiscover({
   }, [basePerformers, search, activeTag, sortMode]);
 
   const liveStories = useMemo(() => {
-    return [...masterPool]
+    const sorted = [...masterPool]
       .filter((p) => p.live !== false)
-      .sort((a, b) => (b.systemScore ?? 0) - (a.systemScore ?? 0))
-      .slice(0, 14);
+      .sort((a, b) => (b.systemScore ?? 0) - (a.systemScore ?? 0));
+    return dedupeById(sorted, (p) => getPerformerKey(p)).slice(0, 14);
   }, [masterPool]);
+
+  const gridPerformers = useMemo(() => {
+    const storyKeys = new Set(liveStories.map((p) => getPerformerKey(p)));
+    return dedupeById(
+      displayedPerformers.filter((p) => !storyKeys.has(getPerformerKey(p))),
+      (p) => getPerformerKey(p),
+    );
+  }, [displayedPerformers, liveStories]);
 
   const inFeedPromo = useMemo(
     () => buildExploreInFeedPromo(liveStories[0] ?? basePerformers[0]),
@@ -367,13 +378,7 @@ export function ExploreSlushyDiscover({
             const thumb = pickCoverUrl(performer);
             const inner = (
               <div className="flex w-[76px] flex-col items-center gap-1.5 lg:w-[58px] lg:gap-1">
-                <div
-                  className="rounded-[24px] p-[2px] lg:rounded-[18px]"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #ff2d92 0%, #e879f9 40%, #a855f7 100%)",
-                  }}
-                >
+                <StoryAvatarRing>
                   <div className="relative h-[72px] w-[72px] overflow-hidden rounded-[22px] bg-[#1C1C1E] lg:h-[52px] lg:w-[52px] lg:rounded-[16px]">
                     {thumb ? (
                       <Image
@@ -387,11 +392,11 @@ export function ExploreSlushyDiscover({
                     ) : (
                       <div className="h-full w-full bg-zinc-800" />
                     )}
-                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pb-1 pt-3 text-center text-[8px] font-black uppercase tracking-wide text-white lg:pb-0.5 lg:pt-2 lg:text-[7px]">
-                      Live
+                    <span className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/80 to-transparent pb-0.5 pt-2 lg:pt-1.5">
+                      <LiveBadge size="sm" className="scale-[0.85] origin-bottom" />
                     </span>
                   </div>
-                </div>
+                </StoryAvatarRing>
                 <span className="max-w-[76px] truncate text-[10px] font-bold text-zinc-100 lg:max-w-[58px] lg:text-[9px]">
                   {handle.replace(/^@/, "")}
                 </span>
@@ -410,24 +415,17 @@ export function ExploreSlushyDiscover({
         </div>
       )}
 
-      <JerkmateExploreGifBanner />
-
       <section className="lg:-mt-1">
-        <div className="mb-2.5 flex items-center justify-between px-0.5 lg:mb-1">
+        <div className="mb-2.5 px-0.5 lg:mb-1">
           <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
             {category ? category.label : "For you"}
           </h2>
-          <span className="text-[10px] font-semibold text-zinc-600">
-            {isPending || showSkeleton
-              ? "…"
-              : `${displayedPerformers.length} / ${total}`}
-          </span>
         </div>
         {showSkeleton ? (
           <ExplorePerformerGridSkeleton count={12} />
         ) : (
           <ExploreTubeGrid
-            performers={displayedPerformers}
+            performers={gridPerformers}
             inFeedPromo={inFeedPromo}
           />
         )}

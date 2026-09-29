@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { ExploreInFeedPromo } from "@/lib/explore/exploreInFeedPromo";
+import { uiStrings } from "@/lib/i18n/uiStrings";
 
 type ExploreInFeedPromoCardProps = {
   promo: ExploreInFeedPromo;
@@ -20,7 +21,7 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
         href={promo.affiliateUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative block aspect-[4/5] w-full overflow-hidden rounded-lg bg-zinc-900 text-left"
+        className="relative block aspect-[4/3] w-full overflow-hidden rounded-lg bg-zinc-900 text-left"
       >
         <Image
           src={cover}
@@ -31,8 +32,8 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
           unoptimized
         />
 
-        <span className="absolute left-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-pink-200 ring-1 ring-pink-400/35">
-          Promoted
+        <span className="absolute left-1.5 top-1.5 rounded bg-black/75 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-zinc-200">
+          {uiStrings.adLabel}
         </span>
 
         <span className="absolute inset-x-2 bottom-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 py-2 text-center text-[10px] font-extrabold uppercase tracking-wide text-white shadow-lg shadow-pink-500/30">

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DesktopImmersiveRoomDialog } from "@/components/desktop/DesktopImmersiveRoomDialog";
-import { DesktopLiveModelCard } from "@/components/desktop/DesktopLiveModelCard";
+import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import {
   applyDesktopCatalogFilters,
   DESKTOP_CATEGORY_PILLS,
@@ -14,9 +14,11 @@ import {
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
-import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
 import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
-import { CATALOG_PAGE_PADDING } from "@/lib/layout/catalogGridLayout";
+import {
+  CATALOG_GRID_CLASS,
+  CATALOG_PAGE_PADDING,
+} from "@/lib/layout/catalogGridLayout";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
@@ -133,7 +135,6 @@ export function DesktopHomeCatalog() {
       />
 
       <HomeCatalogSectionTitle />
-      <JerkmateHomeWideBanner />
 
       <div className="border-b border-zinc-800/80 bg-zinc-950/95 pb-3 pt-2 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-3">
@@ -261,12 +262,13 @@ export function DesktopHomeCatalog() {
 
         {visiblePerformers.length > 0 ? (
           <>
-            <div className="grid grid-cols-3 gap-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-              {visiblePerformers.map((performer) => (
-                <DesktopLiveModelCard
+            <div className={CATALOG_GRID_CLASS}>
+              {visiblePerformers.map((performer, index) => (
+                <ModelTubeCard
                   key={performer.feedKey}
                   performer={performer}
-                  onSelect={() => openLiveRoom(performer)}
+                  gridIndex={index}
+                  priority={index < 4}
                 />
               ))}
             </div>

@@ -8,14 +8,18 @@ type LikeActionButtonProps = {
   feedKey: string;
   modelRef?: SavedModelRef;
   className?: string;
+  /** Profile: single follower count source (overrides seeded like count). */
+  displayCountLabel?: string;
 };
 
 export function LikeActionButton({
   feedKey,
   modelRef,
   className = "",
+  displayCountLabel,
 }: LikeActionButtonProps) {
   const { liked, label, toggleLike, popping } = useFeedLikes(feedKey, modelRef);
+  const countLabel = displayCountLabel ?? label;
 
   return (
     <button
@@ -49,7 +53,7 @@ export function LikeActionButton({
           liked ? "text-[#39FF14]" : "text-zinc-200"
         }`}
       >
-        {label}
+        {countLabel}
       </span>
     </button>
   );

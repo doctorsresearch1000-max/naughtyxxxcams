@@ -3,16 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ApiAvatar } from "@/components/media/ApiAvatar";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
-import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
 import { useConversionAttentionPulse } from "@/hooks/useConversionAttentionPulse";
 import { ModelProfileDesktopView } from "@/components/profile/ModelProfileDesktopView";
 import { ProfileMobileLiveHeader } from "@/components/profile/ProfileMobileLiveHeader";
+import { ProfileStickyCta } from "@/components/profile/ProfileStickyCta";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
+import { LiveBadge } from "@/components/cams/LiveBadge";
+import { trackCtaClickOut, trackModelPageView } from "@/lib/analytics/track";
+import { affiliateClaims } from "@/copy/model-page";
+import { uiStrings } from "@/lib/i18n/uiStrings";
+import { profileFollowersLabel } from "@/lib/profile/followersDisplay";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
@@ -36,11 +41,13 @@ function PrimaryCta({
   live,
   label,
   attentionPulse = false,
+  onTrack,
 }: {
   href: string;
   live: boolean;
   label: string;
   attentionPulse?: boolean;
+  onTrack?: () => void;
 }) {
   const pulseClass =
     attentionPulse && live
@@ -62,7 +69,8 @@ function PrimaryCta({
   return (
     <AffiliateOutboundLink
       href={href}
-      className={`flex w-full items-center justify-between rounded-full bg-[#39FF14] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[#00FF7F] active:scale-[0.99] ${pulseClass}`}
+      onClick={onTrack}
+      className={`flex w-full items-center justify-between rounded-full bg-[var(--nx-action)] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[var(--nx-action-hover)] active:scale-[0.99] ${pulseClass}`}
     >
       <span>{label}</span>
       <span aria-hidden>💬</span>
@@ -79,8 +87,17 @@ export function ModelProfileSlushyView({
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const conversionAttentionPulse = useConversionAttentionPulse(true);
-  const chatCtaLabel = `Chat with ${model.displayName}`;
   const likeKey = `profile-${model.profileSlug}`;
+  const primaryCtaRef = useRef<HTMLDivElement>(null);
+  const followersCount = profileFollowersLabel(
+    model.performer,
+    model.followersLabel,
+  );
+  const liveCtaLabel = uiStrings.watchLiveCta(model.name);
+
+  useEffect(() => {
+    trackModelPageView(model.profileSlug);
+  }, [model.profileSlug]);
 
   const galleryTags = useMemo(() => {
     const set = new Set<string>();
@@ -121,14 +138,14 @@ export function ModelProfileSlushyView({
         <section className="relative">
           <ProfileMobileLiveHeader model={model} />
 
-            <div className="absolute right-3 top-16 z-20 flex flex-col gap-2 pointer-events-none">
+            <div className="absolute right-2 top-14 z-20 flex max-w-[42%] flex-col items-end gap-1 pointer-events-none">
               {model.badges.map((badge) => (
                 <span
                   key={badge}
-                  className={`rotate-2 rounded-xl px-3 py-1.5 text-[10px] font-black tracking-wide text-black shadow-lg ${
+                  className={`rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-wide text-black shadow-sm ${
                     badge.includes("BEST")
                       ? "bg-orange-400"
-                      : "bg-[#39FF14]"
+                      : "bg-[var(--nx-action)]"
                   }`}
                 >
                   {badge}
@@ -157,124 +174,103 @@ export function ModelProfileSlushyView({
             {model.handle.startsWith("@") ? model.handle : `@${model.handle}`}
           </p>
 
-          <div className="mt-4 flex justify-center">
-            <LikeActionButton feedKey={likeKey} />
-          </div>
-
-          <div className="mt-4 flex justify-center">
-            <ChatWithModelCta
-              modelName={model.displayName}
-              affiliateUrl={model.affiliateUrl}
-              visible
-              attentionPulse={conversionAttentionPulse}
+          <div className="mt-3 flex justify-center">
+            <LikeActionButton
+              feedKey={likeKey}
+              displayCountLabel={followersCount}
             />
           </div>
+        </section>
 
-          <p className="mt-4 text-sm leading-relaxed text-zinc-300">{model.bio}</p>
-          <p className="mt-2 text-xs leading-relaxed text-zinc-500">{seo.intro}</p>
+        <section className="space-y-2 px-4 pt-4">
+          <div ref={primaryCtaRef}>
+            <PrimaryCta
+              href={model.affiliateUrl}
+              live={isLive}
+              label={liveCtaLabel}
+              attentionPulse={conversionAttentionPulse}
+              onTrack={() => trackCtaClickOut("primary", model.profileSlug)}
+            />
+          </div>
+          <p className="text-center text-[11px] text-zinc-500">
+            {affiliateClaims.verifiedProfile}
+          </p>
+        </section>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-5 text-xs text-zinc-300">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 ring-1 ring-white/5">
-              <span className="text-[#39FF14]">👤</span>
-              {model.followersLabel} followers
+        <section className="px-5 pt-4 text-center">
+          <p className="text-sm leading-relaxed text-zinc-300">{model.bio}</p>
+        </section>
+
+        <section className="px-4 pt-3">
+          <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-1">
+            <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
+              {followersCount} followers
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1C1C1E] px-3 py-1.5 ring-1 ring-white/5">
-              <span className="text-[#39FF14]">🛡️</span>
-              Verified identity
+            <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
+              {uiStrings.verified}
+            </span>
+            <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
+              {model.language}
+            </span>
+            <span className="shrink-0 rounded-full bg-[#1C1C1E] px-3 py-1.5 text-xs text-zinc-300 ring-1 ring-white/5">
+              {countryFlag(model.country)} {model.country}
             </span>
           </div>
         </section>
 
-        <section className="space-y-3 px-4 pt-8">
-          <PrimaryCta
-            href={model.affiliateUrl}
-            live={isLive}
-            label={chatCtaLabel}
-            attentionPulse={conversionAttentionPulse}
-          />
+        <section className="px-4 pt-4">
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-full border border-white/10 bg-[#1C1C1E] px-5 py-4 text-sm font-semibold text-white ring-1 ring-white/5"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-[#1C1C1E] px-4 py-3 text-sm font-semibold text-white"
           >
-            <span>Save to favorites</span>
             <span aria-hidden>🔖</span>
+            {uiStrings.saveFavorites}
           </button>
         </section>
 
-        <section className="px-4 pt-10">
-          <h2 className="mb-4 text-center text-xs font-black tracking-[0.25em] text-[#39FF14]">
-            ABOUT {model.displayName.toUpperCase()}
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {model.aboutCards.map((card) => (
-              <div
-                key={card.label}
-                className={`rounded-2xl bg-[#1C1C1E] p-4 ring-1 ring-white/5 ${
-                  card.span === "full" ? "col-span-2" : ""
-                }`}
-              >
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
-                  {card.label}
-                </p>
-                <p className="mt-1.5 text-sm font-semibold text-white">
-                  {card.value}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section className="px-4 pt-8">
-          <ProfileSeoContentBlock seo={seo} />
-        </section>
-
-        <section className="px-4 pt-6">
-          <ProfileFaqSection items={seo.faqItems} />
-        </section>
-
-        <section className="px-4 pt-10">
-          <h2 className="text-center text-xs font-black tracking-[0.25em] text-white">
-            PRIVATE GALLERY
+          <h2 className="mb-3 text-center text-xs font-black tracking-[0.2em] text-white">
+            {uiStrings.gallery}
           </h2>
-          <p className="mt-2 text-center text-xs text-zinc-500">
-            {model.galleryItems.length} posts ·{" "}
-            {model.galleryItems.filter((g) => g.locked).length} locked
-          </p>
 
-          <div className="hide-scrollbar mt-4 flex gap-2 overflow-x-auto pb-2">
-            <button
-              type="button"
-              onClick={() => setActiveTag(null)}
-              className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold ${
-                activeTag === null
-                  ? "bg-[#39FF14] text-black"
-                  : "bg-[#1C1C1E] text-zinc-300 ring-1 ring-white/10"
-              }`}
-            >
-              All
-            </button>
-            {galleryTags.map((tag) => (
+          {model.galleryItems.length >= 8 && galleryTags.length > 0 ? (
+            <div className="hide-scrollbar mb-3 flex gap-2 overflow-x-auto pb-2">
               <button
-                key={tag}
                 type="button"
-                onClick={() => setActiveTag(tag)}
-                className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold capitalize ${
-                  activeTag === tag
-                    ? "bg-[#39FF14] text-black"
+                onClick={() => setActiveTag(null)}
+                className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold ${
+                  activeTag === null
+                    ? "bg-[var(--nx-action)] text-black"
                     : "bg-[#1C1C1E] text-zinc-300 ring-1 ring-white/10"
                 }`}
               >
-                {tag}
+                All
               </button>
-            ))}
-          </div>
+              {galleryTags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setActiveTag(tag)}
+                  className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold capitalize ${
+                    activeTag === tag
+                      ? "bg-[var(--nx-action)] text-black"
+                      : "bg-[#1C1C1E] text-zinc-300 ring-1 ring-white/10"
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          ) : null}
 
-          <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {filteredGallery.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
-                onClick={() => item.locked && openSheet()}
+                onClick={() =>
+                  item.locked ? openSheet() : window.open(model.affiliateUrl, "_blank")
+                }
                 className="relative aspect-[3/4] overflow-hidden rounded-[18px] bg-[#1C1C1E] ring-1 ring-white/5"
               >
                 <Image
@@ -286,15 +282,11 @@ export function ModelProfileSlushyView({
                   className={`object-cover ${item.locked ? "blur-md brightness-50" : ""}`}
                   sizes="33vw"
                 />
-                {item.locked && (
+                {item.locked ? (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                     <span className="text-2xl" aria-hidden>🔒</span>
                   </div>
-                )}
-                <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold">
-                  <span aria-hidden>👁</span>
-                  {item.viewsLabel}
-                </div>
+                ) : null}
               </button>
             ))}
           </div>
@@ -302,8 +294,8 @@ export function ModelProfileSlushyView({
 
         {recommended.length > 0 && (
           <section className="px-4 pt-10">
-            <h2 className="text-center text-xs font-black tracking-[0.25em] text-white">
-              MORE LIVE NOW
+            <h2 className="text-center text-xs font-black tracking-[0.2em] text-white">
+              {uiStrings.moreLiveNow}
             </h2>
             <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
               {recommended.map((friend) => (
@@ -322,11 +314,11 @@ export function ModelProfileSlushyView({
                       className="object-cover"
                       sizes="144px"
                     />
-                    {friend.live && (
-                      <span className="absolute left-2 top-2 rounded-full bg-[#39FF14] px-2 py-0.5 text-[9px] font-black text-black">
-                        LIVE
+                    {friend.live ? (
+                      <span className="absolute left-2 top-2">
+                        <LiveBadge />
                       </span>
-                    )}
+                    ) : null}
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black to-transparent p-2">
                       <p className="truncate text-xs font-bold">{friend.name}</p>
                       <p className="text-[10px] text-zinc-300">
@@ -339,6 +331,36 @@ export function ModelProfileSlushyView({
             </div>
           </section>
         )}
+
+        <section className="px-4 pt-8">
+          <h2 className="mb-4 text-center text-xs font-black tracking-[0.2em] text-[var(--nx-action)]">
+            About {model.displayName}
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {model.aboutCards
+              .filter((card) => card.value && card.value !== "—")
+              .map((card) => (
+                <div
+                  key={card.label}
+                  className={`rounded-2xl bg-[#1C1C1E] p-4 ring-1 ring-white/5 ${
+                    card.span === "full" ? "col-span-2" : ""
+                  }`}
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                    {card.label}
+                  </p>
+                  <p className="mt-1.5 text-sm font-semibold text-white">
+                    {card.value}
+                  </p>
+                </div>
+              ))}
+          </div>
+        </section>
+
+        <section className="space-y-4 px-4 pt-8">
+          <ProfileSeoContentBlock seo={seo} />
+          <ProfileFaqSection items={seo.faqItems} />
+        </section>
 
         <section className="px-4 pt-12 text-center">
           <div className="mx-auto mb-4 h-16 w-12 overflow-hidden rounded-xl bg-[#1C1C1E] ring-1 ring-white/10">
@@ -362,18 +384,27 @@ export function ModelProfileSlushyView({
             <PrimaryCta
               href={model.affiliateUrl}
               live={isLive}
-              label={chatCtaLabel}
+              label={liveCtaLabel}
+              onTrack={() => trackCtaClickOut("end_card", model.profileSlug)}
             />
             <Link
               href={nextProfilePath}
               className="flex w-full items-center justify-between rounded-full border border-white/15 bg-transparent px-5 py-4 text-sm font-bold text-white transition hover:bg-white/5"
             >
-              <span>Next profile</span>
+              <span>{uiStrings.nextProfile}</span>
               <span aria-hidden>→</span>
             </Link>
           </div>
         </section>
       </div>
+
+      <ProfileStickyCta
+        href={model.affiliateUrl}
+        live={isLive}
+        modelName={model.name}
+        profileSlug={model.profileSlug}
+        primaryCtaRef={primaryCtaRef}
+      />
     </main>
     </>
   );

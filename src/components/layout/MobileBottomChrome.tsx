@@ -78,6 +78,13 @@ function NavGlyph({
 
 function isPathActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
+  if (href === "/profile") {
+    return (
+      pathname === "/profile" ||
+      pathname.startsWith("/profile/playlists") ||
+      pathname.startsWith("/auth/")
+    );
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

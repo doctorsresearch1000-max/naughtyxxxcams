@@ -1,6 +1,5 @@
 "use client";
 
-import { JerkmateHomeWideBanner } from "@/components/conversion/JerkmateHomeWideBanner";
 import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
@@ -23,7 +22,6 @@ export function HomeTabletTubeCatalog({
       data-home-tablet-tube="v3-camb3"
     >
       <HomeCatalogSectionTitle />
-      <JerkmateHomeWideBanner />
       {!ready ? (
         <ExplorePerformerGridSkeleton />
       ) : (
