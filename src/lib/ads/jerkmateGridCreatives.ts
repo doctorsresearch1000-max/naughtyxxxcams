@@ -1,6 +1,8 @@
-/** Local Jerkmate in-grid creatives (public/ads/jerkmate). */
+import { filterSafeJerkmateCreatives } from "@/lib/ads/jerkmateCreativePolicy";
 
-export const JERKMATE_GRID_CREATIVE_PATHS: readonly string[] = [
+/** Local Jerkmate in-grid creatives (public/ads/jerkmate). Review via `npm run test:ads`. */
+
+const JERKMATE_GRID_CREATIVE_PATHS_RAW: readonly string[] = [
   "/ads/jerkmate/dd29f7ae-7854-4df3-8e8a-abde2df8d253.jpg",
   "/ads/jerkmate/63911948-323c-4a9a-9e09-c0ba002260ac.jpg",
   "/ads/jerkmate/2b6f7af2-cc02-42f0-988e-b763d3005ee9.gif",
@@ -19,8 +21,14 @@ export const JERKMATE_GRID_CREATIVE_PATHS: readonly string[] = [
   "/ads/jerkmate/29a64ccc-f967-4f61-9488-641c929db2de.jpg",
 ] as const;
 
+export const JERKMATE_GRID_CREATIVE_PATHS: readonly string[] =
+  filterSafeJerkmateCreatives(JERKMATE_GRID_CREATIVE_PATHS_RAW);
+
 export function pickJerkmateGridCreative(adSlotIndex: number): string {
   const list = JERKMATE_GRID_CREATIVE_PATHS;
+  if (list.length === 0) {
+    return "/ads/jerkmate/29a64ccc-f967-4f61-9488-641c929db2de.jpg";
+  }
   const idx =
     ((adSlotIndex % list.length) + list.length) % list.length;
   return list[idx]!;

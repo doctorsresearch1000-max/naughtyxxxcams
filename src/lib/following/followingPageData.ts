@@ -31,6 +31,9 @@ export type FollowingOfflineItem = {
   profilePath: string | null;
 };
 
+/** Fewer upstream pages on Following to reduce Worker timeouts (“Connection closed”). */
+const FOLLOWING_MASTER_POOL_PAGES = 2;
+
 const NEARBY_STORY_COUNT = 18;
 const LIVE_CARD_COUNT = 6;
 const OFFLINE_COUNT = 8;
@@ -77,10 +80,19 @@ export type FollowingPageData = {
   followedTotal: number;
 };
 
+export const EMPTY_FOLLOWING_PAGE_DATA: FollowingPageData = {
+  nearby: [],
+  liveCards: [],
+  liveGrid: [],
+  offline: [],
+  liveCount: 0,
+  followedTotal: 0,
+};
+
 export async function getFollowingPageData(): Promise<FollowingPageData> {
   let pool: CrackPerformer[] = [];
   try {
-    pool = await fetchExploreMasterPool(3);
+    pool = await fetchExploreMasterPool(FOLLOWING_MASTER_POOL_PAGES);
   } catch {
     pool = [];
   }

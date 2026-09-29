@@ -4,7 +4,10 @@ export const fetchCache = "force-no-store";
 import type { Metadata } from "next";
 import { FollowingPageView } from "@/components/following/FollowingPageView";
 import { SecondaryRouteShell } from "@/components/layout/SecondaryRouteShell";
-import { getFollowingPageData } from "@/lib/following/followingPageData";
+import {
+  EMPTY_FOLLOWING_PAGE_DATA,
+  getFollowingPageData,
+} from "@/lib/following/followingPageData";
 
 export const metadata: Metadata = {
   title: "Following — Your Live Models | NaughtyXXXCams",
@@ -17,14 +20,7 @@ export default async function FollowingPage() {
   try {
     data = await getFollowingPageData();
   } catch {
-    data = {
-      nearby: [],
-      liveCards: [],
-      liveGrid: [],
-      offline: [],
-      liveCount: 0,
-      followedTotal: 0,
-    };
+    data = EMPTY_FOLLOWING_PAGE_DATA;
   }
 
   return (

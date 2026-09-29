@@ -90,7 +90,7 @@ export type FetchPerformersParams = {
 export async function fetchExploreMasterPool(
   pages = EXPLORE_MASTER_POOL_PAGES,
 ): Promise<CrackPerformer[]> {
-  const responses = await Promise.all(
+  const settled = await Promise.allSettled(
     Array.from({ length: pages }, (_, i) =>
       fetchStreamatePerformers({ live: true, size: 100, page: i + 1 }),
     ),
@@ -99,7 +99,9 @@ export async function fetchExploreMasterPool(
   const merged: CrackPerformer[] = [];
   const seen = new Set<string>();
 
-  for (const data of responses) {
+  for (const result of settled) {
+    if (result.status !== "fulfilled") continue;
+    const data = result.value;
     for (const p of data.performers ?? []) {
       const key = p.itemId || p.nameClean || p.name || "";
       if (!key || seen.has(key)) continue;

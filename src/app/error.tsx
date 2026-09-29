@@ -1,5 +1,12 @@
 "use client";
 
+function isBenignFeedError(message: string | undefined): boolean {
+  if (!message?.trim()) return true;
+  return /connection closed|loading chunk|failed to fetch|network error|aborted/i.test(
+    message,
+  );
+}
+
 export default function Error({
   error,
   reset,
@@ -7,6 +14,9 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const showTechnical =
+    process.env.NODE_ENV === "development" && !isBenignFeedError(error?.message);
+
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 px-6 text-center text-white">
       <h1 className="text-xl font-black text-[#39FF14]">Naughty XXX Cams</h1>
@@ -14,10 +24,10 @@ export default function Error({
         We couldn&apos;t load this page right now. Your connection or our live
         feed API may be temporarily unavailable.
       </p>
-      {error?.message ? (
+      {showTechnical && error?.message ? (
         <p className="max-w-sm text-[11px] text-zinc-500">{error.message}</p>
       ) : null}
-      {error?.digest ? (
+      {error?.digest && process.env.NODE_ENV === "development" ? (
         <p className="text-[10px] text-zinc-600">Reference: {error.digest}</p>
       ) : null}
       <button
