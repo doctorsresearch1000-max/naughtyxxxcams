@@ -6,7 +6,7 @@ type JerkmateLogoMarkProps = {
 };
 
 export function JerkmateLogoMark({
-  className = "h-3.5 w-auto max-w-[5.5rem] object-contain",
+  className = "h-3.5 w-auto object-contain",
 }: JerkmateLogoMarkProps) {
   return (
     // eslint-disable-next-line @next/next/no-img-element

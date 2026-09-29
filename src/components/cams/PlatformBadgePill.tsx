@@ -11,65 +11,39 @@ type PlatformBadgePillProps = {
   className?: string;
 };
 
+/** @deprecated Catalog cards always use the Jerkmate logo watermark (no STREAMATE text). */
 export function isJerkmatePlatformContext(
   performer?: FeedPerformer | null,
   jerkmateSlot = false,
 ): boolean {
   if (jerkmateSlot) return true;
   if (!performer) return false;
-
   const src = performer.systemSource?.trim().toLowerCase() ?? "";
   if (src.includes("jerk")) return true;
-
   const key = performer.feedKey?.trim().toLowerCase() ?? "";
   if (key.includes("jerkmate")) return true;
-
   const room = performer.roomUrl?.trim().toLowerCase() ?? "";
-  if (room.includes("jerkmate")) return true;
-
-  return false;
+  return room.includes("jerkmate");
 }
 
-function catalogProviderTextLabel(performer: FeedPerformer): string | null {
-  const src = performer.systemSource?.trim();
-  if (!src) return null;
-  const lower = src.toLowerCase();
-  if (lower.includes("jerk")) return null;
-  const cleaned = src.replace(/[^a-z0-9]/gi, "").toUpperCase();
-  return cleaned.length > 0 ? cleaned : null;
-}
-
+/**
+ * Bottom-right platform watermark for grid cards.
+ * Always renders the Jerkmate logo asset — never plain "STREAMATE" text
+ * (API `systemSource: streamate` is intentionally not shown as copy).
+ */
 export function PlatformBadgePill({
   performer,
   jerkmate = false,
   className = "",
 }: PlatformBadgePillProps) {
-  const showJerkmateLogo = isJerkmatePlatformContext(performer, jerkmate);
-
-  if (showJerkmateLogo) {
-    return (
-      <span
-        className={`${PLATFORM_BADGE_PILL_CLASS} ${className}`}
-        data-platform-badge="jerkmate"
-      >
-        <JerkmateLogoMark />
-      </span>
-    );
-  }
-
-  if (!performer) return null;
-
-  const label = catalogProviderTextLabel(performer);
-  if (!label) return null;
+  if (!jerkmate && !performer) return null;
 
   return (
     <span
       className={`${PLATFORM_BADGE_PILL_CLASS} ${className}`}
-      data-platform-badge="provider"
+      data-platform-badge="jerkmate"
     >
-      <span className="text-[9px] font-extrabold uppercase text-zinc-200">
-        {label}
-      </span>
+      <JerkmateLogoMark className="h-3.5 w-auto object-contain" />
     </span>
   );
 }

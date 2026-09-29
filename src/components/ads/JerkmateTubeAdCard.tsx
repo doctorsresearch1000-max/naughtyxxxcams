@@ -85,7 +85,7 @@ export function JerkmateTubeAdCard({
               className={PLATFORM_BADGE_PILL_CLASS}
               data-platform-badge="jerkmate"
             >
-              <JerkmateLogoMark />
+              <JerkmateLogoMark className="h-3.5 w-auto object-contain" />
             </span>
           </div>
         </div>
