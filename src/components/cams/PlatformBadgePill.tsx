@@ -20,10 +20,10 @@ export function PlatformBadgePill({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={JERKMATE_LOGO_SRC}
-        className="block h-4 w-auto object-contain md:h-4.5"
+        className="block h-4.5 w-auto object-contain md:h-5"
         alt="Jerkmate"
-        width={64}
-        height={16}
+        width={72}
+        height={18}
         decoding="async"
       />
     </span>
