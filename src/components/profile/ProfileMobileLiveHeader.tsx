@@ -6,8 +6,10 @@ import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutbound
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
+import { ProfilePlayerPosterFallback } from "@/components/profile/ProfilePlayerPosterFallback";
 import { crackPerformerToFeedPerformer } from "@/lib/feed/filterPerformers";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 import {
   injectStreamPreconnects,
   warmPerformerStream,
@@ -44,6 +46,13 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
     model.avatar ||
     "";
 
+  const catalogLive = model.status === "live";
+  const canMountStream = catalogLive && Boolean(feedPerformer);
+
+  const openAffiliate = useCallback(() => {
+    openAffiliateOutbound(model.affiliateUrl);
+  }, [model.affiliateUrl]);
+
   useEffect(() => {
     injectStreamPreconnects();
     setArmed(true);
@@ -73,24 +82,33 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
   }, [armed, feedPerformer]);
 
   useEffect(() => {
-    if (phase !== "loading") return;
+    setPhase("loading");
+  }, [feedPerformer?.feedKey, catalogLive]);
+
+  useEffect(() => {
+    if (!canMountStream || phase !== "loading") return;
     const id = window.setTimeout(() => {
       setPhase((current) => (current === "loading" ? "fallback" : current));
     }, STREAM_TIMEOUT_MS);
     return () => window.clearTimeout(id);
-  }, [phase, feedPerformer?.feedKey]);
+  }, [canMountStream, phase, feedPerformer?.feedKey]);
 
   const handleStreamRevealed = useCallback(() => {
     setPhase("playing");
   }, []);
 
-  const isLive = model.status === "live" && Boolean(feedPerformer);
-  const showOverlay = phase !== "playing";
-  const showFallbackCta = phase === "fallback" && isLive;
+  const handleStreamDisconnected = useCallback(() => {
+    setPhase("fallback");
+  }, []);
+
+  const showOverlay = canMountStream && phase !== "playing";
+  const showFallbackCta = phase === "fallback" && catalogLive;
 
   return (
-    <div className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10">
-      {isLive && feedPerformer ? (
+    <div
+      className="relative mx-3 mt-2 h-[min(68vh,520px)] overflow-hidden rounded-[28px] bg-[#1C1C1E] ring-1 ring-white/10"
+    >
+      {canMountStream && feedPerformer ? (
         <SessionAudioProvider>
           <FeedViewportProvider heightPx={HEADER_HEIGHT_PX}>
             <div
@@ -112,25 +130,24 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
                 externalPosterControl
                 posterFallbackMaxMs={STREAM_TIMEOUT_MS}
                 onStreamRevealed={handleStreamRevealed}
+                onStreamDisconnected={handleStreamDisconnected}
               />
             </div>
           </FeedViewportProvider>
         </SessionAudioProvider>
-      ) : posterUrl ? (
-        <Image
-          src={posterUrl}
-          alt={model.displayName}
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover"
+      ) : (
+        <ProfilePlayerPosterFallback
+          posterUrl={posterUrl}
+          displayName={model.displayName}
+          affiliateUrl={model.affiliateUrl}
+          live={catalogLive}
+          className="absolute inset-0"
         />
-      ) : null}
+      )}
 
-      {isLive && showOverlay ? (
+      {canMountStream && showOverlay ? (
         <div
-          className="absolute inset-0 z-10 flex flex-col items-center justify-center opacity-100 transition-opacity duration-500"
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center transition-opacity duration-500"
           aria-busy={phase === "loading"}
         >
           {posterUrl ? (
@@ -171,17 +188,26 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
                 Enter show / Chat
               </AffiliateOutboundLink>
               <p className="mt-2 text-center text-[10px] text-zinc-300">
-                Stream is warming up — open the room directly
+                Stream unavailable — open the room directly
               </p>
             </div>
           ) : null}
         </div>
       ) : null}
 
+      {catalogLive ? (
+        <button
+          type="button"
+          className="absolute inset-0 z-[12] cursor-pointer bg-transparent"
+          aria-label="Open live room in new tab"
+          onClick={openAffiliate}
+        />
+      ) : null}
+
       <div className="pointer-events-none absolute inset-0 z-[5] bg-gradient-to-b from-black/25 via-transparent to-[#0A0A0A]" />
 
-      {isLive ? (
-        <span className="absolute left-4 top-4 z-20 rounded-full bg-[#39FF14] px-3 py-1 text-[11px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
+      {catalogLive ? (
+        <span className="pointer-events-none absolute left-4 top-4 z-20 rounded-full bg-[#39FF14] px-3 py-1 text-[11px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
           • LIVE
         </span>
       ) : null}

@@ -150,14 +150,9 @@ export function buildFollowersLabel(_performer: CrackPerformer): string {
   return "Verified";
 }
 
-export function buildProfileBadges(performer: CrackPerformer): string[] {
-  const badges: string[] = [];
-  if ((performer.systemScore ?? 0) > 0.85) badges.push("POPULAR PICK");
-  if ((performer.stars ?? 0) >= 4 || (performer.systemScore ?? 0) > 0.92) {
-    badges.push("BEST SELLER");
-  }
-  if (performer.live) badges.push("LIVE NOW");
-  return badges.slice(0, 2);
+/** @deprecated UI uses {@link ProfileConversionBadges} — kept for type compatibility. */
+export function buildProfileBadges(_performer: CrackPerformer): string[] {
+  return [];
 }
 
 export function toRecommendedProfile(

@@ -63,6 +63,8 @@ type LiveEmbedProps = {
   onIframeWindow?: (win: Window | null) => void;
   onFrameDocumentLoad?: () => void;
   onStreamRevealed?: () => void;
+  /** Pure player disconnected before/during reveal (profile fallback). */
+  onStreamDisconnected?: (reason: string) => void;
 };
 
 function wireIframeChrome(
@@ -106,6 +108,7 @@ export function LiveEmbed({
   onIframeWindow,
   onFrameDocumentLoad,
   onStreamRevealed,
+  onStreamDisconnected,
 }: LiveEmbedProps) {
   const contextHeightPx = useFeedSlideHeightPx();
   const slideHeightPx = viewportHeightPx ?? contextHeightPx;
@@ -198,6 +201,12 @@ export function LiveEmbed({
   useEffect(() => {
     if (posterDismissed && isActive) onStreamRevealed?.();
   }, [posterDismissed, isActive, onStreamRevealed]);
+
+  useEffect(() => {
+    if (pureDisconnectReason) {
+      onStreamDisconnected?.(pureDisconnectReason);
+    }
+  }, [pureDisconnectReason, onStreamDisconnected]);
 
   useEffect(() => {
     if (!mountIframe || !isPureIframe) return;
