@@ -330,9 +330,10 @@ export function ExploreSlushyDiscover({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search models"
-          className="w-full rounded-full bg-[#1a1a1e] py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none ring-1 ring-white/[0.06] focus:ring-pink-500/35"
+          className="w-full rounded-full bg-[#1a1a1e] py-3.5 pl-11 pr-4 text-[16px] leading-normal text-white placeholder:text-zinc-500 outline-none ring-1 ring-white/[0.06] focus:ring-pink-500/35 lg:text-sm touch-manipulation"
           autoComplete="off"
           enterKeyHint="search"
+          inputMode="search"
         />
       </div>
 

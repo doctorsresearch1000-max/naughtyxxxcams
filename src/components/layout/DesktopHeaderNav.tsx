@@ -92,7 +92,7 @@ export function DesktopHeaderNav() {
             if (e.key === "Enter") submitSearch(query);
           }}
           placeholder="Search models, tags..."
-          className="h-10 w-full rounded-full border border-white/10 bg-zinc-900/90 pl-10 pr-4 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-[#39FF14]/40 focus:ring-1 focus:ring-[#39FF14]/25"
+          className="h-10 w-full rounded-full border border-white/10 bg-zinc-900/90 pl-10 pr-4 text-[16px] text-white placeholder:text-zinc-500 outline-none focus:border-[#39FF14]/40 focus:ring-1 focus:ring-[#39FF14]/25 lg:text-sm touch-manipulation"
           autoComplete="off"
         />
       </div>
