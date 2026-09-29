@@ -18,6 +18,7 @@ export function PlatformBadgePill({
     <span
       className={`${PLATFORM_BADGE_PILL_CLASS} ${className}`}
       data-platform-badge="jerkmate"
+      data-feed-key={performer.feedKey}
     >
       <JerkmateLogoMark className="h-3.5 w-auto object-contain" />
     </span>
