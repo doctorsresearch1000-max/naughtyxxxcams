@@ -1,7 +1,6 @@
 /** Local Jerkmate in-grid creatives (public/ads/jerkmate). */
 
 export const JERKMATE_GRID_CREATIVE_PATHS: readonly string[] = [
-  "/ads/jerkmate/65e41014-5b2d-4c35-9475-b1d1d38016bd.jpg",
   "/ads/jerkmate/dd29f7ae-7854-4df3-8e8a-abde2df8d253.jpg",
   "/ads/jerkmate/63911948-323c-4a9a-9e09-c0ba002260ac.jpg",
   "/ads/jerkmate/2b6f7af2-cc02-42f0-988e-b763d3005ee9.gif",
