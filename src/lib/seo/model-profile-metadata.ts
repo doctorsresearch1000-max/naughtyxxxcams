@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
 import { pickVariant } from "@/lib/seo/seoVariants";
+import {
+  INDEXABLE_ROBOTS,
+  NOINDEX_ROBOTS,
+  normalizeSeoDescription,
+  normalizeSeoTitle,
+  SEO_DESCRIPTION_MAX_LEN,
+  SEO_TITLE_MAX_LEN,
+} from "@/lib/seo/metadataHelpers";
 
 /** Max recommended length for SERP titles (programmatic trim). */
-export const MODEL_PROFILE_TITLE_MAX = 60;
+export const MODEL_PROFILE_TITLE_MAX = SEO_TITLE_MAX_LEN;
 
 /** Meta description soft cap. */
-export const MODEL_PROFILE_DESCRIPTION_MAX = 160;
+export const MODEL_PROFILE_DESCRIPTION_MAX = SEO_DESCRIPTION_MAX_LEN;
 
 export const PROFILE_INTENT_ROUTES = ["vip", "leaks"] as const;
 export type ProfileIntentRoute = (typeof PROFILE_INTENT_ROUTES)[number];
@@ -32,10 +40,6 @@ export function isModelProfileLive(model: ModelProfileSeoModel): boolean {
   return model.status !== "offline";
 }
 
-function currentSeoYear(): string {
-  return String(new Date().getFullYear());
-}
-
 function atUsername(handle: string): string {
   const clean = handle.trim().replace(/^@+/, "");
   return clean ? `@${clean}` : "@model";
@@ -45,70 +49,6 @@ function bareUsername(handle: string): string {
   return handle.trim().replace(/^@+/, "") || "model";
 }
 
-function normalizeWhitespace(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
-}
-
-/** Strict trim for titles (~70 chars) without awkward mid-word cuts when possible. */
-export function truncateModelProfileTitle(
-  title: string,
-  max = MODEL_PROFILE_TITLE_MAX,
-): string {
-  const normalized = normalizeWhitespace(title);
-  if (normalized.length <= max) return normalized;
-
-  const ellipsis = "…";
-  const budget = max - ellipsis.length;
-  let slice = normalized.slice(0, budget);
-
-  const lastSpace = slice.lastIndexOf(" ");
-  const lastDash = slice.lastIndexOf(" - ");
-  const breakAt = Math.max(lastDash, lastSpace);
-  if (breakAt > budget * 0.55) {
-    slice = slice.slice(0, breakAt);
-  }
-
-  return `${slice.trim()}${ellipsis}`;
-}
-
-function truncateModelProfileDescription(
-  description: string,
-  max = MODEL_PROFILE_DESCRIPTION_MAX,
-): string {
-  const normalized = normalizeWhitespace(description);
-  if (normalized.length <= max) return normalized;
-  return `${normalized.slice(0, max - 1).trim()}…`;
-}
-
-const LIVE_TITLE_TEMPLATES = [
-  "🔴 {name} Live Cam Online - Free Broadcast & Chat {handle} {year}",
-  "🔴 {name} Live Now — HD Public Cam Room & Free Chat {handle} {year}",
-  "🔴 Watch {name} Streaming Live — Interactive Cam & Chat {handle} {year}",
-  "🔴 {name} On Air — Free Live Broadcast & Public Chat {handle} {year}",
-] as const;
-
-const OFFLINE_TITLE_TEMPLATES = [
-  "📸 {name} ({handle}) Telegram Gallery & Updates {year} - Cam HD",
-  "📸 {name} ({handle}) Photo Gallery, Telegram & Cam HD {year}",
-  "📸 {name} ({handle}) — Telegram Updates & HD Gallery {year}",
-] as const;
-
-const LIVE_DESCRIPTION_TEMPLATES = [
-  "Watch {name} ({handle}) streaming live on NaughtyXXXCams — free public chat, HD cam room, and real-time interaction. Join the broadcast now.",
-  "{name} is live now on NaughtyXXXCams: HD webcam, open chat with viewers, and instant room access via {handle}. Tap in for the interactive show.",
-  "Free live cam with {name} ({handle}) — public HD stream, chat-friendly room, and Streamate-powered broadcast on NaughtyXXXCams.",
-  "Catch {name} live: interactive webcam, public chat, and HD streaming on NaughtyXXXCams. Official profile for {handle} with room entry in one tap.",
-] as const;
-
-const OFFLINE_DESCRIPTION_TEMPLATES = [
-  "Browse {name} ({handle}) photos, clips, and Telegram gallery updates on NaughtyXXXCams. HD cam profile, traits, and alerts when she goes live.",
-  "{name}'s official hub ({handle}) — curated gallery, video highlights, Telegram-style updates, and Streamate room links on NaughtyXXXCams.",
-  "Explore {name} ({handle}): photo gallery, profile media, Telegram updates, and HD cam metadata. Save the profile for live alerts on NaughtyXXXCams.",
-] as const;
-
-const VIP_TITLE_SUFFIX = " — VIP Cam Access";
-const LEAKS_TITLE_SUFFIX = " — Exclusive Media";
-
 function fillSeoTemplate(
   template: string,
   vars: Record<string, string>,
@@ -117,8 +57,56 @@ function fillSeoTemplate(
   for (const [key, value] of Object.entries(vars)) {
     out = out.replaceAll(`{${key}}`, value);
   }
-  return normalizeWhitespace(out);
+  return out.replace(/\s+/g, " ").trim();
 }
+
+/** Guaranteed SERP-safe fallback when templates or API data are thin. */
+export function buildModelProfileFallbackTitle(model: ModelProfileSeoModel): string {
+  const name = model.name.trim() || bareUsername(model.handle);
+  return normalizeSeoTitle(`${name} Live Cam & Profile — NaughtyXxxCams`);
+}
+
+export function buildModelProfileFallbackDescription(
+  model: ModelProfileSeoModel,
+): string {
+  const name = model.name.trim() || bareUsername(model.handle);
+  return normalizeSeoDescription(
+    `Watch ${name} live on NaughtyXxxCams. View photos, bio, and live stream schedule.`,
+  );
+}
+
+/** @deprecated use normalizeSeoTitle */
+export function truncateModelProfileTitle(
+  title: string,
+  max = MODEL_PROFILE_TITLE_MAX,
+): string {
+  return normalizeSeoTitle(title, { max });
+}
+
+const LIVE_TITLE_TEMPLATES = [
+  "{name} Live Cam & Profile — NaughtyXxxCams",
+  "{name} Live Now — HD Cam & Chat",
+  "Watch {name} Live — Cam Profile",
+] as const;
+
+const OFFLINE_TITLE_TEMPLATES = [
+  "{name} Cam Profile & Gallery — NaughtyXxxCams",
+  "{name} Photos & Live Alerts — NaughtyXxxCams",
+] as const;
+
+const LIVE_DESCRIPTION_TEMPLATES = [
+  "Watch {name} live on NaughtyXxxCams. View photos, bio, and live stream schedule.",
+  "{name} ({handle}) streams in HD on NaughtyXxxCams — public chat, traits, and official room links.",
+  "Free live cam profile for {name} ({handle}) with gallery, bio, and Streamate room access.",
+] as const;
+
+const OFFLINE_DESCRIPTION_TEMPLATES = [
+  "Browse {name} ({handle}) photos and profile on NaughtyXxxCams. Get alerts when she goes live.",
+  "{name}'s official hub ({handle}) — gallery, traits, and HD cam metadata on NaughtyXxxCams.",
+] as const;
+
+const VIP_TITLE_SUFFIX = " — VIP Access";
+const LEAKS_TITLE_SUFFIX = " — Media Hub";
 
 function intentTitleSuffix(intent: ProfileIntentRoute | null): string {
   if (intent === "vip") return VIP_TITLE_SUFFIX;
@@ -131,26 +119,34 @@ export function buildModelProfileSeoTitle(
   intent: ProfileIntentRoute | null = null,
 ): string {
   const seed = model.profileSlug || bareUsername(model.handle);
-  const year = currentSeoYear();
   const handle = atUsername(model.handle);
-  const vars = {
-    name: model.name.trim() || bareUsername(model.handle),
-    handle,
-    year,
-  };
+  const name = model.name.trim() || bareUsername(model.handle);
+  const vars = { name, handle };
 
-  const base = isModelProfileLive(model)
-    ? fillSeoTemplate(pickVariant(`${seed}-live-title`, LIVE_TITLE_TEMPLATES), vars)
-    : fillSeoTemplate(
-        pickVariant(`${seed}-offline-title`, OFFLINE_TITLE_TEMPLATES),
-        vars,
-      );
+  let base: string;
+  try {
+    base = isModelProfileLive(model)
+      ? fillSeoTemplate(
+          pickVariant(`${seed}-live-title`, LIVE_TITLE_TEMPLATES),
+          vars,
+        )
+      : fillSeoTemplate(
+          pickVariant(`${seed}-offline-title`, OFFLINE_TITLE_TEMPLATES),
+          vars,
+        );
+  } catch {
+    base = buildModelProfileFallbackTitle(model);
+  }
+
+  if (!base.trim()) {
+    base = buildModelProfileFallbackTitle(model);
+  }
 
   const withIntent = intent
-    ? normalizeWhitespace(`${base}${intentTitleSuffix(intent)}`)
+    ? `${base}${intentTitleSuffix(intent)}`.replace(/\s+/g, " ").trim()
     : base;
 
-  return truncateModelProfileTitle(withIntent);
+  return normalizeSeoTitle(withIntent);
 }
 
 export function buildModelProfileSeoDescription(
@@ -159,28 +155,35 @@ export function buildModelProfileSeoDescription(
 ): string {
   const seed = model.profileSlug || bareUsername(model.handle);
   const handle = atUsername(model.handle);
-  const vars = {
-    name: model.name.trim() || bareUsername(model.handle),
-    handle,
-  };
+  const name = model.name.trim() || bareUsername(model.handle);
+  const vars = { name, handle };
 
-  let description = isModelProfileLive(model)
-    ? fillSeoTemplate(
-        pickVariant(`${seed}-live-desc`, LIVE_DESCRIPTION_TEMPLATES),
-        vars,
-      )
-    : fillSeoTemplate(
-        pickVariant(`${seed}-offline-desc`, OFFLINE_DESCRIPTION_TEMPLATES),
-        vars,
-      );
-
-  if (intent === "vip") {
-    description = `${description} VIP-style private room entry and premium cam options via the official NaughtyXXXCams profile.`;
-  } else if (intent === "leaks") {
-    description = `${description} Exclusive gallery highlights and media discovery — indexed only for on-site navigation; see canonical profile for primary SEO.`;
+  let description: string;
+  try {
+    description = isModelProfileLive(model)
+      ? fillSeoTemplate(
+          pickVariant(`${seed}-live-desc`, LIVE_DESCRIPTION_TEMPLATES),
+          vars,
+        )
+      : fillSeoTemplate(
+          pickVariant(`${seed}-offline-desc`, OFFLINE_DESCRIPTION_TEMPLATES),
+          vars,
+        );
+  } catch {
+    description = buildModelProfileFallbackDescription(model);
   }
 
-  return truncateModelProfileDescription(description);
+  if (!description.trim()) {
+    description = buildModelProfileFallbackDescription(model);
+  }
+
+  if (intent === "vip") {
+    description = `${description} VIP private room options via the official profile.`;
+  } else if (intent === "leaks") {
+    description = `${description} Gallery highlights; see canonical profile for primary SEO.`;
+  }
+
+  return normalizeSeoDescription(description);
 }
 
 export function buildModelProfileRobots(
@@ -189,7 +192,7 @@ export function buildModelProfileRobots(
   if (intent === "vip" || intent === "leaks") {
     return { index: false, follow: true };
   }
-  return { index: true, follow: true };
+  return { ...INDEXABLE_ROBOTS };
 }
 
 export function buildModelProfileNextMetadata(
@@ -205,7 +208,7 @@ export function buildModelProfileNextMetadata(
   const description = buildModelProfileSeoDescription(model, intent);
 
   return {
-    title,
+    title: { absolute: title },
     description,
     robots: buildModelProfileRobots(intent),
     alternates: {
@@ -219,5 +222,14 @@ export function buildModelProfileNextMetadata(
         ? [{ url: options.bannerUrl.trim() }]
         : undefined,
     },
+  };
+}
+
+export function buildModelProfileNotFoundMetadata(): Metadata {
+  return {
+    title: { absolute: "Model Profile Not Found — NaughtyXxxCams" },
+    description:
+      "This performer profile is unavailable. Browse live models on NaughtyXxxCams.",
+    robots: { ...NOINDEX_ROBOTS },
   };
 }

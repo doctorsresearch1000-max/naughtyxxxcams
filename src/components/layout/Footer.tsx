@@ -110,19 +110,19 @@ const LIVE_CATEGORIES: FooterLink[] = [
 ];
 
 const SHOW_TYPES: FooterLink[] = [
-  { href: "/explore?show=private", label: "Private 1-on-1" },
-  { href: "/explore?show=lovense", label: "Interactive Toys" },
-  { href: "/explore?show=vip", label: "VIP & Lingerie" },
-  { href: "/explore?show=asmr", label: "Live ASMR" },
-  { href: "/explore?show=gaming", label: "Gaming Streams" },
-  { href: "/explore?show=debut", label: "New Model Debuts" },
+  { href: "/explore/verified", label: "Private 1-on-1" },
+  { href: "/explore/petite", label: "Interactive Toys" },
+  { href: "/explore/cosplay", label: "VIP & Lingerie" },
+  { href: "/explore/alt", label: "Live ASMR" },
+  { href: "/explore/alt", label: "Gaming Streams" },
+  { href: "/explore/verified", label: "New Model Debuts" },
 ];
 
 const EXPLORE_LINKS: FooterLink[] = [
   { href: "/", label: "Home Feed" },
   { href: "/explore", label: "Discover Models" },
   { href: "/following", label: "Following" },
-  { href: "/explore?filter=free", label: "Free Cams" },
+  { href: "/explore", label: "Free Cams" },
   { href: "/telegram", label: "Telegram Mini App" },
   { href: "/guides", label: "Guides & Tips" },
 ];

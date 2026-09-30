@@ -4,7 +4,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Naughty XXX Cams",
+  title: "Terms of Service & Site Rules",
+  description:
+    "Rules for using NaughtyXxxCams, age requirements, third-party cam network disclaimers, and acceptable use for viewers and affiliates.",
 };
 
 export default function TermsPage() {

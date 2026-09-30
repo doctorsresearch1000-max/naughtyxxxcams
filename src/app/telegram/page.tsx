@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
-/** Entry for Telegram Mini App (BotFather Web App URL → /telegram). */
+/** Legacy Mini App entry — 301 to profile hub (see next.config redirect). */
 export default function TelegramMiniAppPage() {
-  redirect("/profile");
+  permanentRedirect("/profile");
 }

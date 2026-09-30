@@ -3,7 +3,9 @@ import Link from "next/link";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Guides & Tips | Naughty XXX Cams",
+  title: "Guides & Tips for Live Cams",
+  description:
+    "Practical tips for browsing live adult webcams safely, using Discover filters, following models, and opening official chat rooms on NaughtyXxxCams.",
 };
 
 export default function GuidesPage() {

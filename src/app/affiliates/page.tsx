@@ -4,7 +4,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "Affiliate Disclosure | Naughty XXX Cams",
+  title: "Affiliate Disclosure & Partner Links",
+  description:
+    "How NaughtyXxxCams earns commissions from Streamate and partner cam networks, plus links to terms, privacy, and compliance contacts.",
 };
 
 export default function AffiliatesPage() {

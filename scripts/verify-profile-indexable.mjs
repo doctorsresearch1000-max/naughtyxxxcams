@@ -24,7 +24,10 @@ const robotsFn = source.match(
   /export function buildModelProfileRobots[\s\S]*?^}/m,
 )?.[0];
 
-if (!robotsFn || !robotsFn.includes("index: true")) {
+const allowsIndex =
+  robotsFn &&
+  (robotsFn.includes("index: true") || robotsFn.includes("INDEXABLE_ROBOTS"));
+if (!allowsIndex) {
   console.error(
     "FAIL: buildModelProfileRobots must allow index for canonical profiles",
   );

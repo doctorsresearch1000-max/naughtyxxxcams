@@ -4,8 +4,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Naughty XXX Cams",
-  description: "Contact support, legal, and compliance for Naughty XXX Cams.",
+  title: "Contact Support, Legal & Compliance",
+  description:
+    "Email NaughtyXxxCams for technical support, DMCA notices, legal inquiries, and partnership questions. Response paths for viewers and affiliates.",
 };
 
 export default function ContactPage() {

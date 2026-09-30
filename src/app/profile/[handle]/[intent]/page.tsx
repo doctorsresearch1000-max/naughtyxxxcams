@@ -12,6 +12,7 @@ import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
 import {
   buildModelProfileNextMetadata,
+  buildModelProfileNotFoundMetadata,
   isProfileIntentRoute,
 } from "@/lib/seo/model-profile-metadata";
 
@@ -27,18 +28,12 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { handle, intent } = await params;
   if (!isProfileIntentRoute(intent)) {
-    return {
-      title: "Model profile — NaughtyXXXCams",
-      robots: { index: false, follow: false },
-    };
+    return buildModelProfileNotFoundMetadata();
   }
 
   const model = await resolveModelProfile(handle);
   if (!model) {
-    return {
-      title: "Model profile not found — NaughtyXXXCams",
-      robots: { index: false, follow: false },
-    };
+    return buildModelProfileNotFoundMetadata();
   }
 
   return buildModelProfileNextMetadata(modelViewToSeoInput(model), {

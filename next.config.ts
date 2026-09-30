@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
         destination: "/sitemap.xml",
         permanent: true,
       },
+      {
+        source: "/telegram",
+        destination: "/profile",
+        permanent: true,
+      },
       ...legacyExploreCategoryRedirects,
     ];
   },

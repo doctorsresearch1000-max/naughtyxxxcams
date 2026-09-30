@@ -3,9 +3,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "DMCA Notice & Takedown Policy | Naughty XXX Cams",
+  title: "DMCA Notice & Takedown Policy",
   description:
-    "Digital Millennium Copyright Act (DMCA) notice procedure and designated agent contact for Naughty XXX Cams.",
+    "Digital Millennium Copyright Act (DMCA) notice procedure and designated agent contact for NaughtyXxxCams.",
 };
 
 export default function DmcaPage() {

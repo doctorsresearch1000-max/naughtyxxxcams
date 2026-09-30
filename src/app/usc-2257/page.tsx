@@ -3,7 +3,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "18 U.S.C. § 2257 Compliance | Naughty XXX Cams",
+  title: "18 U.S.C. § 2257 Compliance Statement",
+  description:
+    "Record-keeping compliance notice for NaughtyXxxCams as a promotional directory linking to third-party adult cam performers and networks.",
 };
 
 export default function Usc2257Page() {

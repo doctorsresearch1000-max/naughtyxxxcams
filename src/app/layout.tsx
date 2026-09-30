@@ -16,9 +16,21 @@ const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || "G-CH205SN6QR";
 
 export const metadata: Metadata = {
-  title: "NaughtyXxxCams — Live Cams",
+  title: {
+    template: "%s | NaughtyXxxCams",
+    default: "NaughtyXxxCams — Live Adult Cam Shows",
+  },
   description:
-    "Discover verified Streamate models in HD. Browse live cams, explore categories, and official performer profiles on NaughtyXXXCams.",
+    "Watch verified Streamate models in HD on NaughtyXxxCams — live cam discovery, categories, and official performer profiles.",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
+  },
 };
 
 export const viewport: Viewport = {

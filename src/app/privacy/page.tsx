@@ -3,7 +3,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Naughty XXX Cams",
+  title: "Privacy Policy & Data Practices",
+  description:
+    "What NaughtyXxxCams collects, how cookies and analytics are used, and how to contact us about privacy requests or data deletion.",
 };
 
 export default function PrivacyPage() {

@@ -1,33 +1,27 @@
 import type { ExploreCategoryConfig } from "@/lib/explore/categorySlugs";
 import { pickVariant } from "@/lib/seo/seoVariants";
+import {
+  normalizeSeoDescription,
+  normalizeSeoTitle,
+} from "@/lib/seo/metadataHelpers";
 
 const DEFAULT_TITLE_VARIANTS = [
-  "Live Nude Cams & Private VIP Rooms — Streamate HD Directory | NaughtyXXXCams",
-  "Watch Live Adult Webcams — Exclusive Models & Free Chat Entry | NaughtyXXXCams",
-  "HD Sex Cam Discovery — Verified Streamate Performers | NaughtyXXXCams",
+  "Live Cam Models & HD Shows",
+  "Discover Adult Webcam Models",
+  "Browse Verified Live Cams",
 ] as const;
 
 const DEFAULT_DESC_VARIANTS = [
-  "Browse live nude cams, private VIP shows, and exclusive model galleries. Filter by category, open HD Streamate rooms, and save favorites on NaughtyXXXCams.",
-  "High-intent adult webcam directory: trending live models, private chat entry, and photo packs on official performer profiles. Mobile-first on NaughtyXXXCams.",
-  "Discover verified Streamate models for live sex chat, exclusive content, and private cam sessions — complementary discovery hub on NaughtyXXXCams.",
-] as const;
-
-const CATEGORY_TITLE_SUFFIX = [
-  "Nude Live Cams & VIP Private Chat",
-  "HD Webcam Shows & Exclusive Packs",
-  "Adult Live Chat & Private Room Access",
-] as const;
-
-const CATEGORY_DESC_INTROS = [
-  "Watch {label} models live on Streamate: nude cam streams, private VIP chat, and exclusive profile media.",
-  "High-intent {label} webcam directory — HD live shows, private sessions, and free chat entry points.",
-  "{label} live sex cams with verified traits, gallery previews, and authorized private room links.",
+  "Browse trending live cam models in HD, filter by category, and open official Streamate rooms from NaughtyXxxCams.",
+  "Mobile-first discovery for adult webcam shows: verified performers, category hubs, and saved favorites.",
+  "Find live nude cams and private chat entry points on NaughtyXxxCams — complementary Streamate directory.",
 ] as const;
 
 export type ExploreSeoCopy = {
   title: string;
   description: string;
+  h1: string;
+  bodyBlurb: string;
 };
 
 export function generateExploreSeoCopy(
@@ -35,24 +29,36 @@ export function generateExploreSeoCopy(
 ): ExploreSeoCopy {
   if (!category) {
     const seed = "explore-default";
+    const title = normalizeSeoTitle(
+      pickVariant(seed, DEFAULT_TITLE_VARIANTS),
+    );
     return {
-      title: pickVariant(seed, DEFAULT_TITLE_VARIANTS),
-      description: pickVariant(seed, DEFAULT_DESC_VARIANTS),
+      title,
+      description: normalizeSeoDescription(
+        pickVariant(seed, DEFAULT_DESC_VARIANTS),
+      ),
+      h1: "Explore Live Cam Models",
+      bodyBlurb:
+        "Welcome to the NaughtyXxxCams discovery hub. Scroll live performers, filter by tags and categories, and open HD Streamate rooms in one tap. Save favorites on your profile and return when models go online. All listings link to authorized partner rooms with age-verified 18+ performers.",
     };
   }
 
   const seed = `explore-cat-${category.slug}`;
-  const suffix = pickVariant(seed, CATEGORY_TITLE_SUFFIX);
-  const intro = pickVariant(seed, CATEGORY_DESC_INTROS).replace(
-    "{label}",
-    category.label,
+  const title = normalizeSeoTitle(
+    category.seoTitle.replace(/\s*\|\s*NaughtyXXXCams\s*$/i, "").trim() ||
+      `${category.label} Live Cams`,
+  );
+  const description = normalizeSeoDescription(
+    `${category.seoDescription} Browse ${category.label.toLowerCase()} models streaming now on NaughtyXxxCams.`,
   );
 
-  const title = `${category.label} ${suffix} — ${category.headline} | NaughtyXXXCams`;
-  const description = `${intro} ${category.seoDescription} Official NaughtyXXXCams category hub (not affiliated with third-party directories).`;
+  const labelLower = category.label.toLowerCase();
+  const bodyBlurb = `Welcome to the ${category.label} live cams section on NaughtyXxxCams. Here you can browse ${labelLower} performers currently streaming in HD, compare traits and gallery previews, and jump into public chat or private shows through official Streamate links. Use filters and tags to narrow results, follow models you like, and check back when new ${labelLower} talent goes live. ${category.seoDescription}`;
 
   return {
-    title: title.slice(0, 120),
-    description: description.slice(0, 165),
+    title,
+    description,
+    h1: `Explore ${category.label} Cams`,
+    bodyBlurb,
   };
 }

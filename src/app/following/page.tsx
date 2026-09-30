@@ -10,9 +10,9 @@ import {
 } from "@/lib/following/followingPageData";
 
 export const metadata: Metadata = {
-  title: "Following — Your Live Models | NaughtyXXXCams",
+  title: "Following & Saved Live Models",
   description:
-    "Models you follow, nearby live streams, and one-tap access to Streamate rooms.",
+    "Models you follow, nearby live streams, and one-tap access to Streamate rooms from your NaughtyXxxCams library.",
 };
 
 export default async function FollowingPage() {

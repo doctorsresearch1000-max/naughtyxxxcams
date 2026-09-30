@@ -4,9 +4,9 @@ import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { SITE_LEGAL } from "@/lib/site/legalContact";
 
 export const metadata: Metadata = {
-  title: "Report Content | Naughty XXX Cams",
+  title: "Report Content & Abuse",
   description:
-    "How to report abusive, illegal, or policy-violating content on Naughty XXX Cams.",
+    "How to report abusive, illegal, or policy-violating content on NaughtyXxxCams and contact the abuse team.",
 };
 
 export default function ReportPage() {
