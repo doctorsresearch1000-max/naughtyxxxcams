@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   },
   description:
     "Watch verified Streamate models in HD on NaughtyXxxCams — live cam discovery, categories, and official performer profiles.",
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png", sizes: "235x235" }],
+    apple: [{ url: "/icon.png", type: "image/png" }],
+  },
   robots: {
     index: true,
     follow: true,
