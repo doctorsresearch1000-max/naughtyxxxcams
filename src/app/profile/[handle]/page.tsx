@@ -12,9 +12,6 @@ import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
 import { buildModelProfileNextMetadata } from "@/lib/seo/model-profile-metadata";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
 type PageProps = {
   params: Promise<{ handle: string }>;
 };

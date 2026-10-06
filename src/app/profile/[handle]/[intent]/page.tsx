@@ -15,9 +15,6 @@ import {
   isProfileIntentRoute,
 } from "@/lib/seo/model-profile-metadata";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
 type PageProps = {
   params: Promise<{ handle: string; intent: string }>;
 };

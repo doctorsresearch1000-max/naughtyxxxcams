@@ -1,9 +1,23 @@
 import type { NextConfig } from "next";
 import { EXPLORE_CATEGORY_SLUGS } from "./src/lib/explore/categorySlugs";
+import { PROFILE_PAGE_CACHE_CONTROL } from "./src/lib/http/profilePageCache";
 
 const nextConfig: NextConfig = {
   async headers() {
     return [
+      {
+        source: "/profile/:handle((?!playlists)[^/]+)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: PROFILE_PAGE_CACHE_CONTROL,
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: PROFILE_PAGE_CACHE_CONTROL,
+          },
+        ],
+      },
       {
         source: "/:path*",
         headers: [

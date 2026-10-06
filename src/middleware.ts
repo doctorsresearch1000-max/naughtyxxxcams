@@ -11,12 +11,26 @@ export function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nx-pathname", pathname);
+  const profileCache =
+    request.method === "GET" && isIndexableProfileHandlePath(pathname);
+
   const response = NextResponse.next({
     request: { headers: requestHeaders },
+    headers: profileCache
+      ? {
+          "Cache-Control": PROFILE_PAGE_CACHE_CONTROL,
+          "CDN-Cache-Control": PROFILE_PAGE_CACHE_CONTROL,
+        }
+      : undefined,
   });
 
-  if (request.method === "GET" && isIndexableProfileHandlePath(pathname)) {
+  if (profileCache) {
     response.headers.set("Cache-Control", PROFILE_PAGE_CACHE_CONTROL);
+    response.headers.set("CDN-Cache-Control", PROFILE_PAGE_CACHE_CONTROL);
+    response.headers.set(
+      "x-nx-profile-edge-cache",
+      PROFILE_PAGE_CACHE_CONTROL,
+    );
   }
 
   return response;
