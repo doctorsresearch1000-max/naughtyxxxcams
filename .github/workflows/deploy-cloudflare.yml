@@ -22,3 +22,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           NEXT_PUBLIC_SITE_URL: https://naughtyxxxcams.com
           NEXT_PUBLIC_TELEGRAM_BOT_USERNAME: NaughtyXXXcamsbot
+          CRAK_TOKEN: ${{ secrets.CRAK_TOKEN }}
+          CRAK_API_KEY: ${{ secrets.CRAK_API_KEY }}
+          CRAK_BRANDS: ${{ secrets.CRAK_BRANDS }}

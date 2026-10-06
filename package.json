@@ -9,8 +9,9 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build:next": "next build",
-    "build": "opennextjs-cloudflare build",
+    "build:next": "npm run generate:profile-slugs && next build",
+    "generate:profile-slugs": "node scripts/generate-resolvable-profile-slugs.mjs",
+    "build": "npm run build:next && opennextjs-cloudflare build",
     "deploy": "NEXT_PUBLIC_SITE_URL=https://naughtyxxxcams.com NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=NaughtyXXXcamsbot npm run build && opennextjs-cloudflare deploy",
     "preview": "npm run build && opennextjs-cloudflare preview",
     "lint": "next lint",

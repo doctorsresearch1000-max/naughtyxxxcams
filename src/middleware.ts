@@ -12,9 +12,9 @@ import {
   PROFILE_PAGE_CACHE_CONTROL,
 } from "@/lib/http/profilePageCache";
 import {
-  getResolvableProfileSlugIndex,
-  isHandleInResolvableProfileIndex,
-} from "@/lib/http/resolvableProfileSlugIndex";
+  hasResolvableProfileSlugManifest,
+  isHandleInResolvableProfileManifest,
+} from "@/lib/http/resolvableProfileSlugManifest";
 
 const PROFILE_ROUTE_METHODS = new Set(["GET", "HEAD"]);
 const READ_METHODS = new Set(["GET", "HEAD"]);
@@ -71,26 +71,24 @@ function continueRequest(
 }
 
 /**
- * Canonical host, profile slug 404 guard, cache hints for HTML vs API.
+ * Sync edge guard: canonical host, static slug manifest (build-time), cache hints.
  */
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const host = request.headers.get("host");
   if (shouldRedirectWwwToApex(host)) {
-    const destination = buildApexRedirectUrl(request.nextUrl);
-    return NextResponse.redirect(destination, 308);
+    return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 308);
   }
 
   const { pathname } = request.nextUrl;
 
   const handle = getProfileHandleFromPathname(pathname);
-  if (handle && PROFILE_ROUTE_METHODS.has(request.method)) {
-    const slugIndex = await getResolvableProfileSlugIndex();
-    if (
-      slugIndex &&
-      !isHandleInResolvableProfileIndex(handle, slugIndex)
-    ) {
-      return profileNotFoundResponse(request.method);
-    }
+  if (
+    handle &&
+    PROFILE_ROUTE_METHODS.has(request.method) &&
+    hasResolvableProfileSlugManifest() &&
+    !isHandleInResolvableProfileManifest(handle)
+  ) {
+    return profileNotFoundResponse(request.method);
   }
 
   return continueRequest(request, pathname);
