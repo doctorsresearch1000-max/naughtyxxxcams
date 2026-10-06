@@ -7,8 +7,7 @@ cd "$(dirname "$0")/.."
 unset CLOUDFLARE_API_KEY CLOUDFLARE_EMAIL CLOUDFLARE_API_USER_SERVICE_KEY
 
 if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-  echo "Missing CLOUDFLARE_API_TOKEN (set in environment, never commit to git)."
-  exit 1
+  echo "CLOUDFLARE_API_TOKEN not set — will rely on wrangler login (OAuth) if present."
 fi
 
 if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
