@@ -23,3 +23,6 @@ CRAK_BRANDS = ""
 CRAK_LANDING_ID = "https://t.ajrkmx3.com/214769/8780/32489?po=6533&aff_sub5=SF_0060G0000041mDN"
 CRAK_TOKEN = "315cea80-b80b-11f1-b979-1d7e40202c1c"
 NEXT_PUBLIC_TELEGRAM_BOT_USERNAME = "NaughtyXXXcamsbot"
+
+# Wrangler CLI auth: set CLOUDFLARE_API_TOKEN in the shell / CI only (never under [vars]).
+# Canonical deploy config: wrangler.jsonc (account_id + bindings). This file is kept in sync for legacy tooling.
