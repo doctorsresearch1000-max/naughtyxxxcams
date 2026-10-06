@@ -1,16 +1,11 @@
 /**
- * Build-time manifest for edge middleware slug checks (no runtime API in middleware).
- * Skips write if CRAK credentials missing (keeps existing JSON).
+ * Build-time profile slug list for sitemaps (no runtime Crack API on sitemap routes).
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT_LOOKUP = join(
-  __dirname,
-  "../src/generated/resolvable-profile-slugs.json",
-);
 const OUT_SITEMAP = join(
   __dirname,
   "../src/generated/profile-sitemap-slugs.json",
@@ -131,16 +126,14 @@ async function fetchPool(live) {
 async function main() {
   if (!TOKEN || !API_KEY) {
     console.warn(
-      "[generate-resolvable-profile-slugs] CRAK_TOKEN/CRAK_API_KEY missing — keeping existing manifest.",
+      "[generate-profile-slugs] CRAK_TOKEN/CRAK_API_KEY missing — keeping existing sitemap manifest.",
     );
     try {
-      readFileSync(OUT_LOOKUP, "utf8");
+      readFileSync(OUT_SITEMAP, "utf8");
       process.exit(0);
     } catch {
-      mkdirSync(dirname(OUT_LOOKUP), { recursive: true });
-      writeFileSync(OUT_LOOKUP, "[]\n", "utf8");
+      mkdirSync(dirname(OUT_SITEMAP), { recursive: true });
       writeFileSync(OUT_SITEMAP, "[]\n", "utf8");
-      console.warn("Wrote empty manifests (middleware will fail-open).");
       process.exit(0);
     }
   }
@@ -150,7 +143,6 @@ async function main() {
     fetchPool(false),
   ]);
   const pool = [...live, ...offline];
-  const keys = new Set();
   const canonicalSlugs = new Set();
 
   for (const performer of pool) {
@@ -159,18 +151,13 @@ async function main() {
     if (findInPool(pool, slug)) {
       canonicalSlugs.add(slug);
     }
-    for (const key of lookupKeys(slug)) {
-      keys.add(key);
-    }
   }
 
-  const lookupList = [...keys].sort((a, b) => a.localeCompare(b));
   const sitemapList = [...canonicalSlugs].sort((a, b) => a.localeCompare(b));
-  mkdirSync(dirname(OUT_LOOKUP), { recursive: true });
-  writeFileSync(OUT_LOOKUP, `${JSON.stringify(lookupList, null, 0)}\n`, "utf8");
+  mkdirSync(dirname(OUT_SITEMAP), { recursive: true });
   writeFileSync(OUT_SITEMAP, `${JSON.stringify(sitemapList, null, 0)}\n`, "utf8");
   console.log(
-    `[generate-resolvable-profile-slugs] Wrote ${lookupList.length} lookup keys, ${sitemapList.length} sitemap slugs (${pool.length} performers).`,
+    `[generate-profile-slugs] Wrote ${sitemapList.length} sitemap slugs (${pool.length} performers).`,
   );
 }
 

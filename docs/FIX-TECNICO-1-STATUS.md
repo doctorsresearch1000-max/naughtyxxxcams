@@ -6,7 +6,7 @@
 |-----------|----------------|
 | Host canónico apex | `middleware` 308 www→apex; `next.config` redirect por host; `getSiteUrl()` sin www |
 | Sitemap ↔ perfiles | Catálogo unificado 25×100 live/offline; slugs compartidos con lookup |
-| 404 perfiles | `notFound()` en layout/páginas; middleware con manifest **build-time** (`src/generated/resolvable-profile-slugs.json`) → HTTP 404 edge sin API en runtime |
+| 404 perfiles | Solo tras **lookup runtime** en layout/páginas (`resolveModelProfile` + `notFound()`). El manifest build-time es **solo sitemap**, no bloquea perfiles en edge. |
 | Edge cache perfiles | `revalidate=300`, middleware + `next.config` Cache-Control (incl. intent) |
 | APIs no cacheables | `Cache-Control: private, no-store` en middleware `/api/*` y `next.config` |
 | `/telegram` en sitemap | Eliminado de explore sitemap; redirect 301 a `/profile` |

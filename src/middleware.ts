@@ -4,32 +4,13 @@ import {
   buildApexRedirectUrl,
   shouldRedirectWwwToApex,
 } from "@/lib/http/canonicalHost";
-import { getProfileHandleFromPathname } from "@/lib/http/profileHandlePath";
 import {
   API_ROUTE_CACHE_CONTROL,
   isPublicProfileHtmlPath,
-  PROFILE_NOT_FOUND_CACHE_CONTROL,
   PROFILE_PAGE_CACHE_CONTROL,
 } from "@/lib/http/profilePageCache";
-import {
-  hasResolvableProfileSlugManifest,
-  isHandleInResolvableProfileManifest,
-} from "@/lib/http/resolvableProfileSlugManifest";
 
-const PROFILE_ROUTE_METHODS = new Set(["GET", "HEAD"]);
 const READ_METHODS = new Set(["GET", "HEAD"]);
-
-function profileNotFoundResponse(method: string): NextResponse {
-  return new NextResponse(method === "HEAD" ? null : "Not Found", {
-    status: 404,
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": PROFILE_NOT_FOUND_CACHE_CONTROL,
-      "CDN-Cache-Control": PROFILE_NOT_FOUND_CACHE_CONTROL,
-      "X-Robots-Tag": "noindex, nofollow",
-    },
-  });
-}
 
 function continueRequest(
   request: NextRequest,
@@ -71,7 +52,8 @@ function continueRequest(
 }
 
 /**
- * Sync edge guard: canonical host, static slug manifest (build-time), cache hints.
+ * Edge: canonical host + cache hints only.
+ * Profile existence is resolved at request time in RSC (`resolveModelProfile` + `notFound()`).
  */
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host");
@@ -79,19 +61,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 308);
   }
 
-  const { pathname } = request.nextUrl;
-
-  const handle = getProfileHandleFromPathname(pathname);
-  if (
-    handle &&
-    PROFILE_ROUTE_METHODS.has(request.method) &&
-    hasResolvableProfileSlugManifest() &&
-    !isHandleInResolvableProfileManifest(handle)
-  ) {
-    return profileNotFoundResponse(request.method);
-  }
-
-  return continueRequest(request, pathname);
+  return continueRequest(request, request.nextUrl.pathname);
 }
 
 export const config = {
