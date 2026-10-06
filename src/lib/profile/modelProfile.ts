@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import {
   pickCoverUrl,
@@ -147,7 +148,7 @@ function toViewModel(
   };
 }
 
-export async function resolveModelProfile(
+async function resolveModelProfileUncached(
   handleParam: string,
 ): Promise<ModelProfileView | null> {
   const slug = performerProfileSlug(handleParam) ?? "";
@@ -158,3 +159,6 @@ export async function resolveModelProfile(
 
   return toViewModel(match, slug);
 }
+
+/** Deduped per request (generateMetadata + page). */
+export const resolveModelProfile = cache(resolveModelProfileUncached);

@@ -1,54 +1,44 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { fetchStreamatePerformers } from "@/lib/crackrevenue/api";
 import {
-  performerProfileSlug,
-  performerProfileSlugLegacyCompact,
-} from "@/lib/profile/performerHandle";
+  findInPerformerPool,
+  lookupKeysForProfileSlug,
+  PERFORMER_CATALOG_MAX_PAGES,
+  PERFORMER_CATALOG_PAGE_SIZE,
+} from "@/lib/crackrevenue/performerCatalog";
+import { fetchStreamatePerformers } from "@/lib/crackrevenue/api";
 
 const SLUG_CACHE = new Map<string, { performer: CrackPerformer; at: number }>();
 const CACHE_TTL_MS = 5 * 60 * 1000;
-const MAX_PAGES = 6;
 
-function slugFromPerformer(p: CrackPerformer): string {
-  return (
-    performerProfileSlug(p.nameClean || p.name) ??
-    performerProfileSlug(p.itemId) ??
-    ""
-  );
-}
-
-function findInPool(pool: CrackPerformer[], slug: string): CrackPerformer | null {
-  const exact = pool.find((p) => slugFromPerformer(p) === slug);
-  if (exact) return exact;
-
-  const loose = pool.find((p) => {
-    const ps = slugFromPerformer(p);
-    return ps.includes(slug) || slug.includes(ps);
-  });
-  return loose ?? null;
-}
-
-async function scanLivePages(slug: string): Promise<CrackPerformer | null> {
-  const pageBatch = [1, 2, 3];
-  const responses = await Promise.all(
-    pageBatch.map((page) =>
-      fetchStreamatePerformers({ live: true, size: 100, page }),
-    ),
-  );
-
-  for (const data of responses) {
-    const match = findInPool(data.performers ?? [], slug);
-    if (match) return match;
-  }
-
-  for (let page = 5; page <= MAX_PAGES; page += 1) {
-    const data = await fetchStreamatePerformers({ live: true, size: 100, page });
+async function scanLivePagesForSlug(slug: string): Promise<CrackPerformer | null> {
+  for (let page = 1; page <= PERFORMER_CATALOG_MAX_PAGES; page += 1) {
+    const data = await fetchStreamatePerformers({
+      live: true,
+      size: PERFORMER_CATALOG_PAGE_SIZE,
+      page,
+    });
     const pool = data.performers ?? [];
-    const match = findInPool(pool, slug);
+    const match = findInPerformerPool(pool, slug);
     if (match) return match;
-    if (pool.length < 100) break;
+    if (pool.length < PERFORMER_CATALOG_PAGE_SIZE) break;
   }
+  return null;
+}
 
+async function scanOfflinePagesForSlug(
+  slug: string,
+): Promise<CrackPerformer | null> {
+  for (let page = 1; page <= PERFORMER_CATALOG_MAX_PAGES; page += 1) {
+    const data = await fetchStreamatePerformers({
+      live: false,
+      size: PERFORMER_CATALOG_PAGE_SIZE,
+      page,
+    });
+    const pool = data.performers ?? [];
+    const match = findInPerformerPool(pool, slug);
+    if (match) return match;
+    if (pool.length < PERFORMER_CATALOG_PAGE_SIZE) break;
+  }
   return null;
 }
 
@@ -56,13 +46,8 @@ export async function findPerformerByProfileSlug(
   slug: string,
   options?: { fresh?: boolean },
 ): Promise<CrackPerformer | null> {
-  const normalized = performerProfileSlug(slug);
-  if (!normalized) return null;
-
-  const lookupSlugs = [
-    normalized,
-    performerProfileSlugLegacyCompact(normalized),
-  ].filter((value, index, arr) => value && arr.indexOf(value) === index);
+  const lookupSlugs = lookupKeysForProfileSlug(slug);
+  if (lookupSlugs.length === 0) return null;
 
   if (options?.fresh) {
     for (const key of lookupSlugs) {
@@ -79,23 +64,14 @@ export async function findPerformerByProfileSlug(
 
   let match: CrackPerformer | null = null;
   for (const key of lookupSlugs) {
-    match = await scanLivePages(key);
+    match = await scanLivePagesForSlug(key);
     if (match) break;
   }
 
   if (!match) {
-    for (let page = 1; page <= 4; page += 1) {
-      const data = await fetchStreamatePerformers({
-        live: false,
-        size: 100,
-        page,
-      });
-      for (const key of lookupSlugs) {
-        match = findInPool(data.performers ?? [], key);
-        if (match) break;
-      }
+    for (const key of lookupSlugs) {
+      match = await scanOfflinePagesForSlug(key);
       if (match) break;
-      if ((data.performers ?? []).length < 100) break;
     }
   }
 
@@ -107,3 +83,5 @@ export async function findPerformerByProfileSlug(
 
   return match;
 }
+
+// fix typo CrackerPerformer -> CrackPerformer

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default function ModelProfileNotFound() {
   return (
     <main className="flex min-h-[50vh] flex-col items-center justify-center px-4 pb-16 pt-8 text-center text-white">

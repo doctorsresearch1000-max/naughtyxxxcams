@@ -12,7 +12,6 @@ import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
 import {
   buildModelProfileNextMetadata,
-  buildModelProfileNotFoundMetadata,
   isProfileIntentRoute,
 } from "@/lib/seo/model-profile-metadata";
 
@@ -28,12 +27,12 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { handle, intent } = await params;
   if (!isProfileIntentRoute(intent)) {
-    return buildModelProfileNotFoundMetadata();
+    notFound();
   }
 
   const model = await resolveModelProfile(handle);
   if (!model) {
-    return buildModelProfileNotFoundMetadata();
+    notFound();
   }
 
   return buildModelProfileNextMetadata(modelViewToSeoInput(model), {

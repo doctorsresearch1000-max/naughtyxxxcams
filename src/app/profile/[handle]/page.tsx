@@ -10,10 +10,7 @@ import {
 import { resolveModelProfile } from "@/lib/profile/modelProfile";
 import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
-import {
-  buildModelProfileNextMetadata,
-  buildModelProfileNotFoundMetadata,
-} from "@/lib/seo/model-profile-metadata";
+import { buildModelProfileNextMetadata } from "@/lib/seo/model-profile-metadata";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -28,7 +25,7 @@ export async function generateMetadata({
   const { handle } = await params;
   const model = await resolveModelProfile(handle);
   if (!model) {
-    return buildModelProfileNotFoundMetadata();
+    notFound();
   }
 
   return buildModelProfileNextMetadata(modelViewToSeoInput(model), {

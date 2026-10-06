@@ -32,12 +32,6 @@ export function buildExploreSitemapEntries(now = new Date()): MetadataRoute.Site
       changeFrequency: "weekly",
       priority: 0.5,
     },
-    {
-      url: `${baseUrl}/telegram`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
     ...LEGAL_PAGE_PATHS.map((path) => ({
       url: `${baseUrl}${path}`,
       lastModified: now,
