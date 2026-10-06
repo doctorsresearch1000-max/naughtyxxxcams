@@ -1,12 +1,37 @@
 import type { NextConfig } from "next";
 import { EXPLORE_CATEGORY_SLUGS } from "./src/lib/explore/categorySlugs";
-import { PROFILE_PAGE_CACHE_CONTROL } from "./src/lib/http/profilePageCache";
+import {
+  API_ROUTE_CACHE_CONTROL,
+  PROFILE_PAGE_CACHE_CONTROL,
+} from "./src/lib/http/profilePageCache";
 
 const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: API_ROUTE_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
         source: "/profile/:handle((?!playlists)[^/]+)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: PROFILE_PAGE_CACHE_CONTROL,
+          },
+          {
+            key: "CDN-Cache-Control",
+            value: PROFILE_PAGE_CACHE_CONTROL,
+          },
+        ],
+      },
+      {
+        source: "/profile/:handle((?!playlists)[^/]+)/:intent",
         headers: [
           {
             key: "Cache-Control",
@@ -40,6 +65,12 @@ const nextConfig: NextConfig = {
     );
 
     return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.naughtyxxxcams.com" }],
+        destination: "https://naughtyxxxcams.com/:path*",
+        permanent: true,
+      },
       {
         source: "/sitemap",
         destination: "/sitemap.xml",

@@ -1,4 +1,4 @@
-/** URL canónica del sitio (producción: naughtyxxxcams.com). */
+/** URL canónica del sitio (producción: apex non-www). */
 export function getSiteUrl(): string {
   const fromEnv =
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
@@ -9,9 +9,20 @@ export function getSiteUrl(): string {
     return "https://naughtyxxxcams.com";
   }
 
-  if (fromEnv.startsWith("http://") || fromEnv.startsWith("https://")) {
-    return fromEnv.replace(/\/$/, "");
-  }
+  const withScheme = fromEnv.startsWith("http://") || fromEnv.startsWith("https://")
+    ? fromEnv
+    : `https://${fromEnv}`;
 
-  return `https://${fromEnv.replace(/\/$/, "")}`;
+  try {
+    const url = new URL(withScheme);
+    if (url.hostname.toLowerCase().startsWith("www.")) {
+      url.hostname = url.hostname.slice(4);
+    }
+    url.pathname = "";
+    url.search = "";
+    url.hash = "";
+    return url.origin;
+  } catch {
+    return "https://naughtyxxxcams.com";
+  }
 }
