@@ -7,7 +7,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT = join(__dirname, "../src/generated/resolvable-profile-slugs.json");
+const OUT_LOOKUP = join(
+  __dirname,
+  "../src/generated/resolvable-profile-slugs.json",
+);
+const OUT_SITEMAP = join(
+  __dirname,
+  "../src/generated/profile-sitemap-slugs.json",
+);
 
 const PAGE_SIZE = 100;
 const MAX_PAGES = 25;
@@ -61,6 +68,23 @@ function lookupKeys(slug) {
   return keys;
 }
 
+function findInPool(pool, slug) {
+  const keys = lookupKeys(slug);
+  if (keys.length === 0) return null;
+  for (const key of keys) {
+    const exact = pool.find((p) => slugFromPerformer(p) === key);
+    if (exact) return exact;
+  }
+  for (const key of keys) {
+    const loose = pool.find((p) => {
+      const ps = slugFromPerformer(p);
+      return ps.includes(key) || key.includes(ps);
+    });
+    if (loose) return loose;
+  }
+  return null;
+}
+
 async function fetchPage(live, page) {
   const search = new URLSearchParams({
     token: TOKEN,
@@ -110,12 +134,13 @@ async function main() {
       "[generate-resolvable-profile-slugs] CRAK_TOKEN/CRAK_API_KEY missing — keeping existing manifest.",
     );
     try {
-      readFileSync(OUT, "utf8");
+      readFileSync(OUT_LOOKUP, "utf8");
       process.exit(0);
     } catch {
-      mkdirSync(dirname(OUT), { recursive: true });
-      writeFileSync(OUT, "[]\n", "utf8");
-      console.warn("Wrote empty manifest (middleware will fail-open).");
+      mkdirSync(dirname(OUT_LOOKUP), { recursive: true });
+      writeFileSync(OUT_LOOKUP, "[]\n", "utf8");
+      writeFileSync(OUT_SITEMAP, "[]\n", "utf8");
+      console.warn("Wrote empty manifests (middleware will fail-open).");
       process.exit(0);
     }
   }
@@ -126,20 +151,26 @@ async function main() {
   ]);
   const pool = [...live, ...offline];
   const keys = new Set();
+  const canonicalSlugs = new Set();
 
   for (const performer of pool) {
     const slug = slugFromPerformer(performer);
     if (!slug) continue;
+    if (findInPool(pool, slug)) {
+      canonicalSlugs.add(slug);
+    }
     for (const key of lookupKeys(slug)) {
       keys.add(key);
     }
   }
 
-  const slugs = [...keys].sort((a, b) => a.localeCompare(b));
-  mkdirSync(dirname(OUT), { recursive: true });
-  writeFileSync(OUT, `${JSON.stringify(slugs, null, 0)}\n`, "utf8");
+  const lookupList = [...keys].sort((a, b) => a.localeCompare(b));
+  const sitemapList = [...canonicalSlugs].sort((a, b) => a.localeCompare(b));
+  mkdirSync(dirname(OUT_LOOKUP), { recursive: true });
+  writeFileSync(OUT_LOOKUP, `${JSON.stringify(lookupList, null, 0)}\n`, "utf8");
+  writeFileSync(OUT_SITEMAP, `${JSON.stringify(sitemapList, null, 0)}\n`, "utf8");
   console.log(
-    `[generate-resolvable-profile-slugs] Wrote ${slugs.length} lookup keys (${pool.length} performers).`,
+    `[generate-resolvable-profile-slugs] Wrote ${lookupList.length} lookup keys, ${sitemapList.length} sitemap slugs (${pool.length} performers).`,
   );
 }
 

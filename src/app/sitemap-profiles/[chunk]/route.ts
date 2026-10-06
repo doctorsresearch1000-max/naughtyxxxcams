@@ -1,7 +1,6 @@
 import { buildProfileSitemapChunkEntries } from "@/lib/sitemap/buildProfileSitemap";
 import { renderSitemapXml } from "@/lib/sitemap/renderSitemapXml";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 const XML_HEADERS = {

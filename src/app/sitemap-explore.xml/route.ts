@@ -1,7 +1,6 @@
 import { buildExploreSitemapEntries } from "@/lib/sitemap/buildExploreSitemap";
 import { renderSitemapXml } from "@/lib/sitemap/renderSitemapXml";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 const XML_HEADERS = {

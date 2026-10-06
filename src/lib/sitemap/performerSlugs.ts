@@ -1,12 +1,8 @@
-import { collectResolvableProfileSlugs } from "@/lib/crackrevenue/performerCatalog";
+import profileSitemapSlugs from "@/generated/profile-sitemap-slugs.json";
 
 /**
- * Slugs únicos para `/profile/[handle]` — solo URLs que la ruta puede resolver.
+ * Canonical profile slugs for sitemaps (build-time manifest; no runtime API).
  */
 export async function collectPerformerProfileSlugs(): Promise<string[]> {
-  try {
-    return await collectResolvableProfileSlugs();
-  } catch {
-    return [];
-  }
+  return Array.isArray(profileSitemapSlugs) ? profileSitemapSlugs : [];
 }
