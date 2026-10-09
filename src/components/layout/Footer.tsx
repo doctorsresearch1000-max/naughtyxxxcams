@@ -123,7 +123,7 @@ const EXPLORE_LINKS: FooterLink[] = [
   { href: "/explore", label: "Discover Models" },
   { href: "/following", label: "Following" },
   { href: "/explore", label: "Free Cams" },
-  { href: "/telegram", label: "Telegram Mini App" },
+  { href: "/profile", label: "Your Profile Hub" },
   { href: "/guides", label: "Guides & Tips" },
 ];
 

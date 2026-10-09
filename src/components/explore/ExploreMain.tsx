@@ -1,16 +1,21 @@
 import { Suspense } from "react";
 import { ExplorePageClient } from "@/components/explore/ExplorePageClient";
+import { ExplorePerformerGrid } from "@/components/explore/ExplorePerformerGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
+import type { ExploreServerBootstrap } from "@/lib/explore/getExploreServerBootstrap";
 import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
 
 type ExploreMainProps = {
   categorySlug: string | null;
+  bootstrap: ExploreServerBootstrap | null;
 };
 
-export function ExploreMain({ categorySlug }: ExploreMainProps) {
+export function ExploreMain({ categorySlug, bootstrap }: ExploreMainProps) {
   const category = resolveExploreCategory(categorySlug);
   const seo = generateExploreSeoCopy(category);
+  const hasServerGrid =
+    Boolean(bootstrap?.performers?.length && bootstrap.performers.length > 0);
 
   return (
     <main
@@ -24,8 +29,23 @@ export function ExploreMain({ categorySlug }: ExploreMainProps) {
           {seo.bodyBlurb}
         </p>
       </header>
+
+      {hasServerGrid ? (
+        <section
+          className="mb-4 px-0.5"
+          aria-label="Live model directory"
+          data-explore-ssr-grid="v1"
+        >
+          <ExplorePerformerGrid performers={bootstrap!.performers} />
+        </section>
+      ) : null}
+
       <Suspense fallback={<ExplorePerformerGridSkeleton count={12} />}>
-        <ExplorePageClient categorySlug={categorySlug} />
+        <ExplorePageClient
+          categorySlug={categorySlug}
+          bootstrap={bootstrap}
+          hidePerformerGrid={hasServerGrid}
+        />
       </Suspense>
     </main>
   );

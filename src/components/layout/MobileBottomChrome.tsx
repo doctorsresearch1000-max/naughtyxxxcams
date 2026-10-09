@@ -1,7 +1,8 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useTransition } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { useFeedBottomChrome } from "@/components/layout/FeedBottomChromeContext";
 import { syncFeedBottomClearanceCss } from "@/lib/layout/feedBottomClearance";
@@ -92,10 +93,7 @@ function isPathActive(pathname: string, href: string): boolean {
  */
 export default function MobileBottomChrome() {
   const pathname = usePathname();
-  const router = useRouter();
   const { cta, feedOverlayOpen } = useFeedBottomChrome();
-  const [pendingPath, setPendingPath] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
   const onHomeFeed = pathname === "/";
   const showFeedCta = onHomeFeed && Boolean(cta);
 
@@ -105,25 +103,8 @@ export default function MobileBottomChrome() {
   }, [showFeedCta]);
 
   useEffect(() => {
-    setPendingPath(null);
-  }, [pathname]);
-
-  useEffect(() => {
     preloadLiveCommentPools();
   }, []);
-
-  const navigate = useCallback(
-    (href: string) => {
-      if (isPathActive(pathname, href) && !pendingPath) return;
-      setPendingPath(href);
-      startTransition(() => {
-        router.push(href);
-      });
-    },
-    [pathname, pendingPath, router],
-  );
-
-  const displayPath = pendingPath ?? pathname;
 
   const shellStyle = {
     paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -132,13 +113,13 @@ export default function MobileBottomChrome() {
   };
 
   const navItems = NAV_ITEMS.map((item) => {
-    const isActive = isPathActive(displayPath, item.href);
+    const isActive = isPathActive(pathname, item.href);
 
     return (
-      <button
+      <Link
         key={item.href}
-        type="button"
-        onClick={() => navigate(item.href)}
+        href={item.href}
+        prefetch
         className="group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 px-1"
         style={{ touchAction: "manipulation" }}
         aria-current={isActive ? "page" : undefined}
@@ -160,7 +141,7 @@ export default function MobileBottomChrome() {
           }`}
           aria-hidden
         />
-      </button>
+      </Link>
     );
   });
 

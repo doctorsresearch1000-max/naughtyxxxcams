@@ -7,6 +7,7 @@ import {
 } from "@/lib/explore/categorySlugs";
 import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
 import { exploreCanonicalUrl } from "@/lib/seo/canonical";
+import { getExploreServerBootstrap } from "@/lib/explore/getExploreServerBootstrap";
 import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
 
 type ExploreCategoryPageProps = {
@@ -50,5 +51,6 @@ export default async function ExploreCategoryPage({
     notFound();
   }
 
-  return <ExploreMain categorySlug={category} />;
+  const bootstrap = await getExploreServerBootstrap(category);
+  return <ExploreMain categorySlug={category} bootstrap={bootstrap} />;
 }

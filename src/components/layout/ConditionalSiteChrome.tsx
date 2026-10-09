@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { LEGAL_PAGE_PATHS } from "@/lib/site/legalContact";
 
-const FOOTER_ROUTES = new Set(["/explore", "/following", "/profile"]);
+const FOOTER_ROUTES = new Set(["/", "/explore", "/following", "/profile"]);
 const LEGAL_ROUTES = new Set<string>(LEGAL_PAGE_PATHS);
 
 /** Footer SEO solo en rutas secundarias; el header va en el layout raíz. */

@@ -6,7 +6,6 @@ import { DesktopHomeCatalog } from "@/components/desktop/DesktopHomeCatalog";
 import { HomeTabletTubeCatalog } from "@/components/home/HomeTabletTubeCatalog";
 import { MobileHomeDenseGrid } from "@/components/home/MobileHomeDenseGrid";
 import { useHomePerformers } from "@/hooks/useHomePerformers";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 
 type PersistedHomeFeedProps = {
@@ -18,8 +17,6 @@ export function PersistedHomeFeed({
 }: PersistedHomeFeedProps) {
   const pathname = usePathname();
   const everHome = useRef(false);
-  const isMobileDense = useMediaQuery("(max-width: 767px)", true);
-  const isDesktop = useMediaQuery("(min-width: 1024px)", false);
   const { performers, ready } = useHomePerformers(initialPerformers);
 
   if (pathname === "/") {
@@ -43,13 +40,15 @@ export function PersistedHomeFeed({
       aria-hidden={!onHome}
       {...(!onHome ? { inert: true as const } : {})}
     >
-      {isDesktop ? (
-        <DesktopHomeCatalog />
-      ) : isMobileDense ? (
+      <div className="max-lg:hidden">
+        <DesktopHomeCatalog initialPerformers={initialPerformers} />
+      </div>
+      <div className="md:hidden">
         <MobileHomeDenseGrid performers={performers} ready={ready} />
-      ) : (
+      </div>
+      <div className="hidden md:block lg:hidden">
         <HomeTabletTubeCatalog performers={performers} ready={ready} />
-      )}
+      </div>
     </div>
   );
 }

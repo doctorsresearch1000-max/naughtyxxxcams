@@ -3,6 +3,7 @@ export const fetchCache = "force-no-store";
 
 import type { Metadata } from "next";
 import { FollowingPageView } from "@/components/following/FollowingPageView";
+import { getSiteUrl } from "@/lib/sitemap/siteUrl";
 import { SecondaryRouteShell } from "@/components/layout/SecondaryRouteShell";
 import {
   EMPTY_FOLLOWING_PAGE_DATA,
@@ -13,6 +14,9 @@ export const metadata: Metadata = {
   title: "Following & Saved Live Models",
   description:
     "Models you follow, nearby live streams, and one-tap access to Streamate rooms from your NaughtyXxxCams library.",
+  alternates: {
+    canonical: `${getSiteUrl()}/following`,
+  },
 };
 
 export default async function FollowingPage() {

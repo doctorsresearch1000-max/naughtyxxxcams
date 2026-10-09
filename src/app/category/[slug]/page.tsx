@@ -5,6 +5,7 @@ import {
 } from "@/lib/explore/exploreCatalog";
 import { isExploreCategorySlug } from "@/lib/explore/categorySlugs";
 import { explorePathForCategorySlug } from "@/lib/explore/paths";
+import { getExploreServerBootstrap } from "@/lib/explore/getExploreServerBootstrap";
 import { resolveCategorySlugTarget } from "@/lib/site/categoryMenu";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,8 @@ export default async function CategoryHubPage({ params }: PageProps) {
   }
 
   if (isExploreCatalogSlug(normalized)) {
-    return <ExploreMain categorySlug={normalized} />;
+    const bootstrap = await getExploreServerBootstrap(normalized);
+    return <ExploreMain categorySlug={normalized} bootstrap={bootstrap} />;
   }
 
   const target = resolveCategorySlugTarget(normalized);

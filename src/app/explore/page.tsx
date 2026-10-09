@@ -5,6 +5,7 @@ import { isExploreCategorySlug } from "@/lib/explore/categorySlugs";
 import { isExploreCatalogSlug } from "@/lib/explore/exploreCatalog";
 import { explorePathForCategorySlug } from "@/lib/explore/paths";
 import { exploreCanonicalUrl } from "@/lib/seo/canonical";
+import { getExploreServerBootstrap } from "@/lib/explore/getExploreServerBootstrap";
 import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
 
 const LEGACY_SHOW_REDIRECTS: Record<string, string> = {
@@ -55,8 +56,10 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
 
   const catalogCat = cat?.trim().toLowerCase();
   if (catalogCat && isExploreCatalogSlug(catalogCat)) {
-    return <ExploreMain categorySlug={catalogCat} />;
+    const bootstrap = await getExploreServerBootstrap(catalogCat);
+    return <ExploreMain categorySlug={catalogCat} bootstrap={bootstrap} />;
   }
 
-  return <ExploreMain categorySlug={null} />;
+  const bootstrap = await getExploreServerBootstrap(null);
+  return <ExploreMain categorySlug={null} bootstrap={bootstrap} />;
 }

@@ -61,10 +61,18 @@ function SelectField<T extends string>({
   );
 }
 
-export function DesktopHomeCatalog() {
-  const [performers, setPerformers] = useState<FeedPerformer[]>([]);
+type DesktopHomeCatalogProps = {
+  initialPerformers?: FeedPerformer[];
+};
+
+export function DesktopHomeCatalog({
+  initialPerformers = [],
+}: DesktopHomeCatalogProps) {
+  const [performers, setPerformers] = useState<FeedPerformer[]>(
+    initialPerformers,
+  );
   const [loadState, setLoadState] = useState<"loading" | "ready" | "empty">(
-    "loading",
+    initialPerformers.length > 0 ? "ready" : "loading",
   );
   const [filters, setFilters] = useState<DesktopCatalogFilters>(DEFAULT_FILTERS);
   const [roomPerformer, setRoomPerformer] = useState<FeedPerformer | null>(
@@ -85,16 +93,20 @@ export function DesktopHomeCatalog() {
         const json = (await res.json()) as { performers?: FeedPerformer[] };
         if (cancelled) return;
         const list = Array.isArray(json.performers) ? json.performers : [];
-        setPerformers(list);
-        setLoadState(list.length > 0 ? "ready" : "empty");
+        if (list.length > 0) {
+          setPerformers(list);
+          setLoadState("ready");
+        } else if (performers.length === 0) {
+          setLoadState("empty");
+        }
       } catch {
-        setLoadState("empty");
+        if (performers.length === 0) setLoadState("empty");
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [performers.length]);
 
   const filtered = useMemo(
     () => applyDesktopCatalogFilters(performers, filters),

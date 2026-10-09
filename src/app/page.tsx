@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getBootstrapFeedPerformers } from "@/lib/feed/getBootstrapFeedPerformers";
 import { normalizeSeoDescription } from "@/lib/seo/metadataHelpers";
+import { getSiteUrl } from "@/lib/sitemap/siteUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
   description: normalizeSeoDescription(
     "Scroll live HD cam shows, tap into Streamate rooms, and explore model profiles on NaughtyXxxCams. Mobile-first feed with categories, favorites, and verified 18+ performers.",
   ),
+  alternates: {
+    canonical: `${getSiteUrl()}/`,
+  },
 };
 
 /**
