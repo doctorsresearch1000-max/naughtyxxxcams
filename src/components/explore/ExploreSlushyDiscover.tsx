@@ -14,7 +14,8 @@ import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
-import { ExploreSlushyCategoryShortcuts } from "@/components/explore/ExploreSlushyCategoryShortcuts";
+import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
+import { buildExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
 import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
 import { ExploreLiveStoriesRow } from "@/components/explore/ExploreLiveStoriesRow";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
@@ -231,6 +232,11 @@ export function ExploreSlushyDiscover({
   const category = resolveExploreCategory(activeCat);
   const showCategoryHub = !activeCat && !search.trim();
 
+  const categoryHubCards = useMemo(
+    () => buildExploreCategoryHubCards(masterPool),
+    [masterPool],
+  );
+
   const onSortChip = (id: ExploreSortMode | "filter") => {
     if (id === "filter") {
       setSearch("");
@@ -394,9 +400,12 @@ export function ExploreSlushyDiscover({
             ) : null}
           </div>
           {popularCategories.length > 0 ? (
-            <ExploreCategoryGrid categories={popularCategories} />
+            <ExploreCategoryGrid
+              categories={popularCategories}
+              masterPool={masterPool}
+            />
           ) : (
-            <ExploreSlushyCategoryShortcuts />
+            <ExploreCategoryPremiumGrid cards={categoryHubCards} />
           )}
         </section>
       ) : null}

@@ -1,22 +1,19 @@
-import Image from "next/image";
-import Link from "next/link";
-import type { ExploreCategory } from "@/lib/crackrevenue/categories";
-import { explorePathFromFeedCategory } from "@/lib/explore/paths";
+"use client";
 
-const GRADIENTS = [
-  "from-rose-600/80 via-pink-600/50 to-purple-900/80",
-  "from-fuchsia-600/70 via-pink-500/40 to-black/80",
-  "from-purple-700/80 via-rose-600/50 to-black/90",
-  "from-pink-600/70 via-violet-600/40 to-black/85",
-  "from-rose-500/75 via-fuchsia-700/45 to-black/80",
-  "from-cyan-500/30 via-purple-600/60 to-pink-600/70",
-];
+import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import type { ExploreCategory } from "@/lib/crackrevenue/categories";
+import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
+import { hubCardsFromApiCategories } from "@/lib/explore/exploreCategoryHubCards";
 
 type ExploreCategoryGridProps = {
   categories: ExploreCategory[];
+  masterPool?: CrackPerformer[];
 };
 
-export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
+export function ExploreCategoryGrid({
+  categories,
+  masterPool = [],
+}: ExploreCategoryGridProps) {
   const safeCategories = Array.isArray(categories) ? categories : [];
 
   if (safeCategories.length === 0) {
@@ -28,38 +25,7 @@ export function ExploreCategoryGrid({ categories }: ExploreCategoryGridProps) {
     );
   }
 
-  return (
-    <div className="grid grid-cols-2 gap-3">
-      {safeCategories.map((cat, index) => (
-        <Link
-          key={cat?.id ?? `category-${index}`}
-          href={explorePathFromFeedCategory(cat)}
-          className="group relative block h-28 w-full overflow-hidden rounded-2xl border border-zinc-800/80 shadow-md transition-all active:scale-95"
-        >
-          {cat.coverUrl ? (
-            <Image
-              src={cat.coverUrl}
-              alt={cat.title}
-              fill
-              sizes="50vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-110"
-              unoptimized
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-900 to-purple-950" />
-          )}
-          <div
-            className={`absolute inset-0 flex flex-col justify-end bg-gradient-to-t p-3 ${GRADIENTS[index % GRADIENTS.length]}`}
-          >
-            <h3 className="text-sm font-black tracking-wide text-white">
-              {cat?.title ?? "CATEGORY"}
-            </h3>
-            <span className="text-[10px] font-semibold text-pink-300">
-              {cat?.liveCount ?? 0} Live
-            </span>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
+  const cards = hubCardsFromApiCategories(safeCategories, masterPool);
+
+  return <ExploreCategoryPremiumGrid cards={cards} />;
 }
