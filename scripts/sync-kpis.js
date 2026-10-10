@@ -37,7 +37,7 @@ async function main() {
   log.info(`Fecha de snapshot: ${snapshotDate}`);
   if (dryRun) log.warn("KPI_SYNC_DRY_RUN=1 — no se escribirá en Notion.");
   log.info(
-    "Enriquecimiento: solo Google Search Console (sin datos simulados).",
+    "Enriquecimiento: Google Search Console + CrakRevenue (política Real-or-Zero).",
   );
 
   const mainDataSourceId =

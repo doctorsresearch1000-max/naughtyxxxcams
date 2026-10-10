@@ -10,7 +10,7 @@ const { log } = require("./logger");
 
 const ZERO_REASON_NO_DOMAIN = "sin dominio";
 const ZERO_REASON_NO_API_DATA =
-  "sin datos reales de Search Console / APIs configuradas";
+  "sin datos reales de Search Console / CrakRevenue";
 
 /**
  * @param {import("./types").EnrichmentContext} ctx
@@ -86,7 +86,11 @@ function finalize(ctx, merged, filledBy) {
     if (filledBy[metricId]) continue;
     if (merged[metricId] === 0) continue;
     merged[metricId] = 0;
-    log.metricZeroed(ctx.domain || ctx.label, METRIC_LABELS[metricId], zeroReason);
+    log.metricZeroed(
+      ctx.domain || ctx.label,
+      METRIC_LABELS[metricId],
+      zeroReason,
+    );
   }
 
   const stillMissing = [];
