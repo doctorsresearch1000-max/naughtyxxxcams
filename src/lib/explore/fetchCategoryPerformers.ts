@@ -10,13 +10,15 @@ export function filterPerformersForCategory(
   pool: CrackPerformer[],
   category: ExploreCategoryConfig | null,
   limit = 24,
+  apiTagBoost?: Set<string>,
 ): CrackPerformer[] {
   if (!category) {
     return pool.filter((p) => p.live !== false).slice(0, limit);
   }
 
   const filtered = pool.filter(
-    (p) => p.live !== false && matchesCategory(p, category),
+    (p) =>
+      p.live !== false && matchesCategory(p, category, apiTagBoost),
   );
 
   return filtered.slice(0, limit);
@@ -52,11 +54,20 @@ function matchesAgeBucket(performer: CrackPerformer, ages: string): boolean {
   return false;
 }
 
-function matchesCategory(
+function matchesClientHints(
+  performer: CrackPerformer,
+  clientMatch: string[] | undefined,
+): boolean {
+  if (!clientMatch?.length) return false;
+  const blob = tagBlob(performer);
+  return clientMatch.some((h) => blob.includes(h.toLowerCase()));
+}
+
+function matchesApiFilters(
   performer: CrackPerformer,
   category: ExploreCategoryConfig,
 ): boolean {
-  const { api, clientMatch } = category;
+  const { api } = category;
   const blob = tagBlob(performer);
 
   if (api.ethnicities && !matchesEthnicity(performer, api.ethnicities)) {
@@ -71,11 +82,72 @@ function matchesCategory(
     return false;
   }
 
-  if (clientMatch?.length) {
-    return clientMatch.some((h) => blob.includes(h.toLowerCase()));
+  return true;
+}
+
+function matchesCategory(
+  performer: CrackPerformer,
+  category: ExploreCategoryConfig,
+  apiTagBoost?: Set<string>,
+): boolean {
+  const key =
+    performer.itemId || performer.nameClean || performer.name || "";
+  if (key && apiTagBoost?.has(key)) return true;
+
+  const { clientMatch } = category;
+  if (clientMatch?.length && matchesClientHints(performer, clientMatch)) {
+    return true;
   }
 
-  return true;
+  if (clientMatch?.length && (category.api.tags || category.api.ethnicities)) {
+    return false;
+  }
+
+  return matchesApiFilters(performer, category);
+}
+
+function performerKey(performer: CrackPerformer): string {
+  return performer.itemId || performer.nameClean || performer.name || "";
+}
+
+function mergePerformerPools(
+  base: CrackPerformer[],
+  extra: CrackPerformer[],
+): CrackPerformer[] {
+  const seen = new Set(base.map(performerKey));
+  const out = [...base];
+  for (const performer of extra) {
+    const key = performerKey(performer);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(performer);
+  }
+  return out;
+}
+
+async function fetchApiTagPerformers(
+  tag: string,
+): Promise<{ performers: CrackPerformer[]; keys: Set<string> }> {
+  const keys = new Set<string>();
+  const performers: CrackPerformer[] = [];
+
+  const pages = 2;
+  for (let page = 1; page <= pages; page++) {
+    const data = await fetchStreamatePerformers({
+      tags: tag,
+      live: true,
+      size: 100,
+      page,
+    });
+    for (const performer of data.performers ?? []) {
+      const key = performerKey(performer);
+      if (!key || keys.has(key)) continue;
+      keys.add(key);
+      performers.push(performer);
+    }
+  }
+
+  return { performers, keys };
 }
 
 export type FetchPerformersParams = {
@@ -118,12 +190,25 @@ export async function fetchCategoryPerformers(
   options?: { size?: number; masterPool?: CrackPerformer[] },
 ): Promise<{ performers: CrackPerformer[]; total: number }> {
   const size = options?.size ?? EXPLORE_DISPLAY_LIMIT;
-  const pool =
+  let pool =
     options?.masterPool && options.masterPool.length > 0
       ? options.masterPool
       : await fetchExploreMasterPool();
 
-  const filtered = filterPerformersForCategory(pool, category, pool.length);
+  let apiTagBoost: Set<string> | undefined;
+  const apiTag = category?.apiTagFetch?.trim();
+  if (category && apiTag) {
+    const tagged = await fetchApiTagPerformers(apiTag);
+    apiTagBoost = tagged.keys;
+    pool = mergePerformerPools(pool, tagged.performers);
+  }
+
+  const filtered = filterPerformersForCategory(
+    pool,
+    category,
+    pool.length,
+    apiTagBoost,
+  );
   const performers = filtered.slice(0, size);
 
   return {

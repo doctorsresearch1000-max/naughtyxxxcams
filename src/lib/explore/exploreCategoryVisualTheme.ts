@@ -25,7 +25,7 @@ const HUB_THEMES: Record<HubThemeSlug, ExploreCategoryVisualTheme> = {
     background:
       "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)",
     accent: NAUGHTY_GREEN,
-    kicker: "18+ verified",
+    kicker: "Teen 18+",
     coverImage: "/explore/categories/verified.jpg",
   },
   milf: {

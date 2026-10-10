@@ -25,6 +25,8 @@ export type ExploreCategoryConfig = {
   seoDescription: string;
   api: CategoryApiFilter;
   clientMatch?: string[];
+  /** performers-ext `tags` query — merged when blob tags omit niche (cosplay/couples). */
+  apiTagFetch?: string;
 };
 
 export const EXPLORE_CATEGORY_MAP: Record<ExploreCategorySlug, ExploreCategoryConfig> =
@@ -40,13 +42,13 @@ export const EXPLORE_CATEGORY_MAP: Record<ExploreCategorySlug, ExploreCategoryCo
     },
     verified: {
       slug: "verified",
-      label: "18+ Verified",
-      headline: "Verified 18+ models",
-      seoTitle: "Verified 18+ Live Cams — HD Webcams | NaughtyXXXCams",
+      label: "Teen",
+      headline: "Teen models live",
+      seoTitle: "Teen Live Cams (18+) — HD Webcams | NaughtyXXXCams",
       seoDescription:
-        "Directory of verified adult models 18+. Live streams, official profiles, and alerts when your favorite goes online.",
+        "Browse 18+ teen-style models streaming live in HD. Official profiles, tags, and alerts when your favorites go online.",
       api: {},
-      clientMatch: ["gc_18_19", "gc_20_29", "young", "verified"],
+      clientMatch: ["gc_18_19", "gc_20_29", "young", "verified", "teen"],
     },
     milf: {
       slug: "milf",
@@ -74,8 +76,16 @@ export const EXPLORE_CATEGORY_MAP: Record<ExploreCategorySlug, ExploreCategoryCo
       seoTitle: "Cosplay Live Cams — Roleplay & Fantasy | NaughtyXXXCams",
       seoDescription:
         "Cosplay aesthetics, costumes, and roleplay live. Filter by category and join chat in seconds.",
-      api: { tags: "dancing" },
-      clientMatch: ["cosplay", "costume", "roleplay", "anime"],
+      api: {},
+      clientMatch: [
+        "cosplay",
+        "costume",
+        "roleplay",
+        "anime",
+        "fantasy",
+        "gaming",
+      ],
+      apiTagFetch: "cosplay",
     },
     couples: {
       slug: "couples",
@@ -84,8 +94,16 @@ export const EXPLORE_CATEGORY_MAP: Record<ExploreCategorySlug, ExploreCategoryCo
       seoTitle: "Couple Live Cams — Duo Shows | NaughtyXXXCams",
       seoDescription:
         "Couples and duos streaming live. Explore shared shows, interactive chat, and verified profiles.",
-      api: { tags: "kinky" },
-      clientMatch: ["couple", "couples", "duo", "pair"],
+      api: {},
+      clientMatch: [
+        "couple",
+        "couples",
+        "duo",
+        "pair",
+        "threesome",
+        "cuckold",
+      ],
+      apiTagFetch: "couples",
     },
     trans: {
       slug: "trans",
