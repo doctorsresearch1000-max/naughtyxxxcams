@@ -47,11 +47,35 @@ function readPageTitle(page) {
   return "Untitled";
 }
 
+function parseNumberFromText(text) {
+  if (text === null || text === undefined) return null;
+  const raw = String(text).trim();
+  if (!raw) return null;
+  const cleaned = raw.replace(/[$€£,\s]/g, "");
+  const parsed = Number.parseFloat(cleaned);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 function readNumberProperty(page, propertyKey) {
   if (!propertyKey) return null;
   const prop = page.properties?.[propertyKey];
-  if (!prop || prop.type !== "number") return null;
-  return prop.number;
+  if (!prop) return null;
+  if (prop.type === "number") {
+    return prop.number === null ? null : prop.number;
+  }
+  if (prop.type === "rich_text") {
+    const text = (prop.rich_text || []).map((t) => t.plain_text).join("");
+    return parseNumberFromText(text);
+  }
+  return null;
+}
+
+function extractDomainFromGscUrl(text) {
+  if (!text) return null;
+  const match = text.match(
+    /resource_id=(?:sc-domain%3A|sc-domain:)([a-z0-9.-]+)/i,
+  );
+  return match ? match[1].toLowerCase() : null;
 }
 
 function todayIsoDate() {
@@ -137,6 +161,8 @@ module.exports = {
   resolveKpiPropertyKeys,
   readPageTitle,
   readNumberProperty,
+  parseNumberFromText,
+  extractDomainFromGscUrl,
   todayIsoDate,
   requireEnv,
   getDatabaseDataSourceId,

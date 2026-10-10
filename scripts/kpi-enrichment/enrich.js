@@ -4,7 +4,7 @@ const { KPI_PROVIDERS } = require("./providers");
 const {
   METRIC_IDS,
   METRIC_LABELS,
-  listMissingMetrics,
+  listEnrichmentGaps,
   isMetricMissing,
 } = require("./metrics");
 const { log } = require("./logger");
@@ -77,7 +77,7 @@ async function enrichRowMetrics(ctx) {
  * @param {Record<string, string | null>} filledBy
  */
 function finalize(ctx, merged, filledBy) {
-  const stillMissing = listMissingMetrics(merged);
+  const stillMissing = listEnrichmentGaps(merged);
   for (const metricId of stillMissing) {
     const reason = !ctx.domain
       ? "añade dominio en columna Site/Domain/URL"

@@ -5,8 +5,9 @@ const {
   readNumberProperty,
   resolveKpiPropertyKeys,
   findSchemaPropertyKey,
+  extractDomainFromGscUrl,
 } = require("./notion-kpi-utils");
-const { listMissingMetrics } = require("./kpi-enrichment/metrics");
+const { listEnrichmentGaps } = require("./kpi-enrichment/metrics");
 
 const DOMAIN_PROPERTY_CANDIDATES = [
   "Site",
@@ -14,6 +15,7 @@ const DOMAIN_PROPERTY_CANDIDATES = [
   "URL",
   "Website",
   "Dominio",
+  "Issues & Incidents",
   "site",
   "domain",
 ];
@@ -85,39 +87,85 @@ function resolveDomainPropertyKey(schema) {
   return findSchemaPropertyKey(schema, DOMAIN_PROPERTY_CANDIDATES);
 }
 
+function resolveRowDomain(page, schema) {
+  const domainKey = resolveDomainPropertyKey(schema);
+  const fromColumn = readDomainFromPage(page, domainKey);
+  if (fromColumn) return fromColumn;
+
+  const gscProp = page.properties?.GSC;
+  if (gscProp?.type === "rich_text") {
+    const gscText = (gscProp.rich_text || []).map((t) => t.plain_text).join("");
+    const fromGsc = extractDomainFromGscUrl(gscText);
+    if (fromGsc) return fromGsc;
+  }
+
+  return null;
+}
+
+function rowDisplayLabel(page, domain) {
+  if (domain) return domain;
+  const title = readPageTitle(page);
+  return title === "Untitled" ? page.id.slice(0, 8) : title;
+}
+
 /**
- * @param {import("@notionhq/client").Client} notion
  * @param {object} mainDs
  * @param {object} page
  */
 function buildRowContext(mainDs, page, mainKpiKeys) {
-  const domainKey = resolveDomainPropertyKey(mainDs.properties);
   const current = {
     monthlyRevenue: readNumberProperty(page, mainKpiKeys.monthlyRevenue),
     dailyClicks: readNumberProperty(page, mainKpiKeys.dailyClicks),
     indexedPages: readNumberProperty(page, mainKpiKeys.indexedPages),
   };
 
+  const domain = resolveRowDomain(page, mainDs.properties);
+
   return {
     pageId: page.id,
-    label: readPageTitle(page),
-    domain: readDomainFromPage(page, domainKey),
+    label: rowDisplayLabel(page, domain),
+    domain,
     current,
-    missing: listMissingMetrics(current),
+    missing: listEnrichmentGaps(current),
   };
 }
 
-function buildMainUpdateProperties(kpiKeys, metrics) {
+function formatMetricProperty(schemaType, metricId, value) {
+  if (value == null) return null;
+  if (schemaType === "number") {
+    return { number: value };
+  }
+  if (schemaType === "rich_text") {
+    let content;
+    if (metricId === "monthlyRevenue") {
+      content = `$${Number(value).toFixed(2)}`;
+    } else if (metricId === "indexedPages") {
+      content = Math.round(value).toLocaleString("en-US");
+    } else {
+      content = String(Math.round(value));
+    }
+    return {
+      rich_text: [{ type: "text", text: { content } }],
+    };
+  }
+  return { number: value };
+}
+
+function buildMainUpdateProperties(mainSchema, kpiKeys, metrics, filledBy) {
   const properties = {};
-  if (kpiKeys.monthlyRevenue && metrics.monthlyRevenue != null) {
-    properties[kpiKeys.monthlyRevenue] = { number: metrics.monthlyRevenue };
+  const map = {
+    monthlyRevenue: kpiKeys.monthlyRevenue,
+    dailyClicks: kpiKeys.dailyClicks,
+    indexedPages: kpiKeys.indexedPages,
+  };
+
+  for (const [metricId, propertyKey] of Object.entries(map)) {
+    if (!propertyKey || !filledBy[metricId]) continue;
+    const schemaType = mainSchema[propertyKey]?.type;
+    const prop = formatMetricProperty(schemaType, metricId, metrics[metricId]);
+    if (prop) properties[propertyKey] = prop;
   }
-  if (kpiKeys.dailyClicks && metrics.dailyClicks != null) {
-    properties[kpiKeys.dailyClicks] = { number: metrics.dailyClicks };
-  }
-  if (kpiKeys.indexedPages && metrics.indexedPages != null) {
-    properties[kpiKeys.indexedPages] = { number: metrics.indexedPages };
-  }
+
   return properties;
 }
 

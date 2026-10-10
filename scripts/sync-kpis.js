@@ -110,7 +110,12 @@ async function main() {
     stats.metricsManual += stillMissing.length;
 
     if (mainDbChanged && !dryRun) {
-      const patch = buildMainUpdateProperties(mainKpiKeys, merged);
+      const patch = buildMainUpdateProperties(
+        mainDs.properties,
+        mainKpiKeys,
+        merged,
+        filledBy,
+      );
       if (Object.keys(patch).length > 0) {
         await notion.pages.update({
           page_id: page.id,
