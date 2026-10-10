@@ -25,6 +25,7 @@ jobs:
         run: npm ci
 
       - name: Enrich and sync KPIs to Notion
+        # Exit 1 if any production domain row lacks a successful GSC+Crak refresh (values preserved).
         run: npm run notion:sync-kpis
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}

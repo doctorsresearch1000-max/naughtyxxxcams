@@ -173,6 +173,27 @@ function buildMainUpdateProperties(mainSchema, kpiKeys, metrics, previous) {
   return properties;
 }
 
+/** Solo propiedades con actualización validada por un proveedor. */
+function buildMainUpdateFromSuccessful(
+  mainSchema,
+  kpiKeys,
+  successfulUpdates,
+  previous,
+) {
+  const properties = {};
+  for (const [metricId, next] of Object.entries(successfulUpdates)) {
+    const propertyKey = kpiKeys[metricId];
+    if (!propertyKey) continue;
+    const prev = previous[metricId];
+    if (next === prev) continue;
+    if (next === null || next === undefined) continue;
+    const schemaType = mainSchema[propertyKey]?.type;
+    const prop = formatMetricProperty(schemaType, metricId, next);
+    if (prop) properties[propertyKey] = prop;
+  }
+  return properties;
+}
+
 function buildHistorySnapshotProperties(
   historyDs,
   relationKey,
@@ -222,6 +243,7 @@ module.exports = {
   queryAllDataSourceRows,
   buildRowContext,
   buildMainUpdateProperties,
+  buildMainUpdateFromSuccessful,
   buildHistorySnapshotProperties,
   resolveHistoryRelationKey,
   resolveKpiPropertyKeys,
