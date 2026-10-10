@@ -2,12 +2,15 @@ import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import {
   EXPLORE_CATEGORY_MAP,
-  EXPLORE_CATEGORY_SLUGS,
   type ExploreCategorySlug,
   isExploreCategorySlug,
 } from "@/lib/explore/categorySlugs";
 import type { ExploreCategoryVisualTheme } from "@/lib/explore/exploreCategoryVisualTheme";
 import { themeForCategorySlug } from "@/lib/explore/exploreCategoryVisualTheme";
+import {
+  EXPLORE_HUB_CATEGORY_SLUGS,
+  isExploreHubCategorySlug,
+} from "@/lib/explore/exploreCategoryHubSlugs";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 import {
   explorePathForCategorySlug,
@@ -17,7 +20,6 @@ import {
 export type ExploreCategoryHubCard = {
   id: string;
   slug: string;
-  /** Primary poster title (typography hero) */
   title: string;
   href: string;
   liveCount: number;
@@ -39,11 +41,10 @@ function cardFromSlug(
   };
 }
 
-/** Editorial category posters — counts from pool, no model/ad imagery. */
 export function buildExploreCategoryHubCards(
   masterPool: CrackPerformer[],
 ): ExploreCategoryHubCard[] {
-  return EXPLORE_CATEGORY_SLUGS.map((slug) => {
+  return EXPLORE_HUB_CATEGORY_SLUGS.map((slug) => {
     const config = EXPLORE_CATEGORY_MAP[slug];
     const filtered = filterPerformersForCategory(
       masterPool,
@@ -63,17 +64,30 @@ export function hubCardsFromApiCategories(
     buildExploreCategoryHubCards(masterPool).map((c) => [c.slug, c.liveCount]),
   );
 
-  return categories.map((cat, index) => {
-    const slugGuess = cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
-    const slug = isExploreCategorySlug(slugGuess) ? slugGuess : slugGuess || cat.id;
+  const excludedTitle = /goth|trans\b|alt\b/i;
 
-    return {
-      id: cat.id ?? `cat-${index}`,
-      slug,
-      title: cat.title?.trim() || "Category",
-      href: explorePathFromFeedCategory(cat),
-      liveCount: cat.liveCount ?? countsBySlug.get(slug as ExploreCategorySlug) ?? 0,
-      theme: themeForCategorySlug(slug),
-    };
-  });
+  return categories
+    .filter((cat) => {
+      const slugGuess =
+        cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
+      if (slugGuess && !isExploreHubCategorySlug(slugGuess)) return false;
+      if (excludedTitle.test(cat.title ?? "")) return false;
+      return true;
+    })
+    .map((cat, index) => {
+      const slugGuess = cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
+      const slug = isExploreCategorySlug(slugGuess)
+        ? slugGuess
+        : slugGuess || cat.id;
+
+      return {
+        id: cat.id ?? `cat-${index}`,
+        slug,
+        title: cat.title?.trim() || "Category",
+        href: explorePathFromFeedCategory(cat),
+        liveCount:
+          cat.liveCount ?? countsBySlug.get(slug as ExploreCategorySlug) ?? 0,
+        theme: themeForCategorySlug(slug),
+      };
+    });
 }

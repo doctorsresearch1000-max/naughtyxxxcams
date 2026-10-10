@@ -1,85 +1,68 @@
 import type { ExploreCategorySlug } from "@/lib/explore/categorySlugs";
+import { EXPLORE_HUB_CATEGORY_SLUGS } from "@/lib/explore/exploreCategoryHubSlugs";
+
+export const NAUGHTY_GREEN = "#39FF14";
 
 export type ExploreCategoryVisualTheme = {
-  /** CSS gradient for poster background */
   background: string;
-  /** Accent line / glow */
   accent: string;
-  /** Optional oversized watermark letter */
-  watermark: string;
-  /** Short editorial line under the title */
   kicker: string;
+  /** Self-hosted niche cover (not ads / not live thumbs). */
+  coverImage: string;
 };
 
-export const EXPLORE_CATEGORY_VISUAL_THEMES: Record<
-  ExploreCategorySlug,
-  ExploreCategoryVisualTheme
-> = {
+type HubThemeSlug = (typeof EXPLORE_HUB_CATEGORY_SLUGS)[number];
+
+const HUB_THEMES: Record<HubThemeSlug, ExploreCategoryVisualTheme> = {
   latinas: {
-    background:
-      "linear-gradient(145deg, #3d0a1f 0%, #ff007f 42%, #1a0510 100%)",
-    accent: "#ff4da6",
-    watermark: "L",
-    kicker: "Live Latina cams",
+    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
+    kicker: "Latina live",
+    coverImage: "/explore/categories/latinas.jpg",
   },
   verified: {
-    background:
-      "linear-gradient(160deg, #0b0f19 0%, #00f0ff22 35%, #ff007f33 100%)",
-    accent: "#00f0ff",
-    watermark: "18",
-    kicker: "Verified 18+",
+    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
+    kicker: "18+ verified",
+    coverImage: "/explore/categories/verified.jpg",
   },
   milf: {
-    background:
-      "linear-gradient(135deg, #2a1038 0%, #c026d3 45%, #1c0a24 100%)",
-    accent: "#e879f9",
-    watermark: "M",
+    background: "linear-gradient(90deg, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
     kicker: "Mature & MILF",
+    coverImage: "/explore/categories/milf.jpg",
   },
   petite: {
-    background:
-      "linear-gradient(145deg, #1a0d2e 0%, #ff007f 38%, #312e81 100%)",
-    accent: "#fda4af",
-    watermark: "P",
+    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.48) 55%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
     kicker: "Petite & e-girl",
+    coverImage: "/explore/categories/petite.jpg",
   },
   cosplay: {
-    background:
-      "linear-gradient(135deg, #1e1b4b 0%, #7c3aed 40%, #ff007f 100%)",
-    accent: "#a78bfa",
-    watermark: "✦",
+    background: "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
     kicker: "Cosplay & fantasy",
+    coverImage: "/explore/categories/cosplay.jpg",
   },
   couples: {
-    background:
-      "linear-gradient(145deg, #0f172a 0%, #ff007f 50%, #0b0f19 100%)",
-    accent: "#fb7185",
-    watermark: "2",
+    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
     kicker: "Duo shows",
-  },
-  trans: {
-    background:
-      "linear-gradient(150deg, #042f2e 0%, #14b8a6 35%, #ff007f 95%)",
-    accent: "#5eead4",
-    watermark: "T",
-    kicker: "Trans models live",
-  },
-  alt: {
-    background:
-      "linear-gradient(145deg, #0a0a0a 0%, #4c1d95 55%, #ff007f 100%)",
-    accent: "#c084fc",
-    watermark: "A",
-    kicker: "Alt · goth · ink",
+    coverImage: "/explore/categories/couples.jpg",
   },
 };
 
-const DEFAULT_THEME: ExploreCategoryVisualTheme =
-  EXPLORE_CATEGORY_VISUAL_THEMES.latinas;
+const DEFAULT_THEME = HUB_THEMES.latinas;
 
 export function themeForCategorySlug(
   slug: string | undefined | null,
 ): ExploreCategoryVisualTheme {
   if (!slug) return DEFAULT_THEME;
-  const key = slug.trim().toLowerCase() as ExploreCategorySlug;
-  return EXPLORE_CATEGORY_VISUAL_THEMES[key] ?? DEFAULT_THEME;
+  const key = slug.trim().toLowerCase() as HubThemeSlug;
+  return HUB_THEMES[key] ?? DEFAULT_THEME;
 }
+
+/** @deprecated Hub grid only uses HUB_THEMES; kept for type compatibility. */
+export const EXPLORE_CATEGORY_VISUAL_THEMES: Partial<
+  Record<ExploreCategorySlug, ExploreCategoryVisualTheme>
+> = HUB_THEMES;
