@@ -7,28 +7,121 @@ const {
   formatIsoDate,
   utcDaysAgo,
   gscDataLagDays,
+  gscClicksWindowDays,
   gscIndexedLookbackDays,
   siteUrlForDomain,
 } = require("./gsc-client");
 
 /**
- * Clics del último día disponible en Search Analytics (respeta GSC_DATA_LAG_DAYS).
+ * @param {import("googleapis").searchconsole_v1.Searchconsole} searchconsole
+ * @param {string} siteUrl
+ * @param {object} requestBody
  */
-async function fetchDailyClicks(searchconsole, siteUrl) {
-  const lag = gscDataLagDays();
-  const day = formatIsoDate(utcDaysAgo(lag));
-
+async function querySearchAnalytics(searchconsole, siteUrl, requestBody) {
+  for (const dataState of ["final", "all"]) {
+    const { data } = await searchconsole.searchanalytics.query({
+      siteUrl,
+      requestBody: { ...requestBody, dataState },
+    });
+    if (data.rows?.length) {
+      return { data, dataState };
+    }
+  }
   const { data } = await searchconsole.searchanalytics.query({
     siteUrl,
-    requestBody: {
-      startDate: day,
-      endDate: day,
-      dataState: "final",
-    },
+    requestBody: { ...requestBody, dataState: "final" },
   });
+  return { data, dataState: "final" };
+}
 
+/**
+ * Clics agregados en un rango (sin dimensión date).
+ */
+async function fetchAggregateClicks(searchconsole, siteUrl, startDate, endDate) {
+  const { data } = await querySearchAnalytics(searchconsole, siteUrl, {
+    startDate,
+    endDate,
+  });
   const clicks = data.rows?.[0]?.clicks;
-  return typeof clicks === "number" ? clicks : null;
+  return typeof clicks === "number" ? clicks : 0;
+}
+
+/**
+ * Resuelve clics diarios: día único con lag → ventana 7d (último día con datos) → media en ventana.
+ */
+async function fetchDailyClicks(searchconsole, siteUrl, domainLabel) {
+  const lag = gscDataLagDays();
+  const windowDays = gscClicksWindowDays();
+  const endDate = formatIsoDate(utcDaysAgo(lag));
+  const windowStartDate = formatIsoDate(utcDaysAgo(lag + windowDays - 1));
+
+  const singleDayClicks = await fetchAggregateClicks(
+    searchconsole,
+    siteUrl,
+    endDate,
+    endDate,
+  );
+  if (singleDayClicks > 0) {
+    log.info(
+      `google-search-console: ${domainLabel} dailyClicks=${singleDayClicks} (día ${endDate}, lag ${lag}d)`,
+    );
+    return singleDayClicks;
+  }
+
+  const { data: byDate, dataState } = await querySearchAnalytics(
+    searchconsole,
+    siteUrl,
+    {
+      startDate: windowStartDate,
+      endDate,
+      dimensions: ["date"],
+      rowLimit: 25000,
+    },
+  );
+
+  const rows = byDate.rows || [];
+  if (rows.length > 0) {
+    const sorted = [...rows].sort((a, b) =>
+      String(b.keys?.[0] || "").localeCompare(String(a.keys?.[0] || "")),
+    );
+    const latestWithClicks = sorted.find((row) => (row.clicks || 0) > 0);
+    if (latestWithClicks) {
+      const day = latestWithClicks.keys?.[0];
+      const clicks = latestWithClicks.clicks || 0;
+      log.info(
+        `google-search-console: ${domainLabel} dailyClicks=${clicks} (último día con datos ${day}, ventana ${windowStartDate}→${endDate}, ${dataState})`,
+      );
+      return clicks;
+    }
+
+    const totalClicks = rows.reduce((sum, row) => sum + (row.clicks || 0), 0);
+    if (totalClicks > 0) {
+      const avgDaily = Math.round(totalClicks / rows.length);
+      log.info(
+        `google-search-console: ${domainLabel} dailyClicks≈${avgDaily} (media ${totalClicks}/${rows.length} días con filas, ${windowStartDate}→${endDate})`,
+      );
+      return avgDaily;
+    }
+  }
+
+  const windowTotal = await fetchAggregateClicks(
+    searchconsole,
+    siteUrl,
+    windowStartDate,
+    endDate,
+  );
+  if (windowTotal > 0) {
+    const avgDaily = Math.round(windowTotal / windowDays);
+    log.info(
+      `google-search-console: ${domainLabel} dailyClicks≈${avgDaily} (media ventana ${windowTotal}/${windowDays}d, ${windowStartDate}→${endDate})`,
+    );
+    return avgDaily;
+  }
+
+  log.info(
+    `google-search-console: ${domainLabel} dailyClicks=0 (sin clics ${windowStartDate}→${endDate}, lag ${lag}d)`,
+  );
+  return 0;
 }
 
 /**
@@ -46,16 +139,12 @@ async function fetchIndexedPagesEstimate(searchconsole, siteUrl) {
   const rowLimit = 25000;
 
   while (true) {
-    const { data } = await searchconsole.searchanalytics.query({
-      siteUrl,
-      requestBody: {
-        startDate,
-        endDate,
-        dimensions: ["page"],
-        rowLimit,
-        startRow,
-        dataState: "final",
-      },
+    const { data } = await querySearchAnalytics(searchconsole, siteUrl, {
+      startDate,
+      endDate,
+      dimensions: ["page"],
+      rowLimit,
+      startRow,
     });
 
     const rows = data.rows || [];
@@ -110,10 +199,10 @@ const googleSearchConsoleProvider = {
 
     try {
       if (wantsClicks) {
-        const clicks = await fetchDailyClicks(searchconsole, siteUrl);
-        patch.dailyClicks = clicks ?? 0;
-        log.info(
-          `${this.id}: ${ctx.domain} dailyClicks=${patch.dailyClicks} (site ${siteUrl})`,
+        patch.dailyClicks = await fetchDailyClicks(
+          searchconsole,
+          siteUrl,
+          ctx.domain,
         );
       }
 

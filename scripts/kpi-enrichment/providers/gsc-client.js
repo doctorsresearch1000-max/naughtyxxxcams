@@ -39,8 +39,13 @@ function utcDaysAgo(days) {
 }
 
 function gscDataLagDays() {
-  const parsed = Number.parseInt(process.env.GSC_DATA_LAG_DAYS || "2", 10);
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 2;
+  const parsed = Number.parseInt(process.env.GSC_DATA_LAG_DAYS || "3", 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 3;
+}
+
+function gscClicksWindowDays() {
+  const parsed = Number.parseInt(process.env.GSC_CLICKS_WINDOW_DAYS || "7", 10);
+  return Number.isFinite(parsed) && parsed >= 3 ? parsed : 7;
 }
 
 function gscIndexedLookbackDays() {
@@ -65,6 +70,7 @@ module.exports = {
   formatIsoDate,
   utcDaysAgo,
   gscDataLagDays,
+  gscClicksWindowDays,
   gscIndexedLookbackDays,
   siteUrlForDomain,
 };
