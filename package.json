@@ -16,10 +16,17 @@
     "preview": "npm run build && opennextjs-cloudflare preview",
     "lint": "next lint",
     "test:seo": "node scripts/verify-profile-indexable.mjs && node scripts/verify-room-titles.mjs && node scripts/verify-crak-subid.mjs",
-    "test:ads": "node scripts/verify-jerkmate-creatives.mjs"
+"test:seo": "node scripts/verify-profile-indexable.mjs && node scripts/verify-room-titles.mjs",
+    "test:ads": "node scripts/verify-jerkmate-creatives.mjs",
+    "notion:setup-kpi-history": "node scripts/setup-databases.js",
+    "notion:sync-kpis": "node scripts/sync-kpis.js"
   },
   "dependencies": {
+    "@google-analytics/data": "^7.2.1",
     "@next/third-parties": "^16.3.6",
+    "@notionhq/client": "^5.27.0",
+    "dotenv": "^18.0.7",
+    "googleapis": "^185.0.0",
     "lucide-react": "^0.544.0",
     "next": "^15.5.3",
     "react": "^19.1.1",
