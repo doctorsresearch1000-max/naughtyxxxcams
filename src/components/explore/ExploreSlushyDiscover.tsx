@@ -10,8 +10,12 @@ import {
   useTransition,
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import { pickCoverUrl } from "@/lib/crackrevenue/api";
+import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
-import { JerkmateExploreGifBanner } from "@/components/explore/JerkmateExploreGifBanner";
+import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
+import { ExploreSlushyCategoryShortcuts } from "@/components/explore/ExploreSlushyCategoryShortcuts";
+import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
 import { ExploreLiveStoriesRow } from "@/components/explore/ExploreLiveStoriesRow";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
@@ -101,6 +105,7 @@ export function ExploreSlushyDiscover({
   initialPerformers,
   initialTotal,
   masterPool,
+  popularCategories,
   poolLoading = false,
 }: ExploreSlushyDiscoverProps) {
   const router = useRouter();
@@ -218,8 +223,13 @@ export function ExploreSlushyDiscover({
     );
   }, [displayedPerformers, liveStories]);
 
+  const promoModel = liveStories[0] ?? basePerformers[0];
+  const promoUrl = promoModel ? buildModelAffiliateUrl(promoModel) : "";
+  const promoImage = promoModel ? pickCoverUrl(promoModel) : null;
+
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
+  const showCategoryHub = !activeCat && !search.trim();
 
   const onSortChip = (id: ExploreSortMode | "filter") => {
     if (id === "filter") {
@@ -364,13 +374,43 @@ export function ExploreSlushyDiscover({
 
       <ExploreLiveStoriesRow performers={liveStories} />
 
-      <JerkmateExploreGifBanner />
+      {promoUrl ? (
+        <ExploreJerkmatePromoBanner
+          affiliateUrl={promoUrl}
+          coverUrl={promoImage}
+        />
+      ) : null}
+
+      {showCategoryHub ? (
+        <section className="mb-2">
+          <div className="mb-2.5 flex items-center justify-between px-0.5">
+            <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
+              Popular categories
+            </h2>
+            {popularCategories.length > 0 ? (
+              <span className="text-[10px] font-semibold text-zinc-600">
+                {popularCategories.length} active
+              </span>
+            ) : null}
+          </div>
+          {popularCategories.length > 0 ? (
+            <ExploreCategoryGrid categories={popularCategories} />
+          ) : (
+            <ExploreSlushyCategoryShortcuts />
+          )}
+        </section>
+      ) : null}
 
       <section className="mt-2 lg:mt-4">
-        <div className="mb-2.5 px-0.5 lg:mb-1">
+        <div className="mb-2.5 flex items-center justify-between px-0.5 lg:mb-1">
           <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
             {category ? category.label : "For you"}
           </h2>
+          <span className="text-[10px] font-semibold text-zinc-600">
+            {isPending || showSkeleton
+              ? "…"
+              : `${gridPerformers.length} / ${total}`}
+          </span>
         </div>
         {showSkeleton ? (
           <ExplorePerformerGridSkeleton count={12} />
