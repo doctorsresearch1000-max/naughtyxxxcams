@@ -7,96 +7,182 @@ const {
   isMetricMissing,
 } = require("./metrics");
 const { log } = require("./logger");
-
-const ZERO_REASON_NO_DOMAIN = "sin dominio";
-const ZERO_REASON_NO_API_DATA =
-  "sin datos reales de Search Console / CrakRevenue";
+const {
+  metricNotAttempted,
+  isSuccessfulOutcome,
+} = require("./outcomes");
 
 /**
+ * Scheduled sync refreshes all KPI metrics by default.
+ * KPI_ENRICH_GAP_ONLY=1 — only fetch metrics that are null/undefined in Notion (legacy).
+ * KPI_ENRICH_OVERWRITE=1 — kept for compatibility; full refresh is already the default.
+ *
  * @param {import("./types").EnrichmentContext} ctx
+ * @param {typeof KPI_PROVIDERS} [providers]
  * @returns {Promise<import("./types").EnrichmentResult>}
  */
-async function enrichRowMetrics(ctx) {
-  const merged = { ...ctx.current };
+async function enrichRowMetrics(ctx, providers = KPI_PROVIDERS) {
+  const outcomes = initOutcomes();
   const filledBy = {
     monthlyRevenue: null,
     dailyClicks: null,
     indexedPages: null,
   };
+  const successfulUpdates = {};
 
   if (!ctx.domain) {
     log.warn(
-      `Fila "${ctx.label}" (${ctx.pageId}): sin dominio; las métricas se pondrán a 0.`,
+      `Fila "${ctx.label}" (${ctx.pageId}): sin dominio; se conservan las métricas actuales.`,
     );
-    return finalize(ctx, merged, filledBy);
+    return buildResult(ctx, ctx.current, filledBy, outcomes, successfulUpdates);
   }
 
-  const targets = new Set(ctx.missing);
-  if (process.env.KPI_ENRICH_OVERWRITE === "1") {
-    for (const id of METRIC_IDS) targets.add(id);
+  const refreshMetrics = resolveRefreshMetrics(ctx);
+  const refreshSet = new Set(refreshMetrics);
+
+  if (refreshSet.size === 0) {
+    return buildResult(ctx, ctx.current, filledBy, outcomes, successfulUpdates);
   }
 
-  if (targets.size > 0) {
-    for (const provider of KPI_PROVIDERS) {
-      const relevant = provider.metrics.filter((m) => targets.has(m));
-      if (relevant.length === 0) continue;
+  const providerCtx = {
+    ...ctx,
+    refreshMetrics,
+    missing: refreshMetrics,
+  };
 
-      let patch = {};
-      try {
-        patch = await provider.fetch({ ...ctx, missing: [...targets] });
-      } catch (err) {
-        log.error(
-          `${provider.id} falló para ${ctx.domain}: ${err.message || err}`,
-        );
+  for (const provider of providers) {
+    const relevant = provider.metrics.filter((m) => refreshSet.has(m));
+    if (relevant.length === 0) continue;
+
+    let providerOutcomes = {};
+    try {
+      providerOutcomes = await provider.fetch(providerCtx);
+    } catch (err) {
+      const message = err?.message || String(err);
+      log.error(`${provider.id} falló para ${ctx.domain}: ${message}`);
+      for (const metricId of relevant) {
+        if (outcomes[metricId].status === "not_attempted") {
+          outcomes[metricId] = {
+            status: "failure",
+            message: `${provider.id}: ${message}`,
+          };
+        }
+      }
+      continue;
+    }
+
+    for (const metricId of relevant) {
+      const outcome = providerOutcomes[metricId];
+      if (!outcome) {
+        if (outcomes[metricId].status === "not_attempted") {
+          outcomes[metricId] = {
+            status: "failure",
+            message: `${provider.id}: sin resultado para ${METRIC_LABELS[metricId]}`,
+          };
+        }
         continue;
       }
 
-      for (const metricId of relevant) {
-        const value = patch[metricId];
-        if (isMetricMissing(value)) continue;
-        if (!targets.has(metricId) && !isMetricMissing(merged[metricId])) {
-          continue;
-        }
+      outcomes[metricId] = outcome;
 
-        merged[metricId] = value;
+      if (isSuccessfulOutcome(outcome)) {
+        successfulUpdates[metricId] = outcome.value;
         filledBy[metricId] = provider.id;
-        targets.delete(metricId);
+        refreshSet.delete(metricId);
         log.metricFilled(
           ctx.domain,
           METRIC_LABELS[metricId],
-          value,
+          outcome.value,
           provider.id,
+        );
+      } else if (outcome.status === "failure") {
+        log.error(
+          `${ctx.domain} · ${METRIC_LABELS[metricId]}: ${outcome.message}`,
+        );
+      } else if (outcome.status === "skipped") {
+        log.info(
+          `${ctx.domain} · ${METRIC_LABELS[metricId]}: omitido (${outcome.reason})`,
         );
       }
     }
   }
 
-  return finalize(ctx, merged, filledBy);
+  for (const metricId of refreshMetrics) {
+    if (outcomes[metricId].status !== "not_attempted") continue;
+    outcomes[metricId] = metricNotAttempted();
+  }
+
+  return buildResult(
+    ctx,
+    mergeForSnapshot(ctx.current, successfulUpdates),
+    filledBy,
+    outcomes,
+    successfulUpdates,
+  );
 }
 
 /**
  * @param {import("./types").EnrichmentContext} ctx
- * @param {Record<string, number | null>} merged
- * @param {Record<string, string | null>} filledBy
+ * @returns {import("./metrics").MetricId[]}
  */
-function finalize(ctx, merged, filledBy) {
-  const zeroReason = ctx.domain ? ZERO_REASON_NO_API_DATA : ZERO_REASON_NO_DOMAIN;
-
-  for (const metricId of METRIC_IDS) {
-    if (filledBy[metricId]) continue;
-    if (merged[metricId] === 0) continue;
-    merged[metricId] = 0;
-    log.metricZeroed(
-      ctx.domain || ctx.label,
-      METRIC_LABELS[metricId],
-      zeroReason,
-    );
+function resolveRefreshMetrics(ctx) {
+  if (process.env.KPI_ENRICH_GAP_ONLY === "1") {
+    return [...ctx.missing];
   }
-
-  const stillMissing = [];
-  const mainDbChanged = METRIC_IDS.some((id) => merged[id] !== ctx.current[id]);
-
-  return { merged, filledBy, stillMissing, mainDbChanged };
+  return [...METRIC_IDS];
 }
 
-module.exports = { enrichRowMetrics };
+function initOutcomes() {
+  /** @type {Record<import("./metrics").MetricId, import("./outcomes").MetricOutcome>} */
+  const outcomes = {};
+  for (const id of METRIC_IDS) {
+    outcomes[id] = metricNotAttempted();
+  }
+  return outcomes;
+}
+
+function mergeForSnapshot(current, successfulUpdates) {
+  return {
+    monthlyRevenue:
+      successfulUpdates.monthlyRevenue !== undefined
+        ? successfulUpdates.monthlyRevenue
+        : current.monthlyRevenue,
+    dailyClicks:
+      successfulUpdates.dailyClicks !== undefined
+        ? successfulUpdates.dailyClicks
+        : current.dailyClicks,
+    indexedPages:
+      successfulUpdates.indexedPages !== undefined
+        ? successfulUpdates.indexedPages
+        : current.indexedPages,
+  };
+}
+
+function buildResult(ctx, merged, filledBy, outcomes, successfulUpdates) {
+  const stillMissing = METRIC_IDS.filter((id) => isMetricMissing(merged[id]));
+  const mainDbChanged = METRIC_IDS.some(
+    (id) =>
+      successfulUpdates[id] !== undefined &&
+      successfulUpdates[id] !== ctx.current[id],
+  );
+  const refreshIncomplete = METRIC_IDS.some((id) => {
+    const status = outcomes[id].status;
+    return status === "failure" || status === "skipped" || status === "not_attempted";
+  });
+
+  return {
+    merged,
+    filledBy,
+    stillMissing,
+    mainDbChanged,
+    outcomes,
+    successfulUpdates,
+    refreshIncomplete,
+  };
+}
+
+module.exports = {
+  enrichRowMetrics,
+  resolveRefreshMetrics,
+  mergeForSnapshot,
+};

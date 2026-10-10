@@ -2,6 +2,11 @@
 
 const { log } = require("../logger");
 const {
+  metricSuccess,
+  metricFailure,
+  metricSkipped,
+} = require("../outcomes");
+const {
   hasGscCredentials,
   getSearchConsoleClient,
   formatIsoDate,
@@ -159,7 +164,11 @@ async function fetchIndexedPagesEstimate(searchconsole, siteUrl) {
     }
   }
 
-  return total > 0 ? total : null;
+  return total;
+}
+
+function refreshList(ctx) {
+  return ctx.refreshMetrics?.length ? ctx.refreshMetrics : ctx.missing;
 }
 
 /** Proveedor Google Search Console (clics diarios, páginas indexadas). */
@@ -174,52 +183,81 @@ const googleSearchConsoleProvider = {
 
   /**
    * @param {import("../types").EnrichmentContext} ctx
-   * @returns {Promise<Partial<Record<import("../metrics").MetricId, number>>>}
+   * @returns {Promise<Partial<Record<import("../metrics").MetricId, import("../outcomes").MetricOutcome>>>}
    */
   async fetch(ctx) {
+    const refresh = refreshList(ctx);
+    const wantsClicks = refresh.includes("dailyClicks");
+    const wantsIndexed = refresh.includes("indexedPages");
+    /** @type {Partial<Record<import("../metrics").MetricId, import("../outcomes").MetricOutcome>>} */
+    const outcomes = {};
+
+    if (!wantsClicks && !wantsIndexed) {
+      return outcomes;
+    }
+
     if (!this.isConfigured()) {
       log.info(
         `${this.id}: omitido (sin credenciales; define GSC_SERVICE_ACCOUNT_JSON).`,
       );
-      return {};
+      if (wantsClicks) {
+        outcomes.dailyClicks = metricSkipped("GSC no configurado");
+      }
+      if (wantsIndexed) {
+        outcomes.indexedPages = metricSkipped("GSC no configurado");
+      }
+      return outcomes;
     }
 
     const siteUrl = siteUrlForDomain(ctx.domain);
     if (!siteUrl) {
       log.warn(`${this.id}: sin dominio en la fila; no se puede consultar GSC.`);
-      return {};
+      if (wantsClicks) {
+        outcomes.dailyClicks = metricSkipped("sin dominio");
+      }
+      if (wantsIndexed) {
+        outcomes.indexedPages = metricSkipped("sin dominio");
+      }
+      return outcomes;
     }
 
     const searchconsole = await getSearchConsoleClient();
-    if (!searchconsole) return {};
-
-    const patch = {};
-    const wantsClicks = ctx.missing.includes("dailyClicks");
-    const wantsIndexed = ctx.missing.includes("indexedPages");
+    if (!searchconsole) {
+      const reason = "no se pudo inicializar el cliente GSC";
+      if (wantsClicks) outcomes.dailyClicks = metricFailure(reason);
+      if (wantsIndexed) outcomes.indexedPages = metricFailure(reason);
+      return outcomes;
+    }
 
     try {
       if (wantsClicks) {
-        patch.dailyClicks = await fetchDailyClicks(
+        const clicks = await fetchDailyClicks(
           searchconsole,
           siteUrl,
           ctx.domain,
         );
+        outcomes.dailyClicks = metricSuccess(clicks);
       }
 
       if (wantsIndexed) {
         const indexed = await fetchIndexedPagesEstimate(searchconsole, siteUrl);
-        patch.indexedPages = indexed ?? 0;
+        outcomes.indexedPages = metricSuccess(indexed);
         log.info(
-          `${this.id}: ${ctx.domain} indexedPages=${patch.indexedPages} (URLs con impresiones, ${gscIndexedLookbackDays()}d)`,
+          `${this.id}: ${ctx.domain} indexedPages=${indexed} (URLs con impresiones, ${gscIndexedLookbackDays()}d)`,
         );
       }
     } catch (err) {
       const message = err?.response?.data?.error?.message || err.message;
       log.error(`${this.id}: error en ${ctx.domain} (${siteUrl}): ${message}`);
-      return {};
+      if (wantsClicks && !outcomes.dailyClicks) {
+        outcomes.dailyClicks = metricFailure(message);
+      }
+      if (wantsIndexed && !outcomes.indexedPages) {
+        outcomes.indexedPages = metricFailure(message);
+      }
     }
 
-    return patch;
+    return outcomes;
   },
 };
 
