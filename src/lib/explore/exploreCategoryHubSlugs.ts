@@ -1,14 +1,16 @@
 import type { ExploreCategorySlug } from "@/lib/explore/categorySlugs";
 
 /** Categories shown in Explore “Popular categories” (hub UI only — SEO routes unchanged). */
-export const EXPLORE_HUB_CATEGORY_SLUGS: ExploreCategorySlug[] = [
+export const EXPLORE_HUB_CATEGORY_SLUGS = [
   "latinas",
   "verified",
   "milf",
   "petite",
   "cosplay",
   "couples",
-];
+] as const satisfies readonly ExploreCategorySlug[];
+
+export type ExploreHubCategorySlug = (typeof EXPLORE_HUB_CATEGORY_SLUGS)[number];
 
 const HUB_SLUG_SET = new Set<string>(EXPLORE_HUB_CATEGORY_SLUGS);
 
