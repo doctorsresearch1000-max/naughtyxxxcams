@@ -11,6 +11,7 @@ import {
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
+import { JerkmateExploreGifBanner } from "@/components/explore/JerkmateExploreGifBanner";
 import { ExploreLiveStoriesRow } from "@/components/explore/ExploreLiveStoriesRow";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
@@ -93,8 +94,6 @@ type ExploreSlushyDiscoverProps = {
   masterPool: CrackPerformer[];
   popularCategories: ExploreCategory[];
   poolLoading?: boolean;
-  /** When true, grid is rendered by parent RSC (SSR SEO); client keeps filters/stories only. */
-  hidePerformerGrid?: boolean;
 };
 
 export function ExploreSlushyDiscover({
@@ -103,7 +102,6 @@ export function ExploreSlushyDiscover({
   initialTotal,
   masterPool,
   poolLoading = false,
-  hidePerformerGrid = false,
 }: ExploreSlushyDiscoverProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -366,20 +364,20 @@ export function ExploreSlushyDiscover({
 
       <ExploreLiveStoriesRow performers={liveStories} />
 
-      {hidePerformerGrid ? null : (
-        <section className="mt-2 lg:mt-4">
-          <div className="mb-2.5 px-0.5 lg:mb-1">
-            <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
-              {category ? category.label : "For you"}
-            </h2>
-          </div>
-          {showSkeleton ? (
-            <ExplorePerformerGridSkeleton count={12} />
-          ) : (
-            <ExploreTubeGrid performers={gridPerformers} />
-          )}
-        </section>
-      )}
+      <JerkmateExploreGifBanner />
+
+      <section className="mt-2 lg:mt-4">
+        <div className="mb-2.5 px-0.5 lg:mb-1">
+          <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
+            {category ? category.label : "For you"}
+          </h2>
+        </div>
+        {showSkeleton ? (
+          <ExplorePerformerGridSkeleton count={12} />
+        ) : (
+          <ExploreTubeGrid performers={gridPerformers} />
+        )}
+      </section>
     </div>
   );
 }

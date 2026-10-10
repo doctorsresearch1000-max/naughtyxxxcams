@@ -6,6 +6,9 @@ import { resolveExploreCategory } from "@/lib/explore/exploreCatalog";
 import type { ExploreServerBootstrap } from "@/lib/explore/getExploreServerBootstrap";
 import { generateExploreSeoCopy } from "@/lib/seo/exploreSeoContent";
 
+/** Max profile links in the non-visual SSR block (crawl / first HTML only). */
+const EXPLORE_SSR_CRAWL_LINK_CAP = 24;
+
 type ExploreMainProps = {
   categorySlug: string | null;
   bootstrap: ExploreServerBootstrap | null;
@@ -14,8 +17,7 @@ type ExploreMainProps = {
 export function ExploreMain({ categorySlug, bootstrap }: ExploreMainProps) {
   const category = resolveExploreCategory(categorySlug);
   const seo = generateExploreSeoCopy(category);
-  const hasServerGrid =
-    Boolean(bootstrap?.performers?.length && bootstrap.performers.length > 0);
+  const crawlPerformers = bootstrap?.performers?.slice(0, EXPLORE_SSR_CRAWL_LINK_CAP);
 
   return (
     <main
@@ -30,22 +32,18 @@ export function ExploreMain({ categorySlug, bootstrap }: ExploreMainProps) {
         </p>
       </header>
 
-      {hasServerGrid ? (
+      {crawlPerformers?.length ? (
         <section
-          className="mb-4 px-0.5"
-          aria-label="Live model directory"
-          data-explore-ssr-grid="v1"
+          className="sr-only"
+          aria-label="Model directory links"
+          data-explore-ssr-grid="crawl-only"
         >
-          <ExplorePerformerGrid performers={bootstrap!.performers} />
+          <ExplorePerformerGrid performers={crawlPerformers} />
         </section>
       ) : null}
 
       <Suspense fallback={<ExplorePerformerGridSkeleton count={12} />}>
-        <ExplorePageClient
-          categorySlug={categorySlug}
-          bootstrap={bootstrap}
-          hidePerformerGrid={hasServerGrid}
-        />
+        <ExplorePageClient categorySlug={categorySlug} bootstrap={bootstrap} />
       </Suspense>
     </main>
   );

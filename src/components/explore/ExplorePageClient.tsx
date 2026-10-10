@@ -70,13 +70,11 @@ function initialFromServer(
 type ExplorePageClientProps = {
   categorySlug: string | null;
   bootstrap?: ExploreServerBootstrap | null;
-  hidePerformerGrid?: boolean;
 };
 
 export function ExplorePageClient({
   categorySlug,
   bootstrap = null,
-  hidePerformerGrid = false,
 }: ExplorePageClientProps) {
   const category = resolveExploreCategory(categorySlug);
   const initialCat = category?.slug ?? null;
@@ -118,7 +116,6 @@ export function ExplorePageClient({
       masterPool={masterPool}
       popularCategories={popularCategories}
       poolLoading={!ready && masterPool.length === 0}
-      hidePerformerGrid={hidePerformerGrid}
     />
   );
 }
