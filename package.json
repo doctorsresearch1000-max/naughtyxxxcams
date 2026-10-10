@@ -19,7 +19,8 @@
     "test:ads": "node scripts/verify-jerkmate-creatives.mjs",
     "notion:setup-kpi-history": "node scripts/setup-databases.js",
     "notion:sync-kpis": "node scripts/sync-kpis.js",
-    "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
+    "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js",
+    "refresh:explore-covers": "node scripts/refresh-explore-category-covers.mjs"
   },
   "dependencies": {
     "@google-analytics/data": "^7.2.1",
