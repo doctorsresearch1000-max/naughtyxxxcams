@@ -13,7 +13,6 @@ import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
-import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
 import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
 import { buildExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
 import { isAllowedExploreChipSlug } from "@/lib/explore/exploreCategoryHubSlugs";
@@ -415,20 +414,11 @@ export function ExploreSlushyDiscover({
             <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
               Popular categories
             </h2>
-            {popularCategories.length > 0 ? (
-              <span className="text-[10px] font-semibold text-zinc-600">
-                {popularCategories.length} active
-              </span>
-            ) : null}
+            <span className="text-[10px] font-semibold text-zinc-600">
+              {categoryHubCards.length} niches
+            </span>
           </div>
-          {popularCategories.length > 0 ? (
-            <ExploreCategoryGrid
-              categories={popularCategories}
-              masterPool={masterPool}
-            />
-          ) : (
-            <ExploreCategoryPremiumGrid cards={categoryHubCards} />
-          )}
+          <ExploreCategoryPremiumGrid cards={categoryHubCards} />
         </section>
       ) : null}
 

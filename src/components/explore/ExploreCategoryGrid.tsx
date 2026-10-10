@@ -17,14 +17,13 @@ export function ExploreCategoryGrid({
   const safeCategories = Array.isArray(categories) ? categories : [];
   const cards = resolveExploreCategoryHubCards(masterPool, safeCategories);
 
-  if (cards.length === 0) {
-    return (
-      <p className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 text-xs text-zinc-400">
-        No categories available right now. Please try again in a few
-        minutes.
-      </p>
-    );
-  }
-
-  return <ExploreCategoryPremiumGrid cards={cards} />;
+  return (
+    <ExploreCategoryPremiumGrid
+      cards={
+        cards.length > 0
+          ? cards
+          : resolveExploreCategoryHubCards(masterPool, [])
+      }
+    />
+  );
 }
