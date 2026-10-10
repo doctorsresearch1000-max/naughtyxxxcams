@@ -1,6 +1,7 @@
 "use client";
 
 import type { MouseEvent, ReactNode } from "react";
+import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
 import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 
 type AffiliateOutboundLinkProps = {
@@ -16,16 +17,18 @@ export function AffiliateOutboundLink({
   children,
   onClick,
 }: AffiliateOutboundLinkProps) {
+  const outboundHref = ensureAffiliateSubid(href);
+
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.stopPropagation();
     event.preventDefault();
     onClick?.();
-    openAffiliateOutbound(href);
+    openAffiliateOutbound(outboundHref);
   };
 
   return (
     <a
-      href={href}
+      href={outboundHref}
       onClick={handleClick}
       target="_blank"
       rel="nofollow noopener sponsored"

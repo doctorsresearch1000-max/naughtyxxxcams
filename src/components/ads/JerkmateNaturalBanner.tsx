@@ -4,6 +4,7 @@ import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
+import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
 
 const BANNER_ASPECT = 300 / 100;
 
@@ -21,10 +22,12 @@ export function JerkmateNaturalBanner({
   alt,
   className = "",
 }: JerkmateNaturalBannerProps) {
+  const outboundHref = ensureAffiliateSubid(href);
+
   return (
     <div className={`w-full ${className}`} aria-label="Sponsored offer">
       <Link
-        href={href}
+        href={outboundHref}
         target="_blank"
         rel="nofollow noopener sponsored"
         className="group block w-full overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 ring-1 ring-pink-500/40 transition hover:ring-pink-400/55"
