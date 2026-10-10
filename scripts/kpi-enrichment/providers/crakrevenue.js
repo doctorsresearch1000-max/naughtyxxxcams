@@ -8,7 +8,7 @@ const {
   currentMonthDateRangeUtc,
 } = require("./crakrevenue-client");
 
-/** Ingresos del mes (MTD) por Sub-ID vía CrakRevenue stats API (HasOffers/TUNE). */
+/** Ingresos MTD por Sub ID 2 (Stat.affiliate_info2 / aff_sub2) vía CrakRevenue stats API. */
 const crakRevenueProvider = {
   id: "crakrevenue",
   label: "CrakRevenue",

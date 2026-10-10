@@ -2,6 +2,7 @@
 
 const { normalizeDomain } = require("../skip-domains");
 
+/** Sub ID 2 (aff_sub2 / Stat.affiliate_info2) enviado desde cada frontend. */
 const DEFAULT_SUBID_BY_DOMAIN = {
   "telehub.cam": "telehub_cam",
   "naughtyxxxcams.com": "naughtyxxxcams_com",
@@ -44,7 +45,7 @@ function statsApiBaseUrl() {
 
 function subIdFilterField() {
   return (
-    process.env.CRAKREVENUE_SUBID_FIELD?.trim() || "Stat.affiliate_info1"
+    process.env.CRAKREVENUE_SUBID_FIELD?.trim() || "Stat.affiliate_info2"
   );
 }
 
