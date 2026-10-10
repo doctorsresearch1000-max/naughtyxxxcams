@@ -32,12 +32,9 @@ const log = {
       ),
     );
   },
-  metricStillMissing(domain, metricLabel, reason) {
-    console.warn(
-      line(
-        "MANUAL",
-        `${domain} · ${metricLabel} sin valor — ${reason}`,
-      ),
+  metricZeroed(domain, metricLabel, reason) {
+    console.log(
+      line("ZERO", `${domain} · ${metricLabel} = 0 (${reason})`),
     );
   },
 };

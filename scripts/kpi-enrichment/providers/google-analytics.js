@@ -32,23 +32,11 @@ async function fetchMonthlyRevenue(client, propertyId) {
   return revenue === null ? null : Math.round(revenue * 100) / 100;
 }
 
-async function fetchDailySessions(client, propertyId) {
-  const lag = gaDataLagDays();
-  const dayLabel = `${lag}daysAgo`;
-  const [response] = await client.runReport({
-    property: `properties/${propertyId}`,
-    dateRanges: [{ startDate: dayLabel, endDate: dayLabel }],
-    metrics: [{ name: "sessions" }],
-  });
-  const sessions = parseMetricValue(response, 0);
-  return sessions === null ? null : Math.round(sessions);
-}
-
-/** Proveedor GA4 (ingresos mensuales rolling, sesiones diarias como tráfico). */
+/** Proveedor GA4 (ingresos mensuales; no está en la cadena activa si solo usas GSC). */
 const googleAnalyticsProvider = {
   id: "google-analytics",
   label: "Google Analytics (GA4)",
-  metrics: ["monthlyRevenue", "dailyClicks"],
+  metrics: ["monthlyRevenue"],
 
   isConfigured() {
     return hasGoogleServiceAccountCredentials();
@@ -79,7 +67,6 @@ const googleAnalyticsProvider = {
 
     const patch = {};
     const wantsRevenue = ctx.missing.includes("monthlyRevenue");
-    const wantsTraffic = ctx.missing.includes("dailyClicks");
 
     try {
       if (wantsRevenue) {
@@ -92,20 +79,6 @@ const googleAnalyticsProvider = {
         } else {
           log.warn(
             `${this.id}: sin ingresos GA4 para ${ctx.domain} (property ${propertyId})`,
-          );
-        }
-      }
-
-      if (wantsTraffic) {
-        const sessions = await fetchDailySessions(client, propertyId);
-        if (sessions !== null) {
-          patch.dailyClicks = sessions;
-          log.info(
-            `${this.id}: ${ctx.domain} dailyClicks≈${sessions} sesiones (property ${propertyId}, lag ${gaDataLagDays()}d)`,
-          );
-        } else {
-          log.warn(
-            `${this.id}: sin sesiones GA4 para ${ctx.domain} (property ${propertyId})`,
           );
         }
       }

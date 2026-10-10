@@ -111,30 +111,18 @@ const googleSearchConsoleProvider = {
     try {
       if (wantsClicks) {
         const clicks = await fetchDailyClicks(searchconsole, siteUrl);
-        if (clicks !== null) {
-          patch.dailyClicks = clicks;
-          log.info(
-            `${this.id}: ${ctx.domain} dailyClicks=${clicks} (site ${siteUrl})`,
-          );
-        } else {
-          log.warn(
-            `${this.id}: sin filas de clics para ${ctx.domain} en ${siteUrl}`,
-          );
-        }
+        patch.dailyClicks = clicks ?? 0;
+        log.info(
+          `${this.id}: ${ctx.domain} dailyClicks=${patch.dailyClicks} (site ${siteUrl})`,
+        );
       }
 
       if (wantsIndexed) {
         const indexed = await fetchIndexedPagesEstimate(searchconsole, siteUrl);
-        if (indexed !== null) {
-          patch.indexedPages = indexed;
-          log.info(
-            `${this.id}: ${ctx.domain} indexedPages≈${indexed} (URLs con impresiones, ${gscIndexedLookbackDays()}d)`,
-          );
-        } else {
-          log.warn(
-            `${this.id}: sin páginas con impresiones para ${ctx.domain} en ${siteUrl}`,
-          );
-        }
+        patch.indexedPages = indexed ?? 0;
+        log.info(
+          `${this.id}: ${ctx.domain} indexedPages=${patch.indexedPages} (URLs con impresiones, ${gscIndexedLookbackDays()}d)`,
+        );
       }
     } catch (err) {
       const message = err?.response?.data?.error?.message || err.message;

@@ -151,7 +151,7 @@ function formatMetricProperty(schemaType, metricId, value) {
   return { number: value };
 }
 
-function buildMainUpdateProperties(mainSchema, kpiKeys, metrics, filledBy) {
+function buildMainUpdateProperties(mainSchema, kpiKeys, metrics, previous) {
   const properties = {};
   const map = {
     monthlyRevenue: kpiKeys.monthlyRevenue,
@@ -160,9 +160,13 @@ function buildMainUpdateProperties(mainSchema, kpiKeys, metrics, filledBy) {
   };
 
   for (const [metricId, propertyKey] of Object.entries(map)) {
-    if (!propertyKey || !filledBy[metricId]) continue;
+    if (!propertyKey) continue;
+    const next = metrics[metricId];
+    const prev = previous[metricId];
+    if (next === prev) continue;
+    if (next === null || next === undefined) continue;
     const schemaType = mainSchema[propertyKey]?.type;
-    const prop = formatMetricProperty(schemaType, metricId, metrics[metricId]);
+    const prop = formatMetricProperty(schemaType, metricId, next);
     if (prop) properties[propertyKey] = prop;
   }
 

@@ -17,9 +17,9 @@ function isMetricMissing(value) {
   return value === null || value === undefined;
 }
 
-/** Huecos para enriquecimiento (0 se trata como placeholder vacío en Notion). */
+/** Huecos a rellenar desde APIs (0 es un valor real guardado en Notion). */
 function isEnrichmentGap(value) {
-  return value === null || value === undefined || value === 0;
+  return isMetricMissing(value);
 }
 
 /**

@@ -36,13 +36,9 @@ async function main() {
   log.section("Notion KPI sync");
   log.info(`Fecha de snapshot: ${snapshotDate}`);
   if (dryRun) log.warn("KPI_SYNC_DRY_RUN=1 — no se escribirá en Notion.");
-  if (process.env.GA4_PROPERTY_MAP?.trim()) {
-    log.info("GA4: mapeo por dominio cargado desde GA4_PROPERTY_MAP.");
-  } else {
-    log.info(
-      "GA4: define GA4_PROPERTY_MAP en .env (o GA4_PROPERTY_ID_<DOMINIO>) para ingresos reales.",
-    );
-  }
+  log.info(
+    "Enriquecimiento: solo Google Search Console (sin datos simulados).",
+  );
 
   const mainDataSourceId =
     process.env.NOTION_MAIN_DATA_SOURCE_ID?.trim() ||
@@ -141,7 +137,7 @@ async function main() {
         mainDs.properties,
         mainKpiKeys,
         merged,
-        filledBy,
+        ctx.current,
       );
       if (Object.keys(patch).length > 0) {
         await notion.pages.update({
@@ -181,11 +177,6 @@ async function main() {
   log.info(`Filas procesadas: ${stats.rows}`);
   log.info(`Filas con huecos iniciales: ${stats.rowsWithGaps}`);
   log.success(`Métricas autocompletadas: ${stats.metricsAutofilled}`);
-  if (stats.metricsManual > 0) {
-    log.warn(
-      `Métricas que siguen vacías (revisión manual): ${stats.metricsManual}`,
-    );
-  }
   log.info(`Actualizaciones en base principal: ${stats.mainUpdates}`);
   log.success(`Filas añadidas a KPI History: ${stats.historyRows}`);
 }
