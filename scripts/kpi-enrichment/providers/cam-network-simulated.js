@@ -2,6 +2,9 @@
 
 const { todayIsoDate } = require("../../notion-kpi-utils");
 const { log } = require("../logger");
+const {
+  googleSearchConsoleProvider,
+} = require("./google-search-console");
 
 /**
  * Perfiles base para la red de sitios cams (valores de referencia, no producción).
@@ -90,6 +93,20 @@ const camNetworkSimulatedProvider = {
     const indexedPages = Math.round(
       base.indexedPages * dailyMultiplier(domain, "indexedPages", dateIso),
     );
+
+    const gscConfigured = googleSearchConsoleProvider.isConfigured();
+    const gscFallbackMetrics = ctx.missing.filter(
+      (m) => m === "dailyClicks" || m === "indexedPages",
+    );
+    if (!gscConfigured && gscFallbackMetrics.length > 0) {
+      log.info(
+        `${this.id}: sin GSC; estimando ${gscFallbackMetrics.join(", ")} para ${domain}`,
+      );
+    } else if (gscConfigured && gscFallbackMetrics.length > 0) {
+      log.info(
+        `${this.id}: fallback GSC para ${domain} → ${gscFallbackMetrics.join(", ")}`,
+      );
+    }
 
     const patch = {};
     for (const metricId of ctx.missing) {

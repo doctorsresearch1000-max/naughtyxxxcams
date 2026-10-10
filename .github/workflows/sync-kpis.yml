@@ -30,3 +30,4 @@ jobs:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_MAIN_DB_ID: ${{ secrets.NOTION_MAIN_DB_ID }}
           NOTION_HISTORY_DB_ID: ${{ secrets.NOTION_HISTORY_DB_ID }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
