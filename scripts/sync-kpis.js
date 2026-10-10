@@ -7,42 +7,34 @@ const { Client } = require("@notionhq/client");
 const {
   formatIdWithDashes,
   requireEnv,
-  resolveKpiPropertyKeys,
-  readPageTitle,
-  readNumberProperty,
   todayIsoDate,
-  findSchemaPropertyKey,
   getDatabaseDataSourceId,
 } = require("./notion-kpi-utils");
-
-const RELATION_CANDIDATES = [
-  "Source record",
-  "Source Record",
-  "CAM SITE NETWORK OS",
-  "CAM Site Network OS",
-];
-
-async function queryAllDataSourceRows(notion, dataSourceId) {
-  const pages = [];
-  let cursor;
-  do {
-    const response = await notion.dataSources.query({
-      data_source_id: dataSourceId,
-      start_cursor: cursor,
-    });
-    pages.push(...response.results);
-    cursor = response.has_more ? response.next_cursor : undefined;
-  } while (cursor);
-  return pages;
-}
+const { enrichRowMetrics } = require("./kpi-enrichment/enrich");
+const { METRIC_LABELS } = require("./kpi-enrichment/metrics");
+const { log } = require("./kpi-enrichment/logger");
+const {
+  queryAllDataSourceRows,
+  buildRowContext,
+  buildMainUpdateProperties,
+  buildHistorySnapshotProperties,
+  resolveHistoryRelationKey,
+  resolveKpiPropertyKeys,
+  resolveDomainPropertyKey,
+} = require("./notion-kpi-sync");
 
 async function main() {
+  const dryRun = process.env.KPI_SYNC_DRY_RUN === "1";
   const apiKey = requireEnv("NOTION_API_KEY");
   const mainDbId = formatIdWithDashes(requireEnv("NOTION_MAIN_DB_ID"));
   const historyDbId = formatIdWithDashes(requireEnv("NOTION_HISTORY_DB_ID"));
 
   const notion = new Client({ auth: apiKey });
   const snapshotDate = todayIsoDate();
+
+  log.section("Notion KPI sync");
+  log.info(`Fecha de snapshot: ${snapshotDate}`);
+  if (dryRun) log.warn("KPI_SYNC_DRY_RUN=1 — no se escribirá en Notion.");
 
   const mainDataSourceId =
     process.env.NOTION_MAIN_DATA_SOURCE_ID?.trim() ||
@@ -58,74 +50,115 @@ async function main() {
   ]);
 
   const mainKpiKeys = resolveKpiPropertyKeys(mainDs.properties);
-  const missing = Object.entries(mainKpiKeys)
+  const domainKey = resolveDomainPropertyKey(mainDs.properties);
+
+  const schemaGaps = Object.entries(mainKpiKeys)
     .filter(([, key]) => !key)
-    .map(([name]) => name);
-  if (missing.length) {
-    console.warn(
-      `⚠️  En la base principal no se encontraron propiedades para: ${missing.join(", ")}. ` +
-        "Los valores faltantes se guardarán como vacíos en el histórico.",
+    .map(([id]) => METRIC_LABELS[id] || id);
+  if (schemaGaps.length) {
+    log.warn(
+      `Columnas no encontradas en CAM SITE NETWORK OS: ${schemaGaps.join(", ")}`,
     );
   }
+  if (!domainKey) {
+    log.warn(
+      "No hay columna Site/Domain/URL; el enriquecimiento automático por dominio no podrá ejecutarse.",
+    );
+  } else {
+    log.info(`Columna de dominio detectada: "${domainKey}"`);
+  }
 
-  const relationKey =
-    findSchemaPropertyKey(historyDs.properties, RELATION_CANDIDATES) ||
-    Object.entries(historyDs.properties).find(
-      ([, def]) => def?.type === "relation",
-    )?.[0];
-
+  const relationKey = resolveHistoryRelationKey(historyDs);
   if (!relationKey) {
     throw new Error(
-      'No se encontró una propiedad Relation en "KPI History". Ejecuta setup-databases.js primero.',
+      'No se encontró Relation en "KPI History". Ejecuta setup-databases.js.',
     );
   }
 
   const mainPages = await queryAllDataSourceRows(notion, mainDataSourceId);
-  console.log(
-    `Sincronizando ${mainPages.length} registro(s) → histórico (${snapshotDate})…`,
-  );
+  log.section(`Análisis (${mainPages.length} filas)`);
 
-  let created = 0;
+  const stats = {
+    rows: mainPages.length,
+    rowsWithGaps: 0,
+    metricsAutofilled: 0,
+    metricsManual: 0,
+    mainUpdates: 0,
+    historyRows: 0,
+  };
+
   for (const page of mainPages) {
-    const title = readPageTitle(page);
-    const monthlyRevenue = readNumberProperty(page, mainKpiKeys.monthlyRevenue);
-    const dailyClicks = readNumberProperty(page, mainKpiKeys.dailyClicks);
-    const indexedPages = readNumberProperty(page, mainKpiKeys.indexedPages);
+    const ctx = buildRowContext(mainDs, page, mainKpiKeys);
+    const gapCount = ctx.missing.length;
 
-    const properties = {
-      Name: {
-        title: [{ type: "text", text: { content: `${snapshotDate} — ${title}` } }],
-      },
-      [relationKey]: {
-        relation: [{ id: page.id }],
-      },
-      Date: { date: { start: snapshotDate } },
-    };
-
-    if (historyDs.properties["Monthly Revenue"]) {
-      properties["Monthly Revenue"] = { number: monthlyRevenue };
-    }
-    if (historyDs.properties["Daily Clicks"]) {
-      properties["Daily Clicks"] = { number: dailyClicks };
-    }
-    if (historyDs.properties["Indexed Pages"]) {
-      properties["Indexed Pages"] = { number: indexedPages };
+    if (gapCount > 0) {
+      stats.rowsWithGaps += 1;
+      log.info(
+        `${ctx.domain || ctx.label}: faltan ${gapCount} métrica(s) — ${ctx.missing
+          .map((m) => METRIC_LABELS[m])
+          .join(", ")}`,
+      );
+    } else {
+      log.info(`${ctx.domain || ctx.label}: métricas completas en la base principal.`);
     }
 
-    await notion.pages.create({
-      parent: { type: "data_source_id", data_source_id: historyDataSourceId },
-      properties,
-    });
-    created += 1;
-    console.log(`  + ${title || page.id}`);
+    log.section(`Enriquecimiento · ${ctx.domain || ctx.label}`);
+    const { merged, filledBy, stillMissing, mainDbChanged } =
+      await enrichRowMetrics(ctx);
+
+    stats.metricsAutofilled += Object.values(filledBy).filter(Boolean).length;
+    stats.metricsManual += stillMissing.length;
+
+    if (mainDbChanged && !dryRun) {
+      const patch = buildMainUpdateProperties(mainKpiKeys, merged);
+      if (Object.keys(patch).length > 0) {
+        await notion.pages.update({
+          page_id: page.id,
+          properties: patch,
+        });
+        stats.mainUpdates += 1;
+        log.success(
+          `Base principal actualizada (${Object.keys(patch).join(", ")}).`,
+        );
+      }
+    } else if (mainDbChanged && dryRun) {
+      log.info("DRY RUN: se omitió actualización de la base principal.");
+    }
+
+    if (!dryRun) {
+      const properties = buildHistorySnapshotProperties(
+        historyDs,
+        relationKey,
+        page.id,
+        snapshotDate,
+        ctx.label,
+        merged,
+      );
+      await notion.pages.create({
+        parent: { type: "data_source_id", data_source_id: historyDataSourceId },
+        properties,
+      });
+      stats.historyRows += 1;
+      log.success(`Histórico: snapshot creado para ${ctx.domain || ctx.label}.`);
+    } else {
+      log.info("DRY RUN: se omitió fila en KPI History.");
+    }
   }
 
-  console.log(
-    `\n✅ Listo: ${created} fila(s) nuevas en KPI History (sin modificar la base principal).`,
-  );
+  log.section("Resumen");
+  log.info(`Filas procesadas: ${stats.rows}`);
+  log.info(`Filas con huecos iniciales: ${stats.rowsWithGaps}`);
+  log.success(`Métricas autocompletadas: ${stats.metricsAutofilled}`);
+  if (stats.metricsManual > 0) {
+    log.warn(
+      `Métricas que siguen vacías (revisión manual): ${stats.metricsManual}`,
+    );
+  }
+  log.info(`Actualizaciones en base principal: ${stats.mainUpdates}`);
+  log.success(`Filas añadidas a KPI History: ${stats.historyRows}`);
 }
 
 main().catch((err) => {
-  console.error("\n❌ Error en sync-kpis:", err.body?.message || err.message);
+  log.error(err.body?.message || err.message);
   process.exit(1);
 });
