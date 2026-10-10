@@ -15,8 +15,9 @@ export function ExploreCategoryGrid({
   masterPool = [],
 }: ExploreCategoryGridProps) {
   const safeCategories = Array.isArray(categories) ? categories : [];
+  const cards = resolveExploreCategoryHubCards(masterPool, safeCategories);
 
-  if (safeCategories.length === 0) {
+  if (cards.length === 0) {
     return (
       <p className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 text-xs text-zinc-400">
         No categories available right now. Please try again in a few
@@ -24,8 +25,6 @@ export function ExploreCategoryGrid({
       </p>
     );
   }
-
-  const cards = resolveExploreCategoryHubCards(masterPool, safeCategories);
 
   return <ExploreCategoryPremiumGrid cards={cards} />;
 }

@@ -15,52 +15,46 @@ type HubThemeSlug = (typeof EXPLORE_HUB_CATEGORY_SLUGS)[number];
 
 const HUB_THEMES: Record<HubThemeSlug, ExploreCategoryVisualTheme> = {
   latinas: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)",
     accent: NAUGHTY_GREEN,
     kicker: "Latina live",
     coverImage: "/explore/categories/latinas.jpg",
   },
   verified: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)",
     accent: NAUGHTY_GREEN,
     kicker: "18+ verified",
     coverImage: "/explore/categories/verified.jpg",
   },
   milf: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
     accent: NAUGHTY_GREEN,
     kicker: "Mature & MILF",
     coverImage: "/explore/categories/milf.jpg",
   },
   petite: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.48) 55%, transparent 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.48) 55%, transparent 100%)",
     accent: NAUGHTY_GREEN,
     kicker: "Petite & e-girl",
     coverImage: "/explore/categories/petite.jpg",
   },
   cosplay: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)",
     accent: NAUGHTY_GREEN,
     kicker: "Cosplay & fantasy",
     coverImage: "/explore/categories/cosplay.jpg",
   },
   couples: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
     accent: NAUGHTY_GREEN,
     kicker: "Duo shows",
     coverImage: "/explore/categories/couples.jpg",
-  },
-  trans: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
-    accent: NAUGHTY_GREEN,
-    kicker: "Trans models live",
-    coverImage: "/explore/categories/cosplay.jpg",
-  },
-  alt: {
-    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
-    accent: NAUGHTY_GREEN,
-    kicker: "Alt & tattoo",
-    coverImage: "/explore/categories/verified.jpg",
   },
 };
 

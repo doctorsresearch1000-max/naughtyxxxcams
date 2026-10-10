@@ -15,7 +15,8 @@ import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
 import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
-import { resolveExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
+import { buildExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
+import { isAllowedExploreChipSlug } from "@/lib/explore/exploreCategoryHubSlugs";
 import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
 import { ExploreLiveStoriesRow } from "@/components/explore/ExploreLiveStoriesRow";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
@@ -230,11 +231,11 @@ export function ExploreSlushyDiscover({
 
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
-  const showCategoryHub = !search.trim();
+  const showCategoryHub = !activeCat && !search.trim();
 
   const categoryHubCards = useMemo(
-    () => resolveExploreCategoryHubCards(masterPool, popularCategories),
-    [masterPool, popularCategories],
+    () => buildExploreCategoryHubCards(masterPool),
+    [masterPool],
   );
 
   const onSortChip = (id: ExploreSortMode | "filter") => {
@@ -320,7 +321,9 @@ export function ExploreSlushyDiscover({
       >
         All
       </button>,
-      ...EXPLORE_CATALOG_MENU.map(({ slug, label }) => (
+      ...EXPLORE_CATALOG_MENU.filter(({ slug }) =>
+        isAllowedExploreChipSlug(slug),
+      ).map(({ slug, label }) => (
         <button
           key={slug}
           type="button"
@@ -399,7 +402,14 @@ export function ExploreSlushyDiscover({
               </span>
             ) : null}
           </div>
-          <ExploreCategoryPremiumGrid cards={categoryHubCards} />
+          {popularCategories.length > 0 ? (
+            <ExploreCategoryGrid
+              categories={popularCategories}
+              masterPool={masterPool}
+            />
+          ) : (
+            <ExploreCategoryPremiumGrid cards={categoryHubCards} />
+          )}
         </section>
       ) : null}
 

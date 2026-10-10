@@ -7,7 +7,10 @@ import {
 } from "@/lib/explore/categorySlugs";
 import type { ExploreCategoryVisualTheme } from "@/lib/explore/exploreCategoryVisualTheme";
 import { themeForCategorySlug } from "@/lib/explore/exploreCategoryVisualTheme";
-import { EXPLORE_HUB_CATEGORY_SLUGS } from "@/lib/explore/exploreCategoryHubSlugs";
+import {
+  EXPLORE_HUB_CATEGORY_SLUGS,
+  isExploreHubCategorySlug,
+} from "@/lib/explore/exploreCategoryHubSlugs";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 import {
   explorePathForCategorySlug,
@@ -38,6 +41,7 @@ function cardFromSlug(
   };
 }
 
+/** Six curated hub posters (f8f7c0e). */
 export function buildExploreCategoryHubCards(
   masterPool: CrackPerformer[],
 ): ExploreCategoryHubCard[] {
@@ -57,40 +61,45 @@ export function hubCardsFromApiCategories(
   categories: ExploreCategory[],
   masterPool: CrackPerformer[],
 ): ExploreCategoryHubCard[] {
-  const hubFallback = buildExploreCategoryHubCards(masterPool);
-  if (!categories.length) return hubFallback;
-
   const countsBySlug = new Map(
-    hubFallback.map((c) => [c.slug, c.liveCount]),
+    buildExploreCategoryHubCards(masterPool).map((c) => [c.slug, c.liveCount]),
   );
 
-  const mapped = categories.map((cat, index) => {
-    const slugGuess = cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
-    const slug = isExploreCategorySlug(slugGuess)
-      ? slugGuess
-      : slugGuess || cat.id;
+  const excludedTitle = /goth|trans\b|alt\b/i;
 
-    return {
-      id: cat.id ?? `cat-${index}`,
-      slug,
-      title: cat.title?.trim() || "Category",
-      href: explorePathFromFeedCategory(cat),
-      liveCount:
-        cat.liveCount ?? countsBySlug.get(slug as ExploreCategorySlug) ?? 0,
-      theme: themeForCategorySlug(slug),
-    };
-  });
+  return categories
+    .filter((cat) => {
+      const slugGuess =
+        cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
+      if (slugGuess && !isExploreHubCategorySlug(slugGuess)) return false;
+      if (excludedTitle.test(cat.title ?? "")) return false;
+      return true;
+    })
+    .map((cat, index) => {
+      const slugGuess = cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
+      const slug = isExploreCategorySlug(slugGuess)
+        ? slugGuess
+        : slugGuess || cat.id;
 
-  return mapped.length > 0 ? mapped : hubFallback;
+      return {
+        id: cat.id ?? `cat-${index}`,
+        slug,
+        title: cat.title?.trim() || "Category",
+        href: explorePathFromFeedCategory(cat),
+        liveCount:
+          cat.liveCount ?? countsBySlug.get(slug as ExploreCategorySlug) ?? 0,
+        theme: themeForCategorySlug(slug),
+      };
+    });
 }
 
-/** Canonical hub cards — never empty when the master pool is still loading. */
+/** API mapping with guaranteed hub fallback (fixes empty Popular categories). */
 export function resolveExploreCategoryHubCards(
   masterPool: CrackPerformer[],
   popularCategories: ExploreCategory[],
 ): ExploreCategoryHubCard[] {
   const hub = buildExploreCategoryHubCards(masterPool);
-  if (popularCategories.length === 0) return hub;
+  if (!popularCategories.length) return hub;
   const fromApi = hubCardsFromApiCategories(popularCategories, masterPool);
   return fromApi.length > 0 ? fromApi : hub;
 }
