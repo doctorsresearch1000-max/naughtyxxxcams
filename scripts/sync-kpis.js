@@ -12,6 +12,7 @@ const {
   readNumberProperty,
   todayIsoDate,
   findSchemaPropertyKey,
+  getDatabaseDataSourceId,
 } = require("./notion-kpi-utils");
 
 const RELATION_CANDIDATES = [
@@ -21,12 +22,12 @@ const RELATION_CANDIDATES = [
   "CAM Site Network OS",
 ];
 
-async function queryAllPages(notion, databaseId) {
+async function queryAllDataSourceRows(notion, dataSourceId) {
   const pages = [];
   let cursor;
   do {
-    const response = await notion.databases.query({
-      database_id: databaseId,
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
       start_cursor: cursor,
     });
     pages.push(...response.results);
@@ -43,12 +44,20 @@ async function main() {
   const notion = new Client({ auth: apiKey });
   const snapshotDate = todayIsoDate();
 
-  const [mainDb, historyDb] = await Promise.all([
-    notion.databases.retrieve({ database_id: mainDbId }),
-    notion.databases.retrieve({ database_id: historyDbId }),
+  const mainDataSourceId =
+    process.env.NOTION_MAIN_DATA_SOURCE_ID?.trim() ||
+    (await getDatabaseDataSourceId(notion, mainDbId)).dataSourceId;
+
+  const historyDataSourceId =
+    process.env.NOTION_HISTORY_DATA_SOURCE_ID?.trim() ||
+    (await getDatabaseDataSourceId(notion, historyDbId)).dataSourceId;
+
+  const [mainDs, historyDs] = await Promise.all([
+    notion.dataSources.retrieve({ data_source_id: mainDataSourceId }),
+    notion.dataSources.retrieve({ data_source_id: historyDataSourceId }),
   ]);
 
-  const mainKpiKeys = resolveKpiPropertyKeys(mainDb.properties);
+  const mainKpiKeys = resolveKpiPropertyKeys(mainDs.properties);
   const missing = Object.entries(mainKpiKeys)
     .filter(([, key]) => !key)
     .map(([name]) => name);
@@ -60,8 +69,8 @@ async function main() {
   }
 
   const relationKey =
-    findSchemaPropertyKey(historyDb.properties, RELATION_CANDIDATES) ||
-    Object.entries(historyDb.properties).find(
+    findSchemaPropertyKey(historyDs.properties, RELATION_CANDIDATES) ||
+    Object.entries(historyDs.properties).find(
       ([, def]) => def?.type === "relation",
     )?.[0];
 
@@ -71,7 +80,7 @@ async function main() {
     );
   }
 
-  const mainPages = await queryAllPages(notion, mainDbId);
+  const mainPages = await queryAllDataSourceRows(notion, mainDataSourceId);
   console.log(
     `Sincronizando ${mainPages.length} registro(s) → histórico (${snapshotDate})…`,
   );
@@ -93,25 +102,27 @@ async function main() {
       Date: { date: { start: snapshotDate } },
     };
 
-    if (historyDb.properties["Monthly Revenue"]) {
+    if (historyDs.properties["Monthly Revenue"]) {
       properties["Monthly Revenue"] = { number: monthlyRevenue };
     }
-    if (historyDb.properties["Daily Clicks"]) {
+    if (historyDs.properties["Daily Clicks"]) {
       properties["Daily Clicks"] = { number: dailyClicks };
     }
-    if (historyDb.properties["Indexed Pages"]) {
+    if (historyDs.properties["Indexed Pages"]) {
       properties["Indexed Pages"] = { number: indexedPages };
     }
 
     await notion.pages.create({
-      parent: { database_id: historyDbId },
+      parent: { type: "data_source_id", data_source_id: historyDataSourceId },
       properties,
     });
     created += 1;
-    console.log(`  + ${title}`);
+    console.log(`  + ${title || page.id}`);
   }
 
-  console.log(`\n✅ Listo: ${created} fila(s) nuevas en KPI History (sin modificar la base principal).`);
+  console.log(
+    `\n✅ Listo: ${created} fila(s) nuevas en KPI History (sin modificar la base principal).`,
+  );
 }
 
 main().catch((err) => {

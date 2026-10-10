@@ -9,9 +9,10 @@ const { Client } = require("@notionhq/client");
 const {
   formatIdWithDashes,
   requireEnv,
+  getDatabaseDataSourceId,
+  resolveParentPageId,
 } = require("./notion-kpi-utils");
 
-const MAIN_DB_TITLE = "CAM SITE NETWORK OS";
 const HISTORY_DB_TITLE = "KPI History";
 const RELATION_PROPERTY_NAME = "Source record";
 const REVERSE_RELATION_NAME = "KPI History";
@@ -38,62 +39,80 @@ async function main() {
     }
   }
 
-  const mainDb = await notion.databases.retrieve({ database_id: mainDbId });
-  const parent = mainDb.parent;
+  const { dataSourceId: mainDataSourceId } = await getDatabaseDataSourceId(
+    notion,
+    mainDbId,
+  );
+  const parentPageId = await resolveParentPageId(
+    notion,
+    mainDbId,
+    mainDataSourceId,
+  );
 
-  if (!parent || parent.type !== "page_id") {
-    throw new Error(
-      `La base principal debe tener un padre de tipo página. Padre actual: ${JSON.stringify(parent)}. ` +
-        "Mueve la base bajo una página en Notion o crea KPI History manualmente bajo esa página.",
-    );
-  }
-
-  console.log(`Base principal encontrada. Creando "${HISTORY_DB_TITLE}"…`);
+  console.log(`Creando "${HISTORY_DB_TITLE}"…`);
 
   const historyDb = await notion.databases.create({
-    parent: { type: "page_id", page_id: parent.page_id },
+    parent: { type: "page_id", page_id: parentPageId },
     title: [{ type: "text", text: { content: HISTORY_DB_TITLE } }],
-    properties: {
-      Name: { title: {} },
-      [RELATION_PROPERTY_NAME]: {
-        relation: {
-          database_id: mainDbId,
-          type: "dual_property",
-          dual_property: { synced_property_name: REVERSE_RELATION_NAME },
+    initial_data_source: {
+      properties: {
+        Name: { title: {} },
+        [RELATION_PROPERTY_NAME]: {
+          relation: {
+            data_source_id: mainDataSourceId,
+            type: "dual_property",
+            dual_property: { synced_property_name: REVERSE_RELATION_NAME },
+          },
         },
+        "Monthly Revenue": { number: { format: "dollar" } },
+        "Daily Clicks": { number: { format: "number" } },
+        "Indexed Pages": { number: { format: "number" } },
+        Date: { date: {} },
       },
-      "Monthly Revenue": { number: { format: "dollar" } },
-      "Daily Clicks": { number: { format: "number" } },
-      "Indexed Pages": { number: { format: "number" } },
-      Date: { date: {} },
     },
   });
 
+  const historyDataSourceId = historyDb.data_sources?.[0]?.id;
+
   console.log("\n✅ Base de datos creada correctamente.");
   console.log(`   Título: ${HISTORY_DB_TITLE}`);
-  console.log(`   ID: ${historyDb.id}`);
-  console.log(`   Relación → "${MAIN_DB_TITLE}" (propiedad "${RELATION_PROPERTY_NAME}")`);
+  console.log(`   ID (NOTION_HISTORY_DB_ID): ${historyDb.id}`);
+  if (historyDataSourceId) {
+    console.log(`   Data source ID: ${historyDataSourceId}`);
+  }
   console.log(
-    `   En la base principal se añadió la relación inversa "${REVERSE_RELATION_NAME}" (no modifica filas existentes).`,
+    `   Relación → base principal (propiedad "${RELATION_PROPERTY_NAME}")`,
+  );
+  console.log(
+    `   En la base principal se añadió la relación inversa "${REVERSE_RELATION_NAME}".`,
   );
 
-  await appendHistoryDbIdToEnv(historyDb.id);
+  await appendEnvValues({
+    NOTION_HISTORY_DB_ID: historyDb.id,
+    ...(historyDataSourceId
+      ? { NOTION_HISTORY_DATA_SOURCE_ID: historyDataSourceId }
+      : {}),
+    NOTION_MAIN_DATA_SOURCE_ID: mainDataSourceId,
+  });
   console.log(
-    "\nSe actualizó NOTION_HISTORY_DB_ID en .env. Ya puedes ejecutar: node scripts/sync-kpis.js",
+    "\nSe actualizó .env (NOTION_HISTORY_DB_ID). Ejecuta: node scripts/sync-kpis.js",
   );
 }
 
-async function appendHistoryDbIdToEnv(historyDbId) {
+async function appendEnvValues(entries) {
   const envPath = path.resolve(__dirname, "../.env");
   let content = fs.existsSync(envPath)
     ? fs.readFileSync(envPath, "utf8")
     : "";
 
-  const line = `NOTION_HISTORY_DB_ID=${historyDbId}`;
-  if (/^NOTION_HISTORY_DB_ID=.*/m.test(content)) {
-    content = content.replace(/^NOTION_HISTORY_DB_ID=.*/m, line);
-  } else {
-    content = content.trimEnd() + `\n${line}\n`;
+  for (const [key, value] of Object.entries(entries)) {
+    const line = `${key}=${value}`;
+    const re = new RegExp(`^${key}=.*`, "m");
+    if (re.test(content)) {
+      content = content.replace(re, line);
+    } else {
+      content = content.trimEnd() + `\n${line}\n`;
+    }
   }
   fs.writeFileSync(envPath, content, "utf8");
 }

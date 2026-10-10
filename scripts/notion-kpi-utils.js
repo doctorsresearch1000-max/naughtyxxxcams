@@ -68,6 +68,67 @@ function requireEnv(name) {
   return value;
 }
 
+async function getDatabaseDataSourceId(notion, databaseId) {
+  const db = await notion.databases.retrieve({ database_id: databaseId });
+  const dataSourceId = db.data_sources?.[0]?.id;
+  if (!dataSourceId) {
+    throw new Error(
+      `La base ${databaseId} no expone data_sources; comprueba permisos de la integración.`,
+    );
+  }
+  return { database: db, dataSourceId };
+}
+
+async function resolveParentPageId(notion, mainDatabaseId, mainDataSourceId) {
+  const override = process.env.NOTION_PARENT_PAGE_ID?.trim();
+  if (override) {
+    return formatIdWithDashes(override);
+  }
+
+  const { database: mainDb } = await getDatabaseDataSourceId(
+    notion,
+    mainDatabaseId,
+  );
+  const parent = mainDb.parent;
+
+  if (parent?.type === "page_id") {
+    return parent.page_id;
+  }
+
+  if (parent?.type === "block_id") {
+    try {
+      let blockId = parent.block_id;
+      for (let depth = 0; depth < 12 && blockId; depth += 1) {
+        const block = await notion.blocks.retrieve({ block_id: blockId });
+        if (block.parent?.type === "page_id") {
+          return block.parent.page_id;
+        }
+        blockId =
+          block.parent?.type === "block_id" ? block.parent.block_id : null;
+      }
+    } catch {
+      // La integración suele no ver bloques ancestros; se usa el fallback inferior.
+    }
+  }
+
+  const firstPage = await notion.dataSources.query({
+    data_source_id: mainDataSourceId,
+    page_size: 1,
+  });
+  const pageId = firstPage.results[0]?.id;
+  if (!pageId) {
+    throw new Error(
+      "No se pudo resolver una página padre. Define NOTION_PARENT_PAGE_ID en .env " +
+        "(página del workspace donde quieras la base KPI History) y compártela con la integración.",
+    );
+  }
+
+  console.warn(
+    "⚠️  La base principal no cuelga de una página accesible; KPI History se creará como subpágina de la primera fila.",
+  );
+  return pageId;
+}
+
 module.exports = {
   KPI_PROPERTY_NAMES,
   normalizeId,
@@ -78,4 +139,6 @@ module.exports = {
   readNumberProperty,
   todayIsoDate,
   requireEnv,
+  getDatabaseDataSourceId,
+  resolveParentPageId,
 };
