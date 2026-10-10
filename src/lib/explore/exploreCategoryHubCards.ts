@@ -1,11 +1,13 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { pickCoverUrl } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import {
   EXPLORE_CATEGORY_MAP,
   EXPLORE_CATEGORY_SLUGS,
   type ExploreCategorySlug,
+  isExploreCategorySlug,
 } from "@/lib/explore/categorySlugs";
+import type { ExploreCategoryVisualTheme } from "@/lib/explore/exploreCategoryVisualTheme";
+import { themeForCategorySlug } from "@/lib/explore/exploreCategoryVisualTheme";
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 import {
   explorePathForCategorySlug,
@@ -15,41 +17,29 @@ import {
 export type ExploreCategoryHubCard = {
   id: string;
   slug: string;
-  label: string;
+  /** Primary poster title (typography hero) */
+  title: string;
   href: string;
-  coverUrl: string | null;
   liveCount: number;
+  theme: ExploreCategoryVisualTheme;
 };
 
-/** Curated local art direction when the live pool has no match yet. */
-const FALLBACK_COVERS: Record<ExploreCategorySlug, string> = {
-  latinas: "/ads/jerkmate/92e58503-d0cf-45a4-bf19-dc54e93b3caa.jpg",
-  verified: "/ads/jerkmate/29a64ccc-f967-4f61-9488-641c929db2de.jpg",
-  milf: "/ads/jerkmate/b0b140d7-72c0-41e5-891b-b2ec67b785ca.jpg",
-  petite: "/ads/jerkmate/9371fb3f-811f-45e0-84a6-9cdad7626054.jpg",
-  cosplay: "/ads/jerkmate/0387e7fd-1abc-472e-8049-8f746cadc8b0.jpg",
-  couples: "/ads/jerkmate/cec523a9-78c0-4f14-b757-f245623efcdf.jpg",
-  trans: "/ads/jerkmate/95bb1ea3-a139-413e-872f-c89a643e3794.jpg",
-  alt: "/ads/jerkmate/a1fa4767-f4f3-4ea7-bbf0-79ce41b31425.jpg",
-};
-
-function pickCategoryCover(
-  performers: CrackPerformer[],
+function cardFromSlug(
   slug: ExploreCategorySlug,
-): string {
-  const sorted = [...performers]
-    .filter((p) => p.live !== false)
-    .sort((a, b) => (b.systemScore ?? 0) - (a.systemScore ?? 0));
-
-  for (const performer of sorted) {
-    const url = pickCoverUrl(performer);
-    if (url?.trim()) return url.trim();
-  }
-
-  return FALLBACK_COVERS[slug];
+  liveCount: number,
+): ExploreCategoryHubCard {
+  const config = EXPLORE_CATEGORY_MAP[slug];
+  return {
+    id: slug,
+    slug,
+    title: config.label,
+    href: explorePathForCategorySlug(slug),
+    liveCount,
+    theme: themeForCategorySlug(slug),
+  };
 }
 
-/** Slushy hub cards — live thumbs first, Naughty fallback art. */
+/** Editorial category posters — counts from pool, no model/ad imagery. */
 export function buildExploreCategoryHubCards(
   masterPool: CrackPerformer[],
 ): ExploreCategoryHubCard[] {
@@ -61,15 +51,7 @@ export function buildExploreCategoryHubCards(
       masterPool.length,
     );
     const liveCount = filtered.filter((p) => p.live !== false).length;
-
-    return {
-      id: slug,
-      slug,
-      label: config.label,
-      href: explorePathForCategorySlug(slug),
-      coverUrl: pickCategoryCover(filtered, slug),
-      liveCount,
-    };
+    return cardFromSlug(slug, liveCount);
   });
 }
 
@@ -77,23 +59,21 @@ export function hubCardsFromApiCategories(
   categories: ExploreCategory[],
   masterPool: CrackPerformer[],
 ): ExploreCategoryHubCard[] {
-  const bySlug = new Map(
-    buildExploreCategoryHubCards(masterPool).map((c) => [c.slug, c]),
+  const countsBySlug = new Map(
+    buildExploreCategoryHubCards(masterPool).map((c) => [c.slug, c.liveCount]),
   );
 
   return categories.map((cat, index) => {
     const slugGuess = cat.filterValue?.replace(/\s+/g, "-").toLowerCase() ?? "";
-    const fallback = bySlug.get(slugGuess as ExploreCategorySlug);
-    const cover =
-      cat.coverUrl?.trim() || fallback?.coverUrl || FALLBACK_COVERS.latinas;
+    const slug = isExploreCategorySlug(slugGuess) ? slugGuess : slugGuess || cat.id;
 
     return {
       id: cat.id ?? `cat-${index}`,
-      slug: slugGuess || cat.id,
-      label: cat.title,
+      slug,
+      title: cat.title?.trim() || "Category",
       href: explorePathFromFeedCategory(cat),
-      coverUrl: cover,
-      liveCount: cat.liveCount ?? fallback?.liveCount ?? 0,
+      liveCount: cat.liveCount ?? countsBySlug.get(slug as ExploreCategorySlug) ?? 0,
+      theme: themeForCategorySlug(slug),
     };
   });
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ExploreCategoryHubCard } from "@/lib/explore/exploreCategoryHubCards";
 
@@ -9,7 +8,7 @@ type ExploreCategoryPremiumGridProps = {
 };
 
 /**
- * Premium 2-col category tiles — live thumbs + Naughty magenta/cyan/neon accents.
+ * Typographic category posters — clearly not model cards (no photos).
  */
 export function ExploreCategoryPremiumGrid({
   cards,
@@ -18,65 +17,102 @@ export function ExploreCategoryPremiumGrid({
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
-      {cards.map((card, index) => (
-        <Link
-          key={card.id}
-          href={card.href}
-          className="group relative block aspect-[5/4] w-full overflow-hidden rounded-[22px] bg-[#141416] shadow-[0_10px_40px_rgba(0,0,0,0.45)] ring-1 ring-magenta/35 transition duration-300 hover:shadow-neon hover:ring-[#39FF14]/45 active:scale-[0.98]"
-        >
-          {card.coverUrl ? (
-            <Image
-              src={card.coverUrl}
-              alt={card.label}
-              fill
-              sizes="(max-width: 768px) 46vw, 280px"
-              className="object-cover transition duration-500 group-hover:scale-[1.06]"
-              unoptimized
-              priority={index < 2}
-            />
-          ) : (
+      {cards.map((card) => {
+        const { theme } = card;
+        const titleLines = splitPosterTitle(card.title);
+
+        return (
+          <Link
+            key={card.id}
+            href={card.href}
+            className="group relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden rounded-[24px] p-4 shadow-[0_12px_48px_rgba(0,0,0,0.5)] ring-1 ring-white/[0.08] transition duration-300 hover:ring-magenta/50 hover:shadow-neon active:scale-[0.98]"
+            style={{ background: theme.background }}
+          >
             <div
-              className="absolute inset-0 bg-gradient-to-br from-magenta/40 via-[#1a0a14] to-night"
+              className="pointer-events-none absolute inset-0 opacity-[0.12]"
+              style={{
+                backgroundImage: `radial-gradient(circle at 20% 0%, ${theme.accent} 0%, transparent 45%), radial-gradient(circle at 100% 100%, #ff007f 0%, transparent 40%)`,
+              }}
               aria-hidden
             />
-          )}
+            <div
+              className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.08%22/%3E%3C/svg%3E')] opacity-40 mix-blend-overlay"
+              aria-hidden
+            />
 
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-magenta/30 via-transparent to-cyan/10 opacity-90 mix-blend-soft-light transition group-hover:from-magenta/40"
-            aria-hidden
-          />
-
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-magenta/70 to-transparent opacity-80" />
-
-          {card.liveCount > 0 ? (
             <span
-              className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-md bg-[#39FF14] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-black shadow-[0_0_12px_rgba(57,255,20,0.45)]"
+              className="pointer-events-none absolute -right-1 bottom-6 select-none text-[clamp(4rem,22vw,5.5rem)] font-black leading-none text-white/[0.07]"
+              aria-hidden
             >
-              <span className="h-1.5 w-1.5 animate-live-pulse rounded-full bg-black/80" />
-              {card.liveCount} live
+              {theme.watermark}
             </span>
-          ) : (
-            <span
-              className="absolute left-2.5 top-2.5 z-10 rounded-md bg-black/55 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-pink-200 ring-1 ring-magenta/40"
-            >
-              Explore
-            </span>
-          )}
 
-          <div className="absolute inset-x-0 bottom-0 z-10 p-3 pt-8">
-            <h3 className="text-sm font-black tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-              {card.label}
-            </h3>
-            <p className="mt-0.5 text-[10px] font-semibold text-pink-300/90">
-              HD cams · NaughtyXXX
-            </p>
-          </div>
-        </Link>
-      ))}
+            <div className="relative z-10 space-y-1">
+              <p
+                className="text-[9px] font-bold uppercase tracking-[0.28em] text-white/55"
+              >
+                Category
+              </p>
+              <div
+                className="h-0.5 w-8 rounded-full opacity-90 transition group-hover:w-12"
+                style={{ backgroundColor: theme.accent }}
+              />
+            </div>
+
+            <div className="relative z-10 flex flex-1 flex-col justify-end">
+              <h3
+                className="font-black uppercase leading-[0.92] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.65)]"
+                style={{
+                  fontSize: titleLines.length > 1 ? "1.35rem" : "1.65rem",
+                }}
+              >
+                {titleLines.map((line, i) => (
+                  <span key={i} className="block">
+                    {line}
+                  </span>
+                ))}
+              </h3>
+              <p className="mt-2 text-[11px] font-semibold leading-snug text-white/75">
+                {theme.kicker}
+              </p>
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between pt-3">
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider text-white/50"
+              >
+                Browse
+              </span>
+              {card.liveCount > 0 ? (
+                <span className="text-[10px] font-semibold tabular-nums text-white/90">
+                  <span
+                    className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-[#39FF14] shadow-[0_0_8px_#39FF14]"
+                    aria-hidden
+                  />
+                  {card.liveCount} live
+                </span>
+              ) : (
+                <span className="text-[10px] font-medium text-white/45">
+                  Open hub
+                </span>
+              )}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
+}
+
+/** Break long labels into 2 poster lines (e.g. "18+ Verified"). */
+function splitPosterTitle(title: string): string[] {
+  const t = title.trim();
+  if (t.length <= 10) return [t];
+  if (t.includes(" ")) {
+    const parts = t.split(/\s+/);
+    if (parts.length === 2) return parts;
+    const mid = Math.ceil(parts.length / 2);
+    return [parts.slice(0, mid).join(" "), parts.slice(mid).join(" ")];
+  }
+  return [t];
 }
