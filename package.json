@@ -12,7 +12,7 @@
     "build:next": "npm run generate:profile-slugs && next build",
     "generate:profile-slugs": "node scripts/generate-resolvable-profile-slugs.mjs",
     "build": "npm run build:next && opennextjs-cloudflare build",
-    "deploy": "NEXT_PUBLIC_SITE_URL=https://naughtyxxxcams.com NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=NaughtyXXXcamsbot npm run build && opennextjs-cloudflare deploy && node scripts/promote-cloudflare-worker.mjs",
+    "deploy": "NEXT_PUBLIC_SITE_URL=https://naughtyxxxcams.com NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=NaughtyXXXcamsbot npm run build && node scripts/opennext-deploy-and-promote.mjs",
     "preview": "npm run build && opennextjs-cloudflare preview",
     "lint": "next lint",
     "test:seo": "node scripts/verify-profile-indexable.mjs && node scripts/verify-room-titles.mjs && node scripts/verify-crak-subid.mjs",
