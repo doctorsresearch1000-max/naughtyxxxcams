@@ -15,7 +15,7 @@ import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreCategoryGrid } from "@/components/explore/ExploreCategoryGrid";
 import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
-import { buildExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
+import { resolveExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
 import { ExploreJerkmatePromoBanner } from "@/components/explore/ExploreJerkmatePromoBanner";
 import { ExploreLiveStoriesRow } from "@/components/explore/ExploreLiveStoriesRow";
 import { ExploreTubeGrid } from "@/components/explore/ExploreTubeGrid";
@@ -230,11 +230,11 @@ export function ExploreSlushyDiscover({
 
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
   const category = resolveExploreCategory(activeCat);
-  const showCategoryHub = !activeCat && !search.trim();
+  const showCategoryHub = !search.trim();
 
   const categoryHubCards = useMemo(
-    () => buildExploreCategoryHubCards(masterPool),
-    [masterPool],
+    () => resolveExploreCategoryHubCards(masterPool, popularCategories),
+    [masterPool, popularCategories],
   );
 
   const onSortChip = (id: ExploreSortMode | "filter") => {
@@ -399,14 +399,7 @@ export function ExploreSlushyDiscover({
               </span>
             ) : null}
           </div>
-          {popularCategories.length > 0 ? (
-            <ExploreCategoryGrid
-              categories={popularCategories}
-              masterPool={masterPool}
-            />
-          ) : (
-            <ExploreCategoryPremiumGrid cards={categoryHubCards} />
-          )}
+          <ExploreCategoryPremiumGrid cards={categoryHubCards} />
         </section>
       ) : null}
 

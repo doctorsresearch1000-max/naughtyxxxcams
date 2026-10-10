@@ -50,6 +50,18 @@ const HUB_THEMES: Record<HubThemeSlug, ExploreCategoryVisualTheme> = {
     kicker: "Duo shows",
     coverImage: "/explore/categories/couples.jpg",
   },
+  trans: {
+    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
+    kicker: "Trans models live",
+    coverImage: "/explore/categories/cosplay.jpg",
+  },
+  alt: {
+    background: "linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 58%, transparent 100%)",
+    accent: NAUGHTY_GREEN,
+    kicker: "Alt & tattoo",
+    coverImage: "/explore/categories/verified.jpg",
+  },
 };
 
 const DEFAULT_THEME = HUB_THEMES.latinas;

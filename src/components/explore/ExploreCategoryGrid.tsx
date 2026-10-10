@@ -3,7 +3,7 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
-import { hubCardsFromApiCategories } from "@/lib/explore/exploreCategoryHubCards";
+import { resolveExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
 
 type ExploreCategoryGridProps = {
   categories: ExploreCategory[];
@@ -25,7 +25,7 @@ export function ExploreCategoryGrid({
     );
   }
 
-  const cards = hubCardsFromApiCategories(safeCategories, masterPool);
+  const cards = resolveExploreCategoryHubCards(masterPool, safeCategories);
 
   return <ExploreCategoryPremiumGrid cards={cards} />;
 }
