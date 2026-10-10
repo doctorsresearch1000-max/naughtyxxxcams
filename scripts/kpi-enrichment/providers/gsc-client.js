@@ -1,37 +1,28 @@
 "use strict";
 
 const { google } = require("googleapis");
+const {
+  hasGoogleServiceAccountCredentials,
+  getServiceAccountClientOptions,
+} = require("../google-credentials");
 
 /** @type {import("googleapis").searchconsole_v1.Searchconsole | null} */
 let cachedSearchConsole = null;
 
 function hasGscCredentials() {
-  return Boolean(
-    process.env.GSC_SERVICE_ACCOUNT_JSON?.trim() ||
-      process.env.GOOGLE_APPLICATION_CREDENTIALS?.trim(),
-  );
+  return hasGoogleServiceAccountCredentials();
 }
 
 async function getSearchConsoleClient() {
   if (cachedSearchConsole) return cachedSearchConsole;
   if (!hasGscCredentials()) return null;
 
-  const scopes = ["https://www.googleapis.com/auth/webmasters.readonly"];
-  let auth;
+  const options = getServiceAccountClientOptions([
+    "https://www.googleapis.com/auth/webmasters.readonly",
+  ]);
+  if (!options) return null;
 
-  const inlineJson = process.env.GSC_SERVICE_ACCOUNT_JSON?.trim();
-  if (inlineJson) {
-    auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse(inlineJson),
-      scopes,
-    });
-  } else {
-    auth = new google.auth.GoogleAuth({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS.trim(),
-      scopes,
-    });
-  }
-
+  const auth = new google.auth.GoogleAuth(options);
   cachedSearchConsole = google.searchconsole({ version: "v1", auth });
   return cachedSearchConsole;
 }

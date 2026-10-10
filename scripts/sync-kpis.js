@@ -13,6 +13,7 @@ const {
 const { enrichRowMetrics } = require("./kpi-enrichment/enrich");
 const { METRIC_LABELS } = require("./kpi-enrichment/metrics");
 const { log } = require("./kpi-enrichment/logger");
+const { isSkippedDomain } = require("./kpi-enrichment/skip-domains");
 const {
   queryAllDataSourceRows,
   buildRowContext,
@@ -35,6 +36,13 @@ async function main() {
   log.section("Notion KPI sync");
   log.info(`Fecha de snapshot: ${snapshotDate}`);
   if (dryRun) log.warn("KPI_SYNC_DRY_RUN=1 — no se escribirá en Notion.");
+  if (process.env.GA4_PROPERTY_MAP?.trim()) {
+    log.info("GA4: mapeo por dominio cargado desde GA4_PROPERTY_MAP.");
+  } else {
+    log.info(
+      "GA4: define GA4_PROPERTY_MAP en .env (o GA4_PROPERTY_ID_<DOMINIO>) para ingresos reales.",
+    );
+  }
 
   const mainDataSourceId =
     process.env.NOTION_MAIN_DATA_SOURCE_ID?.trim() ||
@@ -103,8 +111,27 @@ async function main() {
     }
 
     log.section(`Enriquecimiento · ${ctx.domain || ctx.label}`);
-    const { merged, filledBy, stillMissing, mainDbChanged } =
-      await enrichRowMetrics(ctx);
+
+    let merged = ctx.current;
+    let filledBy = {
+      monthlyRevenue: null,
+      dailyClicks: null,
+      indexedPages: null,
+    };
+    let stillMissing = ctx.missing;
+    let mainDbChanged = false;
+
+    if (isSkippedDomain(ctx.domain)) {
+      log.info(
+        `${ctx.domain}: enriquecimiento omitido (dominio excluido; solo snapshot con datos actuales).`,
+      );
+    } else {
+      const enriched = await enrichRowMetrics(ctx);
+      merged = enriched.merged;
+      filledBy = enriched.filledBy;
+      stillMissing = enriched.stillMissing;
+      mainDbChanged = enriched.mainDbChanged;
+    }
 
     stats.metricsAutofilled += Object.values(filledBy).filter(Boolean).length;
     stats.metricsManual += stillMissing.length;

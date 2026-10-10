@@ -2,9 +2,8 @@
 
 const { todayIsoDate } = require("../../notion-kpi-utils");
 const { log } = require("../logger");
-const {
-  googleSearchConsoleProvider,
-} = require("./google-search-console");
+const { googleSearchConsoleProvider } = require("./google-search-console");
+const { googleAnalyticsProvider } = require("./google-analytics");
 
 /**
  * Perfiles base para la red de sitios cams (valores de referencia, no producción).
@@ -95,16 +94,19 @@ const camNetworkSimulatedProvider = {
     );
 
     const gscConfigured = googleSearchConsoleProvider.isConfigured();
+    const gaConfigured = googleAnalyticsProvider.isConfigured();
     const gscFallbackMetrics = ctx.missing.filter(
       (m) => m === "dailyClicks" || m === "indexedPages",
     );
-    if (!gscConfigured && gscFallbackMetrics.length > 0) {
+    const gaFallbackMetrics = ctx.missing.filter((m) => m === "monthlyRevenue");
+    if (gscFallbackMetrics.length > 0) {
       log.info(
-        `${this.id}: sin GSC; estimando ${gscFallbackMetrics.join(", ")} para ${domain}`,
+        `${this.id}: fallback${gscConfigured ? " GSC" : ""} → ${gscFallbackMetrics.join(", ")} (${domain})`,
       );
-    } else if (gscConfigured && gscFallbackMetrics.length > 0) {
+    }
+    if (gaFallbackMetrics.length > 0) {
       log.info(
-        `${this.id}: fallback GSC para ${domain} → ${gscFallbackMetrics.join(", ")}`,
+        `${this.id}: fallback${gaConfigured ? " GA4" : ""} → ${gaFallbackMetrics.join(", ")} (${domain})`,
       );
     }
 
