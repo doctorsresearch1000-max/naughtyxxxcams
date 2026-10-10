@@ -1,4 +1,5 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
+import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
 import {
   CRAK_LANDING_ID_RAW,
   resolveWidgetLandingId,
@@ -53,9 +54,9 @@ export function buildJerkmateAffiliateUrl(performer: CrackPerformer): string {
     try {
       const parsed = new URL(replaceTrackingPlaceholders(roomUrl));
       applyCrakAffiliateParams(parsed, modelName);
-      return parsed.toString();
+      return ensureAffiliateSubid(parsed.toString());
     } catch {
-      return replaceTrackingPlaceholders(roomUrl);
+      return ensureAffiliateSubid(replaceTrackingPlaceholders(roomUrl));
     }
   }
 
@@ -64,7 +65,7 @@ export function buildJerkmateAffiliateUrl(performer: CrackPerformer): string {
     try {
       const parsed = new URL(replaceTrackingPlaceholders(landingRaw));
       applyCrakAffiliateParams(parsed, modelName);
-      return parsed.toString();
+      return ensureAffiliateSubid(parsed.toString());
     } catch {
       /* fallback below */
     }
@@ -83,7 +84,9 @@ export function buildJerkmateAffiliateUrl(performer: CrackPerformer): string {
     params.set("performer", modelName);
   }
 
-  return `https://go.crakrevenue.com/?${params.toString()}`;
+  return ensureAffiliateSubid(
+    `https://go.crakrevenue.com/?${params.toString()}`,
+  );
 }
 
 /** Chat CTA when only the model display name is known. */
@@ -97,7 +100,7 @@ export function buildJerkmateAffiliateUrlByName(modelName: string): string {
 
 /** Opens monetized room URL in a new tab — no modals or preventDefault blockers. */
 export function openAffiliateOutbound(url: string): void {
-  const target = url?.trim();
+  const target = ensureAffiliateSubid(url?.trim() ?? "");
   if (!target) return;
   const opened = window.open(target, "_blank", "noopener,noreferrer");
   if (!opened) {

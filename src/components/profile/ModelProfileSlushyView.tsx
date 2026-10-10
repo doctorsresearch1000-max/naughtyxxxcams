@@ -14,6 +14,7 @@ import { ProfileStickyCta } from "@/components/profile/ProfileStickyCta";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import { LiveBadge } from "@/components/cams/LiveBadge";
+import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 import { trackCtaClickOut, trackModelPageView } from "@/lib/analytics/track";
 import { affiliateClaims } from "@/copy/model-page";
 import { uiStrings } from "@/lib/i18n/uiStrings";
@@ -249,7 +250,9 @@ export function ModelProfileSlushyView({
                 key={item.id}
                 type="button"
                 onClick={() =>
-                  item.locked ? openSheet() : window.open(model.affiliateUrl, "_blank")
+                  item.locked
+                    ? openSheet()
+                    : openAffiliateOutbound(model.affiliateUrl)
                 }
                 className="relative aspect-[3/4] overflow-hidden rounded-[18px] bg-[#1C1C1E] ring-1 ring-white/5"
               >

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { FollowingLiveCard } from "@/lib/following/followingPageData";
+import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
 import { performerDisplayHandle } from "@/lib/profile/performerHandle";
 
 type FollowingLiveGridProps = {
@@ -30,7 +31,7 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/50" />
             <a
-              href={card.affiliateUrl}
+              href={ensureAffiliateSubid(card.affiliateUrl)}
               target="_blank"
               rel="nofollow noopener"
               className="absolute inset-0 z-0"

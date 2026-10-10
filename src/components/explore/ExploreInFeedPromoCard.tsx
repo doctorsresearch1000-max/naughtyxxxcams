@@ -7,6 +7,7 @@ import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
+import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
 
 type ExploreInFeedPromoCardProps = {
   promo: ExploreInFeedPromo;
@@ -14,13 +15,14 @@ type ExploreInFeedPromoCardProps = {
 
 export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
   const cover = pickJerkmateGridCreative(0);
+  const outboundHref = ensureAffiliateSubid(promo.affiliateUrl);
 
   return (
     <article
       className="group flex flex-col overflow-hidden rounded-lg bg-[#141416] ring-1 ring-pink-500/25 transition hover:ring-pink-400/45"
     >
       <a
-        href={promo.affiliateUrl}
+        href={outboundHref}
         target="_blank"
         rel="noopener noreferrer"
         className="relative block aspect-[4/3] w-full overflow-hidden rounded-lg bg-zinc-900 text-left"
