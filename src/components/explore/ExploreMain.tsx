@@ -2,6 +2,11 @@ import { Suspense } from "react";
 import { ExplorePageClient } from "@/components/explore/ExplorePageClient";
 import { ExplorePerformerGridSkeleton } from "@/components/explore/ExplorePerformerGridSkeleton";
 import { ExploreSeoCrawlBlock } from "@/components/explore/ExploreSeoCrawlBlock";
+import { ExploreHubCategoryMain } from "@/components/explore/hub/ExploreHubCategoryMain";
+import {
+  isExploreHubCategorySlug,
+  type ExploreHubCategorySlug,
+} from "@/lib/explore/exploreCategoryHubSlugs";
 import type { ExploreServerBootstrap } from "@/lib/explore/getExploreServerBootstrap";
 
 type ExploreMainProps = {
@@ -14,6 +19,15 @@ const EXPLORE_MAIN_CLASS =
   "mx-auto min-h-screen w-full max-w-md overflow-x-hidden overflow-y-auto bg-[#0d0d0f] px-3.5 pb-24 pt-3 text-white [-webkit-overflow-scrolling:touch] lg:max-w-[1800px] lg:px-4 lg:pb-12 lg:pt-2";
 
 export function ExploreMain({ categorySlug, bootstrap }: ExploreMainProps) {
+  if (categorySlug && isExploreHubCategorySlug(categorySlug)) {
+    return (
+      <ExploreHubCategoryMain
+        categorySlug={categorySlug as ExploreHubCategorySlug}
+        bootstrap={bootstrap}
+      />
+    );
+  }
+
   return (
     <main className={EXPLORE_MAIN_CLASS}>
       <ExploreSeoCrawlBlock

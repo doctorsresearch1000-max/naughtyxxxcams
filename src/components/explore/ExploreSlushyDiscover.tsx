@@ -36,7 +36,12 @@ import {
 import { filterPerformersForCategory } from "@/lib/explore/fetchCategoryPerformers";
 import { dedupeById } from "@/lib/feed/dedupeById";
 import { getPerformerKey } from "@/lib/crackrevenue/api";
-import { explorePathForCategoryParam } from "@/lib/explore/paths";
+import {
+  explorePathForCategoryParam,
+  explorePathForCategorySlug,
+} from "@/lib/explore/paths";
+import { isExploreHubCategorySlug } from "@/lib/explore/exploreCategoryHubSlugs";
+import Link from "next/link";
 
 type CacheEntry = {
   performers: CrackPerformer[];
@@ -323,16 +328,30 @@ export function ExploreSlushyDiscover({
       </button>,
       ...EXPLORE_CATALOG_MENU.filter(({ slug }) =>
         isAllowedExploreChipSlug(slug),
-      ).map(({ slug, label }) => (
-        <button
-          key={slug}
-          type="button"
-          className={chipClass(activeCat === slug)}
-          onClick={() => loadCategory(slug)}
-        >
-          {label}
-        </button>
-      )),
+      ).map(({ slug, label }) => {
+        if (isExploreHubCategorySlug(slug)) {
+          return (
+            <Link
+              key={slug}
+              href={explorePathForCategorySlug(slug)}
+              className={chipClass(false)}
+              onClick={() => setShowCategoryPicker(false)}
+            >
+              {label}
+            </Link>
+          );
+        }
+        return (
+          <button
+            key={slug}
+            type="button"
+            className={chipClass(activeCat === slug)}
+            onClick={() => loadCategory(slug)}
+          >
+            {label}
+          </button>
+        );
+      }),
     ];
   }, [showCategoryPicker, activeCat, loadCategory]);
 
