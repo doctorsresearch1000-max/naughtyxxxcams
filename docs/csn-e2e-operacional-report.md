@@ -1,25 +1,25 @@
 # E2E operacional CSN OS
 
-2026-10-11T09:12:41.209Z
+2026-10-11T09:28:36.746Z
 
 **PASS**
 
 ```json
 {
   "A": {
-    "siteExternalId": "csn:site:e2e-qa-1791709841650",
-    "runExternalId": "csn:run:e2e-qa-1791709841650",
-    "siteId": "3f684cd0-85ae-816a-8a97-f78141727e45",
-    "runId": "3f684cd0-85ae-817a-a81a-ce68698b0564",
-    "launchKey": "e2e-qa-1791709841650",
+    "siteExternalId": "csn:site:e2e-qa-automation",
+    "runExternalId": "csn:run:e2e-qa-automation",
+    "siteId": "3f684cd0-85ae-81bc-bfc0-da3ee0e389bb",
+    "runId": "3f684cd0-85ae-81af-88c0-e3ab26bd26b6",
+    "launchKey": "e2e-qa-automation",
     "executionTasks": {
       "created": 28,
       "reused": 0
     }
   },
   "B": {
-    "runExternalId": "csn:run:e2e-qa-1791709841650",
-    "runName": "Lanzamiento — E2E QA e2e-qa-1791709841650",
+    "runExternalId": "csn:run:e2e-qa-automation",
+    "runName": "Lanzamiento — E2E QA automation (test-only)",
     "currentPhase": 1,
     "recordClass": "QA test-only",
     "domain": "",
@@ -178,8 +178,8 @@
   "B_pass": true,
   "C": {
     "pass": true,
-    "path": "/workspace/csn-os/generated-prompts/csn_prompt_csn_run_e2e-qa-1791709841650_p05_bd1ad17bb12d.md",
-    "notionUrl": "https://app.notion.com/p/Prompt-Cursor-Repository-and-branch-strategy-3f684cd085ae81529a08d4ebfa0a7db7"
+    "path": "/workspace/csn-os/generated-prompts/csn_prompt_csn_run_e2e-qa-automation_p05_e0b76d1c61ae.md",
+    "notionUrl": "https://app.notion.com/p/Prompt-Cursor-Repository-and-branch-strategy-3f684cd085ae81c1bcc1cd01276cbdfd"
   },
   "D": {
     "pass": true,
@@ -190,12 +190,12 @@
   "E": {
     "pass": true,
     "rec": {
-      "reportId": "csn:report:csn:run:e2e-qa-1791709841650:p05:1791709871570",
-      "path": "/workspace/csn-os/execution-reports/csn_run_e2e-qa-1791709841650/phase-05.json",
+      "reportId": "csn:report:csn:run:e2e-qa-automation:p05:1791710835031",
+      "path": "/workspace/csn-os/execution-reports/csn_run_e2e-qa-automation/phase-05.json",
       "nextRecommended": {
         "phase": 1,
-        "runExternalId": "csn:run:e2e-qa-1791709841650",
-        "hint": "npm run csn -- prompt --run-external-id=csn:run:e2e-qa-1791709841650 --phase=1"
+        "runExternalId": "csn:run:e2e-qa-automation",
+        "hint": "npm run csn -- prompt --run-external-id=csn:run:e2e-qa-automation --phase=1"
       },
       "taskStatus": "Done"
     }

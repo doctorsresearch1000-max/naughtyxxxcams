@@ -1,7 +1,7 @@
 # Auditoría y saneamiento — Cam Sites — SOP System
 
-**Fecha:** 2026-10-11  
-**Estado final:** **Bloqueado (parcial en repo)** — la integración Notion «Cursor Connection» no puede leer el stack canónico; correcciones de hub/etiquetas QA en Notion pendientes de re-share.
+**Fecha:** 2026-10-11 (actualizado tras re-share Notion, ~09:29 UTC)  
+**Estado final:** **Operativo (remoto verificado)** — API, hub v4, aceptación y E2E PASS; legacy intacto.
 
 **Evidencias en repo:**
 
@@ -9,8 +9,10 @@
 |-----------|------|
 | Auditoría local + intento remoto | `docs/csn-content-audit-raw.json` |
 | Saneamiento aplicado (vacío si API bloqueada) | `docs/csn-content-sanitize-applied.json` |
-| Aceptación / API | `docs/csn-acceptance-report.json` (`blocked: true`) |
-| Última evidencia hub OK | `docs/csn-hub-integration-evidence.json` (2026-10-11 09:10 UTC) |
+| Verificación acceso (Paso 1) | `docs/csn-notion-access-verify.json` |
+| Aceptación remota | `docs/csn-acceptance-report.json` (`allPass: true`) |
+| Saneamiento aplicado | `docs/csn-content-sanitize-applied.json` (2 pasadas, `corrections: []`) |
+| E2E operacional | `docs/csn-e2e-operacional-report.md` (**PASS**) |
 | Inventario canónico previo | `scripts/notion-csn-canonical-audit.json` |
 
 ---
@@ -19,7 +21,8 @@
 
 | Elemento | ID / clave | Categoría | Notas |
 |----------|------------|-----------|--------|
-| **Cam Sites — SOP System** (entrada canónica) | `3f684cd0-85ae-811f-a929-c4b4ccbcb56a` | Operativo | Hub A–G; 14 DB inline. API: **no accesible** ahora. |
+| **Cam Sites — SOP System** (entrada canónica) | `3f684cd0-85ae-811f-a929-c4b4ccbcb56a` | Operativo | Hub A–G + `csn-hub-marker-v4`; 14 DB accesibles (verificado 09:25 UTC). |
+| **E2E QA automation** (nuevo run idempotente) | sitio `3f684cd0-85ae-81bc-bfc0-da3ee0e389bb`, run `3f684cd0-85ae-81af-88c0-e3ab26bd26b6`, `csn:run:e2e-qa-automation` | QA/demo | Creado en E2E; re-ejecución reutiliza 28 tareas (`created: 0, reused: 28`). |
 | Raíz duplicada obsoleta | `3f684cd0-85ae-8115-841a-c9dc40395c58` | Duplicado / interno | Título «OBSOLETO — copia parcial»; API **sí** accesible. |
 | Stack duplicado vacío (3 DB) | `95d161c2-…`, `4aa293a5-…`, `fc7a5d12-…` | Duplicado obsoleto | Sin filas; no usar. |
 | **DEMO QA — LIVE/OFFLINE** | `csn:run:demo-qa-live-offline` / launch `demo-qa-live-offline` | QA/demo | 3 prompts publicados (evidencia en `csn-hub-integration-evidence.json`). |
@@ -54,11 +57,11 @@
 
 | Corrección | ID / referencia | Verificado en Notion |
 |------------|-----------------|----------------------|
-| Hub navegación: QA fuera del flujo principal (sección G), callout Phase Spec ≠ prompt | `csn-hub-marker-v4` en `csn-os/lib/notion-root-hub.mjs` | **No** — requiere `npm run csn:content-sanitize` o `csn:sync-hub` tras re-share |
-| E2E idempotente `e2e-qa-automation` | `scripts/csn-e2e-operational.mjs` | **No** — E2E no ejecutado (API) |
-| Script auditoría `csn:content-audit` | `docs/csn-content-audit-raw.json` | Local **sí** |
-| Script saneamiento QA tags + hub | `scripts/csn-content-sanitize.mjs` | **Pendiente** (API) |
-| Aceptación con fallo explícito si API caída | `docs/csn-acceptance-report.json` | **Sí** (blocked documentado) |
+| Hub v4 en Notion (sección G, callout Phase Spec) | raíz `3f684cd0-85ae-811f-a929-c4b4ccbcb56a` | **Sí** — 1× `csn-hub-marker-v4`, 1× «Empieza aquí» tras 2× sanitize |
+| Etiquetas QA en sitios/runs | — | **N/A** — auditoría: `qaSitesNeedingTag: 0` (ya etiquetados) |
+| E2E `e2e-qa-automation` | `csn:site:e2e-qa-automation` / `csn:run:e2e-qa-automation` | **Sí** — PASS remoto |
+| `csn:content-audit` | `docs/csn-content-audit-raw.json` | **Sí** (7→8 sitios tras E2E) |
+| `csn:verify-acceptance` | `docs/csn-acceptance-report.json` | **Sí** — `allPass: true` |
 
 ---
 
@@ -74,33 +77,25 @@
 
 ## 5. Resultado pruebas flujo completo
 
-| Paso | Resultado | Evidencia |
-|------|-----------|-----------|
-| 1. Sitio QA aislado | No re-ejecutado | API bloqueada |
-| 2. Plan técnico / dependencias | No re-ejecutado | — |
-| 3. Prompt específico en tarea | Última OK 09:10 UTC | `csn-hub-integration-evidence.json` |
-| 4. Éxito + evidencias | Última OK en integración previa | `csn-demo-flow-evidence.json` |
-| 5. Fallo → Blocked | Implementado en `workflow.mjs` | No re-verificado hoy |
-| 6. No avanzar fase sin criterios | `checkPhaseReadiness` | No re-verificado hoy |
-| 7. Re-sync sin duplicar | Hub idempotente por marcador | No re-verificado hoy |
+| Paso | Resultado remoto | Evidencia |
+|------|------------------|-----------|
+| 1. Sitio QA aislado | PASS — `e2e-qa-automation`, Record Class QA test-only | E2E caso A |
+| 2. Plan técnico | PASS — fase 1 current, 3 tareas | E2E caso B |
+| 3. Prompt con contenido + Notion URL | PASS — fase 5, sin `{{` | E2E caso C |
+| 4. Registro resultado | PASS — informe phase-05.json | E2E caso E |
+| 5. Legacy sin cambios | PASS | E2E caso G + sanitize `legacyIntegrityOk` |
+| 6. Fase 11 bloqueada en QA | PASS — missing readiness | E2E caso D |
+| 7. Hub idempotente | PASS — 1 marcador v4 tras 2× sanitize | consulta bloques raíz |
 
-**Comandos tras restaurar API:**
-
-```bash
-npm run csn:content-sanitize   # etiquetas QA + hub v4
-npm run csn:verify-acceptance
-npm run csn:e2e
-npm run csn:content-sanitize   # segunda pasada idempotencia hub/tags
-```
+**Nota:** Notion devolvió `rate_limited` durante E2E (reintentos OK); no afectó el PASS final.
 
 ---
 
 ## 6. Bloqueos que requieren decisión humana
 
-1. **Re-share Notion:** página [Cam Sites — SOP System](https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a) y las 14 bases hijas con la integración **Cursor Connection** (integration_id `3f584cd0-85ae-810b-9426-0027a382248e`).
-2. **Producción real:** ningún sitio `Record Class = Production` auditado hoy; confirmar nombres/launch keys antes de operar.
-3. **Limpieza opcional de runs E2E legacy:** solo archivar en vistas Notion, no borrar filas (política del encargo).
-4. **Contenido técnico en Phase specs:** ampliar `Work sequence` por fase solo si el operador quiere más detalle en catálogo (no sustituye tareas).
+1. **Producción real:** los 8 sitios CSN auditados son `QA test-only`; confirmar antes de crear `Production`.
+2. **Runs E2E legacy** (`e2e-qa-<timestamp>`): conservados; opcional archivar en vistas Notion.
+3. **Cuerpo Notion de Phase N Specification:** sigue siendo catálogo; fuente repo `csn-os/phase-specs/`.
 
 ---
 
@@ -108,11 +103,12 @@ npm run csn:content-sanitize   # segunda pasada idempotencia hub/tags
 
 | Dimensión | Estado |
 |-----------|--------|
-| Modelo operativo (repo + diseño Notion) | **Parcialmente operativo** |
-| Contenido Notion remoto verificado hoy | **Bloqueado** (API) |
-| Navegación hub | **Lista en código**; aplicación pendiente |
-| Separación QA | **Lógica lista** (`classifyRowLocal`, filtros documentados); etiquetado remoto pendiente |
-| Prompts vacíos presentados como ejecutables | **Mitigado** (`blocked-planning`, overrides, callout Phase Spec) |
+| Acceso API canónico + 14 DB | **OK** (remoto) |
+| Navegación hub v4 | **OK** (remoto) |
+| Aceptación (`csn:verify-acceptance`) | **allPass: true** (remoto) |
+| E2E operacional | **PASS** (remoto; escribe QA en Notion) |
+| Legacy OPERATIONS / KPI | **Sin cambios** (conteos 4/4/1/9/8/7/52/4) |
+| Separación QA | **OK** — filtros + Record Class; 0 sitios sin etiqueta |
 
 **Prompts ejecutables conocidos (última verificación remota):**
 

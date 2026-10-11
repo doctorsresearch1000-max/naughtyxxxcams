@@ -1,8 +1,48 @@
 {
-  "at": "2026-10-11T09:23:55.084Z",
-  "blocked": true,
-  "code": "object_not_found",
-  "message": "Could not find page with ID: 3f684cd0-85ae-811f-a929-c4b4ccbcb56a. Make sure the relevant pages and databases are shared with your integration \"Cursor Connection\".",
+  "at": "2026-10-11T09:28:57.969Z",
+  "blocked": false,
+  "rootPageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+  "hubMarker": "csn-hub-marker-v4",
   "corrections": [],
-  "hint": "Re-conecta «Cam Sites — SOP System» (3f684cd0-85ae-811f-a929-c4b4ccbcb56a) y las 14 DB CSN a Cursor Connection, luego npm run csn:content-sanitize"
+  "hub": {
+    "rootUrl": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
+    "runUrl": "https://app.notion.com/p/Lanzamiento-DEMO-QA-LIVE-OFFLINE-Cam-Profiles-3f684cd085ae8118a3efd5d25a6f6bb0",
+    "taskUrl": "https://app.notion.com/p/QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae812a96acee9c9e69ba82",
+    "promptUrl": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f",
+    "promptLinks": [
+      {
+        "name": "[QA] Coherencia LIVE/OFFLINE en perfiles de modelo",
+        "url": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f"
+      },
+      {
+        "name": "CI workflow verification (repo)",
+        "url": "https://app.notion.com/p/Prompt-Cursor-CI-workflow-verification-repo-3f684cd085ae81e7a1d5d072de997352"
+      },
+      {
+        "name": "Document affiliate credential storage (outside Notion)",
+        "url": "https://app.notion.com/p/Prompt-Cursor-Document-affiliate-credential-storage-outside-Notion-3f684cd085ae810cbf1dfa186d6e6c39"
+      }
+    ]
+  },
+  "legacyIntegrityOk": true,
+  "legacyBefore": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacyAfter": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  }
 }

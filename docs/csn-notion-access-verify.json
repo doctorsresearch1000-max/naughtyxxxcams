@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-11T09:25:45.855Z",
+  "step": "Paso 1 — verificación solo lectura",
+  "root": {
+    "id": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+    "ok": true,
+    "title": "Cam Sites — SOP System",
+    "url": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a"
+  },
+  "allOk": true,
+  "databasesQueried": 14,
+  "note": "Cada DB: databases.retrieve + dataSources.query page_size=1. Todas OK."
+}

@@ -1,14 +1,11 @@
 {
-  "at": "2026-10-11T09:23:37.194Z",
+  "at": "2026-10-11T09:29:01.756Z",
   "canonicalRootId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
   "runbookPageId": "3f684cd0-85ae-81c4-86c9-f909182fa38c",
   "panelPageId": "3f684cd0-85ae-81ba-ab3f-db738b779058",
   "duplicateRootId": "3f684cd0-85ae-8115-841a-c9dc40395c58",
   "notionAccess": {
-    "ok": false,
-    "code": "object_not_found",
-    "message": "Could not find page with ID: 3f684cd0-85ae-811f-a929-c4b4ccbcb56a. Make sure the relevant pages and databases are shared with your integration \"Cursor Connection\".",
-    "hint": "Comparte la página «Cam Sites — SOP System» y las 14 bases CSN con la integración «Cursor Connection»."
+    "ok": true
   },
   "local": {
     "phaseSpecs": [
@@ -259,8 +256,310 @@
       "qa-sandbox-notion-launch-v1"
     ]
   },
-  "remote": null,
-  "legacyCounts": null,
+  "remote": {
+    "sites": [
+      {
+        "id": "3f684cd0-85ae-81bc-bfc0-da3ee0e389bb",
+        "url": "https://app.notion.com/p/E2E-QA-automation-test-only-3f684cd085ae81bcbfc0da3ee0e389bb",
+        "siteName": "E2E QA automation (test-only)",
+        "launchKey": "e2e-qa-automation",
+        "externalId": "csn:site:e2e-qa-automation",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-816a-8a97-f78141727e45",
+        "url": "https://app.notion.com/p/E2E-QA-e2e-qa-1791709841650-3f684cd085ae816a8a97f78141727e45",
+        "siteName": "E2E QA e2e-qa-1791709841650",
+        "launchKey": "e2e-qa-1791709841650",
+        "externalId": "csn:site:e2e-qa-1791709841650",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-814f-b85a-e03b64f0f108",
+        "url": "https://app.notion.com/p/E2E-QA-e2e-qa-1791708627619-3f684cd085ae814fb85ae03b64f0f108",
+        "siteName": "E2E QA e2e-qa-1791708627619",
+        "launchKey": "e2e-qa-1791708627619",
+        "externalId": "csn:site:e2e-qa-1791708627619",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-8159-a3b8-fe01885e9cff",
+        "url": "https://app.notion.com/p/E2E-QA-e2e-qa-1791707778677-3f684cd085ae8159a3b8fe01885e9cff",
+        "siteName": "E2E QA e2e-qa-1791707778677",
+        "launchKey": "e2e-qa-1791707778677",
+        "externalId": "csn:site:e2e-qa-1791707778677",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-811e-8175-ca7f92b187d4",
+        "url": "https://app.notion.com/p/DEMO-QA-LIVE-OFFLINE-Cam-Profiles-3f684cd085ae811e8175ca7f92b187d4",
+        "siteName": "DEMO QA — LIVE/OFFLINE Cam Profiles",
+        "launchKey": "demo-qa-live-offline",
+        "externalId": "csn:site:demo-qa-live-offline",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-8184-9c23-cc4016ff64c8",
+        "url": "https://app.notion.com/p/E2E-QA-e2e-qa-1791707104885-3f684cd085ae81849c23cc4016ff64c8",
+        "siteName": "E2E QA e2e-qa-1791707104885",
+        "launchKey": "e2e-qa-1791707104885",
+        "externalId": "csn:site:e2e-qa-1791707104885",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-81f4-9a15-f3cc19ec0b36",
+        "url": "https://app.notion.com/p/FICTIONAL-SANDBOX-PROMPT-QA-3f684cd085ae81f49a15f3cc19ec0b36",
+        "siteName": "FICTIONAL-SANDBOX-PROMPT-QA",
+        "launchKey": "fictional-sandbox-prompt-qa",
+        "externalId": "csn:site:fictional-sandbox-prompt-qa",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      },
+      {
+        "id": "3f684cd0-85ae-81e8-9c32-d84530bd0a66",
+        "url": "https://app.notion.com/p/QA-SANDBOX-NOTION-3f684cd085ae81e89c32d84530bd0a66",
+        "siteName": "QA-SANDBOX-NOTION",
+        "launchKey": "qa-sandbox-notion-launch-v1",
+        "externalId": "csn:qa-sandbox-notion:launch:v1",
+        "recordClass": "QA test-only",
+        "classification": "QA/demo",
+        "classificationReason": "Record Class ya QA test-only",
+        "needsQaTag": false
+      }
+    ],
+    "projectRuns": [
+      {
+        "id": "3f684cd0-85ae-81af-88c0-e3ab26bd26b6",
+        "url": "https://app.notion.com/p/Lanzamiento-E2E-QA-automation-test-only-3f684cd085ae81af88c0e3ab26bd26b6",
+        "runName": "Lanzamiento — E2E QA automation (test-only)",
+        "launchKey": "e2e-qa-automation",
+        "externalId": "csn:run:e2e-qa-automation",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-817a-a81a-ce68698b0564",
+        "url": "https://app.notion.com/p/Lanzamiento-E2E-QA-e2e-qa-1791709841650-3f684cd085ae817aa81ace68698b0564",
+        "runName": "Lanzamiento — E2E QA e2e-qa-1791709841650",
+        "launchKey": "e2e-qa-1791709841650",
+        "externalId": "csn:run:e2e-qa-1791709841650",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-8147-92bb-dd5881aa95c4",
+        "url": "https://app.notion.com/p/Lanzamiento-E2E-QA-e2e-qa-1791708627619-3f684cd085ae814792bbdd5881aa95c4",
+        "runName": "Lanzamiento — E2E QA e2e-qa-1791708627619",
+        "launchKey": "e2e-qa-1791708627619",
+        "externalId": "csn:run:e2e-qa-1791708627619",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-81f7-a319-ef524bc03f7f",
+        "url": "https://app.notion.com/p/Lanzamiento-E2E-QA-e2e-qa-1791707778677-3f684cd085ae81f7a319ef524bc03f7f",
+        "runName": "Lanzamiento — E2E QA e2e-qa-1791707778677",
+        "launchKey": "e2e-qa-1791707778677",
+        "externalId": "csn:run:e2e-qa-1791707778677",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-8118-a3ef-d5d25a6f6bb0",
+        "url": "https://app.notion.com/p/Lanzamiento-DEMO-QA-LIVE-OFFLINE-Cam-Profiles-3f684cd085ae8118a3efd5d25a6f6bb0",
+        "runName": "Lanzamiento — DEMO QA — LIVE/OFFLINE Cam Profiles",
+        "launchKey": "demo-qa-live-offline",
+        "externalId": "csn:run:demo-qa-live-offline",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-810e-a25f-d9da689db379",
+        "url": "https://app.notion.com/p/Lanzamiento-E2E-QA-e2e-qa-1791707104885-3f684cd085ae810ea25fd9da689db379",
+        "runName": "Lanzamiento — E2E QA e2e-qa-1791707104885",
+        "launchKey": "e2e-qa-1791707104885",
+        "externalId": "csn:run:e2e-qa-1791707104885",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-814f-ac05-d5f31475aa36",
+        "url": "https://app.notion.com/p/Fictional-Prompt-QA-Run-3f684cd085ae814fac05d5f31475aa36",
+        "runName": "Fictional Prompt QA Run",
+        "launchKey": "fictional-sandbox-prompt-qa",
+        "externalId": "csn:run:fictional-sandbox-prompt-qa",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      },
+      {
+        "id": "3f684cd0-85ae-8163-bd91-c543e4878c1c",
+        "url": "https://app.notion.com/p/QA-Launch-QA-SANDBOX-NOTION-3f684cd085ae8163bd91c543e4878c1c",
+        "runName": "QA Launch — QA-SANDBOX-NOTION",
+        "launchKey": "qa-sandbox-notion-launch-v1",
+        "externalId": "csn:qa-sandbox-notion:launch:v1",
+        "runType": "QA Sandbox",
+        "classification": "QA/demo"
+      }
+    ],
+    "phaseSpecificationRows": [
+      {
+        "id": "3f684cd0-85ae-8179-97ef-e58e3aa9a538",
+        "url": "https://app.notion.com/p/Phase-12-Specification-3f684cd085ae817997efe58e3aa9a538",
+        "title": "Phase 12 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-12.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-817b-b4a7-e1c26d1b9218",
+        "url": "https://app.notion.com/p/Phase-11-Specification-3f684cd085ae817bb4a7e1c26d1b9218",
+        "title": "Phase 11 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-11.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8147-a168-e8198f0038a4",
+        "url": "https://app.notion.com/p/Phase-10-Specification-3f684cd085ae8147a168e8198f0038a4",
+        "title": "Phase 10 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-10.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-810f-95b8-c0a3dbd2901c",
+        "url": "https://app.notion.com/p/Phase-9-Specification-3f684cd085ae810f95b8c0a3dbd2901c",
+        "title": "Phase 9 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-09.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-81b7-a6f2-fc48a508ceac",
+        "url": "https://app.notion.com/p/Phase-8-Specification-3f684cd085ae81b7a6f2fc48a508ceac",
+        "title": "Phase 8 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-08.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8193-94ca-f27fb0b39f64",
+        "url": "https://app.notion.com/p/Phase-7-Specification-3f684cd085ae819394caf27fb0b39f64",
+        "title": "Phase 7 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-07.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8139-918d-c609afc1b7fc",
+        "url": "https://app.notion.com/p/Phase-6-Specification-3f684cd085ae8139918dc609afc1b7fc",
+        "title": "Phase 6 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-06.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8106-a0e6-d6e59355a2bd",
+        "url": "https://app.notion.com/p/Phase-5-Specification-3f684cd085ae8106a0e6d6e59355a2bd",
+        "title": "Phase 5 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-05.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8161-a0a5-cfeb13fbc611",
+        "url": "https://app.notion.com/p/Phase-4-Specification-3f684cd085ae8161a0a5cfeb13fbc611",
+        "title": "Phase 4 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-04.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8181-84b4-d19a15287a49",
+        "url": "https://app.notion.com/p/Phase-3-Specification-3f684cd085ae818184b4d19a15287a49",
+        "title": "Phase 3 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-03.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8163-9b68-d276ff7ce808",
+        "url": "https://app.notion.com/p/Phase-2-Specification-3f684cd085ae81639b68d276ff7ce808",
+        "title": "Phase 2 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-02.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      },
+      {
+        "id": "3f684cd0-85ae-8178-8643-e53b822251cb",
+        "url": "https://app.notion.com/p/Phase-1-Specification-3f684cd085ae81788643e53b822251cb",
+        "title": "Phase 1 Specification",
+        "artifactType": "Phase Specification",
+        "repositoryPath": "csn-os/phase-specs/phase-01.md",
+        "classification": "Documentación de fase (catálogo — no prompt Cursor)",
+        "notionBodyAudited": false,
+        "note": "Cuerpo en Notion puede estar vacío si solo se materializó metadata; fuente: csn-os/phase-specs/"
+      }
+    ],
+    "counts": {
+      "sites": 8,
+      "runs": 8,
+      "sopRows": 24,
+      "qaSitesNeedingTag": 0
+    }
+  },
+  "legacyCounts": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
   "staticInventory": {
     "note": "IDs de referencia de auditoría previa (2026-10-11) cuando API respondía",
     "priorAuditFile": "scripts/notion-csn-canonical-audit.json",
