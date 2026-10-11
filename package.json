@@ -41,6 +41,7 @@
     "csn:legacy-ops-inspect": "node scripts/csn-legacy-ops-inspect.mjs",
     "csn:legacy-ops-centralize": "node scripts/csn-legacy-ops-centralize.mjs",
     "csn:legacy-ops-fix2": "node scripts/csn-legacy-ops-fix2.mjs",
+    "csn:preflight-snapshot": "node scripts/csn-preflight-snapshot.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {
