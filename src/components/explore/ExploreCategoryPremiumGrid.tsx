@@ -18,7 +18,7 @@ export function ExploreCategoryPremiumGrid({
   if (cards.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-2.5">
+    <div className="grid grid-cols-2 gap-2.5 md:grid-cols-2 md:gap-3 lg:grid-cols-3 lg:gap-4">
       {cards.map((card, index) => {
         const { theme } = card;
 
@@ -26,15 +26,15 @@ export function ExploreCategoryPremiumGrid({
           <Link
             key={card.id}
             href={card.href}
-            className="group relative flex h-[5.5rem] w-full overflow-hidden rounded-2xl bg-[#0d0d0f] shadow-[0_6px_24px_rgba(0,0,0,0.45)] ring-1 ring-[#39FF14]/20 transition duration-300 hover:ring-[#39FF14]/55 hover:shadow-[0_0_20px_rgba(57,255,20,0.15)] active:scale-[0.98]"
+            className="group relative flex h-[5.5rem] w-full overflow-hidden rounded-2xl bg-[#0d0d0f] shadow-[0_6px_24px_rgba(0,0,0,0.45)] ring-1 ring-[#39FF14]/20 transition duration-300 hover:ring-[#39FF14]/55 hover:shadow-[0_0_20px_rgba(57,255,20,0.15)] active:scale-[0.98] lg:h-32 lg:max-h-36 lg:rounded-xl"
           >
             <Image
               src={theme.coverImage}
               alt=""
               aria-hidden
               fill
-              sizes="(max-width: 768px) 46vw, 240px"
-              className="object-cover object-center transition duration-500 group-hover:scale-[1.04]"
+              sizes="(max-width: 768px) 46vw, (max-width: 1280px) 33vw, 280px"
+              className="object-cover object-center transition duration-500 group-hover:scale-[1.04] lg:object-[center_20%]"
               priority={index < 2}
             />
 
@@ -44,7 +44,7 @@ export function ExploreCategoryPremiumGrid({
               aria-hidden
             />
             <div
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent lg:bg-gradient-to-r lg:from-black/80 lg:via-black/40 lg:to-transparent"
               aria-hidden
             />
 

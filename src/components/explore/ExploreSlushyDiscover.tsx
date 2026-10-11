@@ -355,7 +355,7 @@ export function ExploreSlushyDiscover({
   }, [showCategoryPicker, activeCat, loadCategory]);
 
   return (
-    <div className="space-y-4 pb-1 lg:space-y-2">
+    <div className="space-y-4 pb-1 lg:space-y-3 xl:space-y-3.5">
       <div className="relative lg:hidden">
         <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>

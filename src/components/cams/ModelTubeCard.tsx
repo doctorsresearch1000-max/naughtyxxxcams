@@ -23,6 +23,8 @@ type ModelTubeCardProps = {
   /** Desktop quick-view modal (immersive room). */
   onQuickView?: (performer: FeedPerformer) => void;
   enableDesktopPreview?: boolean;
+  /** Thumbnail frame — explore uses taller portrait tiles on desktop. */
+  tileAspectClass?: string;
 };
 
 export function ModelTubeCard({
@@ -31,6 +33,7 @@ export function ModelTubeCard({
   priority = false,
   onQuickView,
   enableDesktopPreview = false,
+  tileAspectClass = "aspect-[4/3]",
 }: ModelTubeCardProps) {
   const href = performerProfilePathFromPerformer(performer) ?? "/explore";
   const isLive = performer.live !== false;
@@ -110,7 +113,7 @@ export function ModelTubeCard({
         }
       >
         <div
-          className="relative aspect-[4/3] overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-900 ring-1 ring-zinc-800/80 lg:[content-visibility:auto] lg:[contain-intrinsic-size:300px]"
+          className={`relative overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-900 ring-1 ring-zinc-800/80 lg:[content-visibility:auto] lg:[contain-intrinsic-size:300px] ${tileAspectClass}`}
         >
           {thumb ? (
             <CamCardImage
