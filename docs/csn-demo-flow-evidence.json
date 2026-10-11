@@ -1,0 +1,33 @@
+{
+  "panelUrl": "https://app.notion.com/p/CSN-OS-Panel-de-proyectos-3f684cd085ae81baab3fdb738b779058",
+  "promptPageUrl": "https://app.notion.com/p/PROMPT-Cursor-copiar-LIVE-OFFLINE-perfiles-QA-3f684cd085ae81e38060d06211966812",
+  "flowPageUrl": "https://app.notion.com/p/Flujo-demo-QA-paso-a-paso-3f684cd085ae819e9023ed6e2fe5f8e0",
+  "runExternalId": "csn:run:demo-qa-live-offline",
+  "runUrl": "https://app.notion.com/p/Lanzamiento-DEMO-QA-LIVE-OFFLINE-Cam-Profiles-3f684cd085ae8118a3efd5d25a6f6bb0",
+  "taskUrl": "https://app.notion.com/p/QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae812a96acee9c9e69ba82",
+  "taskExternalId": "csn:taskrun:csn:run:demo-qa-live-offline:demo-live-offline-v1",
+  "promptFileRepo": "/workspace/csn-os/generated-prompts/DEMO-QA-live-offline-profiles.md",
+  "promptNotionBlockCount": 80,
+  "promptPreview": "# Cursor — QA DEMO: coherencia LIVE/OFFLINE en perfiles de modelo\n\n**Proyecto QA:** DEMO QA — LIVE/OFFLINE Cam Profiles  \n**Run ID:** `csn:run:demo-qa-live-offline`  \n**Repositorio de referencia (inspeccionado):** `doctorsresearch1000-max/naughtyxxxcams` (este monorepo Next.js + Cloudflare)  \n**NO es producción.** No despliegues ni cambies DNS.\n\n---\n\n## Rol y misión\n\nEres un ingeniero senior en fr",
+  "legacyOk": true,
+  "legacyBefore": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacyAfter": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  }
+}

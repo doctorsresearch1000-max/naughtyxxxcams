@@ -1,0 +1,15 @@
+{
+  "executionStatus": "verified_sandbox",
+  "verificationLabel": "Verificado en sandbox",
+  "summary": "Registro de ejemplo — operador reemplazará tras Cursor real",
+  "evidenceUrls": [
+    "https://app.notion.com/p/PROMPT-Cursor-copiar-LIVE-OFFLINE-perfiles-QA-3f684cd085ae81e38060d06211966812"
+  ],
+  "tests": [
+    {
+      "cmd": "npm run csn -- demo-live-offline",
+      "exit": 0
+    }
+  ],
+  "advancePhase": false
+}

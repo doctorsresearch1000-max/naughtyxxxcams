@@ -1,5 +1,5 @@
 {
-  "auditedAt": "2026-10-11T08:02:41.940Z",
+  "auditedAt": "2026-10-11T08:37:41.995Z",
   "legacyCounts": {
     "hub": 4,
     "ops": 4,
@@ -25,31 +25,31 @@
           "id": "7b6afa6b-844b-438f-9321-0cdb8ee728ca",
           "dataSourceId": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
           "url": "https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca",
-          "rowCount": 1
+          "rowCount": 5
         },
         {
           "title": "SOP Versions",
           "id": "9ed26a47-a251-42e8-a987-676d698b004c",
           "dataSourceId": "a14777aa-6ca0-471e-a7ca-50ff07d9bcea",
           "url": "https://app.notion.com/p/9ed26a47a25142e8a987676d698b004c",
-          "rowCount": 1
+          "rowCount": 24
         },
         {
           "title": "Project Runs",
           "id": "d0e397e4-95e5-44d2-8a68-99bc6a1e654f",
           "dataSourceId": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
           "url": "https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f",
-          "rowCount": 1
+          "rowCount": 5
         },
         {
           "title": "Tasks",
           "id": "30d3973d-e3e3-40b0-957a-9f8c34db43ee",
           "dataSourceId": "f0c88978-015a-4b67-8a6d-3f493d53c425",
           "url": "https://app.notion.com/p/30d3973de3e340b0957a9f8c34db43ee",
-          "rowCount": 31,
-          "hasRecordType": false,
+          "rowCount": 172,
+          "hasRecordType": true,
           "taskdefCount": 0,
-          "taskrunCount": 31
+          "taskrunCount": 100
         },
         {
           "title": "Domain Candidates",
@@ -131,34 +131,34 @@
         "id": "30d3973d-e3e3-40b0-957a-9f8c34db43ee",
         "dataSourceId": "f0c88978-015a-4b67-8a6d-3f493d53c425",
         "url": "https://app.notion.com/p/30d3973de3e340b0957a9f8c34db43ee",
-        "rowCount": 31,
-        "hasRecordType": false,
+        "rowCount": 172,
+        "hasRecordType": true,
         "taskdefCount": 0,
-        "taskrunCount": 31
+        "taskrunCount": 100
       },
       "taskSample": [
         {
-          "ext": "csn:task:v2:p12:03",
-          "recordType": "(none)"
+          "ext": "csn:taskrun:csn:run:e2e-qa-1791707778677:p01:01",
+          "recordType": "Execution task"
         },
         {
-          "ext": "csn:task:v2:p12:02",
-          "recordType": "(none)"
+          "ext": "csn:taskrun:csn:run:e2e-qa-1791707778677:p01:02",
+          "recordType": "Execution task"
         },
         {
-          "ext": "csn:task:v2:p12:01",
-          "recordType": "(none)"
+          "ext": "csn:taskrun:csn:run:e2e-qa-1791707778677:p01:03",
+          "recordType": "Execution task"
         },
         {
-          "ext": "csn:task:v2:p11:02",
-          "recordType": "(none)"
+          "ext": "csn:taskrun:csn:run:e2e-qa-1791707778677:p02:01",
+          "recordType": "Execution task"
         },
         {
-          "ext": "csn:task:v2:p11:01",
-          "recordType": "(none)"
+          "ext": "csn:taskrun:csn:run:e2e-qa-1791707778677:p02:02",
+          "recordType": "Execution task"
         }
       ],
-      "score": 273,
+      "score": 445,
       "dbTitles": [
         "Backlink Opportunities",
         "CSN Incidents",
@@ -228,6 +228,6 @@
     }
   ],
   "recommendedCanonical": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
-  "recommendationReason": "Highest score (273): more DBs/records/runbook/tasks",
+  "recommendationReason": "Highest score (445): more DBs/records/runbook/tasks",
   "ambiguous": false
 }

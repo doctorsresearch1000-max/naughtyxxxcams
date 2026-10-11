@@ -115,6 +115,14 @@ Ejemplo:
     console.log("Panel:", url);
     return;
   }
+  if (cmd === "demo-live-offline") {
+    const { spawn } = await import("child_process");
+    const r = spawn("node", [new URL("./csn-demo-live-offline.mjs", import.meta.url).pathname], {
+      stdio: "inherit",
+    });
+    r.on("close", (c) => process.exit(c ?? 0));
+    return;
+  }
   if (cmd === "proyecto-crear") {
     const r = await createProject({
       siteName: opts.nombre || "Nuevo sitio QA",
