@@ -1,0 +1,37 @@
+{
+  "canonicalRoot": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+  "newArtifacts": 23,
+  "taskMigration": {
+    "defs": 31,
+    "execs": 0,
+    "rows": 31
+  },
+  "fictional": {
+    "siteId": "3f684cd0-85ae-81f4-9a15-f3cc19ec0b36",
+    "runExt": "csn:run:fictional-sandbox-prompt-qa",
+    "siteExt": "csn:site:fictional-sandbox-prompt-qa"
+  },
+  "executionTasks": {
+    "qa": {
+      "created": 28,
+      "reused": 0,
+      "total": 31
+    },
+    "fictional": {
+      "created": 28,
+      "reused": 0,
+      "total": 31
+    }
+  },
+  "legacyIntegrity": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacyOk": true
+}

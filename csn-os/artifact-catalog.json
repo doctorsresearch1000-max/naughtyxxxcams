@@ -1,0 +1,139 @@
+{
+  "standards": [
+    {
+      "id": "csn:standard:v1:architecture",
+      "file": "architecture.md",
+      "name": "Network Architecture Standard",
+      "version": "1.0.0",
+      "path": "csn-os/standards/architecture.md"
+    },
+    {
+      "id": "csn:standard:v1:secrets",
+      "file": "security-secrets.md",
+      "name": "Security and Secrets Handling",
+      "version": "1.0.0",
+      "path": "csn-os/standards/security-secrets.md"
+    },
+    {
+      "id": "csn:standard:v1:repo-ci",
+      "file": "repository-ci.md",
+      "name": "Repository and CI Standard",
+      "version": "1.0.0",
+      "path": "csn-os/standards/repository-ci.md"
+    },
+    {
+      "id": "csn:standard:v1:testing",
+      "file": "testing-release.md",
+      "name": "Testing and Release Evidence",
+      "version": "1.0.0",
+      "path": "csn-os/standards/testing-release.md"
+    },
+    {
+      "id": "csn:standard:v1:seo",
+      "file": "seo-indexing.md",
+      "name": "SEO and Indexation Standard",
+      "version": "1.0.0",
+      "path": "csn-os/standards/seo-indexing.md"
+    },
+    {
+      "id": "csn:standard:v1:feeds",
+      "file": "feed-integration.md",
+      "name": "Affiliate and Feed Integration",
+      "version": "1.0.0",
+      "path": "csn-os/standards/feed-integration.md"
+    },
+    {
+      "id": "csn:standard:v1:compliance",
+      "file": "content-compliance.md",
+      "name": "Content and Compliance",
+      "version": "1.0.0",
+      "path": "csn-os/standards/content-compliance.md"
+    },
+    {
+      "id": "csn:standard:v1:gates",
+      "file": "human-gates.md",
+      "name": "Human Approval and Risk Policy",
+      "version": "1.0.0",
+      "path": "csn-os/standards/human-gates.md"
+    },
+    {
+      "id": "csn:standard:v1:evidence",
+      "file": "documentation-evidence.md",
+      "name": "Documentation and Evidence",
+      "version": "1.0.0",
+      "path": "csn-os/standards/documentation-evidence.md"
+    }
+  ],
+  "phases": [
+    {
+      "phase": 1,
+      "artifactId": "csn:phase:v1:01",
+      "path": "csn-os/phase-specs/phase-01.md"
+    },
+    {
+      "phase": 2,
+      "artifactId": "csn:phase:v1:02",
+      "path": "csn-os/phase-specs/phase-02.md"
+    },
+    {
+      "phase": 3,
+      "artifactId": "csn:phase:v1:03",
+      "path": "csn-os/phase-specs/phase-03.md"
+    },
+    {
+      "phase": 4,
+      "artifactId": "csn:phase:v1:04",
+      "path": "csn-os/phase-specs/phase-04.md"
+    },
+    {
+      "phase": 5,
+      "artifactId": "csn:phase:v1:05",
+      "path": "csn-os/phase-specs/phase-05.md"
+    },
+    {
+      "phase": 6,
+      "artifactId": "csn:phase:v1:06",
+      "path": "csn-os/phase-specs/phase-06.md"
+    },
+    {
+      "phase": 7,
+      "artifactId": "csn:phase:v1:07",
+      "path": "csn-os/phase-specs/phase-07.md"
+    },
+    {
+      "phase": 8,
+      "artifactId": "csn:phase:v1:08",
+      "path": "csn-os/phase-specs/phase-08.md"
+    },
+    {
+      "phase": 9,
+      "artifactId": "csn:phase:v1:09",
+      "path": "csn-os/phase-specs/phase-09.md"
+    },
+    {
+      "phase": 10,
+      "artifactId": "csn:phase:v1:10",
+      "path": "csn-os/phase-specs/phase-10.md"
+    },
+    {
+      "phase": 11,
+      "artifactId": "csn:phase:v1:11",
+      "path": "csn-os/phase-specs/phase-11.md"
+    },
+    {
+      "phase": 12,
+      "artifactId": "csn:phase:v1:12",
+      "path": "csn-os/phase-specs/phase-12.md"
+    }
+  ],
+  "promptTemplates": [
+    {
+      "artifactId": "csn:prompttpl:v1:execution-phase",
+      "path": "csn-os/prompt-templates/execution-phase.md"
+    },
+    {
+      "artifactId": "csn:prompttpl:v1:blocked-planning",
+      "path": "csn-os/prompt-templates/blocked-planning.md"
+    }
+  ]
+}
