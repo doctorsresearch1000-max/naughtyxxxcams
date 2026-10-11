@@ -15,7 +15,7 @@ export function SecondaryRouteShell({
 }: SecondaryRouteShellProps) {
   return (
     <main
-      className={`mx-auto min-h-screen w-full max-w-md bg-[#0A0A0A] px-4 pb-24 pt-3 text-white [-webkit-overflow-scrolling:touch] lg:max-w-[1600px] lg:px-8 lg:pb-12 lg:pt-[calc(var(--app-header-height,3.5rem)+0.75rem)] ${className}`}
+      className={`mx-auto min-h-screen w-full max-w-md bg-[#0A0A0A] px-4 pb-24 pt-3 text-white [-webkit-overflow-scrolling:touch] lg:max-w-[1600px] lg:px-8 lg:pb-12 lg:pt-[calc(var(--app-header-height,3.5rem)+0.75rem)] lg:overflow-x-hidden ${className}`}
     >
       {children}
     </main>
