@@ -28,7 +28,7 @@ export default async function FollowingPage() {
   }
 
   return (
-    <SecondaryRouteShell>
+    <SecondaryRouteShell className="bg-[#0d0d0f]">
       <FollowingPageView {...data} />
     </SecondaryRouteShell>
   );

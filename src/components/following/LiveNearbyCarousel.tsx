@@ -8,6 +8,12 @@ type LiveNearbyCarouselProps = {
   items: FollowingNearbyItem[];
 };
 
+const SCROLL_CLASS =
+  "nx-chip-scroll hide-scrollbar -mx-0.5 flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-visible scroll-smooth px-0.5 py-4 lg:gap-4";
+
+const AVATAR_INNER =
+  "relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-2xl border-2 border-[#0d0d0f] bg-[#1C1C1E] lg:h-20 lg:w-20 lg:rounded-full xl:h-24 xl:w-24";
+
 export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
   const visible = items.filter((item) => item.image?.trim());
 
@@ -20,65 +26,65 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
   }
 
   return (
-    <div
-      className="nx-chip-scroll hide-scrollbar -mx-1 flex min-h-[108px] snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-visible scroll-smooth pb-2 pl-0.5 pr-3 lg:min-h-[116px] lg:gap-4"
-    >
-      {visible.map((item) => {
-        const href = item.profilePath ?? item.affiliateUrl;
-        const external = !item.profilePath;
+    <section className="w-full overflow-visible" aria-label="Following stories">
+      <div className={SCROLL_CLASS}>
+        {visible.map((item) => {
+          const href = item.profilePath ?? item.affiliateUrl;
+          const external = !item.profilePath;
 
-        const avatar = (
-          <StoryAvatarRing>
-            <div className="relative h-[3.75rem] w-[3.75rem] overflow-hidden rounded-full border-2 border-[#0A0A0A] bg-[#1C1C1E]">
-              <ApiAvatar
-                src={item.image}
-                alt={item.label}
-                fill
-                sizes="60px"
-                className="object-cover"
-              />
-              {item.isLive ? (
-                <span className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/80 to-transparent pb-0.5 pt-2">
-                  <LiveBadge className="scale-[0.72] origin-bottom" />
-                </span>
-              ) : null}
+          const avatar = (
+            <div className="flex w-[76px] shrink-0 snap-start flex-col items-center gap-2 lg:w-20 xl:w-24">
+              <StoryAvatarRing className="rounded-[26px] lg:rounded-full">
+                <div className={AVATAR_INNER}>
+                  <ApiAvatar
+                    src={item.image}
+                    alt={item.label}
+                    fill
+                    sizes="(max-width: 1280px) 80px, 96px"
+                    className="object-cover object-top"
+                  />
+                  {item.isLive ? (
+                    <span className="absolute bottom-1 right-1 z-10">
+                      <LiveBadge
+                        size="sm"
+                        className="!px-1.5 !py-0.5 !text-[10px] !font-bold shadow-lg ring-1 ring-black/40"
+                      />
+                    </span>
+                  ) : null}
+                </div>
+              </StoryAvatarRing>
+              <span
+                className="max-w-[90px] truncate text-center text-xs font-medium text-zinc-300"
+              >
+                {item.label}
+              </span>
             </div>
-          </StoryAvatarRing>
-        );
-
-        const content = (
-          <>
-            {avatar}
-            <span className="mt-2 max-w-[68px] truncate text-center text-[10px] font-semibold text-zinc-300">
-              {item.label}
-            </span>
-          </>
-        );
-
-        if (external) {
-          return (
-            <a
-              key={item.id}
-              href={href}
-              target="_blank"
-              rel="nofollow noopener"
-              className="flex shrink-0 flex-col items-center transition active:scale-[0.97]"
-            >
-              {content}
-            </a>
           );
-        }
 
-        return (
-          <Link
-            key={item.id}
-            href={href}
-            className="flex shrink-0 flex-col items-center transition active:scale-[0.97]"
-          >
-            {content}
-          </Link>
-        );
-      })}
-    </div>
+          const wrapperClass =
+            "shrink-0 transition-transform duration-200 hover:scale-[1.02]";
+
+          if (external) {
+            return (
+              <a
+                key={item.id}
+                href={href}
+                target="_blank"
+                rel="nofollow noopener"
+                className={wrapperClass}
+              >
+                {avatar}
+              </a>
+            );
+          }
+
+          return (
+            <Link key={item.id} href={href} className={wrapperClass}>
+              {avatar}
+            </Link>
+          );
+        })}
+      </div>
+    </section>
   );
 }

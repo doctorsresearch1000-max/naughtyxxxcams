@@ -6,13 +6,10 @@ import { useCallback, useEffect, useState } from "react";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { LiveBadge } from "@/components/cams/LiveBadge";
 import { FollowingOfflineList } from "@/components/following/FollowingOfflineList";
-import { JerkmateFollowingGifBanner } from "@/components/following/JerkmateFollowingGifBanner";
+import { FollowingJerkmatePromoBanner } from "@/components/following/FollowingJerkmatePromoBanner";
 import { LiveNearbyCarousel } from "@/components/following/LiveNearbyCarousel";
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
-import {
-  CATALOG_GRID_CLASS,
-  MOBILE_HOME_GRID_CLASS,
-} from "@/lib/layout/catalogGridLayout";
+import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
 import type { FollowingPageData } from "@/lib/following/followingPageData";
 
 type FollowingPageViewProps = FollowingPageData;
@@ -61,88 +58,88 @@ export function FollowingPageView({
         : `${liveCount} of your ${followedTotal} models are live`;
 
   return (
-    <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8">
-      <section className="mb-6 lg:col-span-12 lg:mb-2">
+    <div className="flex flex-col gap-4 overflow-x-hidden pb-1 lg:gap-5">
+      <section className="order-1 overflow-visible lg:order-1">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--nx-action)]">
           Following stories
         </span>
-        <div className="mt-2 lg:mt-3">
+        <div className="mt-2 lg:mt-2">
           <LiveNearbyCarousel items={nearby} />
         </div>
       </section>
 
-      <div className="mb-2 lg:col-span-12">
-        <JerkmateFollowingGifBanner />
+      <div className="order-2 lg:order-2">
+        <FollowingJerkmatePromoBanner />
       </div>
 
-      <section className="lg:col-span-8 xl:col-span-9">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--nx-action)]">
-          Following
-        </span>
-        <div className="mb-1 mt-1 flex items-center justify-between gap-3 lg:mt-2">
-          <h1 className="text-2xl font-black tracking-tight text-white lg:text-3xl">
-            Your models
-          </h1>
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={refreshing}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-[#1C1C1E] text-sm text-[var(--nx-action)] transition hover:border-[var(--nx-action)]/40 hover:bg-zinc-900 disabled:opacity-60 lg:h-10 lg:w-10"
-            aria-label="Refresh list"
-          >
-            <span className={refreshing ? "inline-block animate-spin" : ""}>
-              🔄
+      <div className="order-3 lg:grid lg:grid-cols-12 lg:items-start lg:gap-8 lg:order-3">
+        <section className="lg:col-span-8 xl:col-span-9">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--nx-action)]">
+            Following
+          </span>
+          <div className="mb-1 mt-1 flex items-center justify-between gap-3 lg:mt-2">
+            <h1 className="text-2xl font-black tracking-tight text-white lg:text-3xl">
+              Your models
+            </h1>
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={refreshing}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-zinc-800 bg-[#1C1C1E] text-sm text-[var(--nx-action)] transition hover:border-[var(--nx-action)]/40 hover:bg-zinc-900 disabled:opacity-60 lg:h-10 lg:w-10"
+              aria-label="Refresh list"
+            >
+              <span className={refreshing ? "inline-block animate-spin" : ""}>
+                🔄
+              </span>
+            </button>
+          </div>
+          <p className="mb-3 text-xs leading-relaxed text-zinc-400 lg:text-sm">
+            {subtitle}
+          </p>
+
+          <div className="mb-4 flex flex-wrap items-center gap-2 lg:mb-5">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nx-action)]/35 bg-[var(--nx-action)]/10 px-2.5 py-1 text-[10px] font-bold text-[var(--nx-action)]"
+            >
+              <LiveBadge className="scale-90" />
+              <span>{liveCount}</span>
             </span>
-          </button>
-        </div>
-        <p className="mb-3 text-xs leading-relaxed text-zinc-400 lg:text-sm">
-          {subtitle}
-        </p>
+            <span className="text-[11px] font-medium text-zinc-500 lg:text-xs">
+              {formatUpdatedLabel(updatedAt)}
+            </span>
+          </div>
 
-        <div className="mb-4 flex flex-wrap items-center gap-2 lg:mb-6">
-          <span
-            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nx-action)]/35 bg-[var(--nx-action)]/10 px-2.5 py-1 text-[10px] font-bold text-[var(--nx-action)]"
-          >
-            <LiveBadge className="scale-90" />
-            <span>{liveCount}</span>
-          </span>
-          <span className="text-[11px] font-medium text-zinc-500 lg:text-xs">
-            {formatUpdatedLabel(updatedAt)}
-          </span>
-        </div>
+          <div className={`${EXPLORE_TUBE_GRID_CLASS} mb-4`}>
+            {gridCards.map((performer, index) => (
+              <ModelTubeCard
+                key={performer.feedKey}
+                performer={performer}
+                gridIndex={index}
+                priority={index < 6}
+                enableDesktopPreview
+                tileAspectClass="aspect-[4/3] lg:aspect-[16/10]"
+                tileImageClass="object-cover object-top"
+              />
+            ))}
+          </div>
 
-        <div className={`mb-4 ${MOBILE_HOME_GRID_CLASS} lg:hidden`}>
-          {gridCards.map((performer, index) => (
-            <ModelTubeCard
-              key={performer.feedKey}
-              performer={performer}
-              gridIndex={index}
-              priority={index < 4}
-            />
-          ))}
-        </div>
+          {gridCards.length === 0 ? (
+            <p className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 text-center text-sm text-zinc-400">
+              No live followed models right now. Check offline list or explore
+              new talent.
+            </p>
+          ) : null}
+        </section>
 
-        <div className={`mb-4 hidden lg:grid ${CATALOG_GRID_CLASS}`}>
-          {gridCards.map((performer, index) => (
-            <ModelTubeCard
-              key={performer.feedKey}
-              performer={performer}
-              gridIndex={index}
-              priority={index < 8}
-              enableDesktopPreview
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="lg:col-span-4 xl:col-span-3">
-        <div className="lg:sticky lg:top-[calc(var(--app-header-height,3.5rem)+1rem)]">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
-            Offline
-          </span>
-          <FollowingOfflineList items={offline} />
-        </div>
-      </section>
+        <section className="lg:col-span-4 xl:col-span-3">
+          <div className="lg:sticky lg:top-[calc(var(--app-header-height,3.5rem)+1rem)]">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
+              Offline
+            </span>
+            <FollowingOfflineList items={offline} />
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
