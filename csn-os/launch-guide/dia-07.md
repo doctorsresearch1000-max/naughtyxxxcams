@@ -1,446 +1,98 @@
-# Guía 7 días — Día 7: Staging, decisión de lanzamiento y operación posterior
+# Día 7 — Comprueba la web y decide el lanzamiento
 
-## Objetivo del día
-Evidencia en staging, gates de producción (si aplica), snapshot KPI y rutinas de mantenimiento.
+## 1. Qué vas a conseguir hoy
 
-**Nota realista:** Producción solo con gate Approved; QA puede cerrar en sandbox sin deploy real.
+**Evidencia de staging** (URL de preview), decisión documentada sobre **producción** (gate Pending o N/A en QA), **snapshot KPI** de lanzamiento y **rutinas de mantenimiento** — sin asumir que la web ya está en producción.
 
-## Fases CSN cubiertas
-- Fase 10: Staging, QA y endurecimiento — Release en staging/sandbox, pruebas y Evidence URL.
-- Fase 11: Lanzamiento a producción — Solo con gate production_deploy Approved; no automatizado.
-- Fase 12: Medición, mantenimiento y handoff — Launch KPI Snapshot (aislado), mantenimiento y cierre del run.
+## 2. Qué necesitas antes de empezar
 
-## Antes de empezar
-- Acceso a Notion «Cam Sites — SOP System».
-- Decidir si el sitio es **prueba (QA)** o **producción** (producción exige más gates y dominio real).
-- Tener listo: nombre comercial, nicho, objetivo, brief en prosa (qué debe hacer la web).
-- Navegador para expireddomains.net y web.archive.org (día 2).
-- Acceso de lectura al repositorio GitHub del sitio (días 4–5).
-- **Día 7 producción:** aprobación humana explícita antes de deploy (gate production_deploy).
+- CI documentado (Día 4).
+- Checklist legal (Día 3).
+- **Staging:** versión de la web para probar antes del lanzamiento público.
 
-## Pasos que debes seguir
-### Bloque fase 10
-1) CSN Releases staging Done (or sandbox). 2) staging_deploy gate if real public staging. 3) Project Run Evidence URL populated.
+## 3. Tiempo estimado y dependencias
 
-1. **Staging release record**
-   - Qué hacer: CSN Releases: Environment = staging, Status = In progress → Done when deploy completes. Git SHA required. Relate Site + Project Run.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Staging release row with Deployed At.
-   - Comprobar: Release Status = Done for sandbox simulation.
-2. **Staging deploy Human Gate (if external impact)**
-   - Qué hacer: If staging uses real DNS or public URLs with consequences: create Human Gates Target Type = staging_deploy (pending schema), Scope lists hostnames, Limits = no prod data. For QA-SANDBOX use example host only — gate optional but document.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Gate row or explicit Notes 'no staging gate required for example.com QA'.
-   - Comprobar: Documented decision.
-   - ⚠ Aprobación humana: csn:gate:policy:staging_deploy
-3. **Attach QA evidence to Project Run**
-   - Qué hacer: Set Project Run Evidence URL to staging preview or test artifact. Current Phase = 10.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Evidence URL non-empty.
-   - Comprobar: Evidence URL populated.
-### Bloque fase 11
-1) production_deploy gate Pending. 2) CSN Releases production row Blocked. 3) QA sites: mark N/A — never prod deploy.
+| | |
+|--|--|
+| **Tiempo** | 4–8 horas de pruebas; deploy prod puede ser otro día |
+| **Producción** | Solo con Human Gate **production_deploy** Approved |
 
-4. **Production deploy Human Gate**
-   - Qué hacer: Create Human Gates Target Type = production_deploy, Target External ID = run External ID, Scope = prod hostnames, Limits = maintenance window. Status must be Pending until human approves. DO NOT deploy.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Pending production gate.
-   - Comprobar: Gate exists Pending or N/A documented for QA.
-   - ⚠ Aprobación humana: csn:gate:policy:production_deploy
-5. **Production release row (blocked until gate)**
-   - Qué hacer: CSN Releases Environment = production, Status = Blocked until production_deploy gate Approved. No deploy action in automation.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Production release row in Blocked/Not started.
-   - Comprobar: Row exists; not Done.
-   - ⚠ Aprobación humana: csn:gate:policy:production_deploy
-### Bloque fase 12
-1) Launch KPI Snapshots with Record Class matching site. 2) CSN Maintenance seeds. 3) Project Run Status Done if evidence + sandbox rules met.
+## 4. Pasos
 
-6. **Launch KPI Snapshot (isolated DB)**
-   - Qué hacer: Create Launch KPI Snapshots with metrics, Record Class matching site, link Site + Project Run. For QA use zeros and QA test-only. Legacy KPI History sync (npm run notion:sync-kpis) is separate — do not mix QA into hub KPI reporting.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Snapshot row with Captured At.
-   - Comprobar: Snapshot exists.
-7. **Seed CSN Maintenance routines**
-   - Qué hacer: Create CSN Maintenance rows (weekly KPI review, feed health) linked to Site.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: ≥2 maintenance rows.
-   - Comprobar: ≥2 rows.
-8. **Close Project Run**
-   - Qué hacer: Set Current Phase = 12, Status = Done only if Evidence URL set and required gates resolved or N/A for QA. Document handoff in Notes.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Project Run Status = Done (sandbox) or In progress (prod pending gates).
-   - Comprobar: Status updated per sandbox rules.
+### Paso 1 — Release de staging
 
-## Instrucciones para Cursor
+- **Qué hacer:** [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) · **Environment** = staging · **Status** In progress → Done cuando tengas preview · **Git SHA** · enlaces Site y Run.
+- **Comprobar:** URL de preview en Notes o Evidence URL del run.
 
-### Cómo obtener el prompt con tus datos reales
-1. Registra el proyecto (Día 1) en la consola **/csn-console** (formulario) o con ayuda de quien tenga acceso al servidor.
-2. Abre **Continuar** → **Preparar prompt** para la fase actual; copia el texto completo.
-3. Pega en Cursor en el repositorio autorizado. Cursor **no** se ejecuta solo al generar el prompt.
+### Paso 2 — Gate de staging (si aplica)
 
-### Prompt — Staging release record
-```
-# Cursor — Tarea CSN (Fase 10: Staging, QA y endurecimiento)
+- Si la preview usa DNS público con impacto, crea gate **staging_deploy** con hostnames listados. En QA con example.com, escribe en Notes: «no se requiere gate staging».
 
-**ID de tarea (definición):** `csn:task:v2:p10:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+### Paso 3 — Evidencia en Project Run
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+- **Qué hacer:** Rellena **Evidence URL** del [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) con la preview · **Current Phase** = 10.
+- **Comprobar:** QA no afirma lanzamiento producción.
 
-## Misión concreta
-CSN Releases: Environment = staging, Status = In progress → Done when deploy completes. Git SHA required. Relate Site + Project Run.
+### Paso 4 — Gate de producción (solo Production)
 
-## Precondiciones
-CI documented.
+- **Qué hacer:** Si Record Class es **Production**, [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) · **production_deploy** · Pending · NO desplegar. Si es **QA test-only**, anota en Notes «N/A QA» y no crees deploy prod.
 
-## Entregable esperado
-Staging release row with Deployed At.
+### Paso 5 — Fila release producción bloqueada
 
-## Criterios de aceptación (verificables)
-QA sites use Environment = staging or sandbox only.
+- **Qué hacer:** CSN Releases · **production** · **Blocked** o Not started · sin SHA hasta deploy real aprobado.
 
-## Evidencias a registrar en Notion
-Release URL + deploy log link in Notes.
+### Paso 6 — Launch KPI Snapshot
 
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
+- **Qué hacer:** [Launch KPI Snapshots](https://app.notion.com/p/f01f1be58f36408192d17fbe6eff7ca8) · métricas (ceros OK en QA) · Record Class igual que el Site.
 
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
+### Paso 7 — Mantenimiento
 
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
+- **Qué hacer:** [CSN Maintenance](https://app.notion.com/p/e1dc314841b84783a79e185b0fde5280) · ≥2 filas (ej. revisión semanal KPI, salud del feed) · cadencia definida.
 
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+### Paso 8 — Cerrar el run (QA)
+
+- En QA puedes poner run **Done** solo si Evidence URL existe y gates prod son N/A. En producción real, **In progress** hasta deploy aprobado.
+
+## 5. Prompt listo para copiar en Cursor
 
 ```
+# Día 7 — Lista de pruebas en staging (sin deploy prod)
 
-### Prompt — Staging deploy Human Gate (if external impact)
-```
-# Cursor — Tarea CSN (Fase 10: Staging, QA y endurecimiento)
+## Objetivo
+Generar checklist de QA manual para la preview del sitio de cams.
 
-**ID de tarea (definición):** `csn:task:v2:p10:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+## Contexto
+- URL preview: [URL STAGING]
+- Repo: [URL]
+- QA o producción: [QA / Producción]
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## Tareas
+1. Checklist: home carga, enlaces afiliado, age gate, páginas legales enlazadas, perfiles LIVE/OFFLINE coherentes si aplica al repo.
+2. Separar «bloqueante lanzamiento» vs «mejora».
+3. Texto para Evidence URL y Notes de cierre.
 
-## Misión concreta
-If staging uses real DNS or public URLs with consequences: create Human Gates Target Type = staging_deploy (pending schema), Scope lists hostnames, Limits = no prod data. For QA-SANDBOX use example host only — gate optional but document.
+## Límites
+- No ejecutar deploy a producción.
+- No marcar KPI reales de producción en QA.
 
-## Precondiciones
-csn:task:v2:p10:01.
-
-## Entregable esperado
-Gate row or explicit Notes 'no staging gate required for example.com QA'.
-
-## Criterios de aceptación (verificables)
-Gate not reused for production.
-
-## Evidencias a registrar en Notion
-Gate URL or waiver note.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
+## Entregables
+Checklist markdown + resumen para Notion.
 ```
 
-### Prompt — Attach QA evidence to Project Run
-```
-# Cursor — Tarea CSN (Fase 10: Staging, QA y endurecimiento)
+## 6. Qué revisar en la respuesta de Cursor
 
-**ID de tarea (definición):** `csn:task:v2:p10:03`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+Éxito: pruebas concretas según tu URL. Fallo: «listo para producción» sin gate.
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## 7. Cuándo terminar el día
 
-## Misión concreta
-Set Project Run Evidence URL to staging preview or test artifact. Current Phase = 10.
+- [ ] Release staging Done con enlace verificable.
+- [ ] Evidence URL en Project Run.
+- [ ] Gate prod Pending o N/A QA documentado.
+- [ ] Launch KPI Snapshot + ≥2 Maintenance.
+- [ ] Decisión escrita: «lanzar / no lanzar / esperar aprobación».
 
-## Precondiciones
-csn:task:v2:p10:01.
+## 8. Qué queda pendiente
 
-## Entregable esperado
-Evidence URL non-empty.
+Deploy producción, compras, DNS cutover, KPI legacy del hub (sync separado — no mezclar QA).
 
-## Criterios de aceptación (verificables)
-URL must not assert production launch for QA Record Class.
-
-## Evidencias a registrar en Notion
-Evidence URL field.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Production deploy Human Gate
-```
-# Cursor — Tarea CSN (Fase 11: Lanzamiento a producción)
-
-**ID de tarea (definición):** `csn:task:v2:p11:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Create Human Gates Target Type = production_deploy, Target External ID = run External ID, Scope = prod hostnames, Limits = maintenance window. Status must be Pending until human approves. DO NOT deploy.
-
-## Precondiciones
-Staging evidence complete; Record Class = Production only.
-
-## Entregable esperado
-Pending production gate.
-
-## Criterios de aceptación (verificables)
-QA test-only sites skip this task (mark Done with Notes 'N/A QA').
-
-## Evidencias a registrar en Notion
-Gate row.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Production release row (blocked until gate)
-```
-# Cursor — Tarea CSN (Fase 11: Lanzamiento a producción)
-
-**ID de tarea (definición):** `csn:task:v2:p11:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-CSN Releases Environment = production, Status = Blocked until production_deploy gate Approved. No deploy action in automation.
-
-## Precondiciones
-csn:task:v2:p11:01.
-
-## Entregable esperado
-Production release row in Blocked/Not started.
-
-## Criterios de aceptación (verificables)
-Git SHA empty until real deploy.
-
-## Evidencias a registrar en Notion
-Release row URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Launch KPI Snapshot (isolated DB)
-```
-# Cursor — Tarea CSN (Fase 12: Medición, mantenimiento y handoff)
-
-**ID de tarea (definición):** `csn:task:v2:p12:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Create Launch KPI Snapshots with metrics, Record Class matching site, link Site + Project Run. For QA use zeros and QA test-only. Legacy KPI History sync (npm run notion:sync-kpis) is separate — do not mix QA into hub KPI reporting.
-
-## Precondiciones
-Run near completion.
-
-## Entregable esperado
-Snapshot row with Captured At.
-
-## Criterios de aceptación (verificables)
-Record Class must match site; production reporting must filter QA test-only.
-
-## Evidencias a registrar en Notion
-Snapshot row URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Seed CSN Maintenance routines
-```
-# Cursor — Tarea CSN (Fase 12: Medición, mantenimiento y handoff)
-
-**ID de tarea (definición):** `csn:task:v2:p12:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Create CSN Maintenance rows (weekly KPI review, feed health) linked to Site.
-
-## Precondiciones
-Site active.
-
-## Entregable esperado
-≥2 maintenance rows.
-
-## Criterios de aceptación (verificables)
-Cadence set.
-
-## Evidencias a registrar en Notion
-Maintenance row URLs.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Close Project Run
-```
-# Cursor — Tarea CSN (Fase 12: Medición, mantenimiento y handoff)
-
-**ID de tarea (definición):** `csn:task:v2:p12:03`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Set Current Phase = 12, Status = Done only if Evidence URL set and required gates resolved or N/A for QA. Document handoff in Notes.
-
-## Precondiciones
-csn:task:v2:p12:01.
-
-## Entregable esperado
-Project Run Status = Done (sandbox) or In progress (prod pending gates).
-
-## Criterios de aceptación (verificables)
-Done without Evidence URL is policy violation — not API enforced.
-
-## Evidencias a registrar en Notion
-Final run state screenshot.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-## Cómo comprobar el resultado
-- [ ] Staging release record: QA sites use Environment = staging or sandbox only.
-- [ ] Staging deploy Human Gate (if external impact): Gate not reused for production.
-- [ ] Attach QA evidence to Project Run: URL must not assert production launch for QA Record Class.
-- [ ] Production deploy Human Gate: QA test-only sites skip this task (mark Done with Notes 'N/A QA').
-- [ ] Production release row (blocked until gate): Git SHA empty until real deploy.
-- [ ] Launch KPI Snapshot (isolated DB): Record Class must match site; production reporting must filter QA test-only.
-- [ ] Seed CSN Maintenance routines: Cadence set.
-- [ ] Close Project Run: Done without Evidence URL is policy violation — not API enforced.
-
-Estados en Notion Tasks: **Not started** → **In progress** → **Done** (con evidencia) o **Blocked** (con motivo).
-
-## Si algo falla
-- Anota el mensaje de error y la URL de la fila Notion afectada.
-- No avances de fase si `checkPhaseReadiness` / bloqueos listan brief, repo o fase anterior incompleta.
-- Gates en **Pending** o **Rejected**: usar plantilla blocked-planning; no comprar ni desplegar.
-- Crea fila en **CSN Incidents** si el fallo afecta al sitio.
-
-## Criterio para terminar el día
-- [ ] Release Status = Done for sandbox simulation.
-- [ ] Documented decision.
-- [ ] Evidence URL populated.
-- [ ] Gate exists Pending or N/A documented for QA.
-- [ ] Row exists; not Done.
-- [ ] Snapshot exists.
-- [ ] ≥2 rows.
-- [ ] Status updated per sandbox rules.
-
-**Siguiente jornada:** Día — fin del calendario objetivo
+**Fin del calendario objetivo de 7 días.** El mantenimiento continúa según filas CSN Maintenance.

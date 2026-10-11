@@ -4,7 +4,7 @@ import { deleteBlocksExceptChildPagesAndDatabases, rt } from "./notion-markdown-
 import { PRIMARY_ENTRY_TITLE } from "./primary-entry-page.mjs";
 import { DAY_PLAN } from "./launch-guide-builder.mjs";
 
-const HUB_MARKER = "csn-hub-marker-v7-7day";
+const HUB_MARKER = "csn-hub-marker-v8-practical";
 
 function link(label, url) {
   return [{ type: "text", text: { content: label, link: url ? { url } : null } }];
@@ -14,12 +14,15 @@ function h2(text) {
   return { object: "block", type: "heading_2", heading_2: { rich_text: rt(text) } };
 }
 
+function h3(text) {
+  return { object: "block", type: "heading_3", heading_3: { rich_text: rt(text) } };
+}
+
 function bullet(text) {
   return { object: "block", type: "bulleted_list_item", bulleted_list_item: { rich_text: rt(text) } };
 }
 
 async function discoverLaunchGuidePages(notion, rootId) {
-  const prefix = "Guía 7 días — Día";
   const found = [];
   let cursor;
   do {
@@ -31,7 +34,7 @@ async function discoverLaunchGuidePages(notion, rootId) {
       for (const v of Object.values(p.properties || {})) {
         if (v.type === "title") title = v.title.map((t) => t.plain_text).join("");
       }
-      if (!title.startsWith(prefix)) continue;
+      if (!title.startsWith("Guía 7 días")) continue;
       const m = title.match(/Día (\d+)/);
       found.push({ day: m ? Number(m[1]) : 0, title, url: p.url });
     }
@@ -46,6 +49,7 @@ export async function syncCanonicalRootHub(manifest, opts = {}) {
   const rootId = manifest.rootPageId;
   const runbookUrl = manifest.runbookPageUrl;
   const panelUrl = manifest.panelPageUrl;
+  const db = manifest.databases;
   const guidePages = opts.guidePages || (await discoverLaunchGuidePages(notion, rootId));
   const day1 = guidePages.find((p) => p.day === 1);
 
@@ -54,38 +58,45 @@ export async function syncCanonicalRootHub(manifest, opts = {}) {
   const blocks = [
     {
       object: "block",
-      type: "callout",
-      callout: {
-        icon: { emoji: "🚀" },
-        rich_text: rt(
-          `Guía de lanzamiento en 7 días — Aquí aprenderás a pasar de una idea a una web de cams operativa (o un entorno de prueba QA), con tareas, prompts y evidencias en Notion. No necesitas conocer las 14 bases de datos. (${HUB_MARKER})`,
-        ),
-      },
+      type: "heading_1",
+      heading_1: { rich_text: rt("CAM SITES — GUÍA DE LANZAMIENTO") },
     },
     {
       object: "block",
       type: "paragraph",
       paragraph: {
         rich_text: rt(
-          "Qué vas a conseguir: un proyecto registrado, dominio e infraestructura planificados, repositorio y feeds documentados, SEO preparado, staging verificado y plan de mantenimiento — siguiendo las 12 fases CSN ya definidas en este sistema.",
+          `De una idea a tu web de cams en 7 días. Sigue una jornada cada vez. No necesitas conocer el sistema interno. (${HUB_MARKER})`,
         ),
       },
     },
-    h2("Empieza aquí — Día 1"),
+    h2("A. Bienvenida"),
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: rt(
+          "Esta guía te lleva paso a paso: definir el proyecto, elegir dominio, preparar el código, integraciones, SEO y comprobar la web antes de lanzar. Usarás Notion para anotar decisiones y Cursor para ayuda en el repositorio. Las compras y los cambios en producción siempre requieren aprobación de una persona responsable.",
+        ),
+      },
+    },
+    h2("B. Empieza por aquí"),
     {
       object: "block",
       type: "paragraph",
       paragraph: {
         rich_text: day1
           ? [
-              { type: "text", text: { content: "Abre la guía del primer día y sigue los pasos en orden: " } },
-              ...link("Día 1 — Definir el proyecto", day1.url),
+              { type: "text", text: { content: "1. Abre " } },
+              ...link("Día 1 — Define tu proyecto", day1.url),
+              { type: "text", text: { content: "." } },
             ]
-          : rt("Ejecuta npm run csn:sync-7day-guide para publicar las páginas de la guía en Notion."),
+          : rt("1. Abre la guía del Día 1 (ejecuta npm run csn:sync-7day-guide si no ves los enlaces)."),
       },
     },
-    bullet("Primera acción práctica: completar el brief y registrar el proyecto (consola /csn-console → Crear sitio, entorno QA para practicar)."),
-    h2("Calendario de 7 días"),
+    bullet("2. Sigue los pasos en orden y usa el prompt que encontrarás al final de esa jornada."),
+    bullet("3. Comprueba la lista «Cuándo puedes dar el día por terminado» antes de pasar al día siguiente."),
+    h2("C. Tu recorrido (7 días)"),
     ...DAY_PLAN.flatMap((d) => {
       const pg = guidePages.find((p) => p.day === d.day);
       return [
@@ -95,45 +106,61 @@ export async function syncCanonicalRootHub(manifest, opts = {}) {
           bulleted_list_item: {
             rich_text: pg
               ? [
-                  { type: "text", text: { content: `Día ${d.day}: ${d.title} — ` } },
-                  ...link("abrir guía", pg.url),
-                  { type: "text", text: { content: ` · Resultado: ${d.outcome.slice(0, 120)}…` } },
+                  { type: "text", text: { content: `Día ${d.day}. ` } },
+                  ...link(d.title, pg.url),
+                  { type: "text", text: { content: ` — ${d.tagline}` } },
                 ]
-              : rt(`Día ${d.day}: ${d.title} — ${d.outcome}`),
+              : rt(`Día ${d.day}. ${d.title} — ${d.tagline}`),
           },
         },
       ];
     }),
     {
       object: "block",
-      type: "callout",
-      callout: {
-        icon: { emoji: "⏳" },
+      type: "paragraph",
+      paragraph: {
         rich_text: rt(
-          "Plazo de 7 días = objetivo de planificación. Compras de dominio, aprobaciones humanas (gates) y despliegue a producción pueden tardar más; la guía lo indica en cada día.",
+          "Cada jornada incluye instrucciones, un prompt utilizable, comprobaciones y qué hacer si algo falla. Los 7 días son un objetivo de planificación: dominio, aprobaciones e integraciones externas pueden tardar más.",
         ),
       },
     },
-    h2("Proyecto en curso y mantenimiento"),
-    bullet("Consola guiada (formularios reales): /csn-console — crear, continuar, prompt, resultado."),
-    bullet("Si ya tienes launch-key: en la consola → Continuar → ver tarea pendiente y preparar prompt."),
-    { object: "block", type: "divider", divider: {} },
-    h2("Zona QA (pruebas)"),
-    bullet("Usa entorno QA en la consola; no mezcles con tableros de producción ni KPI legacy."),
-    { object: "block", type: "divider", divider: {} },
-    h2("Referencia técnica (opcional)"),
+    h2("D. Si te quedas bloqueado"),
+    bullet("Guarda: captura de pantalla, URL de la página de Notion donde trabajas y el texto exacto del error."),
+    bullet("Copia en un bloc la última respuesta de Cursor y marca qué paso del día estabas haciendo."),
+    bullet("Bloqueo por permiso: compra de dominio, pago de backlink o deploy producción → espera aprobación (Human Gate en Pending no es fallo tuyo)."),
+    bullet("Bloqueo por datos: si falta el repositorio, completa el cuaderno del Día 1 y continúa con los días que no lo requieran."),
     {
       object: "block",
       type: "paragraph",
       paragraph: {
         rich_text: [
-          ...link("Runbooks 12 fases", runbookUrl),
-          { type: "text", text: { content: " · " } },
-          ...link("Panel técnico", panelUrl),
-          { type: "text", text: { content: " · Las 14 tablas de datos están debajo de esta página." } },
+          { type: "text", text: { content: "Registro de problemas graves: " } },
+          ...link("CSN Incidents", db.csnIncidents.url),
         ],
       },
     },
+    { object: "block", type: "divider", divider: {} },
+    h2("Referencia técnica — no necesitas abrirla para seguir la guía"),
+    h3("Documentación operativa"),
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          ...link("Runbooks de las 12 fases", runbookUrl),
+          { type: "text", text: { content: " · " } },
+          ...link("Panel técnico CSN", panelUrl),
+        ],
+      },
+    },
+    h3("Tablas de datos (solo si tu equipo te lo pide)"),
+    bullet(`Project Runs — ${db.projectRuns.url}`),
+    bullet(`CSN Sites — ${db.csnSites.url}`),
+    bullet(`Tasks — ${db.tasks.url}`),
+    bullet(`Human Gates — ${db.humanGates.url}`),
+    bullet(`Domain Candidates — ${db.domainCandidates.url}`),
+    bullet(`CSN Knowledge — ${db.csnKnowledge.url}`),
+    bullet(`(Resto de tablas: mismas que en el panel técnico; no hace falta abrirlas todas para la guía.)`),
   ];
 
   await notion.blocks.children.append({
@@ -147,20 +174,22 @@ export async function syncCanonicalRootHub(manifest, opts = {}) {
 }
 
 export async function verifyRootHubFirstBlock(notion, rootId) {
-  const res = await notion.blocks.children.list({ block_id: rootId, page_size: 5 });
-  const first = res.results[0];
-  if (!first) return { ok: false, reason: "no blocks" };
-  const callout = first?.callout?.rich_text?.map((t) => t.plain_text).join("") || "";
-  const okIntro = first?.type === "callout" && callout.includes("Guía de lanzamiento en 7 días");
+  const res = await notion.blocks.children.list({ block_id: rootId, page_size: 8 });
+  const texts = res.results.map((b) => {
+    if (b.type === "heading_1") return b.heading_1?.rich_text?.map((t) => t.plain_text).join("");
+    if (b.type === "paragraph") return b.paragraph?.rich_text?.map((t) => t.plain_text).join("");
+    return "";
+  });
+  const joined = texts.join(" ");
   const page = await notion.pages.retrieve({ page_id: rootId });
   let title = "";
   for (const v of Object.values(page.properties || {})) {
     if (v.type === "title") title = v.title.map((t) => t.plain_text).join("");
   }
   return {
-    ok: okIntro && title === PRIMARY_ENTRY_TITLE,
-    firstType: first.type,
-    calloutPreview: callout.slice(0, 80),
+    ok: joined.includes("GUÍA DE LANZAMIENTO") && joined.includes("csn-hub-marker-v8-practical"),
     pageTitle: title,
+    expectedTitle: PRIMARY_ENTRY_TITLE,
+    titleOk: title === PRIMARY_ENTRY_TITLE,
   };
 }

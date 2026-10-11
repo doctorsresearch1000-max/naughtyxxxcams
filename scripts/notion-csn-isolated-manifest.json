@@ -242,51 +242,51 @@
   "panelPageUrl": "https://app.notion.com/p/CSN-OS-Panel-de-proyectos-3f684cd085ae81baab3fdb738b779058",
   "panelPageId": "3f684cd0-85ae-81ba-ab3f-db738b779058",
   "launchGuide7Day": {
-    "syncedAt": "2026-10-11T09:55:53.359Z",
+    "syncedAt": "2026-10-11T10:23:36.833Z",
     "pages": [
       {
         "day": 1,
-        "title": "Guía 7 días — Día 1: Definir el proyecto y los requisitos iniciales",
+        "title": "Guía 7 días — Día 1 — Define tu proyecto",
         "pageId": "3f684cd0-85ae-8120-9538-e8937196d167",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-1-Definir-el-proyecto-y-los-requisitos-iniciales-3f684cd085ae81209538e8937196d167"
       },
       {
         "day": 2,
-        "title": "Guía 7 días — Día 2: Dominio, infraestructura y arquitectura",
+        "title": "Guía 7 días — Día 2 — Evalúa el dominio y prepara la infraestructura",
         "pageId": "3f684cd0-85ae-81e5-8b65-dc19d89e2549",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-2-Dominio-infraestructura-y-arquitectura-3f684cd085ae81e58b65dc19d89e2549"
       },
       {
         "day": 3,
-        "title": "Guía 7 días — Día 3: Experiencia, estructura y cumplimiento inicial",
+        "title": "Guía 7 días — Día 3 — Diseña la estructura y revisa requisitos legales",
         "pageId": "3f684cd0-85ae-81e8-b07a-dba546a3174f",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-3-Experiencia-estructura-y-cumplimiento-inicial-3f684cd085ae81e8b07adba546a3174f"
       },
       {
         "day": 4,
-        "title": "Guía 7 días — Día 4: Repositorio, CI y calidad de código",
+        "title": "Guía 7 días — Día 4 — Prepara el repositorio y comprueba la calidad",
         "pageId": "3f684cd0-85ae-8120-bed5-c8b11242b398",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-4-Repositorio-CI-y-calidad-de-c-digo-3f684cd085ae8120bed5c8b11242b398"
       },
       {
         "day": 5,
-        "title": "Guía 7 días — Día 5: Integraciones, feeds y monetización técnica",
+        "title": "Guía 7 días — Día 5 — Configura integraciones y feeds",
         "pageId": "3f684cd0-85ae-81b0-9de0-fd19e9fc864e",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-5-Integraciones-feeds-y-monetizaci-n-t-cnica-3f684cd085ae81b09de0fd19e9fc864e"
       },
       {
         "day": 6,
-        "title": "Guía 7 días — Día 6: SEO, autoridad y validación previa al lanzamiento",
+        "title": "Guía 7 días — Día 6 — Prepara el SEO y evalúa autoridad",
         "pageId": "3f684cd0-85ae-8118-be07-f5ddabec28bf",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-6-SEO-autoridad-y-validaci-n-previa-al-lanzamiento-3f684cd085ae8118be07f5ddabec28bf"
       },
       {
         "day": 7,
-        "title": "Guía 7 días — Día 7: Staging, decisión de lanzamiento y operación posterior",
+        "title": "Guía 7 días — Día 7 — Comprueba la web y decide el lanzamiento",
         "pageId": "3f684cd0-85ae-8114-bfba-c6d37568d9b5",
         "url": "https://app.notion.com/p/Gu-a-7-d-as-D-a-7-Staging-decisi-n-de-lanzamiento-y-operaci-n-posterior-3f684cd085ae8114bfbac6d37568d9b5"
       }
     ],
-    "hubMarker": "csn-hub-marker-v7-7day"
+    "hubMarker": "csn-hub-marker-v8-practical"
   }
 }

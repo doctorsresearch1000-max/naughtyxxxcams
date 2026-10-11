@@ -25,7 +25,7 @@ async function main() {
   const lk = `qa-guia-7d-${Date.now()}`;
   const checks = {};
 
-  checks.hub7day = hub.ok;
+  checks.hub7day = hub.ok && hub.titleOk;
   checks.day1PageExists = Boolean(manifest.launchGuide7Day?.pages?.find((p) => p.day === 1));
 
   const created = await api.createProjectFromForm({

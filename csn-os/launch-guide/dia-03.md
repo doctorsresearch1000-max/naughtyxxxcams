@@ -1,91 +1,84 @@
-# Guía 7 días — Día 3: Experiencia, estructura y cumplimiento inicial
+# Día 3 — Diseña la estructura y revisa requisitos legales
 
-## Objetivo del día
-Checklist de páginas legales y UX documentado en CSN Knowledge.
+## 1. Qué vas a conseguir hoy
 
-**Nota realista:** No sustituye diseño gráfico completo; define qué debe existir antes de lanzar.
+Un **mapa de páginas** (inicio, categorías, perfil de modelo, legales) y un **checklist de cumplimiento** (edad, privacidad, términos, 2257 si aplica) guardado en Notion, con huecos marcados para revisión humana cuando haga falta.
 
-## Fases CSN cubiertas
-- Fase 7: Producto, UX, contenido y cumplimiento — Páginas legales y UX; escalar temas legales a revisión humana.
+## 2. Qué necesitas antes de empezar
 
-## Antes de empezar
-- Acceso a Notion «Cam Sites — SOP System».
-- Decidir si el sitio es **prueba (QA)** o **producción** (producción exige más gates y dominio real).
-- Tener listo: nombre comercial, nicho, objetivo, brief en prosa (qué debe hacer la web).
-- Navegador para expireddomains.net y web.archive.org (día 2).
-- Acceso de lectura al repositorio GitHub del sitio (días 4–5).
+- Día 1 completado (Site en Notion).
+- Brief del cuaderno de proyecto.
+- **UX:** la experiencia que vive el visitante (menús, filtros, fichas de modelo).
 
-## Pasos que debes seguir
-### Bloque fase 7
-1) CSN Knowledge Policy checklist. 2) CSN Incidents for blocking gaps.
+## 3. Tiempo estimado y dependencias
 
-1. **Compliance page checklist**
-   - Qué hacer: Create CSN Knowledge checklist: age gate, 2257, privacy, terms. Link Site relation. Mark gaps in Issues via CSN Incidents if blocking.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Knowledge article Category = Policy.
-   - Comprobar: Checklist Status = In progress minimum.
+| | |
+|--|--|
+| **Tiempo** | 2–4 horas |
+| **Depende de** | Brief claro (Día 1) |
+| **No depende de** | Dominio comprado |
 
-## Instrucciones para Cursor
+## 4. Pasos
 
-### Cómo obtener el prompt con tus datos reales
-1. Registra el proyecto (Día 1) en la consola **/csn-console** (formulario) o con ayuda de quien tenga acceso al servidor.
-2. Abre **Continuar** → **Preparar prompt** para la fase actual; copia el texto completo.
-3. Pega en Cursor en el repositorio autorizado. Cursor **no** se ejecuta solo al generar el prompt.
+### Paso 1 — Listar páginas obligatorias
 
-### Prompt — Compliance page checklist
-```
-# Cursor — Tarea CSN (Fase 7: Producto, UX, contenido y cumplimiento)
+- **Qué hacer:** En papel o Notion, lista: Home, listados, perfil, búsqueda, contacto, **Política de privacidad**, **Términos**, **Aviso +18 / age gate**, y **2257** si operas en jurisdicciones que lo exigen.
+- **Dónde:** Borrador en [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85) → **New**, **Category = Policy**, título «Checklist legal y páginas — [sitio]».
+- **Resultado:** Cada ítem con columna «¿Existe? / Pendiente / Responsable».
+- **Comprobar:** No dejas legales en blanco sin marcar «pendiente abogado».
 
-**ID de tarea (definición):** `csn:task:v2:p07:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+### Paso 2 — Esquema de navegación
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+- **Qué hacer:** Dibuja o describe menú principal y 2 niveles de categorías acordes a tu nicho.
+- **Dónde:** Misma página Knowledge o Notes del [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f).
+- **Comprobar:** Un visitante nuevo entiende dónde encontrar modelos en vivo vs offline.
 
-## Misión concreta
-Create CSN Knowledge checklist: age gate, 2257, privacy, terms. Link Site relation. Mark gaps in Issues via CSN Incidents if blocking.
+### Paso 3 — Registrar huecos como incidencias si bloquean
 
-## Precondiciones
-Site row exists.
+- **Qué hacer:** Si falta texto legal crítico, crea fila en [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) con severidad y «bloquea lanzamiento: sí/no».
+- **Comprobar:** Incidencia enlazada al Site si aplica.
 
-## Entregable esperado
-Knowledge article Category = Policy.
+### Paso 4 — Marcar fase en el run
 
-## Criterios de aceptación (verificables)
-Each required page listed with owner.
+- **Qué hacer:** Cuando el checklist esté al menos «In progress» completo, anota en Project Run **Current Phase** = 7.
 
-## Evidencias a registrar en Notion
-Article URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+## 5. Prompt listo para copiar en Cursor
 
 ```
+# Día 3 — Estructura del sitio y checklist legal (solo documentación)
 
-## Cómo comprobar el resultado
-- [ ] Compliance page checklist: Each required page listed with owner.
+## Objetivo
+Proponer mapa de páginas y checklist de cumplimiento para un sitio de webcam. Yo pegaré el resultado en CSN Knowledge. No eres abogado: marca «revisión legal humana» donde corresponda.
 
-Estados en Notion Tasks: **Not started** → **In progress** → **Done** (con evidencia) o **Blocked** (con motivo).
+## Contexto
+- Nicho y países objetivo: [TU BRIEF]
+- QA o producción: [QA / Producción]
+- Repo (si existe): [URL — Cursor puede leer rutas src/app o pages para ver qué ya existe]
 
-## Si algo falla
-- Anota el mensaje de error y la URL de la fila Notion afectada.
-- No avances de fase si `checkPhaseReadiness` / bloqueos listan brief, repo o fase anterior incompleta.
-- Gates en **Pending** o **Rejected**: usar plantilla blocked-planning; no comprar ni desplegar.
-- Crea fila en **CSN Incidents** si el fallo afecta al sitio.
+## Tareas
+1. Mapa de páginas (lista + una frase por página).
+2. Wireframe en texto del menú principal.
+3. Checklist legal: age gate, privacy, terms, 2257 — estado sugerido (existe / falta / N/A) según el repo si lo tienes.
+4. Lista de riesgos si lanzamos sin ítem X.
 
-## Criterio para terminar el día
-- [ ] Checklist Status = In progress minimum.
+## Límites
+- No redactar políticas legales finales como si fueran asesoramiento jurídico.
+- No afirmar que las páginas ya están publicadas.
 
-**Siguiente jornada:** Día 4
+## Entregables
+Markdown para CSN Knowledge + lista de incidencias sugeridas.
+```
+
+## 6. Qué revisar en la respuesta de Cursor
+
+Éxito: mapa alineado con tu brief; legales marcados para revisión humana. Fallo: promete cumplimiento legal sin revisión.
+
+## 7. Cuándo terminar el día
+
+- [ ] Artículo Policy en CSN Knowledge con checklist y responsables.
+- [ ] Esquema de navegación guardado.
+- [ ] Incidencias creadas solo si hay bloqueos reales.
+
+## 8. Qué queda pendiente
+
+Revisión legal profesional; diseño visual detallado (puede ir en paralelo al Día 4).

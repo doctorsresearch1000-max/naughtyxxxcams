@@ -93,14 +93,14 @@ async function main() {
   const report = {
     at: new Date().toISOString(),
     primaryPage: { id: rootId, title, url: page.url, expectedTitle: PRIMARY_ENTRY_TITLE },
-    navigation: { hubOk: hub.ok, hubPreview: hub.calloutPreview, dbFingerprint: fp },
+    navigation: { hubOk: hub.ok && hub.titleOk, hubPreview: hub.pageTitle, dbFingerprint: fp },
     duplicate: { id: DUPLICATE_ROOT_ID, title: dupTitle, disambiguated: dupTitle.includes("OBSOLETO") },
     promptChain: promptParent,
     threePrompts: prompts,
     legacyCounts: legacy,
     acceptance: {
       nav1_title: title === PRIMARY_ENTRY_TITLE,
-      nav2_guia7dias: hub.ok,
+      nav2_guia7dias: hub.ok && hub.titleOk,
       nav3_db14: fp.match,
       nav4_promptFromTask: Boolean(promptUrl),
       nav5_duplicateNamed: dupTitle.includes("OBSOLETO"),

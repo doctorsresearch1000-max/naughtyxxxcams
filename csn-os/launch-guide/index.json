@@ -2,69 +2,51 @@
   "days": [
     {
       "day": 1,
-      "title": "Definir el proyecto y los requisitos iniciales",
-      "file": "dia-01.md",
-      "phases": [
-        1
-      ]
+      "title": "Define tu proyecto",
+      "pageTitle": "Guía 7 días — Día 1 — Define tu proyecto",
+      "file": "dia-01.md"
     },
     {
       "day": 2,
-      "title": "Dominio, infraestructura y arquitectura",
-      "file": "dia-02.md",
-      "phases": [
-        2,
-        3,
-        4
-      ]
+      "title": "Evalúa el dominio y prepara la infraestructura",
+      "pageTitle": "Guía 7 días — Día 2 — Evalúa el dominio y prepara la infraestructura",
+      "file": "dia-02.md"
     },
     {
       "day": 3,
-      "title": "Experiencia, estructura y cumplimiento inicial",
-      "file": "dia-03.md",
-      "phases": [
-        7
-      ]
+      "title": "Diseña la estructura y revisa requisitos legales",
+      "pageTitle": "Guía 7 días — Día 3 — Diseña la estructura y revisa requisitos legales",
+      "file": "dia-03.md"
     },
     {
       "day": 4,
-      "title": "Repositorio, CI y calidad de código",
-      "file": "dia-04.md",
-      "phases": [
-        5
-      ]
+      "title": "Prepara el repositorio y comprueba la calidad",
+      "pageTitle": "Guía 7 días — Día 4 — Prepara el repositorio y comprueba la calidad",
+      "file": "dia-04.md"
     },
     {
       "day": 5,
-      "title": "Integraciones, feeds y monetización técnica",
-      "file": "dia-05.md",
-      "phases": [
-        6
-      ]
+      "title": "Configura integraciones y feeds",
+      "pageTitle": "Guía 7 días — Día 5 — Configura integraciones y feeds",
+      "file": "dia-05.md"
     },
     {
       "day": 6,
-      "title": "SEO, autoridad y validación previa al lanzamiento",
-      "file": "dia-06.md",
-      "phases": [
-        8,
-        9
-      ]
+      "title": "Prepara el SEO y evalúa autoridad",
+      "pageTitle": "Guía 7 días — Día 6 — Prepara el SEO y evalúa autoridad",
+      "file": "dia-06.md"
     },
     {
       "day": 7,
-      "title": "Staging, decisión de lanzamiento y operación posterior",
-      "file": "dia-07.md",
-      "phases": [
-        10,
-        11,
-        12
-      ]
+      "title": "Comprueba la web y decide el lanzamiento",
+      "pageTitle": "Guía 7 días — Día 7 — Comprueba la web y decide el lanzamiento",
+      "file": "dia-07.md"
     }
   ],
+  "version": "practical-v1",
   "generatedFrom": [
-    "csn-task-manifest-v2.json",
-    "phases-meta.json",
-    "csn-phase-runbooks.json"
+    "csn-os/launch-guide/days/*",
+    "scripts/csn-task-manifest-v2.json",
+    "notion-csn-isolated-manifest.json"
   ]
 }

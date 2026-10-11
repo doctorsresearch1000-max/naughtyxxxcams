@@ -1,188 +1,142 @@
-# Guía 7 días — Día 1: Definir el proyecto y los requisitos iniciales
+# Día 1 — Define tu proyecto
 
-## Objetivo del día
-Proyecto registrado en Notion, sitio vinculado y aprobación de alcance (gate) creada.
+## 1. Qué vas a conseguir hoy
 
-**Nota realista:** Completable en un día si tienes claro el nicho y el brief.
+Al terminar tendrás **tu idea escrita con claridad**, **tres registros en Notion** (ejecución del proyecto, ficha del sitio y solicitud de aprobación de alcance) y **un texto listo** para pedir aprobación antes de gastar dinero o publicar.
 
-## Fases CSN cubiertas
-- Fase 1: Intake y aprobación de alcance — Definir el proyecto, crear registros y obtener aprobación de alcance antes de gastar o desplegar.
+## 2. Qué necesitas antes de empezar
 
-## Antes de empezar
-- Acceso a Notion «Cam Sites — SOP System».
-- Decidir si el sitio es **prueba (QA)** o **producción** (producción exige más gates y dominio real).
-- Tener listo: nombre comercial, nicho, objetivo, brief en prosa (qué debe hacer la web).
+- Cuenta con acceso a Notion en la página [Cam Sites — SOP System](https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae811fa929c4b4ccbcb56a).
+- 30–45 minutos sin interrupciones.
+- Decisión honesta: ¿esto es **práctica (QA)** o **lanzamiento real (producción)**? En QA puedes usar dominios de ejemplo; en producción necesitarás más aprobaciones después.
 
-## Pasos que debes seguir
-### Bloque fase 1
-1) Create Project Runs row (Run Type, Launch Key, External ID, SOP Version). 2) Create CSN Sites row with matching Launch Key and Record Class. 3) Relate Site on run. 4) Create Human Gate (project_run) with Scope + Limits for this run only. 5) Wait for Approved before scope expansion.
 
-1. **Open Project Run for launch or QA sandbox**
-   - Qué hacer: Create a Project Runs row: Run Type = New Site Launch (production intent) or QA Sandbox (test-only). Set Launch Key (stable string), External ID (csn:{site}:{launch}), link SOP Version = Active, Status = In progress, Current Phase = 1.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Project Run page linked to SOP Version with Started date populated.
-   - Comprobar: Project Run Status is In progress and Current Phase = 1.
-2. **Create or link CSN Sites row**
-   - Qué hacer: Create CSN Sites row: Site Name, Domain (URL), Record Class = Production OR QA test-only, Launch Key matches Project Run, External ID matches run scope. Relate Site on Project Run.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: CSN Sites row with correct Record Class and relations to Project Run.
-   - Comprobar: Project Run → Site relation points to intended site row.
-3. **Request scoped Human Gate for run intake**
-   - Qué hacer: Create Human Gates row: Target Type = project_run, Target External ID = Project Run External ID, Scope lists allowed work (e.g. Notion ops only), Limits (max spend $0 for QA). Status = Pending until approver sets Approved.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Pending Human Gate uniquely tied to this run (not blanket approval).
-   - Comprobar: Gate Status = Approved for sandbox QA; Pending acceptable for production until human acts.
-   - ⚠ Aprobación humana: csn:gate:policy:project_run
+## Tu cuaderno de proyecto (rellénalo una vez y consérvalo)
 
-## Instrucciones para Cursor
+Copia este bloque en un documento propio (Notion, bloc de notas o la descripción de tu Project Run). Lo usarás en los prompts de Cursor.
 
-### Cómo obtener el prompt con tus datos reales
-1. Registra el proyecto (Día 1) en la consola **/csn-console** (formulario) o con ayuda de quien tenga acceso al servidor.
-2. Abre **Continuar** → **Preparar prompt** para la fase actual; copia el texto completo.
-3. Pega en Cursor en el repositorio autorizado. Cursor **no** se ejecuta solo al generar el prompt.
+- **Nombre del sitio (público):** _______________________
+- **¿Es una prueba (QA) o lanzamiento real (producción)?** QA / Producción
+- **Nicho en una frase:** _______________________
+- **Qué debe hacer la web para el visitante:** _______________________
+- **Identificador interno del proyecto** (elige una palabra corta, sin espacios, ej. `mi-cams-oct-2026`): _______________________
+- **URL del repositorio de código** (si ya existe; si no, escribe «pendiente»): _______________________
+- **Dominio deseado** (si lo sabes; si no, «por decidir»): _______________________
 
-### Prompt — Open Project Run for launch or QA sandbox
-```
-# Cursor — Tarea CSN (Fase 1: Intake y aprobación de alcance)
+No necesitas memorizar códigos del sistema: el identificador interno es solo para que tú y tu equipo reconozcáis el mismo proyecto en Notion.
 
-**ID de tarea (definición):** `csn:task:v2:p01:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## 3. Tiempo estimado y dependencias
 
-## Misión concreta
-Create a Project Runs row: Run Type = New Site Launch (production intent) or QA Sandbox (test-only). Set Launch Key (stable string), External ID (csn:{site}:{launch}), link SOP Version = Active, Status = In progress, Current Phase = 1.
+| | |
+|--|--|
+| **Tiempo orientativo** | 1–2 horas |
+| **Depende de** | Nada (es el primer día) |
+| **Puede alargarse si** | Aún no tienes claro el nicho o quién debe aprobar el alcance |
 
-## Precondiciones
-Active SOP Versions row exists. Operator knows Launch Key naming convention.
+## 4. Pasos (sigue este orden)
 
-## Entregable esperado
-Project Run page linked to SOP Version with Started date populated.
+### Paso 1 — Escribe el brief del sitio
 
-## Criterios de aceptación (verificables)
-Run Name, Launch Key, External ID, and SOP Version relation are non-empty; Evidence URL empty until Phase 10+.
+- **Qué hacer:** Rellena el cuaderno de arriba, sobre todo «qué debe hacer la web» en 5–10 frases (público, idiomas, tipo de modelos/categorías, si habrá blog, etc.).
+- **Dónde:** En tu bloc o directamente en Notion al crear el proyecto (paso 2).
+- **Resultado esperado:** Un párrafo que cualquier persona entienda sin jerga técnica.
+- **Comprobar:** ¿Podrías leérselo a alguien no técnico y que entienda el producto? Si no, amplía.
+- **Si falla:** Usa el prompt de Cursor al final de este día para redactar el brief; copia el resultado al cuaderno.
 
-## Evidencias a registrar en Notion
-Screenshot or URL of Project Run row in Notion.
+### Paso 2 — Crear la fila «Project Run» (ejecución del proyecto)
 
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
+- **Qué hacer:** Abre la base [Project Runs](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) → **New** (nueva fila).
+- **Qué rellenar:**
+  - **Run Name:** nombre del sitio + «lanzamiento» o «prueba QA».
+  - **Run Type:** elige *QA Sandbox* si es prueba, o *New Site Launch* si es producción.
+  - **Launch Key:** el identificador interno de tu cuaderno (ej. `mi-cams-oct-2026`).
+  - **External ID:** puedes usar `csn:run:` + el mismo identificador (ej. `csn:run:mi-cams-oct-2026`).
+  - **Status:** In progress · **Current Phase:** 1.
+  - Relaciona **SOP Version** con la versión activa si aparece en la lista.
+- **Resultado esperado:** Una página de proyecto visible con fecha de inicio.
+- **Comprobar:** Launch Key y External ID no están vacíos.
+- **Si falla:** Si no ves la base, confirma que la integración Notion tiene acceso; no uses otra copia del sistema.
 
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
+### Paso 3 — Crear la ficha del sitio en CSN Sites
 
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
+- **Qué hacer:** Abre [CSN Sites](https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca) → **New**.
+- **Qué rellenar:**
+  - **Site Name:** nombre público del sitio.
+  - **Domain:** si es QA, puedes poner `https://example.com` o «pendiente»; en producción, el dominio objetivo o «pendiente».
+  - **Record Class:** **QA test-only** para pruebas; **Production** solo si es lanzamiento real.
+  - **Launch Key:** el mismo del paso 2.
+  - Vuelve a [Project Runs](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) y en tu fila relaciona **Site** con esta ficha.
+- **Resultado esperado:** Sitio y proyecto enlazados entre sí.
+- **Comprobar:** En Project Run, el campo Site apunta a la ficha correcta.
+- **Si falla:** Nunca marques Production si solo estás practicando.
 
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+### Paso 4 — Solicitar aprobación de alcance (Human Gate)
 
-```
+- **Qué hacer:** Abre [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) → **New**.
+- **Qué rellenar:**
+  - **Target Type:** project_run.
+  - **Target External ID:** el External ID del Project Run (paso 2).
+  - **Scope:** lista concreta de lo permitido (ej. «Solo Notion y documentación; sin compras; sin DNS; sin deploy»).
+  - **Limits:** para QA, «gasto máximo 0 USD».
+  - **Status:** Pending (hasta que un responsable ponga Approved).
+- **Resultado esperado:** Una solicitud de aprobación ligada solo a este proyecto.
+- **Comprobar:** Scope menciona tu proyecto, no una aprobación genérica para todo.
+- **Si falla:** Si no hay responsable, deja Pending y anota en Notes del run quién debe aprobar.
 
-### Prompt — Create or link CSN Sites row
-```
-# Cursor — Tarea CSN (Fase 1: Intake y aprobación de alcance)
+### Paso 5 — (Opcional) Marcar tareas del Día 1 en Tasks
 
-**ID de tarea (definición):** `csn:task:v2:p01:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+- **Qué hacer:** En [Tasks](https://app.notion.com/p/30d3973de3e340b0957a9f8c34db43ee), filtra por tu Project Run si puedes; marca **Done** las tres tareas de fase 1 cuando hayas completado los pasos 2–4.
+- **Resultado esperado:** Trazabilidad para tu equipo; no es obligatorio para seguir la guía.
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## 5. Prompt listo para copiar en Cursor
 
-## Misión concreta
-Create CSN Sites row: Site Name, Domain (URL), Record Class = Production OR QA test-only, Launch Key matches Project Run, External ID matches run scope. Relate Site on Project Run.
-
-## Precondiciones
-csn:task:v2:p01:01 complete.
-
-## Entregable esperado
-CSN Sites row with correct Record Class and relations to Project Run.
-
-## Criterios de aceptación (verificables)
-QA test-only sites must never use Record Class = Production.
-
-## Evidencias a registrar en Notion
-CSN Sites row URL in Project Run notes or Evidence URL field on run.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+Pega esto en **Cursor** (en el chat del repositorio del sitio, si ya lo tienes; si no, en cualquier chat y guarda la respuesta):
 
 ```
+# Redactar brief y textos para Notion — Día 1 (sin acceso a Notion)
 
-### Prompt — Request scoped Human Gate for run intake
-```
-# Cursor — Tarea CSN (Fase 1: Intake y aprobación de alcance)
+## Objetivo
+Ayudarme a definir un sitio de webcam y producir textos que yo pegaré manualmente en Notion. NO tienes acceso a Notion: no intentes crear filas ni APIs.
 
-**ID de tarea (definición):** `csn:task:v2:p01:03`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+## Contexto (rellena antes de enviar)
+- Nombre del sitio: [TU NOMBRE]
+- QA o producción: [QA / Producción]
+- Nicho: [TU NICHO]
+- Identificador interno: [TU IDENTIFICADOR]
+- Repositorio: [URL o «pendiente»]
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## Qué debes hacer
+1. Mejorar el brief en español claro (público, propuesta de valor, secciones principales).
+2. Proponer Run Name, Launch Key y External ID coherentes (yo los revisaré).
+3. Redactar Scope y Limits para una solicitud de aprobación de alcance (Human Gate) acorde a QA o producción.
+4. Lista de comprobación final en viñetas.
 
-## Misión concreta
-Create Human Gates row: Target Type = project_run, Target External ID = Project Run External ID, Scope lists allowed work (e.g. Notion ops only), Limits (max spend $0 for QA). Status = Pending until approver sets Approved.
+## Límites
+- No inventes dominios comprados, despliegues ni credenciales.
+- No des por hecho acceso a GitHub si puse «pendiente».
 
-## Precondiciones
-Project Run External ID defined.
-
-## Entregable esperado
-Pending Human Gate uniquely tied to this run (not blanket approval).
-
-## Criterios de aceptación (verificables)
-Gate Scope and Limits mention exact run/site; no other targets referenced as approved.
-
-## Evidencias a registrar en Notion
-Human Gates row URL; approver name when Approved.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
+## Entregables
+Texto listo para copiar en Project Run, CSN Sites y Human Gates.
 ```
 
-## Cómo comprobar el resultado
-- [ ] Open Project Run for launch or QA sandbox: Run Name, Launch Key, External ID, and SOP Version relation are non-empty; Evidence URL empty until Phase 10+.
-- [ ] Create or link CSN Sites row: QA test-only sites must never use Record Class = Production.
-- [ ] Request scoped Human Gate for run intake: Gate Scope and Limits mention exact run/site; no other targets referenced as approved.
+## 6. Qué revisar en la respuesta de Cursor
 
-Estados en Notion Tasks: **Not started** → **In progress** → **Done** (con evidencia) o **Blocked** (con motivo).
+| Señal de éxito | Problema |
+|----------------|----------|
+| Brief comprensible en español | Texto genérico sin tu nicho |
+| Scope acotado (sin «hacer todo») | Aprobación vaga para cualquier gasto |
+| Distingue QA vs producción | Mezcla prueba con lanzamiento real |
 
-## Si algo falla
-- Anota el mensaje de error y la URL de la fila Notion afectada.
-- No avances de fase si `checkPhaseReadiness` / bloqueos listan brief, repo o fase anterior incompleta.
-- Gates en **Pending** o **Rejected**: usar plantilla blocked-planning; no comprar ni desplegar.
-- Crea fila en **CSN Incidents** si el fallo afecta al sitio.
+## 7. Cuándo puedes dar el día por terminado
 
-## Criterio para terminar el día
-- [ ] Project Run Status is In progress and Current Phase = 1.
-- [ ] Project Run → Site relation points to intended site row.
-- [ ] Gate Status = Approved for sandbox QA; Pending acceptable for production until human acts.
+- [ ] Cuaderno de proyecto rellenado.
+- [ ] Fila en Project Runs con Launch Key y External ID.
+- [ ] Ficha en CSN Sites con Record Class correcto (QA test-only si es prueba).
+- [ ] Project Run enlazado al Site.
+- [ ] Human Gate creado con Scope y Limits (Approved o Pending documentado).
 
-**Siguiente jornada:** Día 2
+## 8. Qué queda pendiente
+
+- **Aprobación humana:** el gate puede seguir en Pending; puedes empezar el Día 2 en modo documentación si el Scope permite investigar dominios sin comprar.
+- **Repositorio:** si aún no existe, los días 4–5 esperarán URL real; no bloquea el Día 2.

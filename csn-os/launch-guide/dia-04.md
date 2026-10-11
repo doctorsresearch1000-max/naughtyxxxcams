@@ -1,140 +1,84 @@
-# Guía 7 días — Día 4: Repositorio, CI y calidad de código
+# Día 4 — Prepara el repositorio y comprueba la calidad
 
-## Objetivo del día
-Repositorio enlazado, release sandbox y evidencia de CI en Notion.
+## 1. Qué vas a conseguir hoy
 
-**Nota realista:** Requiere acceso al repositorio GitHub del sitio.
+El **enlace al código** documentado en Notion, una fila de **release en entorno sandbox** y **evidencia de que las pruebas automáticas (CI) se ejecutan** en GitHub — sin desplegar a producción.
 
-## Fases CSN cubiertas
-- Fase 5: Repositorio y CI — Inspeccionar repo, CI y evidencias de lint/test.
+## 2. Qué necesitas antes de empezar
 
-## Antes de empezar
-- Acceso a Notion «Cam Sites — SOP System».
-- Decidir si el sitio es **prueba (QA)** o **producción** (producción exige más gates y dominio real).
-- Tener listo: nombre comercial, nicho, objetivo, brief en prosa (qué debe hacer la web).
-- Navegador para expireddomains.net y web.archive.org (día 2).
-- Acceso de lectura al repositorio GitHub del sitio (días 4–5).
+- URL del repositorio GitHub (HTTPS público o al que tengas acceso).
+- Cuenta GitHub para ver **Actions** (pestaña de automatización).
 
-## Pasos que debes seguir
-### Bloque fase 5
-1) Document repo URL. 2) CSN Releases sandbox row. 3) Store GitHub Actions run URL in Release Notes.
+**CI (integración continua):** programa que ejecuta lint y tests cada vez que subes cambios.
 
-1. **Repository and branch strategy**
-   - Qué hacer: Document GitHub repo URL on CSN Sites Notes or Knowledge. Create CSN Releases row Environment = sandbox, Status = Not started, Git SHA when available.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: CSN Releases row linked to Site and Project Run.
-   - Comprobar: At least one CSN Releases row exists for run.
-2. **CI workflow verification (repo)**
-   - Qué hacer: In GitHub: confirm workflow runs lint/test on PR. Record workflow URL in Release Notes or Knowledge. Command locally: npm run lint && npm test (if applicable).
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: CI green on main or PR link stored.
-   - Comprobar: Evidence URL or Release Notes contains Actions link.
+## 3. Tiempo estimado y dependencias
 
-## Instrucciones para Cursor
+| | |
+|--|--|
+| **Tiempo** | 2–3 horas |
+| **Depende de** | Repositorio existente |
+| **Si no hay repo** | Usa el día para documentar «repo pendiente» y salta implementación hasta tener URL |
 
-### Cómo obtener el prompt con tus datos reales
-1. Registra el proyecto (Día 1) en la consola **/csn-console** (formulario) o con ayuda de quien tenga acceso al servidor.
-2. Abre **Continuar** → **Preparar prompt** para la fase actual; copia el texto completo.
-3. Pega en Cursor en el repositorio autorizado. Cursor **no** se ejecuta solo al generar el prompt.
+## 4. Pasos
 
-### Prompt — Repository and branch strategy
-```
-# Cursor — Tarea CSN (Fase 5: Repositorio y CI)
+### Paso 1 — Documentar el repositorio
 
-**ID de tarea (definición):** `csn:task:v2:p05:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+- **Qué hacer:** Copia la URL `https://github.com/...` en Notes del Site o en Knowledge.
+- **Dónde:** [CSN Sites](https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca) o [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85).
+- **Comprobar:** La URL abre el repo correcto.
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+### Paso 2 — Crear fila de release sandbox
 
-## Misión concreta
-Document GitHub repo URL on CSN Sites Notes or Knowledge. Create CSN Releases row Environment = sandbox, Status = Not started, Git SHA when available.
+- **Qué hacer:** [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) → **New** · **Environment** = sandbox (o staging) · **Status** = Not started · enlaza Site y Project Run.
+- **Comprobar:** Existe al menos una fila de release para tu run.
 
-## Precondiciones
-Phase 4 DNS plan drafted.
+### Paso 3 — Verificar GitHub Actions
 
-## Entregable esperado
-CSN Releases row linked to Site and Project Run.
+- **Qué hacer:** En GitHub → pestaña **Actions** → abre el último workflow de lint/test en `main` o en un PR reciente. Copia la URL del run.
+- **Dónde:** Pega la URL en **Notes** de la fila CSN Releases o en Knowledge.
+- **Comprobar:** No marques éxito sin URL real; si falló, anota «falló» y el enlace.
+- **Local (opcional):** si tienes Node instalado, en la carpeta del repo: `npm run lint` y `npm test` si el README lo indica.
 
-## Criterios de aceptación (verificables)
-Repo URL is public https GitHub link.
+### Paso 4 — Actualizar release cuando haya SHA
 
-## Evidencias a registrar en Notion
-Release row URL.
+- **Qué hacer:** Si hay commit reciente, pon **Git SHA** corto en la release y **Status** = In progress.
 
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+## 5. Prompt listo para copiar en Cursor
 
 ```
+# Día 4 — Revisión de repo y CI (sin deploy)
 
-### Prompt — CI workflow verification (repo)
-```
-# Cursor — Tarea CSN (Fase 5: Repositorio y CI)
+## Objetivo
+Inspeccionar el repositorio del sitio y decir qué comprobaciones de calidad existen. No desplegar a producción.
 
-**ID de tarea (definición):** `csn:task:v2:p05:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+## Contexto
+- Repo: [URL GITHUB]
+- QA o producción: [QA / Producción]
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## Tareas
+1. Localizar workflows en .github/workflows y resumir qué ejecutan.
+2. Indicar comandos locales recomendados (lint, test, build).
+3. Listar archivos clave de configuración (package.json, wrangler, etc.).
+4. Decir qué evidencia debo pegar en Notion (URL de Actions, SHA).
 
-## Misión concreta
-In GitHub: confirm workflow runs lint/test on PR. Record workflow URL in Release Notes or Knowledge. Command locally: npm run lint && npm test (if applicable).
+## Límites
+- No ejecutar deploy ni cambiar secrets.
+- Etiquetar: Implementado / Solo documentado / No probado.
 
-## Precondiciones
-csn:task:v2:p05:01.
-
-## Entregable esperado
-CI green on main or PR link stored.
-
-## Criterios de aceptación (verificables)
-Do not claim success without a workflow run URL.
-
-## Evidencias a registrar en Notion
-GitHub Actions run URL in Notion rich text.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
+## Entregables
+Informe breve en español + URL sugerida para Notes de CSN Releases.
 ```
 
-## Cómo comprobar el resultado
-- [ ] Repository and branch strategy: Repo URL is public https GitHub link.
-- [ ] CI workflow verification (repo): Do not claim success without a workflow run URL.
+## 6. Qué revisar en la respuesta de Cursor
 
-Estados en Notion Tasks: **Not started** → **In progress** → **Done** (con evidencia) o **Blocked** (con motivo).
+Éxito: nombra workflows reales del repo. Fallo: «todo verde» sin haber leído el repo.
 
-## Si algo falla
-- Anota el mensaje de error y la URL de la fila Notion afectada.
-- No avances de fase si `checkPhaseReadiness` / bloqueos listan brief, repo o fase anterior incompleta.
-- Gates en **Pending** o **Rejected**: usar plantilla blocked-planning; no comprar ni desplegar.
-- Crea fila en **CSN Incidents** si el fallo afecta al sitio.
+## 7. Cuándo terminar el día
 
-## Criterio para terminar el día
-- [ ] At least one CSN Releases row exists for run.
-- [ ] Evidence URL or Release Notes contains Actions link.
+- [ ] URL de repo en Notion.
+- [ ] Fila CSN Releases sandbox.
+- [ ] URL de GitHub Actions en Notes (o «pendiente» documentado con motivo).
 
-**Siguiente jornada:** Día 5
+## 8. Qué queda pendiente
+
+Arreglar CI rojo (día siguiente o incidencia); deploy sigue prohibido sin gates posteriores.

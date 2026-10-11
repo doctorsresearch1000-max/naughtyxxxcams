@@ -1,444 +1,198 @@
-# Guía 7 días — Día 2: Dominio, infraestructura y arquitectura
+# Día 2 — Evalúa el dominio y prepara la infraestructura
 
-## Objetivo del día
-Candidatos de dominio evaluados, decisión documentada y plan DNS/hosting en Conocimiento.
+## 1. Qué vas a conseguir hoy
 
-**Nota realista:** La compra de dominio requiere aprobación humana (gate); puede quedar pendiente sin bloquear el plan.
+Tendrás **al menos tres nombres de dominio candidatos** anotados en Notion, **historial revisado** (descartando opciones peligrosas), **un favorito justificado**, **solicitud de compra preparada pero sin pagar**, y un **plan escrito de alojamiento y DNS** (sin tocar DNS de producción).
 
-## Fases CSN cubiertas
-- Fase 2: Investigación de dominios expirados — Buscar candidatos en expireddomains.net, revisar historial y puntuar sin comprar.
-- Fase 3: Selección y preparación de registro — Elegir dominio y preparar compra; requiere gate domain_candidate Approved.
-- Fase 4: Arquitectura, DNS y hosting — Documentar arquitectura y DNS; sin cutover de producción sin gate.
+Puedes **terminar el día con la compra pendiente** de aprobación.
 
-## Antes de empezar
-- Acceso a Notion «Cam Sites — SOP System».
-- Decidir si el sitio es **prueba (QA)** o **producción** (producción exige más gates y dominio real).
-- Tener listo: nombre comercial, nicho, objetivo, brief en prosa (qué debe hacer la web).
-- Navegador para expireddomains.net y web.archive.org (día 2).
+## 2. Qué necesitas antes de empezar
 
-## Pasos que debes seguir
-### Bloque fase 2
-1) expireddomains.net Deleted Domains + filters. 2) Export candidates → Domain Candidates (Source=expireddomains.net). 3) Wayback/archive review per row. 4) Score relevance in Notes
- pick primary. 5) Create domain_candidate Human Gate (Pending) before purchase.
+- Haber completado el **Día 1** (Project Run + Site en Notion).
+- Tu **cuaderno de proyecto** con nicho e identificador interno.
+- Navegador web.
+- **Glosario (primera vez):**
+  - **Dominio:** la dirección web (ej. `ejemplo.cam`).
+  - **Dominio expirado:** un nombre que dejó de renovarse; a veces se puede registrar de nuevo (hay que comprobar disponibilidad y historial).
+  - **Wayback Machine (web.archive.org):** archivo histórico de cómo se veía una web en el pasado.
+  - **DNS:** el «directorio» que enlaza tu dominio con el servidor donde vive la web; cambiarlo mal puede tumbar el sitio.
+  - **Staging / pruebas:** versión de la web en una dirección de prueba, no la que usa el público en producción.
 
-1. **expireddomains.net search and export**
-   - Qué hacer: Go to https://www.expireddomains.net/ → Deleted Domains. Apply filters (TLD, length, no adult-blocked TLDs per policy). Export candidate list. For each candidate create Domain Candidates row: Source = expireddomains.net, Domain title, link Site + Project Run, Status = Not started.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: ≥3 Domain Candidates rows with Source = expireddomains.net.
-   - Comprobar: Domain Candidates count ≥ 3 for the run.
-2. **Historical / Wayback review per candidate**
-   - Qué hacer: For each Domain Candidate open web.archive.org and registrar history notes. Record Wayback Last Good date if clean; set Status = Blocked if spam/malware history. Document findings in Notes.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Every candidate has Notes with history summary.
-   - Comprobar: No candidate remains Not started without Notes.
-3. **Relevance scoring and rank**
-   - Qué hacer: Score topical fit (1–5) in Notes; optional Ahrefs DR in Ahrefs DR field if tool available. Mark top candidate Status = In progress; others remain Not started or Blocked.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Single preferred candidate identified in Notes on Project Run.
-   - Comprobar: One candidate marked In progress as primary pick.
-4. **Request domain purchase Human Gate**
-   - Qué hacer: Create Human Gates: Target Type = domain_candidate, Target External ID = csn:domain:{domain}:{runExternalId}, Scope = register specific domain at named registrar, Limits = max price USD. Status = Pending. STOP — do not purchase until Approved.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Pending gate tied to one domain only.
-   - Comprobar: Gate exists and remains Pending until human purchase approval.
-   - ⚠ Aprobación humana: csn:gate:policy:domain_candidate
-### Bloque fase 3
-1) Confirm domain_candidate gate Approved for production (sandbox: document STOP if Pending). 2) Document rationale on Domain Candidates. 3) Update run Current Phase = 3.
+## 3. Tiempo estimado y dependencias
 
-5. **Confirm domain purchase gate status**
-   - Qué hacer: Verify Human Gate for domain_candidate is Approved before any registrar checkout. If Pending or Rejected, stop and escalate.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Gate Status documented on Project Run Notes.
-   - Comprobar: For sandbox: gate may remain Pending and operator documents STOP. For prod: must be Approved.
-   - ⚠ Aprobación humana: csn:gate:policy:domain_candidate
-6. **Document selection rationale**
-   - Qué hacer: Update winning Domain Candidates Notes with rationale; set Project Run Current Phase = 3.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Rationale paragraph in Notion.
-   - Comprobar: Notes length > 50 chars with decision summary.
-### Bloque fase 4
-1) CSN Knowledge runbook: DNS table. 2) Sandbox hostname plan (QA: example/staging only). 3) Optional CSN Maintenance seed for DNS review.
+| | |
+|--|--|
+| **Tiempo orientativo** | 3–5 horas de trabajo; la **compra real** puede tardar días (aprobación + registrador) |
+| **Depende de** | Día 1; Human Gate de alcance que permita investigación (sin gasto) |
+| **Puede alargarse si** | expireddomains.net limita el acceso o el responsable tarda en aprobar la compra |
 
-7. **DNS and hosting plan in CSN Knowledge**
-   - Qué hacer: Create or update CSN Knowledge runbook entry for the site: DNS records, Cloudflare Pages project name, apex vs www. Link from Project Run Evidence URL.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Knowledge article Category = Runbook linked to Site.
-   - Comprobar: Article Status = Done or In progress with complete DNS table.
-8. **Sandbox DNS checklist (no prod cutover)**
-   - Qué hacer: Document sandbox/staging hostnames only. Do not change production DNS for QA test-only sites.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Checklist in Knowledge or Project Run Notes.
-   - Comprobar: Checklist marked complete in Notes.
+## 4. Pasos (sigue este orden)
 
-## Instrucciones para Cursor
+### Paso 1 — Buscar al menos tres candidatos en expireddomains.net
 
-### Cómo obtener el prompt con tus datos reales
-1. Registra el proyecto (Día 1) en la consola **/csn-console** (formulario) o con ayuda de quien tenga acceso al servidor.
-2. Abre **Continuar** → **Preparar prompt** para la fase actual; copia el texto completo.
-3. Pega en Cursor en el repositorio autorizado. Cursor **no** se ejecuta solo al generar el prompt.
+- **Qué hacer:** Entra en https://www.expireddomains.net/ → menú **Deleted Domains**. Filtra por extensión (TLD), longitud y palabras relacionadas con tu nicho. Anota **mínimo 3 dominios** que parezcan disponibles o próximos a ello.
+- **Dónde:** Navegador; luego [Domain Candidates](https://app.notion.com/p/6b21261509454bc3b615faca86776831) en Notion → **New** por cada uno.
+- **Qué rellenar en Notion:** **Domain** (título), **Source** = expireddomains.net, relación a tu **Site** y **Project Run**, **Status** = Not started.
+- **Resultado esperado:** ≥3 filas en Domain Candidates.
+- **Comprobar:** Cada fila está ligada a tu mismo Project Run.
+- **Si no funciona:** Si el sitio pide registro o no carga, anota candidatos desde otra fuente permitida por tu política y pon Source = «manual» en Notes; no inventes dominios ya comprados.
 
-### Prompt — expireddomains.net search and export
-```
-# Cursor — Tarea CSN (Fase 2: Investigación de dominios expirados)
+### Paso 2 — Revisar historial (Wayback) y descartar riesgos
 
-**ID de tarea (definición):** `csn:task:v2:p02:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+- **Qué hacer:** Para **cada** candidato, abre https://web.archive.org/ y busca el dominio. Mira capturas antiguas.
+- **Señales graves (marcar candidato como Blocked en Notion):** spam, malware, casinos no relacionados, phishing, contenido ilegal, redirecciones sospechosas.
+- **Dónde:** Wayback + campo **Notes** de cada fila en [Domain Candidates](https://app.notion.com/p/6b21261509454bc3b615faca86776831).
+- **Resultado esperado:** Cada candidato tiene Notes con resumen y, si aplica, enlace a captura Wayback.
+- **Comprobar:** Ningún candidato activo queda sin Notes.
+- **Si falla:** Si Wayback no tiene datos, escribe «sin historial en Wayback»; no asumas que está limpio.
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+### Paso 3 — Comparar candidatos restantes
 
-## Misión concreta
-Go to https://www.expireddomains.net/ → Deleted Domains. Apply filters (TLD, length, no adult-blocked TLDs per policy). Export candidate list. For each candidate create Domain Candidates row: Source = expireddomains.net, Domain title, link Site + Project Run, Status = Not started.
+- **Qué hacer:** Puntúa los que no están Blocked con la tabla siguiente (copia también en Notes del favorito).
 
-## Precondiciones
-Phase 1 complete; intake gate Approved for research scope.
+Criterios prácticos para comparar candidatos (puntuación 1–5 en cada fila; suma orientativa):
 
-## Entregable esperado
-≥3 Domain Candidates rows with Source = expireddomains.net.
+| Criterio | 1 (peor) | 5 (mejor) |
+|----------|----------|-----------|
+| Encaje con tu nicho | Nombre confuso o fuera de tema | Nombre claro para tu público |
+| Fácil de recordar y escribir | Muy largo o con guiones raros | Corto y memorable |
+| Historial en Wayback | Spam, casinos, malware, redirecciones raras | Páginas normales o vacío limpio |
+| Extensión (.com, .cam, etc.) | TLD poco adecuado para tu mercado | TLD que tu audiencia reconoce |
 
-## Criterios de aceptación (verificables)
-Each row linked to same Project Run and Site; no purchase actions performed.
+**Ahrefs DR u otras métricas de pago:** opcionales. No son obligatorias para terminar el día.
 
-## Evidencias a registrar en Notion
-CSV export filename/date in Notes; filter screenshot optional.
+El manifest CSN menciona la plantilla «TEMPLATE: Domain candidate evaluation» en CSN Knowledge; su texto oficial es breve: revisar Wayback, marcar Blocked si es tóxico, y no comprar sin aprobación humana.
 
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
+- **Dónde:** Notes en Domain Candidates y, al final, Notes de tu [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f).
+- **Resultado esperado:** Un solo candidato marcado **In progress** como favorito; el resto Not started o Blocked.
+- **Comprobar:** En Project Run hay una frase clara: «Dominio preferido: … porque …».
+- **Si falla:** Si todos son malos, vuelve al paso 1 con nuevos nombres.
 
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
+### Paso 4 — Preparar la compra (sin pagar)
 
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
+- **Qué hacer:** En [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) crea una fila nueva:
+  - **Target Type:** domain_candidate
+  - **Target External ID:** `csn:domain:[nombre-del-dominio]:[External-ID-de-tu-run]` (sustituye los corchetes por valores reales).
+  - **Scope:** «Registrar [dominio exacto] en [registrador que usaréis]».
+  - **Limits:** precio máximo en USD (ej. 25).
+  - **Status:** **Pending**
+- **Regla:** **STOP — no pagues** hasta que un responsable cambie Status a **Approved**.
+- **Resultado esperado:** Gate de compra pendiente, ligado a un solo dominio.
+- **Comprobar:** Limits incluye tope en dólares.
+- **Si falla:** Si no hay quien apruebe hoy, deja Pending; el día sigue siendo válido si los pasos 1–3 y 6 están hechos.
 
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+### Paso 5 — Confirmar estado del gate (sin comprar)
+
+- **Qué hacer:** Abre el gate del paso 4. Si es **QA/práctica:** documenta en Notes del Project Run: «Compra pendiente de aprobación — no se realiza checkout». Si es **producción** y sigue Pending: **no** vayas al registrador.
+- **Resultado esperado:** Estado del gate escrito en el run (captura o texto).
+- **Comprobar:** No hay recibo de compra ni dominio pagado sin Approved.
+- **Si está Rejected:** elige otro candidato (paso 3) o escala en [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) si hace falta.
+
+### Paso 6 — Escribir la decisión en Notion (fase de selección)
+
+- **Qué hacer:** En el candidato favorito, amplía **Notes** con un párrafo de al menos 50 caracteres: por qué gana frente a los otros. En Project Run, pon **Current Phase** = 3 cuando este texto esté listo.
+- **Resultado esperado:** Justificación legible para un revisor humano.
+- **Comprobar:** El párrafo menciona criterios de la tabla, no solo «me gusta el nombre».
+
+### Paso 7 — Plan de alojamiento y DNS (solo documentación)
+
+- **Qué hacer:** En [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85) crea un artículo **Category = Runbook** titulado «DNS y hosting — [nombre del sitio]». Incluye tabla: tipo de registro (A, CNAME, etc.), nombre (@, www), valor **sin contraseñas** (solo hostnames; ej. proyecto en Cloudflare Pages).
+- **Para QA:** en el mismo artículo o en Notes del run, escribe: «No se cambiará DNS de producción; pruebas en example.com o subdominio de staging».
+- **Dónde:** [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85); enlaza la URL en **Evidence URL** del Project Run si existe el campo.
+- **Resultado esperado:** Plan DNS legible; QA deja constancia de no cutover prod.
+- **Comprobar:** No hay claves API ni contraseñas en el artículo.
+- **Si falla:** Si no conoces Cloudflare aún, describe «pendiente definir con responsable técnico» y lista preguntas abiertas.
+
+### Paso 8 — Checklist sandbox DNS
+
+- **Qué hacer:** En Notes del Project Run, lista numerada: hostnames de prueba, quién los configura, fecha objetivo. Marca explícito: «DNS producción: sin cambios».
+- **Resultado esperado:** Checklist marcada mentalmente como completa cuando el texto existe.
+- **Comprobar:** Record Class del sitio sigue siendo QA test-only si es prueba.
+
+## 5. Prompt listo para copiar en Cursor
+
+Usa **un prompt por bloque de trabajo** (puedes hacerlo en dos veces: investigación + plan DNS).
+
+### Prompt A — Investigación y tabla comparativa (sin Notion)
 
 ```
+# Día 2 — Ayuda con dominios candidatos (sin acceso a Notion ni registradores)
 
-### Prompt — Historical / Wayback review per candidate
-```
-# Cursor — Tarea CSN (Fase 2: Investigación de dominios expirados)
+## Objetivo
+Organizar mi investigación de dominios para un sitio de webcam. Yo crearé las filas en Notion y yo compraré el dominio si hay aprobación.
 
-**ID de tarea (definición):** `csn:task:v2:p02:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+## Contexto
+- Nicho: [PEGA TU NICHO DEL CUADERNO]
+- Dominios que estoy valorando: [LISTA 3+ DOMINIOS]
+- Resúmenes Wayback que ya vi: [PEGA TUS NOTAS O «pendiente»]
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## Qué puedes hacer
+1. Sugerir preguntas adicionales para detectar riesgos en el historial.
+2. Rellenar una tabla comparativa (criterios 1–5: encaje, memorabilidad, historial, TLD) con justificación breve.
+3. Redactar el párrafo «dominio preferido porque…» para pegar en Notion.
+4. Redactar Scope y Limits para una solicitud de compra (dominio único, tope USD) — sin afirmar que está comprado.
 
-## Misión concreta
-For each Domain Candidate open web.archive.org and registrar history notes. Record Wayback Last Good date if clean; set Status = Blocked if spam/malware history. Document findings in Notes.
+## Lo que NO debes hacer
+- No digas que compraste ni registraste nada.
+- No accedas a expireddomains.net ni Wayback (yo ya lo hice o lo haré).
+- No inventes métricas Ahrefs; si no tengo datos, di «opcional / no disponible».
 
-## Precondiciones
-csn:task:v2:p02:01.
-
-## Entregable esperado
-Every candidate has Notes with history summary.
-
-## Criterios de aceptación (verificables)
-Blocked candidates must not proceed to Phase 3 selection.
-
-## Evidencias a registrar en Notion
-Wayback URL pasted in Notes per candidate.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
+## Entregables
+Tabla markdown + párrafo de decisión + texto de gate en español.
 ```
 
-### Prompt — Relevance scoring and rank
-```
-# Cursor — Tarea CSN (Fase 2: Investigación de dominios expirados)
-
-**ID de tarea (definición):** `csn:task:v2:p02:03`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Score topical fit (1–5) in Notes; optional Ahrefs DR in Ahrefs DR field if tool available. Mark top candidate Status = In progress; others remain Not started or Blocked.
-
-## Precondiciones
-csn:task:v2:p02:02.
-
-## Entregable esperado
-Single preferred candidate identified in Notes on Project Run.
-
-## Criterios de aceptación (verificables)
-Scoring rubric documented in CSN Knowledge TEMPLATE: Domain candidate evaluation.
-
-## Evidencias a registrar en Notion
-Project Run Evidence URL or Notes listing ranked domain.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+### Prompt B — Plan DNS y hosting (repositorio si existe)
 
 ```
+# Día 2 — Borrador de plan DNS/hosting (documentación)
 
-### Prompt — Request domain purchase Human Gate
-```
-# Cursor — Tarea CSN (Fase 2: Investigación de dominios expirados)
+## Objetivo
+Producir un borrador de artículo «DNS y hosting» que pegaré en CSN Knowledge. Sin secretos.
 
-**ID de tarea (definición):** `csn:task:v2:p02:04`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+## Contexto
+- Sitio: [NOMBRE]
+- QA o producción: [QA / Producción]
+- Dominio preferido (puede estar sin comprar): [DOMINIO]
+- Repositorio (si existe): [URL GITHUB — o «desconocido»]
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## Qué puedes hacer
+1. Si tengo repo: leer wrangler.toml, README o docs de deploy y resumir dónde se aloja (ej. Cloudflare Pages).
+2. Proponer tabla DNS (apex vs www) solo con hostnames públicos.
+3. Para QA: sección explícita «sin cambios en DNS de producción».
 
-## Misión concreta
-Create Human Gates: Target Type = domain_candidate, Target External ID = csn:domain:{domain}:{runExternalId}, Scope = register specific domain at named registrar, Limits = max price USD. Status = Pending. STOP — do not purchase until Approved.
+## Límites
+- No modificar DNS real ni Cloudflare.
+- No pegar API keys.
 
-## Precondiciones
-Primary candidate chosen.
-
-## Entregable esperado
-Pending gate tied to one domain only.
-
-## Criterios de aceptación (verificables)
-Target External ID matches exactly one Domain Candidates row.
-
-## Evidencias a registrar en Notion
-Human Gates row URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
+## Entregables
+Markdown listo para CSN Knowledge + checklist sandbox en viñetas.
 ```
 
-### Prompt — Confirm domain purchase gate status
-```
-# Cursor — Tarea CSN (Fase 3: Selección y preparación de registro)
+## 6. Qué revisar en la respuesta de Cursor
 
-**ID de tarea (definición):** `csn:task:v2:p03:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+| Éxito | Fallo o bloqueo |
+|-------|------------------|
+| Tabla con razones concretas | Elige un dominio sin mencionar riesgos Wayback |
+| Texto de gate con tope en USD | «Aprobar cualquier compra» |
+| Plan DNS sin contraseñas | Incluye tokens o keys |
+| Distingue QA (sin prod DNS) | Instrucciones de cutover producción sin gate |
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## 7. Cuándo puedes dar el día por terminado
 
-## Misión concreta
-Verify Human Gate for domain_candidate is Approved before any registrar checkout. If Pending or Rejected, stop and escalate.
+- [ ] ≥3 Domain Candidates en Notion con Source documentado.
+- [ ] Wayback/Notes en cada candidato; malos en Blocked.
+- [ ] Un favorito In progress con puntuación y párrafo de decisión.
+- [ ] Human Gate domain_candidate en **Pending** (o Approved si ya hubo aprobación explícita).
+- [ ] **Sin pago** de dominio si el gate no está Approved.
+- [ ] Artículo Runbook DNS/hosting en CSN Knowledge (o borrador pegado y enlace anotado).
+- [ ] Checklist «sin DNS producción» si es QA.
 
-## Precondiciones
-csn:task:v2:p02:04.
+## 8. Qué queda pendiente
 
-## Entregable esperado
-Gate Status documented on Project Run Notes.
+| Pendiente | ¿Puedo seguir con otra cosa? |
+|-----------|------------------------------|
+| Aprobación de compra | Sí — Día 3 (estructura/legal) no requiere dominio comprado |
+| Registro real del dominio | Esperar Approved; no bloquea diseño ni checklist legal |
+| Configurar DNS en el registrador | Día 7 o cuando haya staging y gates; hoy solo plan |
 
-## Criterios de aceptación (verificables)
-No registrar payment without Approved gate (policy control; not API-enforced).
-
-## Evidencias a registrar en Notion
-Gate Status field screenshot.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Document selection rationale
-```
-# Cursor — Tarea CSN (Fase 3: Selección y preparación de registro)
-
-**ID de tarea (definición):** `csn:task:v2:p03:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Update winning Domain Candidates Notes with rationale; set Project Run Current Phase = 3.
-
-## Precondiciones
-csn:task:v2:p02:03.
-
-## Entregable esperado
-Rationale paragraph in Notion.
-
-## Criterios de aceptación (verificables)
-References scoring from Phase 2.
-
-## Evidencias a registrar en Notion
-Domain Candidates Notes URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — DNS and hosting plan in CSN Knowledge
-```
-# Cursor — Tarea CSN (Fase 4: Arquitectura, DNS y hosting)
-
-**ID de tarea (definición):** `csn:task:v2:p04:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Create or update CSN Knowledge runbook entry for the site: DNS records, Cloudflare Pages project name, apex vs www. Link from Project Run Evidence URL.
-
-## Precondiciones
-Site row exists.
-
-## Entregable esperado
-Knowledge article Category = Runbook linked to Site.
-
-## Criterios de aceptación (verificables)
-No secrets in article; only hostnames and record types.
-
-## Evidencias a registrar en Notion
-CSN Knowledge article URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Sandbox DNS checklist (no prod cutover)
-```
-# Cursor — Tarea CSN (Fase 4: Arquitectura, DNS y hosting)
-
-**ID de tarea (definición):** `csn:task:v2:p04:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Document sandbox/staging hostnames only. Do not change production DNS for QA test-only sites.
-
-## Precondiciones
-Record Class verified.
-
-## Entregable esperado
-Checklist in Knowledge or Project Run Notes.
-
-## Criterios de aceptación (verificables)
-QA test-only sites use example.com or staging subdomain only.
-
-## Evidencias a registrar en Notion
-Notes stating no prod DNS change.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-## Cómo comprobar el resultado
-- [ ] expireddomains.net search and export: Each row linked to same Project Run and Site; no purchase actions performed.
-- [ ] Historical / Wayback review per candidate: Blocked candidates must not proceed to Phase 3 selection.
-- [ ] Relevance scoring and rank: Scoring rubric documented in CSN Knowledge TEMPLATE: Domain candidate evaluation.
-- [ ] Request domain purchase Human Gate: Target External ID matches exactly one Domain Candidates row.
-- [ ] Confirm domain purchase gate status: No registrar payment without Approved gate (policy control; not API-enforced).
-- [ ] Document selection rationale: References scoring from Phase 2.
-- [ ] DNS and hosting plan in CSN Knowledge: No secrets in article; only hostnames and record types.
-- [ ] Sandbox DNS checklist (no prod cutover): QA test-only sites use example.com or staging subdomain only.
-
-Estados en Notion Tasks: **Not started** → **In progress** → **Done** (con evidencia) o **Blocked** (con motivo).
-
-## Si algo falla
-- Anota el mensaje de error y la URL de la fila Notion afectada.
-- No avances de fase si `checkPhaseReadiness` / bloqueos listan brief, repo o fase anterior incompleta.
-- Gates en **Pending** o **Rejected**: usar plantilla blocked-planning; no comprar ni desplegar.
-- Crea fila en **CSN Incidents** si el fallo afecta al sitio.
-
-## Criterio para terminar el día
-- [ ] Domain Candidates count ≥ 3 for the run.
-- [ ] No candidate remains Not started without Notes.
-- [ ] One candidate marked In progress as primary pick.
-- [ ] Gate exists and remains Pending until human purchase approval.
-- [ ] For sandbox: gate may remain Pending and operator documents STOP. For prod: must be Approved.
-- [ ] Notes length > 50 chars with decision summary.
-- [ ] Article Status = Done or In progress with complete DNS table.
-- [ ] Checklist marked complete in Notes.
-
-**Siguiente jornada:** Día 3
+**Siguiente jornada:** Día 3 — estructura, UX y requisitos legales.

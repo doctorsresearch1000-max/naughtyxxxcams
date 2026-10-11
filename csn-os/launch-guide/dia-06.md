@@ -1,243 +1,79 @@
-# Guía 7 días — Día 6: SEO, autoridad y validación previa al lanzamiento
+# Día 6 — Prepara el SEO y evalúa autoridad
 
-## Objetivo del día
-Oportunidades SEO y backlink identificadas; gates de pago creados en pendiente.
+## 1. Qué vas a conseguir hoy
 
-**Nota realista:** Envío a GSC y outreach real pueden extenderse más allá del día 6.
+Al menos **dos oportunidades SEO** en Notion, un **plan de sitemap** (sin afirmar envío a Google si no lo verificaste) y **una oportunidad de backlink** identificada, con gate de pago en Pending si implica dinero.
 
-## Fases CSN cubiertas
-- Fase 8: SEO e indexación — Oportunidades SEO, sitemap y verificación en sitio renderizado.
-- Fase 9: Autoridad y backlinks — Oportunidades de enlace; pagos requieren gate backlink.
+## 2. Qué necesitas antes de empezar
 
-## Antes de empezar
-- Acceso a Notion «Cam Sites — SOP System».
-- Decidir si el sitio es **prueba (QA)** o **producción** (producción exige más gates y dominio real).
-- Tener listo: nombre comercial, nicho, objetivo, brief en prosa (qué debe hacer la web).
-- Navegador para expireddomains.net y web.archive.org (día 2).
-- Acceso de lectura al repositorio GitHub del sitio (días 4–5).
+- URL de staging o, en QA, URL de ejemplo acordada (ej. preview de Cloudflare).
+- **SEO:** optimización para buscadores (títulos, URLs, sitemap).
+- **GSC (Google Search Console):** herramienta gratuita de Google para ver indexación (opcional hoy).
 
-## Pasos que debes seguir
-### Bloque fase 8
-1) SEO Opportunities rows. 2) Sitemap/GSC steps in Knowledge (mark Unverified until GSC proof).
+## 3. Tiempo estimado y dependencias
 
-1. **Import SEO Opportunities**
-   - Qué hacer: From GSC or manual research create SEO Opportunities rows with Target URL, Priority, link Site + Project Run.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: ≥2 SEO Opportunities rows.
-   - Comprobar: ≥2 rows created.
-2. **Sitemap submission plan**
-   - Qué hacer: Document sitemap URL and GSC submission steps in Knowledge. Do not claim submitted unless verified in GSC UI.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Runbook steps in Knowledge.
-   - Comprobar: Steps documented.
-### Bloque fase 9
-1) Backlink Opportunities row. 2) Paid placement → Human Gate backlink Pending with USD Limits.
+| | |
+|--|--|
+| **Tiempo** | 3–5 horas |
+| **Herramientas de pago** | Opcionales (Ahrefs, etc.) |
 
-3. **Identify backlink opportunity**
-   - Qué hacer: Create Backlink Opportunities row with Target, DR/Traffic notes, Outreach Status = Identified.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Backlink Opportunities row linked to run.
-   - Comprobar: Row exists.
-4. **Request paid backlink Human Gate**
-   - Qué hacer: Human Gates: Target Type = backlink, Target External ID = csn:backlink:{id}, Scope = single placement, Limits = max USD. Status = Pending. STOP before payment.
-   - Dónde: Notion (Tasks / tablas indicadas) y herramientas externas citadas en la instrucción.
-   - Resultado: Pending gate separate from domain/production gates.
-   - Comprobar: Gate Status = Pending (not approved in this automation).
-   - ⚠ Aprobación humana: csn:gate:policy:backlink
+## 4. Pasos
 
-## Instrucciones para Cursor
+### Paso 1 — Crear SEO Opportunities
 
-### Cómo obtener el prompt con tus datos reales
-1. Registra el proyecto (Día 1) en la consola **/csn-console** (formulario) o con ayuda de quien tenga acceso al servidor.
-2. Abre **Continuar** → **Preparar prompt** para la fase actual; copia el texto completo.
-3. Pega en Cursor en el repositorio autorizado. Cursor **no** se ejecuta solo al generar el prompt.
+- **Qué hacer:** [SEO Opportunities](https://app.notion.com/p/050ba07cbe8f45ca93fa9bb30d9ed739) → **New** (mínimo 2) · título, URL objetivo, prioridad · enlaza Site y Project Run.
+- **Comprobar:** ≥2 filas.
 
-### Prompt — Import SEO Opportunities
-```
-# Cursor — Tarea CSN (Fase 8: SEO e indexación)
+### Paso 2 — Plan de sitemap en Knowledge
 
-**ID de tarea (definición):** `csn:task:v2:p08:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+- **Qué hacer:** Artículo Runbook: URL del sitemap (ej. `/sitemap.xml`), pasos para enviarlo en GSC. Marca **Unverified** hasta tener captura de GSC.
+- **Comprobar:** No dice «enviado» sin prueba.
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+### Paso 3 — Backlink identificado
 
-## Misión concreta
-From GSC or manual research create SEO Opportunities rows with Target URL, Priority, link Site + Project Run.
+- **Qué hacer:** [Backlink Opportunities](https://app.notion.com/p/ff38edc78b1d43ceb6926c630058066e) → **New** · sitio objetivo · notas de tráfico/DR si las tienes gratis · **Outreach** = Identified.
+- **Comprobar:** No envías emails de pago sin gate.
 
-## Precondiciones
-Staging or prod URL known (sandbox: example URL).
+### Paso 4 — Gate si el enlace es de pago
 
-## Entregable esperado
-≥2 SEO Opportunities rows.
+- **Qué hacer:** [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) · **backlink** · Scope un placement · **Limits** USD · **Pending**.
 
-## Criterios de aceptación (verificables)
-Unverified if GSC API not run — note in Notes.
-
-## Evidencias a registrar en Notion
-Opportunity row URLs.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
+## 5. Prompt listo para copiar en Cursor
 
 ```
+# Día 6 — SEO técnico en el repo (sin GSC remoto)
 
-### Prompt — Sitemap submission plan
-```
-# Cursor — Tarea CSN (Fase 8: SEO e indexación)
+## Objetivo
+Revisar el código para SEO on-page y proponer entradas para Notion.
 
-**ID de tarea (definición):** `csn:task:v2:p08:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+## Contexto
+- Repo: [URL]
+- URL pública o preview: [URL]
+- Nicho: [BRIEF]
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## Tareas
+1. Revisar metadata, sitemap, robots si existen en el repo.
+2. Proponer ≥2 SEO Opportunities (título, URL, prioridad P0-P2).
+3. Pasos para verificar sitemap (marcar Unverified si no puedes abrir GSC).
+4. Una idea de backlink realista (sin contactar aún).
 
-## Misión concreta
-Document sitemap URL and GSC submission steps in Knowledge. Do not claim submitted unless verified in GSC UI.
+## Límites
+- No afirmar posiciones en Google ni DR inventados.
 
-## Precondiciones
-csn:task:v2:p08:01.
-
-## Entregable esperado
-Runbook steps in Knowledge.
-
-## Criterios de aceptación (verificables)
-Marked Unverified until GSC confirmation captured.
-
-## Evidencias a registrar en Notion
-Knowledge URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
+## Entregables
+Texto para pegar en SEO Opportunities y Knowledge.
 ```
 
-### Prompt — Identify backlink opportunity
-```
-# Cursor — Tarea CSN (Fase 9: Autoridad y backlinks)
+## 6. Qué revisar en la respuesta de Cursor
 
-**ID de tarea (definición):** `csn:task:v2:p09:01`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
+Éxito: referencias a archivos reales del repo. Fallo: métricas inventadas.
 
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
+## 7. Cuándo terminar el día
 
-## Misión concreta
-Create Backlink Opportunities row with Target, DR/Traffic notes, Outreach Status = Identified.
+- [ ] ≥2 SEO Opportunities.
+- [ ] Plan sitemap documentado (Unverified si aplica).
+- [ ] Backlink Opportunity + gate Pending si hay coste.
 
-## Precondiciones
-SEO baseline started.
+## 8. Qué queda pendiente
 
-## Entregable esperado
-Backlink Opportunities row linked to run.
-
-## Criterios de aceptación (verificables)
-No outreach sent without gate for paid links.
-
-## Evidencias a registrar en Notion
-Row URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-### Prompt — Request paid backlink Human Gate
-```
-# Cursor — Tarea CSN (Fase 9: Autoridad y backlinks)
-
-**ID de tarea (definición):** `csn:task:v2:p09:02`
-**Proyecto:** {{NOMBRE_DE_TU_SITIO}} — Launch Key: {{TU_LAUNCH_KEY}}
-**Clase de registro:** {{QA test-only O Production}}
-**Repositorio:** {{URL_GITHUB}} (si ya existe)
-
-## Rol
-Eres ingeniero senior en la red Cam Site Network (CSN). Ejecuta **solo** esta tarea. No compres dominios, no cambies DNS de producción, no despliegues ni pagues backlinks sin un Human Gate **Approved** citado en Notion.
-
-## Misión concreta
-Human Gates: Target Type = backlink, Target External ID = csn:backlink:{id}, Scope = single placement, Limits = max USD. Status = Pending. STOP before payment.
-
-## Precondiciones
-csn:task:v2:p09:01.
-
-## Entregable esperado
-Pending gate separate from domain/production gates.
-
-## Criterios de aceptación (verificables)
-Limits field includes dollar cap.
-
-## Evidencias a registrar en Notion
-Gate row URL.
-
-## Pruebas
-- Marca cada comprobación como: Implementado | Probado con éxito | Probado sin éxito | No probado | Bloqueado | Solo documentado.
-- No afirmes despliegue ni compra sin evidencia URL.
-
-## Si falta información
-Si el brief o el repositorio están vacíos, detente y devuelve lista de campos faltantes (plantilla blocked-planning). No inventes dominios ni claves API.
-
-## Al terminar
-Indica URLs de filas Notion creadas/actualizadas y texto sugerido para el campo Resultado ejecución de la tarea.
-
----
-*Generado desde `csn-task-manifest-v2.json` + estándares CSN. Para prompt con tus datos ya rellenados: consola `/csn-console` → Preparar prompt, o registro previo del proyecto.*
-
-```
-
-## Cómo comprobar el resultado
-- [ ] Import SEO Opportunities: Unverified if GSC API not run — note in Notes.
-- [ ] Sitemap submission plan: Marked Unverified until GSC confirmation captured.
-- [ ] Identify backlink opportunity: No outreach sent without gate for paid links.
-- [ ] Request paid backlink Human Gate: Limits field includes dollar cap.
-
-Estados en Notion Tasks: **Not started** → **In progress** → **Done** (con evidencia) o **Blocked** (con motivo).
-
-## Si algo falla
-- Anota el mensaje de error y la URL de la fila Notion afectada.
-- No avances de fase si `checkPhaseReadiness` / bloqueos listan brief, repo o fase anterior incompleta.
-- Gates en **Pending** o **Rejected**: usar plantilla blocked-planning; no comprar ni desplegar.
-- Crea fila en **CSN Incidents** si el fallo afecta al sitio.
-
-## Criterio para terminar el día
-- [ ] ≥2 rows created.
-- [ ] Steps documented.
-- [ ] Row exists.
-- [ ] Gate Status = Pending (not approved in this automation).
-
-**Siguiente jornada:** Día 7
+Outreach real, enlaces de pago, verificación GSC (días posteriores).
