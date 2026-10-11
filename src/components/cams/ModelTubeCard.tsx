@@ -25,6 +25,7 @@ type ModelTubeCardProps = {
   enableDesktopPreview?: boolean;
   /** Thumbnail frame — explore uses taller portrait tiles on desktop. */
   tileAspectClass?: string;
+  tileImageClass?: string;
 };
 
 export function ModelTubeCard({
@@ -34,6 +35,7 @@ export function ModelTubeCard({
   onQuickView,
   enableDesktopPreview = false,
   tileAspectClass = "aspect-[4/3]",
+  tileImageClass = "object-cover",
 }: ModelTubeCardProps) {
   const href = performerProfilePathFromPerformer(performer) ?? "/explore";
   const isLive = performer.live !== false;
@@ -124,7 +126,7 @@ export function ModelTubeCard({
               desktopWidths={enableDesktopPreview}
               hoverSrc={hoverStill}
               showHoverLayer={showHoverPreview}
-              className="object-cover transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
+              className={`${tileImageClass} transition duration-200 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100`}
             />
           ) : null}
 

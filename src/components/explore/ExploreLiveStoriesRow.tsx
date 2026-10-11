@@ -16,14 +16,17 @@ type ExploreLiveStoriesRowProps = {
 };
 
 const SCROLL_CLASS =
-  "hide-scrollbar flex max-h-[104px] snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden scroll-smooth py-1 pl-0.5 pr-2 lg:max-h-[110px] lg:gap-3.5 xl:gap-4";
+  "hide-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden scroll-smooth py-0.5 pl-0.5 pr-2 lg:gap-4";
+
+const AVATAR_INNER =
+  "relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[22px] bg-[#1C1C1E] lg:h-20 lg:w-20 lg:rounded-full xl:h-24 xl:w-24";
 
 export function ExploreLiveStoriesRow({ performers }: ExploreLiveStoriesRowProps) {
   if (performers.length === 0) return null;
 
   return (
     <section
-      className="relative z-10 w-full shrink-0"
+      className="relative z-10 w-full max-w-full shrink-0 overflow-hidden"
       aria-label="Live stories"
     >
       <div className={SCROLL_CLASS}>
@@ -34,31 +37,32 @@ export function ExploreLiveStoriesRow({ performers }: ExploreLiveStoriesRowProps
           );
           const thumb = pickCoverUrl(performer);
           const inner = (
-            <div className="flex w-[80px] shrink-0 snap-start flex-col items-center gap-1.5 lg:w-20 xl:w-24">
-              <StoryAvatarRing>
-                <div
-                  className="relative aspect-square h-[72px] w-[72px] overflow-hidden rounded-[22px] bg-[#1C1C1E] lg:h-20 lg:w-20 lg:rounded-2xl xl:h-24 xl:w-24"
-                >
+            <div className="flex w-[76px] shrink-0 snap-start flex-col items-center gap-1.5 lg:w-20 xl:w-24">
+              <StoryAvatarRing className="rounded-[24px] lg:rounded-full">
+                <div className={AVATAR_INNER}>
                   {thumb ? (
                     <Image
                       src={thumb}
                       alt={handle}
                       fill
-                      className="object-cover"
-                      sizes="80px"
+                      className="object-cover object-top"
+                      sizes="(max-width: 1280px) 80px, 96px"
                       unoptimized
                     />
                   ) : (
                     <div className="h-full w-full bg-zinc-800" />
                   )}
-                  <span
-                    className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-black/85 to-transparent pb-0.5 pt-3"
-                  >
-                    <LiveBadge size="sm" className="scale-[0.85] origin-bottom" />
+                  <span className="absolute right-1 top-1 z-10 lg:right-1.5 lg:top-1.5">
+                    <LiveBadge
+                      size="sm"
+                      className="!px-1.5 !py-0.5 !text-[10px] !font-bold shadow-md"
+                    />
                   </span>
                 </div>
               </StoryAvatarRing>
-              <span className="max-w-[80px] truncate text-center text-[10px] font-bold text-zinc-100 lg:max-w-20 lg:text-xs xl:max-w-24">
+              <span
+                className="max-w-[90px] truncate text-center text-[10px] font-medium text-zinc-300 lg:text-xs"
+              >
                 {handle.replace(/^@/, "")}
               </span>
             </div>
@@ -67,7 +71,7 @@ export function ExploreLiveStoriesRow({ performers }: ExploreLiveStoriesRowProps
             <Link
               key={performer.itemId ?? handle}
               href={path}
-              className="shrink-0"
+              className="shrink-0 transition-transform duration-200 hover:scale-[1.02]"
             >
               {inner}
             </Link>

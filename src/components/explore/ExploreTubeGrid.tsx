@@ -89,7 +89,8 @@ export function ExploreTubeGrid({
               priority={item.performerIndex < 4}
               enableDesktopPreview
               onQuickView={openTheater}
-              tileAspectClass="aspect-[4/5] lg:aspect-[3/4]"
+              tileAspectClass="aspect-[4/3] lg:aspect-[16/10]"
+              tileImageClass="object-cover object-top"
             />
           ),
         )}
