@@ -10,6 +10,12 @@ import { loadManifest } from "../csn-os/lib/manifest.mjs";
 import { getNotion, legacyRowCounts } from "../csn-os/lib/notion.mjs";
 import { ensureOperationalSchema } from "../csn-os/lib/ensure-operational-schema.mjs";
 import { syncCanonicalRootHub, verifyRootHubFirstBlock } from "../csn-os/lib/notion-root-hub.mjs";
+import {
+  alignPrimaryEntryPage,
+  disambiguateDuplicateRoot,
+  syncParentContainerIndex,
+  verifyPrimaryEntryFingerprint,
+} from "../csn-os/lib/primary-entry-page.mjs";
 import { syncRunbooksSpanish } from "../csn-os/lib/sync-runbooks-es.mjs";
 import { assemblePrompt } from "../csn-os/lib/assemble-prompt.mjs";
 import { createProject, syncExecutionTasksForRun } from "../csn-os/lib/workflow.mjs";
@@ -91,6 +97,8 @@ async function main() {
   const legacyBefore = await legacyRowCounts(notion);
 
   await ensureOperationalSchema(notion, manifest);
+  const entry = await alignPrimaryEntryPage(notion, manifest);
+  const dup = await disambiguateDuplicateRoot(notion);
   const published = await publishThreeQaTasks(manifest);
   const runbookUrl = await syncRunbooksSpanish(manifest);
 
@@ -101,17 +109,33 @@ async function main() {
     runUrl: run?.url,
     taskUrl: task?.url,
     promptUrl: task?.properties["Prompt Notion URL"]?.url,
+    promptLinks: await (async () => {
+      const out = [];
+      for (const p of published.filter((x) => x.notionUrl)) {
+        const row = (await queryByRichText(notion, manifest.databases.tasks.dataSourceId, "External ID", p.taskExternalId))[0];
+        out.push({
+          name: row?.properties?.Task?.title?.[0]?.plain_text || p.taskExternalId,
+          url: p.notionUrl,
+        });
+      }
+      return out;
+    })(),
   });
 
+  await syncParentContainerIndex(notion, hub.rootUrl);
   const verify = await verifyRootHubFirstBlock(notion, manifest.rootPageId);
+  const fingerprint = await verifyPrimaryEntryFingerprint(notion, manifest.rootPageId);
   const legacyAfter = await legacyRowCounts(notion);
 
   const evidence = {
     at: new Date().toISOString(),
     rootUrl: hub.rootUrl,
     runbookUrl,
+    primaryEntry: entry,
+    duplicateRoot: dup,
     hub,
     verifyRoot: verify,
+    fingerprint,
     published,
     legacyOk: JSON.stringify(legacyBefore) === JSON.stringify(legacyAfter),
     legacyBefore,
@@ -122,7 +146,7 @@ async function main() {
   fs.writeFileSync(out, JSON.stringify(evidence, null, 2));
   console.log(JSON.stringify(evidence, null, 2));
 
-  if (!verify.ok || !evidence.legacyOk) process.exit(1);
+  if (!verify.ok || !fingerprint.match || !evidence.legacyOk) process.exit(1);
   if (published.some((p) => !p.notionUrl || p.blocked)) process.exit(1);
 }
 

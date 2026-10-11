@@ -1,17 +1,9 @@
 {
-  "reportId": "csn:report:csn:run:demo-qa-live-offline:p07:1791707938263",
-  "executionStatus": "verified_sandbox",
-  "verificationLabel": "Verificado en sandbox",
-  "summary": "Registro de ejemplo — operador reemplazará tras Cursor real",
-  "evidenceUrls": [
-    "https://app.notion.com/p/PROMPT-Cursor-copiar-LIVE-OFFLINE-perfiles-QA-3f684cd085ae81e38060d06211966812"
-  ],
-  "tests": [
-    {
-      "cmd": "npm run csn -- demo-live-offline",
-      "exit": 0
-    }
-  ],
+  "reportId": "csn:report:csn:run:demo-qa-live-offline:p07:1791709829065",
+  "executionStatus": "failed",
+  "verificationLabel": "Rechazado requiere correcciones",
+  "summary": "Prueba auditoría: fallo simulado",
+  "evidenceUrls": [],
   "advancePhase": false,
-  "recordedAt": "2026-10-11T08:38:58.263Z"
+  "recordedAt": "2026-10-11T09:10:29.065Z"
 }

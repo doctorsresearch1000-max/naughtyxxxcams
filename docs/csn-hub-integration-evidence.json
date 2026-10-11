@@ -1,17 +1,80 @@
 {
-  "at": "2026-10-11T08:54:54.647Z",
-  "rootUrl": "https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae811fa929c4b4ccbcb56a",
+  "at": "2026-10-11T09:10:25.544Z",
+  "rootUrl": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
   "runbookUrl": "https://app.notion.com/p/12-Phase-Operational-Runbooks-3f684cd085ae81c486c9f909182fa38c",
+  "primaryEntry": {
+    "pageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+    "title": "Cam Sites — SOP System",
+    "url": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
+    "fingerprint": {
+      "match": true,
+      "dbCount": 14,
+      "dbTitles": [
+        "CSN Sites",
+        "SOP Versions",
+        "Project Runs",
+        "Tasks",
+        "Domain Candidates",
+        "SEO Opportunities",
+        "Backlink Opportunities",
+        "Feed Sync Runs",
+        "CSN Releases",
+        "CSN Incidents",
+        "CSN Maintenance",
+        "CSN Knowledge",
+        "Launch KPI Snapshots",
+        "Human Gates"
+      ]
+    }
+  },
+  "duplicateRoot": {
+    "ok": true
+  },
   "hub": {
-    "rootUrl": "https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae811fa929c4b4ccbcb56a",
+    "rootUrl": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
     "runUrl": "https://app.notion.com/p/Lanzamiento-DEMO-QA-LIVE-OFFLINE-Cam-Profiles-3f684cd085ae8118a3efd5d25a6f6bb0",
     "taskUrl": "https://app.notion.com/p/QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae812a96acee9c9e69ba82",
-    "promptUrl": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f"
+    "promptUrl": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f",
+    "promptLinks": [
+      {
+        "name": "[QA] Coherencia LIVE/OFFLINE en perfiles de modelo",
+        "url": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f"
+      },
+      {
+        "name": "CI workflow verification (repo)",
+        "url": "https://app.notion.com/p/Prompt-Cursor-CI-workflow-verification-repo-3f684cd085ae81e7a1d5d072de997352"
+      },
+      {
+        "name": "Document affiliate credential storage (outside Notion)",
+        "url": "https://app.notion.com/p/Prompt-Cursor-Document-affiliate-credential-storage-outside-Notion-3f684cd085ae810cbf1dfa186d6e6c39"
+      }
+    ]
   },
   "verifyRoot": {
     "ok": true,
     "firstType": "callout",
-    "calloutPreview": "Empieza aquí — CSN OS es tu centro de lanzamiento de cam sites: eliges un proyec"
+    "calloutPreview": "Empieza aquí — Cam Sites — SOP System es tu centro operativo: proyecto → tarea →",
+    "pageTitle": "Cam Sites — SOP System"
+  },
+  "fingerprint": {
+    "match": true,
+    "dbCount": 14,
+    "dbTitles": [
+      "CSN Sites",
+      "SOP Versions",
+      "Project Runs",
+      "Tasks",
+      "Domain Candidates",
+      "SEO Opportunities",
+      "Backlink Opportunities",
+      "Feed Sync Runs",
+      "CSN Releases",
+      "CSN Incidents",
+      "CSN Maintenance",
+      "CSN Knowledge",
+      "Launch KPI Snapshots",
+      "Human Gates"
+    ]
   },
   "published": [
     {

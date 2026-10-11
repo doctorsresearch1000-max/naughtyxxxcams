@@ -1,33 +1,54 @@
 import { loadManifest } from "./manifest.mjs";
 import { getNotion, queryByRichText } from "./notion.mjs";
 import { deleteBlocksExceptChildPagesAndDatabases, rt } from "./notion-markdown-blocks.mjs";
+import { PRIMARY_ENTRY_TITLE } from "./primary-entry-page.mjs";
 
-const HUB_MARKER = "csn-hub-marker-v2";
+const HUB_MARKER = "csn-hub-marker-v3";
 const DEMO_RUN_EXT = "csn:run:demo-qa-live-offline";
 const DEMO_TASK_EXT = "csn:taskrun:csn:run:demo-qa-live-offline:demo-live-offline-v1";
+
+function link(label, url) {
+  return [
+    { type: "text", text: { content: label, link: url ? { url } : null } },
+  ];
+}
 
 export async function syncCanonicalRootHub(manifest, links = {}) {
   const notion = getNotion();
   const rootId = manifest.rootPageId;
+  const dbs = manifest.databases;
   const runbookUrl = manifest.runbookPageUrl;
   const panelUrl = manifest.panelPageUrl;
 
   let runUrl = links.runUrl;
   let taskUrl = links.taskUrl;
   let promptUrl = links.promptUrl;
+  const promptLinks = links.promptLinks || [];
 
   if (!runUrl || !taskUrl || !promptUrl) {
-    const runsDb = manifest.databases.projectRuns;
-    const run = (await queryByRichText(notion, runsDb.dataSourceId, "External ID", DEMO_RUN_EXT))[0];
+    const run = (await queryByRichText(notion, dbs.projectRuns.dataSourceId, "External ID", DEMO_RUN_EXT))[0];
     if (run) {
       runUrl = run.url;
       promptUrl = run.properties["Prompt Notion URL"]?.url || promptUrl;
     }
-    const tasksDb = manifest.databases.tasks;
-    const task = (await queryByRichText(notion, tasksDb.dataSourceId, "External ID", DEMO_TASK_EXT))[0];
+    const task = (await queryByRichText(notion, dbs.tasks.dataSourceId, "External ID", DEMO_TASK_EXT))[0];
     if (task) {
       taskUrl = task.url;
       promptUrl = task.properties["Prompt Notion URL"]?.url || promptUrl;
+    }
+  }
+
+  if (!promptLinks.length) {
+    for (const ext of [
+      DEMO_TASK_EXT,
+      `csn:taskrun:${DEMO_RUN_EXT}:p05:02`,
+      `csn:taskrun:${DEMO_RUN_EXT}:p06:01`,
+    ]) {
+      const row = (await queryByRichText(notion, dbs.tasks.dataSourceId, "External ID", ext))[0];
+      if (!row) continue;
+      const u = row.properties["Prompt Notion URL"]?.url;
+      const name = row.properties.Task?.title?.[0]?.plain_text || ext;
+      if (u) promptLinks.push({ name, url: u });
     }
   }
 
@@ -40,19 +61,31 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
       callout: {
         icon: { emoji: "▶️" },
         rich_text: rt(
-          `Empieza aquí — CSN OS es tu centro de lanzamiento de cam sites: eliges un proyecto, abres una tarea técnica, copias el prompt para Cursor, ejecutas en el repositorio y registras el resultado en Notion. Todo lo de QA está marcado como prueba; no mezcles con producción. (${HUB_MARKER})`,
+          `Empieza aquí — ${PRIMARY_ENTRY_TITLE} es tu centro operativo: proyecto → tarea → prompt Cursor → ejecución → resultado. Los registros QA son solo prueba; no mezcles con producción ni KPI legacy. (${HUB_MARKER})`,
         ),
       },
     },
-    { object: "block", type: "heading_2", heading_2: { rich_text: rt("Flujo en 5 pasos") } },
+    {
+      object: "block",
+      type: "callout",
+      callout: {
+        icon: { emoji: "🔒" },
+        rich_text: rt(
+          "CSN OS aislado: sin relaciones con OPERATIONS / KNOWLEDGE / KPI History legacy. Las filas QA test-only no alimentan lanzamientos de producción.",
+        ),
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("A. Cómo empezar o continuar") } },
     {
       object: "block",
       type: "numbered_list_item",
       numbered_list_item: {
         rich_text: [
-          { type: "text", text: { content: "Abre tu " } },
-          { type: "text", text: { content: "proyecto (Project Run)", link: runUrl ? { url: runUrl } : null } },
-          { type: "text", text: { content: " — prueba recomendada: DEMO QA LIVE/OFFLINE." } },
+          { type: "text", text: { content: "Nuevo proyecto: crea filas en " } },
+          ...link("CSN Sites", dbs.csnSites.url),
+          { type: "text", text: { content: " + " } },
+          ...link("Project Runs", dbs.projectRuns.url),
+          { type: "text", text: { content: " (o usa el proyecto demo QA enlazado abajo)." } },
         ],
       },
     },
@@ -61,9 +94,10 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
       type: "numbered_list_item",
       numbered_list_item: {
         rich_text: [
-          { type: "text", text: { content: "Abre la " } },
-          { type: "text", text: { content: "tarea activa", link: taskUrl ? { url: taskUrl } : null } },
-          { type: "text", text: { content: " y revisa criterios de aceptación." } },
+          { type: "text", text: { content: "Continuar: abre tu " } },
+          ...link("Project Run", runUrl),
+          { type: "text", text: { content: " y la " } },
+          ...link("tarea activa", taskUrl),
         ],
       },
     },
@@ -73,8 +107,8 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
       numbered_list_item: {
         rich_text: [
           { type: "text", text: { content: "Copia el " } },
-          { type: "text", text: { content: "prompt completo en Notion", link: promptUrl ? { url: promptUrl } : null } },
-          { type: "text", text: { content: " (página hija de la tarea o enlace Prompt Notion URL)." } },
+          ...link("prompt en Notion", promptUrl),
+          { type: "text", text: { content: " (página hija de la tarea o campo Prompt Notion URL)." } },
         ],
       },
     },
@@ -82,7 +116,7 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
       object: "block",
       type: "numbered_list_item",
       numbered_list_item: {
-        rich_text: rt("Pega en un agente Cursor nuevo y ejecuta solo el alcance del prompt (sin deploy ni DNS)."),
+        rich_text: rt("Ejecuta en Cursor solo el alcance del prompt. Sin deploy, DNS ni compras sin gate humano."),
       },
     },
     {
@@ -90,63 +124,105 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
       type: "numbered_list_item",
       numbered_list_item: {
         rich_text: rt(
-          "Registra el resultado: actualiza la tarea o ejecuta en el repo npm run csn -- resultado --run-external-id=<run> --phase=N --json=informe.json",
+          "Registra resultado en la tarea o: npm run csn -- resultado --run-external-id=<run> --phase=N --json=informe.json",
         ),
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("B. Proyectos") } },
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          { type: "text", text: { content: "Sitios: " } },
+          ...link("CSN Sites", dbs.csnSites.url),
+          { type: "text", text: { content: " | Lanzamientos: " } },
+          ...link("Project Runs", dbs.projectRuns.url),
+          { type: "text", text: { content: " — filtra Record Class = QA test-only para pruebas." } },
+        ],
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("C. Tareas y plan técnico") } },
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          { type: "text", text: { content: "Abre " } },
+          ...link("Tasks", dbs.tasks.url),
+          {
+            type: "text",
+            text: {
+              content:
+                " → filtra por tu Project Run. Cada tarea de ejecución tiene instrucciones, criterios de aceptación y prompt.",
+            },
+          },
+        ],
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("D. Prompts Cursor (QA demo)") } },
+    ...promptLinks.map((p) => ({
+      object: "block",
+      type: "bulleted_list_item",
+      bulleted_list_item: {
+        rich_text: [
+          { type: "text", text: { content: `${p.name}: ` } },
+          { type: "text", text: { content: "abrir prompt", link: { url: p.url } } },
+        ],
+      },
+    })),
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: rt(
+          "Generar/regenerar: npm run csn -- prompt --run-external-id=<run> --phase=N (publica en Notion y rellena Prompt Notion URL).",
+        ),
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("E. Resultados y siguiente paso") } },
+    {
+      object: "block",
+      type: "bulleted_list_item",
+      bulleted_list_item: {
+        rich_text: rt(
+          "Campos: Resultado ejecución, Required Evidence, Último informe ejecución en el Project Run. Un fallo no marca la tarea como Done.",
+        ),
+      },
+    },
+    {
+      object: "block",
+      type: "bulleted_list_item",
+      bulleted_list_item: {
+        rich_text: rt("Siguiente paso: npm run csn -- plan --run-external-id=<run> tras registrar el informe."),
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("F. Runbooks (12 fases)") } },
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          { type: "text", text: { content: "Referencia en español: " } },
+          { type: "text", text: { content: "Runbooks operativos", link: runbookUrl ? { url: runbookUrl } : null } },
+          { type: "text", text: { content: " | Panel secundario: " } },
+          { type: "text", text: { content: "abrir", link: panelUrl ? { url: panelUrl } : null } },
+        ],
       },
     },
     { object: "block", type: "heading_3", heading_3: { rich_text: rt("Si una tarea falla") } },
     {
       object: "block",
       type: "bulleted_list_item",
-      bulleted_list_item: {
-        rich_text: rt("Marca la tarea como Bloqueada y describe el error en Resultado ejecución."),
-      },
+      bulleted_list_item: { rich_text: rt("Estado Bloqueada + motivo en Resultado ejecución.") },
     },
     {
       object: "block",
       type: "bulleted_list_item",
-      bulleted_list_item: {
-        rich_text: rt("No avances de fase hasta registrar evidencia; en QA puedes regenerar el prompt con npm run csn -- prompt ..."),
-      },
+      bulleted_list_item: { rich_text: rt("Regenera prompt si cambió el contexto; no avances de fase sin evidencia.") },
     },
-    {
-      object: "block",
-      type: "bulleted_list_item",
-      bulleted_list_item: {
-        rich_text: rt("Mantenimiento del hub: npm run csn:sync-hub (republica enlaces sin duplicar bases de datos)."),
-      },
-    },
-    { object: "block", type: "heading_3", heading_3: { rich_text: rt("Referencia: 12 fases") } },
-    {
-      object: "block",
-      type: "paragraph",
-      paragraph: {
-        rich_text: [
-          { type: "text", text: { content: "Runbooks detallados: " } },
-          { type: "text", text: { content: "12-Phase Operational Runbooks", link: runbookUrl ? { url: runbookUrl } : null } },
-        ],
-      },
-    },
-    {
-      object: "block",
-      type: "paragraph",
-      paragraph: {
-        rich_text: [
-          { type: "text", text: { content: "Acceso secundario — Panel de proyectos: " } },
-          { type: "text", text: { content: "abrir", link: panelUrl ? { url: panelUrl } : null } },
-        ],
-      },
-    },
-    {
-      object: "block",
-      type: "divider",
-      divider: {},
-    },
-    {
-      object: "block",
-      type: "heading_3",
-      heading_3: { rich_text: rt("Bases de datos del sistema (14)") },
-    },
+    { object: "block", type: "divider", divider: {} },
+    { object: "block", type: "heading_3", heading_3: { rich_text: rt("Bases de datos del sistema (14)") } },
   ];
 
   await notion.blocks.children.append({
@@ -156,19 +232,24 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
   });
 
   const page = await notion.pages.retrieve({ page_id: rootId });
-  return { rootUrl: page.url, runUrl, taskUrl, promptUrl };
+  return { rootUrl: page.url, runUrl, taskUrl, promptUrl, promptLinks };
 }
 
 export async function verifyRootHubFirstBlock(notion, rootId) {
   const res = await notion.blocks.children.list({ block_id: rootId, page_size: 5 });
   const first = res.results[0];
   if (!first) return { ok: false, reason: "no blocks" };
-  const text =
-    first.paragraph?.rich_text?.map((t) => t.plain_text).join("") ||
-    first.callout?.rich_text?.map((t) => t.plain_text).join("") ||
-    "";
-  const second = res.results[1];
   const callout = first?.callout?.rich_text?.map((t) => t.plain_text).join("") || "";
   const empieza = first?.type === "callout" && callout.includes("Empieza aquí");
-  return { ok: empieza, firstType: first.type, calloutPreview: callout.slice(0, 80) };
+  const page = await notion.pages.retrieve({ page_id: rootId });
+  let title = "";
+  for (const v of Object.values(page.properties || {})) {
+    if (v.type === "title") title = v.title.map((t) => t.plain_text).join("");
+  }
+  return {
+    ok: empieza && title === PRIMARY_ENTRY_TITLE,
+    firstType: first.type,
+    calloutPreview: callout.slice(0, 80),
+    pageTitle: title,
+  };
 }

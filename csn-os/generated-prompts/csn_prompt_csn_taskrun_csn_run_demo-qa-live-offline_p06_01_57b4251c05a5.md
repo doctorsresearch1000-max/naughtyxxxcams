@@ -1,7 +1,7 @@
 # Cursor execution prompt — Phase 6: Affiliate and feed integration
 
 **Prompt ID:** `csn:prompt:csn:taskrun:csn:run:demo-qa-live-offline:p06:01:57b4251c05a5`  
-**Generated at:** 2026-10-11T08:53:14.268Z  
+**Generated at:** 2026-10-11T09:09:21.156Z  
 **Source versions:** {
   "phaseSpec": {
     "id": "csn:phase:v1:06",
@@ -128,3 +128,16 @@ Provide: summary of changes, file list, commands run with outcomes, evidence lin
 ## 16. Handoff package for the next phase
 
 Update Project Run Current Phase; mark execution tasks Done with evidence; list open gates; attach this prompt path; prepare inputs for next phase per phase spec exit section.
+
+
+---
+
+## Tarea focalizada: Document affiliate credential storage (outside Notion)
+
+**Prerrequisitos:** (ninguno registrado)
+
+**Instrucciones de la tarea:**
+(completar en Notion Tasks)
+
+**Criterios de aceptación (tarea):**
+(completar en Notion Tasks)

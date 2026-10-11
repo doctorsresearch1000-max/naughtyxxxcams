@@ -29,6 +29,7 @@
     "csn": "node scripts/csn.mjs",
     "csn:demo": "node scripts/csn-demo-live-offline.mjs",
     "csn:sync-hub": "node scripts/csn-sync-hub.mjs",
+    "csn:verify-acceptance": "node scripts/csn-verify-acceptance.mjs",
     "csn:e2e": "node scripts/csn-e2e-operational.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },

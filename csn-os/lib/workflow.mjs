@@ -275,15 +275,11 @@ export async function recordExecutionResult(runExternalId, phase, report) {
     (t) => t.properties.Phase?.number === phase,
   );
 
-  const statusMap = {
-    not_started: "Not started",
-    in_progress: "In progress",
-    blocked: "Blocked",
-    implemented_pending: "In progress",
-    verified_sandbox: "Done",
-    rejected: "Blocked",
-  };
-  const notionStatus = statusMap[report.executionStatus] || "In progress";
+  const successStatuses = new Set(["verified_sandbox", "verified_production", "validated_staging"]);
+  const blockedStatuses = new Set(["blocked", "failed", "rejected", "error"]);
+  let notionStatus = "In progress";
+  if (successStatuses.has(report.executionStatus)) notionStatus = "Done";
+  else if (blockedStatuses.has(report.executionStatus)) notionStatus = "Blocked";
 
   for (const t of execTasks) {
     await notion.pages.update({
@@ -314,7 +310,19 @@ export async function recordExecutionResult(runExternalId, phase, report) {
     },
   });
 
-  return { reportId, path: fp };
+  let nextRecommended = null;
+  try {
+    const plan = await getWorkPlan(runExternalId);
+    nextRecommended = {
+      phase: plan.nextRecommendedPhase,
+      runExternalId,
+      hint: `npm run csn -- prompt --run-external-id=${runExternalId} --phase=${plan.nextRecommendedPhase}`,
+    };
+  } catch {
+    /* optional */
+  }
+
+  return { reportId, path: fp, nextRecommended, taskStatus: notionStatus };
 }
 
 export { legacyRowCounts };

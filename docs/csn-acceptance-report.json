@@ -1,0 +1,83 @@
+{
+  "at": "2026-10-11T09:10:37.067Z",
+  "primaryPage": {
+    "id": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+    "title": "Cam Sites — SOP System",
+    "url": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
+    "expectedTitle": "Cam Sites — SOP System"
+  },
+  "navigation": {
+    "hubOk": true,
+    "hubPreview": "Empieza aquí — Cam Sites — SOP System es tu centro operativo: proyecto → tarea →",
+    "dbFingerprint": {
+      "match": true,
+      "dbCount": 14,
+      "dbTitles": [
+        "CSN Sites",
+        "SOP Versions",
+        "Project Runs",
+        "Tasks",
+        "Domain Candidates",
+        "SEO Opportunities",
+        "Backlink Opportunities",
+        "Feed Sync Runs",
+        "CSN Releases",
+        "CSN Incidents",
+        "CSN Maintenance",
+        "CSN Knowledge",
+        "Launch KPI Snapshots",
+        "Human Gates"
+      ]
+    }
+  },
+  "duplicate": {
+    "id": "3f684cd0-85ae-8115-841a-c9dc40395c58",
+    "title": "OBSOLETO — copia parcial CSN OS (no usar)",
+    "disambiguated": true
+  },
+  "promptChain": {
+    "taskId": "3f684cd0-85ae-812a-96ac-ee9c9e69ba82",
+    "promptPageId": "3f684cd0-85ae-816f-939c-d41fb9e15b4f",
+    "url": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f"
+  },
+  "threePrompts": [
+    {
+      "ext": "csn:taskrun:csn:run:demo-qa-live-offline:demo-live-offline-v1",
+      "title": "[QA] Coherencia LIVE/OFFLINE en perfiles de modelo",
+      "notionUrl": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f",
+      "localPath": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_demo-qa-live-offline_demo-live-offline-v1_0a13a464c704.md"
+    },
+    {
+      "ext": "csn:taskrun:csn:run:demo-qa-live-offline:p05:02",
+      "title": "CI workflow verification (repo)",
+      "notionUrl": "https://app.notion.com/p/Prompt-Cursor-CI-workflow-verification-repo-3f684cd085ae81e7a1d5d072de997352",
+      "localPath": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_demo-qa-live-offline_p05_02_b9c91f8ca38e.md"
+    },
+    {
+      "ext": "csn:taskrun:csn:run:demo-qa-live-offline:p06:01",
+      "title": "Document affiliate credential storage (outside Notion)",
+      "notionUrl": "https://app.notion.com/p/Prompt-Cursor-Document-affiliate-credential-storage-outside-Notion-3f684cd085ae810cbf1dfa186d6e6c39",
+      "localPath": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_demo-qa-live-offline_p06_01_57b4251c05a5.md"
+    }
+  ],
+  "legacyCounts": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "acceptance": {
+    "nav1_title": true,
+    "nav2_empieza": true,
+    "nav3_db14": true,
+    "nav4_promptFromTask": true,
+    "nav5_duplicateNamed": true,
+    "gen_threePrompts": true,
+    "gen_urlsMatchTasks": true,
+    "allPass": true
+  }
+}

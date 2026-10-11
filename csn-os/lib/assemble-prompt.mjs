@@ -244,6 +244,17 @@ export async function assemblePrompt({ manifest, runExternalId, phase, taskExter
     content = fillTemplate(template, vars);
   }
 
+  if (targetTasks.length === 1 && blockingMissing.length === 0) {
+    const t = targetTasks[0];
+    const tTitle = t.properties.Task?.title?.[0]?.plain_text || "";
+    const instr = t.properties.Instructions?.rich_text?.map((x) => x.plain_text).join("") || "";
+    const accept = t.properties["Acceptance Criteria"]?.rich_text?.map((x) => x.plain_text).join("") || "";
+    const prereq = t.properties.Prerequisites?.rich_text?.map((x) => x.plain_text).join("") || "";
+    if (tTitle || instr || accept) {
+      content += `\n\n---\n\n## Tarea focalizada: ${tTitle}\n\n**Prerrequisitos:** ${prereq || "(ninguno registrado)"}\n\n**Instrucciones de la tarea:**\n${instr || "(completar en Notion Tasks)"}\n\n**Criterios de aceptación (tarea):**\n${accept || "(completar en Notion Tasks)"}\n`;
+    }
+  }
+
   const localRelativePath = writeLocalPrompt(promptId, content);
   const outFile = path.join(csnOsRoot(), "..", localRelativePath);
 

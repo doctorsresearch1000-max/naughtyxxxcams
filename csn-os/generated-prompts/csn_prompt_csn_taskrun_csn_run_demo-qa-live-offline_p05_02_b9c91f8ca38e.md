@@ -1,7 +1,7 @@
 # Cursor execution prompt — Phase 5: Repository and CI foundation
 
 **Prompt ID:** `csn:prompt:csn:taskrun:csn:run:demo-qa-live-offline:p05:02:b9c91f8ca38e`  
-**Generated at:** 2026-10-11T08:52:03.058Z  
+**Generated at:** 2026-10-11T09:08:43.140Z  
 **Source versions:** {
   "phaseSpec": {
     "id": "csn:phase:v1:05",
@@ -133,3 +133,16 @@ Provide: summary of changes, file list, commands run with outcomes, evidence lin
 ## 16. Handoff package for the next phase
 
 Update Project Run Current Phase; mark execution tasks Done with evidence; list open gates; attach this prompt path; prepare inputs for next phase per phase spec exit section.
+
+
+---
+
+## Tarea focalizada: CI workflow verification (repo)
+
+**Prerrequisitos:** (ninguno registrado)
+
+**Instrucciones de la tarea:**
+(completar en Notion Tasks)
+
+**Criterios de aceptación (tarea):**
+(completar en Notion Tasks)

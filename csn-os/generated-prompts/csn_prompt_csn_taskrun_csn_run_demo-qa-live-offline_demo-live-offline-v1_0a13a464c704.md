@@ -122,3 +122,16 @@ Tras ejecutar, el operador registrará en Notion (tarea de ejecución vinculada)
 ---
 
 *Generado por CSN OS — QA ficticio. Prompt ID: `csn:prompt:demo-qa-live-offline:task-live-offline-v1`*
+
+
+---
+
+## Tarea focalizada: [QA] Coherencia LIVE/OFFLINE en perfiles de modelo
+
+**Prerrequisitos:** (ninguno registrado)
+
+**Instrucciones de la tarea:**
+Abrir la página hijo PROMPT Cursor en el panel CSN OS, copiar todo el contenido a un agente Cursor nuevo, ejecutar en el repo naughtyxxxcams (QA).
+
+**Criterios de aceptación (tarea):**
+Lint + test:seo OK; badge LIVE coherente; informe con evidencias.
