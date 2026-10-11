@@ -62,7 +62,7 @@ function JerkmateRatingBannerChrome({
             className="select-none font-black uppercase italic leading-[0.95] tracking-tight text-white [-webkit-text-stroke:0.5px_rgba(0,0,0,0.35)] sm:text-[clamp(1.35rem,3.2vw,2.35rem)] text-[1.15rem]"
             style={{ marginLeft: "-0.12em" }}
           >
-            The rating experience
+            Dick rating experience
           </h2>
         </div>
 
