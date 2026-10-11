@@ -1,0 +1,310 @@
+{
+  "at": "2026-10-11T09:23:37.194Z",
+  "canonicalRootId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+  "runbookPageId": "3f684cd0-85ae-81c4-86c9-f909182fa38c",
+  "panelPageId": "3f684cd0-85ae-81ba-ab3f-db738b779058",
+  "duplicateRootId": "3f684cd0-85ae-8115-841a-c9dc40395c58",
+  "notionAccess": {
+    "ok": false,
+    "code": "object_not_found",
+    "message": "Could not find page with ID: 3f684cd0-85ae-811f-a929-c4b4ccbcb56a. Make sure the relevant pages and databases are shared with your integration \"Cursor Connection\".",
+    "hint": "Comparte la página «Cam Sites — SOP System» y las 14 bases CSN con la integración «Cursor Connection»."
+  },
+  "local": {
+    "phaseSpecs": [
+      {
+        "phase": 1,
+        "file": "phase-01.md",
+        "repositoryPath": "csn-os/phase-specs/phase-01.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 2,
+        "file": "phase-02.md",
+        "repositoryPath": "csn-os/phase-specs/phase-02.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 3,
+        "file": "phase-03.md",
+        "repositoryPath": "csn-os/phase-specs/phase-03.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 4,
+        "file": "phase-04.md",
+        "repositoryPath": "csn-os/phase-specs/phase-04.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 5,
+        "file": "phase-05.md",
+        "repositoryPath": "csn-os/phase-specs/phase-05.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 6,
+        "file": "phase-06.md",
+        "repositoryPath": "csn-os/phase-specs/phase-06.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 7,
+        "file": "phase-07.md",
+        "repositoryPath": "csn-os/phase-specs/phase-07.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 8,
+        "file": "phase-08.md",
+        "repositoryPath": "csn-os/phase-specs/phase-08.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 9,
+        "file": "phase-09.md",
+        "repositoryPath": "csn-os/phase-specs/phase-09.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 10,
+        "file": "phase-10.md",
+        "repositoryPath": "csn-os/phase-specs/phase-10.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 11,
+        "file": "phase-11.md",
+        "repositoryPath": "csn-os/phase-specs/phase-11.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      },
+      {
+        "phase": 12,
+        "file": "phase-12.md",
+        "repositoryPath": "csn-os/phase-specs/phase-12.md",
+        "classification": "Documentación de fase (catálogo SOP Versions — no prompt ejecutable)",
+        "sectionsPresent": {
+          "purpose": true,
+          "entry": true,
+          "work": true,
+          "acceptance": true,
+          "evidence": true,
+          "human": true,
+          "deliverables": true
+        },
+        "missingSections": [],
+        "notes": null,
+        "executablePromptSource": "Tasks → assemble-prompt (execution-phase o override por External ID)"
+      }
+    ],
+    "taskPromptOverrides": [
+      {
+        "key": "demo-live-offline-v1",
+        "path": "prompts/DEMO-QA-live-offline-profiles.md",
+        "exists": true,
+        "nonEmpty": true,
+        "classification": "Operativo (prompt ejecutable)"
+      },
+      {
+        "key": "p05:02",
+        "path": "task-prompts/qa-ci-workflow-verification.md",
+        "exists": true,
+        "nonEmpty": true,
+        "classification": "Operativo (prompt ejecutable)"
+      },
+      {
+        "key": "p06:01",
+        "path": "task-prompts/qa-affiliate-credentials-doc.md",
+        "exists": true,
+        "nonEmpty": true,
+        "classification": "Operativo (prompt ejecutable)"
+      }
+    ],
+    "knownQaLaunchKeys": [
+      "demo-qa-live-offline",
+      "e2e-qa-automation",
+      "fictional-sandbox-prompt-qa",
+      "qa-sandbox-notion-launch-v1"
+    ]
+  },
+  "remote": null,
+  "legacyCounts": null,
+  "staticInventory": {
+    "note": "IDs de referencia de auditoría previa (2026-10-11) cuando API respondía",
+    "priorAuditFile": "scripts/notion-csn-canonical-audit.json",
+    "qaProjects": [
+      {
+        "launchKey": "demo-qa-live-offline",
+        "runExternalId": "csn:run:demo-qa-live-offline",
+        "label": "DEMO QA — LIVE/OFFLINE Cam Profiles"
+      },
+      {
+        "launchKey": "fictional-sandbox-prompt-qa",
+        "runExternalId": "csn:run:fictional-sandbox-prompt-qa",
+        "label": "FICTIONAL-SANDBOX-PROMPT-QA"
+      },
+      {
+        "launchKey": "qa-sandbox-notion-launch-v1",
+        "runExternalId": "csn:qa-sandbox-notion:launch:v1",
+        "label": "QA-SANDBOX-NOTION"
+      },
+      {
+        "launchKey": "e2e-qa-automation",
+        "runExternalId": "csn:run:e2e-qa-automation",
+        "label": "E2E QA automation (recomendado post-saneamiento)"
+      }
+    ],
+    "supportPages": [
+      {
+        "name": "12-Phase Operational Runbooks",
+        "id": "3f684cd0-85ae-81c4-86c9-f909182fa38c"
+      },
+      {
+        "name": "CSN OS Panel",
+        "id": "3f684cd0-85ae-81ba-ab3f-db738b779058"
+      },
+      {
+        "name": "blocked-planning template",
+        "id": "csn:prompttpl:v1:blocked-planning",
+        "path": "csn-os/prompt-templates/blocked-planning.md"
+      },
+      {
+        "name": "execution-phase template",
+        "id": "csn:prompttpl:v1:execution-phase",
+        "path": "csn-os/prompt-templates/execution-phase.md"
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-11T09:23:55.084Z",
+  "blocked": true,
+  "code": "object_not_found",
+  "message": "Could not find page with ID: 3f684cd0-85ae-811f-a929-c4b4ccbcb56a. Make sure the relevant pages and databases are shared with your integration \"Cursor Connection\".",
+  "corrections": [],
+  "hint": "Re-conecta «Cam Sites — SOP System» (3f684cd0-85ae-811f-a929-c4b4ccbcb56a) y las 14 DB CSN a Cursor Connection, luego npm run csn:content-sanitize"
+}

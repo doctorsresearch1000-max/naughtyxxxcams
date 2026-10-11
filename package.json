@@ -31,6 +31,8 @@
     "csn:sync-hub": "node scripts/csn-sync-hub.mjs",
     "csn:verify-acceptance": "node scripts/csn-verify-acceptance.mjs",
     "csn:e2e": "node scripts/csn-e2e-operational.mjs",
+    "csn:content-audit": "node scripts/csn-content-audit.mjs",
+    "csn:content-sanitize": "node scripts/csn-content-sanitize.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {

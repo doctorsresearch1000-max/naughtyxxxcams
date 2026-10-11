@@ -25,10 +25,11 @@ async function main() {
   await ensureOperationalSchema(notion, manifest);
 
   const results = {};
-  const lk = `e2e-qa-${Date.now()}`;
+  /** Reutiliza el mismo sitio/run para no proliferar filas E2E en Notion. */
+  const lk = process.env.CSN_E2E_LAUNCH_KEY || "e2e-qa-automation";
 
   results.A = await createProject({
-    siteName: `E2E QA ${lk}`,
+    siteName: "E2E QA automation (test-only)",
     launchKey: lk,
     isQa: true,
     niche: "Ficticio",

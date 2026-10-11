@@ -3,7 +3,7 @@ import { getNotion, queryByRichText } from "./notion.mjs";
 import { deleteBlocksExceptChildPagesAndDatabases, rt } from "./notion-markdown-blocks.mjs";
 import { PRIMARY_ENTRY_TITLE } from "./primary-entry-page.mjs";
 
-const HUB_MARKER = "csn-hub-marker-v3";
+const HUB_MARKER = "csn-hub-marker-v4";
 const DEMO_RUN_EXT = "csn:run:demo-qa-live-offline";
 const DEMO_TASK_EXT = "csn:taskrun:csn:run:demo-qa-live-offline:demo-live-offline-v1";
 
@@ -154,29 +154,29 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
             type: "text",
             text: {
               content:
-                " → filtra por tu Project Run. Cada tarea de ejecución tiene instrucciones, criterios de aceptación y prompt.",
+                " → filtra por tu Project Run. Cada tarea de ejecución tiene instrucciones, criterios de aceptación y campo Prompt Notion URL.",
             },
           },
         ],
       },
     },
-    { object: "block", type: "heading_2", heading_2: { rich_text: rt("D. Prompts Cursor (QA demo)") } },
-    ...promptLinks.map((p) => ({
+    {
       object: "block",
-      type: "bulleted_list_item",
-      bulleted_list_item: {
-        rich_text: [
-          { type: "text", text: { content: `${p.name}: ` } },
-          { type: "text", text: { content: "abrir prompt", link: { url: p.url } } },
-        ],
+      type: "callout",
+      callout: {
+        icon: { emoji: "📋" },
+        rich_text: rt(
+          "SOP Versions / «Phase N Specification» = catálogo y criterios de fase (no copies esas páginas a Cursor). El prompt ejecutable se genera por tarea o fase vía CLI y se publica como página hija de la tarea.",
+        ),
       },
-    })),
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("D. Generar o abrir el prompt de tu tarea") } },
     {
       object: "block",
       type: "paragraph",
       paragraph: {
         rich_text: rt(
-          "Generar/regenerar: npm run csn -- prompt --run-external-id=<run> --phase=N (publica en Notion y rellena Prompt Notion URL).",
+          "npm run csn -- prompt --run-external-id=<run> --phase=N [--task-external-id=...] — publica en Notion y rellena Prompt Notion URL. Si faltan datos obligatorios, recibes blocked-planning (no un prompt vacío).",
         ),
       },
     },
@@ -203,10 +203,43 @@ export async function syncCanonicalRootHub(manifest, links = {}) {
       type: "paragraph",
       paragraph: {
         rich_text: [
-          { type: "text", text: { content: "Referencia en español: " } },
-          { type: "text", text: { content: "Runbooks operativos", link: runbookUrl ? { url: runbookUrl } : null } },
-          { type: "text", text: { content: " | Panel secundario: " } },
-          { type: "text", text: { content: "abrir", link: panelUrl ? { url: panelUrl } : null } },
+          { type: "text", text: { content: "Referencia: " } },
+          { type: "text", text: { content: "12-Phase Operational Runbooks", link: runbookUrl ? { url: runbookUrl } : null } },
+          { type: "text", text: { content: " (objetivos por fase; ejecución en Tasks)." } },
+        ],
+      },
+    },
+    { object: "block", type: "heading_2", heading_2: { rich_text: rt("G. Zona QA (pruebas — no producción)") } },
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          { type: "text", text: { content: "Proyecto demo: " } },
+          ...link("DEMO QA LIVE/OFFLINE", runUrl),
+          { type: "text", text: { content: " | Tarea ejemplo: " } },
+          ...link("abrir", taskUrl),
+          { type: "text", text: { content: ". Filtra siempre Record Class = QA test-only en tableros operativos." } },
+        ],
+      },
+    },
+    ...promptLinks.map((p) => ({
+      object: "block",
+      type: "bulleted_list_item",
+      bulleted_list_item: {
+        rich_text: [
+          { type: "text", text: { content: `[QA] ${p.name}: ` } },
+          { type: "text", text: { content: "prompt", link: { url: p.url } } },
+        ],
+      },
+    })),
+    {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          { type: "text", text: { content: "Panel técnico / legado (no flujo principal): " } },
+          { type: "text", text: { content: "CSN OS Panel", link: panelUrl ? { url: panelUrl } : null } },
         ],
       },
     },

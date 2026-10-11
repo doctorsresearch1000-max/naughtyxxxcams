@@ -21,7 +21,28 @@ async function main() {
   const manifest = loadManifest();
   const notion = getNotion();
   const rootId = manifest.rootPageId;
-  const legacy = await legacyRowCounts(notion);
+  const out = path.join(path.dirname(fileURLToPath(import.meta.url)), "../docs/csn-acceptance-report.json");
+
+  let legacy;
+  try {
+    await notion.pages.retrieve({ page_id: rootId });
+  } catch (e) {
+    const blocked = {
+      at: new Date().toISOString(),
+      blocked: true,
+      code: e.code,
+      message: e.message,
+      primaryPage: { id: rootId, expectedTitle: PRIMARY_ENTRY_TITLE },
+      hint:
+        "Notion API sin acceso al stack canónico. Comparte Cam Sites — SOP System + 14 DB con Cursor Connection.",
+      acceptance: { allPass: false, apiAccess: false },
+    };
+    fs.writeFileSync(out, JSON.stringify(blocked, null, 2));
+    console.log(JSON.stringify(blocked, null, 2));
+    process.exit(2);
+  }
+
+  legacy = await legacyRowCounts(notion);
 
   const page = await notion.pages.retrieve({ page_id: rootId });
   let title = "";
@@ -92,7 +113,6 @@ async function main() {
     .filter(([k]) => k !== "allPass")
     .every(([, v]) => v === true);
 
-  const out = path.join(path.dirname(fileURLToPath(import.meta.url)), "../docs/csn-acceptance-report.json");
   fs.writeFileSync(out, JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report, null, 2));
   process.exit(report.acceptance.allPass ? 0 : 1);
