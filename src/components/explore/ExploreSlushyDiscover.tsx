@@ -355,8 +355,8 @@ export function ExploreSlushyDiscover({
   }, [showCategoryPicker, activeCat, loadCategory]);
 
   return (
-    <div className="space-y-4 overflow-x-hidden pb-1 lg:space-y-3 xl:max-w-full xl:space-y-3.5">
-      <div className="relative lg:hidden">
+    <div className="flex flex-col gap-4 overflow-x-hidden pb-1 lg:gap-3 xl:gap-3.5">
+      <div className="relative order-1 lg:hidden">
         <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -376,7 +376,7 @@ export function ExploreSlushyDiscover({
       </div>
 
       <div
-        className="sticky top-[calc(var(--app-header-height,0px)+2px)] z-20 -mx-1 space-y-2 bg-[#0d0d0f]/95 py-2 backdrop-blur-md supports-[backdrop-filter]:bg-[#0d0d0f]/80"
+        className="order-2 sticky top-[calc(var(--app-header-height,0px)+2px)] z-20 -mx-1 space-y-2 overflow-visible bg-[#0d0d0f]/95 py-2 backdrop-blur-md supports-[backdrop-filter]:bg-[#0d0d0f]/80 lg:order-2"
       >
         <div className={`${horizontalScrollClass} hidden lg:flex`}>
           {sortChipButtons}
@@ -399,17 +399,21 @@ export function ExploreSlushyDiscover({
         ) : null}
       </div>
 
-      <ExploreLiveStoriesRow performers={liveStories} />
+      <div className="order-3 overflow-visible lg:order-1">
+        <ExploreLiveStoriesRow performers={liveStories} />
+      </div>
 
       {promoUrl ? (
-        <ExploreJerkmatePromoBanner
-          affiliateUrl={promoUrl}
-          coverUrl={promoImage}
-        />
+        <div className="order-4 lg:order-4">
+          <ExploreJerkmatePromoBanner
+            affiliateUrl={promoUrl}
+            coverUrl={promoImage}
+          />
+        </div>
       ) : null}
 
       {showCategoryHub ? (
-        <section className="mb-2">
+        <section className="order-5 mb-2 lg:order-5">
           <div className="mb-2.5 flex items-center justify-between px-0.5">
             <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
               Popular categories
@@ -422,7 +426,7 @@ export function ExploreSlushyDiscover({
         </section>
       ) : null}
 
-      <section className="mt-2 lg:mt-4">
+      <section className="order-6 mt-2 lg:order-6 lg:mt-4">
         <div className="mb-2.5 flex items-center justify-between px-0.5 lg:mb-1">
           <h2 className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
             {category ? category.label : "For you"}

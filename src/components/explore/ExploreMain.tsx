@@ -16,7 +16,7 @@ type ExploreMainProps = {
 
 /** Slushy mobile column + wide desktop grid; SEO in sr-only crawl block. */
 const EXPLORE_MAIN_CLASS =
-  "mx-auto min-h-screen w-full max-w-md overflow-x-hidden overflow-y-auto bg-[#0d0d0f] px-3.5 pb-24 pt-3 text-white [-webkit-overflow-scrolling:touch] lg:max-w-[1600px] lg:px-8 lg:pb-12 lg:pt-2";
+  "mx-auto min-h-screen w-full max-w-md overflow-x-hidden overflow-y-auto bg-[#0d0d0f] px-3.5 pb-24 pt-3 text-white [-webkit-overflow-scrolling:touch] lg:max-w-[1600px] lg:overflow-x-hidden lg:px-8 lg:pb-12 lg:pt-4";
 
 export function ExploreMain({ categorySlug, bootstrap }: ExploreMainProps) {
   if (categorySlug && isExploreHubCategorySlug(categorySlug)) {
