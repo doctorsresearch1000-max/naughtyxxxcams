@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { loadManifest } from "./manifest.mjs";
 import { getNotion } from "./notion.mjs";
-import { deleteAllBlocks, appendMarkdownAsBlocks } from "./notion-markdown-blocks.mjs";
+import { deleteAllBlocks, markdownToNotionBlocks, appendNotionBlocks } from "./notion-markdown-blocks.mjs";
 import { buildAllDays, DAY_PLAN } from "./launch-guide-builder.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -49,7 +49,8 @@ export async function syncLaunchGuidePages(manifest) {
     }
 
     await deleteAllBlocks(notion, page.id, false);
-    await appendMarkdownAsBlocks(notion, page.id, md.slice(0, 45000));
+    const blocks = markdownToNotionBlocks(md);
+    await appendNotionBlocks(notion, page.id, blocks);
     pages.push({ day: d.day, title, pageId: page.id, url: page.url });
   }
 

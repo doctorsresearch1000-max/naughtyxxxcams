@@ -1,72 +1,60 @@
-# Día 5 — Configura integraciones y feeds
+# Día 5 — Feeds e integración de datos
 
 ## 1. Qué vas a conseguir hoy
+- Artículo **secretos** (nombres, no valores).
+- **Feed Sync Run** en Notion (real o simulado QA).
+- Perfiles en preview/local usando **datos reales o mock QA** etiquetado.
 
-Documentación clara de **dónde viven las claves de afiliado** (nunca en Notion) y una fila de **Feed Sync Run** (real o simulada en QA) que demuestra que entiendes el flujo de datos de modelos.
+## 2. Antes de empezar
+- Plantilla Día 4 al menos Implementada en local.
+- Acceso a quien gestione secrets (o solo documentar).
 
-## 2. Qué necesitas antes de empezar
-
-- Repositorio documentado (Día 4).
-- Saber qué red de afiliación usaréis (en este stack suele documentarse **CrakRevenue / HasOffers** con clave en GitHub Actions y Cloudflare — ver docs del repo si existen).
-
-## 3. Tiempo estimado y dependencias
-
-| | |
-|--|--|
-| **Tiempo** | 2–4 horas |
-| **Depende de** | Acceso de lectura al repo y a quien gestione secrets |
+## 3. Tiempo
+- **3–5 h**
 
 ## 4. Pasos
 
-### Paso 1 — Artículo de política de secretos
+### Paso 1 — Policy secretos
+- **Qué:** [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85) Policy; prompt §5.
+- **Comprobar:** cero claves en Notion.
 
-- **Qué hacer:** En [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85), **Category = Policy**, lista **nombres** de variables (ej. `CRAKREVENUE_API_KEY`) y dónde viven: **GitHub → Settings → Secrets** y **Cloudflare → Environment variables**. Escribe explícito: «valores nunca en Notion».
-- **Comprobar:** El artículo no contiene valores de claves.
+### Paso 2 — Mapeo campos feed → plantilla
+- **Qué:** Tabla en Knowledge «Feed → perfil» desde salida Cursor.
 
-### Paso 2 — Registrar Feed Sync Run
+### Paso 3 — Feed Sync Run
+- **Qué:** [Feed Sync Runs](https://app.notion.com/p/ffc92a9784af41a0b9936cbfe0ca2831) New; Rows 0 + Notes «simulado QA» si no hay API.
 
-- **Qué hacer:** [Feed Sync Runs](https://app.notion.com/p/ffc92a9784af41a0b9936cbfe0ca2831) → **New** · proveedor · fechas · **Rows Upserted** (0 permitido en QA con Note «simulado») · enlaza Site y Project Run.
-- **Comprobar:** Fila existe y está enlazada.
+### Paso 4 — Probar 2 perfiles con datos feed
+- **Qué:** localhost; anotar slugs en run Notes.
+- **Si falla API:** usar mock del repo; marcar **No probado con API real**.
 
-### Paso 3 — Si hay job de feed en el repo
+## 5. Prompt
+```text
+# Día 5 — Integración feed CrakRevenue / datos modelo
 
-- Pide a Cursor (prompt abajo) que localice scripts o workflows de sincronización; tú ejecutas solo lo que tengas permiso.
+Repo: [URL]
+QA o prod: [ ]
 
-## 5. Prompt listo para copiar en Cursor
+1. Localizar fuente performer/model (ej. src/lib/crackrevenue/, APIs feed).
+2. Listar campos reales disponibles para plantilla perfil (nombre, slug, live, categorías, imágenes).
+3. Documentar env vars (nombres solo): CRAKREVENUE_API_KEY en GitHub Secrets y Cloudflare — nunca valores.
+4. Si hay script sync: cómo ejecutarlo en QA o simular con mock etiquetado QA.
+5. Verificar que perfiles muestran datos del feed, no inventados.
 
-```
-# Día 5 — Afiliación y feeds (documentación + código)
-
-## Objetivo
-Explicar cómo el repo integra feeds de afiliado y qué secretos necesita, sin exponer valores.
-
-## Contexto
-- Repo: [URL]
-- QA o producción: [QA / Producción]
-
-## Tareas
-1. Buscar referencias a CrakRevenue, HasOffers, feed sync en código y docs.
-2. Listar nombres de env vars y dónde configurarlas (GitHub/Cloudflare).
-3. Describir pasos para una sincronización de prueba que YO ejecutaré (o marcar «solo documentado»).
-4. Texto para Feed Sync Run en Notion (proveedor, filas, notas).
-
-## Límites
-- No imprimir API keys.
-- No afirmar que el feed corrió en producción sin evidencia.
-
-## Entregables
-Markdown para CSN Knowledge + texto para fila Feed Sync Run.
+Sin keys en chat. Sin afirmar sync prod sin log.
+Entrega: markdown Policy secretos + pasos Feed Sync Run + qué campos faltan en feed.
 ```
 
-## 6. Qué revisar en la respuesta de Cursor
+## 6. Respuesta Cursor
+- Lista archivos feed; instrucciones sync; sin API keys.
 
-Éxito: nombres de secretos sin valores. Fallo: pega claves o inventa IDs de oferta.
+## 7. Comprobar
+- [ ] Policy secretos
+- [ ] Feed Sync Run
+- [ ] 2 perfiles con datos trazables al feed o mock QA
 
-## 7. Cuándo terminar el día
+## 8. Si falla
+- Sin API key: solo documentado + simulación.
 
-- [ ] Artículo Policy de secretos.
-- [ ] Feed Sync Run creado (simulado OK en QA).
-
-## 8. Qué queda pendiente
-
-Obtener claves reales del afiliado (humano con cuenta); ejecutar sync en producción (más adelante).
+## 9. Pendiente
+- Sync producción tras gates.

@@ -1,0 +1,53 @@
+{
+  "at": "2026-10-11T10:41:32.472Z",
+  "perDay": {
+    "1": {
+      "links": 5,
+      "codes": 1,
+      "literalMdLink": 0
+    },
+    "2": {
+      "links": 5,
+      "codes": 2,
+      "literalMdLink": 0
+    },
+    "3": {
+      "links": 3,
+      "codes": 3,
+      "literalMdLink": 0
+    },
+    "4": {
+      "links": 5,
+      "codes": 2,
+      "literalMdLink": 0
+    },
+    "5": {
+      "links": 2,
+      "codes": 1,
+      "literalMdLink": 0
+    },
+    "6": {
+      "links": 2,
+      "codes": 2,
+      "literalMdLink": 0
+    },
+    "7": {
+      "links": 5,
+      "codes": 1,
+      "literalMdLink": 0
+    }
+  },
+  "hubScan": {
+    "links": 11,
+    "codes": 0,
+    "literalMdLink": 0
+  },
+  "checks": {
+    "hubOk": true,
+    "hubLinks": 11,
+    "eachDayHasCode": true,
+    "noLiteralMdLinks": true,
+    "minLinksPerDay": true,
+    "allPass": true
+  }
+}

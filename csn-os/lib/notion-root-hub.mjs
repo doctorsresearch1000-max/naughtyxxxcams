@@ -4,7 +4,7 @@ import { deleteBlocksExceptChildPagesAndDatabases, rt } from "./notion-markdown-
 import { PRIMARY_ENTRY_TITLE } from "./primary-entry-page.mjs";
 import { DAY_PLAN } from "./launch-guide-builder.mjs";
 
-const HUB_MARKER = "csn-hub-marker-v8-practical";
+const HUB_MARKER = "csn-hub-marker-v9-pseo";
 
 function link(label, url) {
   return [{ type: "text", text: { content: label, link: url ? { url } : null } }];
@@ -187,7 +187,7 @@ export async function verifyRootHubFirstBlock(notion, rootId) {
     if (v.type === "title") title = v.title.map((t) => t.plain_text).join("");
   }
   return {
-    ok: joined.includes("GUÍA DE LANZAMIENTO") && joined.includes("csn-hub-marker-v8-practical"),
+    ok: joined.includes("GUÍA DE LANZAMIENTO") && joined.includes("csn-hub-marker-v9-pseo"),
     pageTitle: title,
     expectedTitle: PRIMARY_ENTRY_TITLE,
     titleOk: title === PRIMARY_ENTRY_TITLE,

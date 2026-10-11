@@ -1,90 +1,93 @@
 import { notionLinks } from "../guide-context.mjs";
+import { link, promptFence } from "../guide-sections.mjs";
+import { PROMPT_KEYWORD_RESEARCH } from "../prompts-pseo.mjs";
 
 export function renderDay03() {
-  const n = notionLinks();
-  return `# Día 3 — Diseña la estructura y revisa requisitos legales
+  const u = notionLinks();
+  const promptArch = `# Día 3 — Arquitectura pSEO (familias de página)
+
+Basado en el mapa de keywords ya acordado.
+
+Define para cada familia (directorio, categoría, subcategoría, perfil, búsqueda solo si útil):
+- Intención búsqueda
+- Patrón URL (ej. /c/[slug], /model/[slug])
+- Fuente datos (feed campo X)
+- Plantilla React/route
+- Enlaces internos entrantes/salientes
+- Index: sí/no/condicional
+- Riesgos: thin, duplicado, canibalización
+
+NO generar todas las combinaciones de filtros. NO inventar volúmenes.
+Entrega: tabla + diagrama texto + política LIVE/OFFLINE en SERP si aplica.`;
+
+  const promptLegal = `# Día 3 — Checklist legal y wireframe (documentación)
+
+Brief: [cuaderno]
+Repo si existe: [URL]
+
+Mapa páginas + menú texto + checklist age/privacy/terms/2257 (marcar revisión legal humana).
+No asesoría jurídica definitiva.`;
+
+  return `# Día 3 — Keywords, arquitectura pSEO y diseño
 
 ## 1. Qué vas a conseguir hoy
+- **Mapa keywords long tail** con familias y prioridades (sin volúmenes inventados).
+- **Arquitectura pSEO** (URLs, plantillas, indexación).
+- **Wireframe** navegación + checklist legal en ${link("CSN Knowledge", u.csnKnowledge)}.
+- Decisión qué familias existen (directorio, categoría, perfil; filtros solo si aportan).
 
-Un **mapa de páginas** (inicio, categorías, perfil de modelo, legales) y un **checklist de cumplimiento** (edad, privacidad, términos, 2257 si aplica) guardado en Notion, con huecos marcados para revisión humana cuando haga falta.
+## 2. Antes de empezar
+- Cuaderno Día 1.
+- Opcional: repo clonado para que Cursor lea rutas reales.
 
-## 2. Qué necesitas antes de empezar
-
-- Día 1 completado (Site en Notion).
-- Brief del cuaderno de proyecto.
-- **UX:** la experiencia que vive el visitante (menús, filtros, fichas de modelo).
-
-## 3. Tiempo estimado y dependencias
-
-| | |
-|--|--|
-| **Tiempo** | 2–4 horas |
-| **Depende de** | Brief claro (Día 1) |
-| **No depende de** | Dominio comprado |
+## 3. Tiempo
+- **4–6 h** (investigación + documentación).
+- No depende de dominio comprado.
 
 ## 4. Pasos
 
-### Paso 1 — Listar páginas obligatorias
+### Paso 1 — Investigación keywords (Cursor)
+- **Qué:** Ejecutar prompt §5A; pegar resultado en Knowledge «pSEO — Mapa keywords».
+- **Comprobar:** Cada fila tiene fuente (repo/brief/hipótesis).
+- **Si falla:** sin repo, usar solo brief y marcar hipótesis.
 
-- **Qué hacer:** En papel o Notion, lista: Home, listados, perfil, búsqueda, contacto, **Política de privacidad**, **Términos**, **Aviso +18 / age gate**, y **2257** si operas en jurisdicciones que lo exigen.
-- **Dónde:** Borrador en [CSN Knowledge](${n.csnKnowledge}) → **New**, **Category = Policy**, título «Checklist legal y páginas — [sitio]».
-- **Resultado:** Cada ítem con columna «¿Existe? / Pendiente / Responsable».
-- **Comprobar:** No dejas legales en blanco sin marcar «pendiente abogado».
+### Paso 2 — Arquitectura pSEO
+- **Qué:** Prompt §5B → artículo «pSEO — Arquitectura URLs».
+- **Comprobar:** Reglas anti-canibalización escritas.
 
-### Paso 2 — Esquema de navegación
+### Paso 3 — Wireframe y legales
+- **Qué:** Prompt §5C → Policy «Checklist legal y páginas».
+- **Dónde:** ${link("CSN Knowledge", u.csnKnowledge)}
 
-- **Qué hacer:** Dibuja o describe menú principal y 2 niveles de categorías acordes a tu nicho.
-- **Dónde:** Misma página Knowledge o Notes del [Project Run](${n.projectRuns}).
-- **Comprobar:** Un visitante nuevo entiende dónde encontrar modelos en vivo vs offline.
+### Paso 4 — SEO Opportunities (mínimo 2)
+- **Qué:** ${link("SEO Opportunities", u.seoOpportunities)} desde ideas del mapa (título, URL objetivo, prioridad).
 
-### Paso 3 — Registrar huecos como incidencias si bloquean
+### Paso 5 — Notion run
+- **Qué:** Current Phase 7 cuando Knowledge tenga los tres artículos.
 
-- **Qué hacer:** Si falta texto legal crítico, crea fila en [CSN Incidents](${n.csnIncidents}) con severidad y «bloquea lanzamiento: sí/no».
-- **Comprobar:** Incidencia enlazada al Site si aplica.
+## 5. Prompts
 
-### Paso 4 — Marcar fase en el run
+### 5A — Keywords long tail
+${promptFence(PROMPT_KEYWORD_RESEARCH)}
 
-- **Qué hacer:** Cuando el checklist esté al menos «In progress» completo, anota en Project Run **Current Phase** = 7.
+### 5B — Arquitectura
+${promptFence(promptArch)}
 
-## 5. Prompt listo para copiar en Cursor
+### 5C — Legal + wireframe
+${promptFence(promptLegal)}
 
-\`\`\`
-# Día 3 — Estructura del sitio y checklist legal (solo documentación)
+## 6. Respuesta Cursor
+- Tablas markdown listas para Knowledge; sin métricas falsas.
 
-## Objetivo
-Proponer mapa de páginas y checklist de cumplimiento para un sitio de webcam. Yo pegaré el resultado en CSN Knowledge. No eres abogado: marca «revisión legal humana» donde corresponda.
+## 7. Comprobar
+- [ ] Mapa keywords + arquitectura + legal
+- [ ] ≥2 SEO Opportunities
+- [ ] LIVE/OFFLINE documentado si aplica
 
-## Contexto
-- Nicho y países objetivo: [TU BRIEF]
-- QA o producción: [QA / Producción]
-- Repo (si existe): [URL — Cursor puede leer rutas src/app o pages para ver qué ya existe]
+## 8. Si falla
+- Sin repo: arquitectura provisional; marcar «validar con código Día 4».
 
-## Tareas
-1. Mapa de páginas (lista + una frase por página).
-2. Wireframe en texto del menú principal.
-3. Checklist legal: age gate, privacy, terms, 2257 — estado sugerido (existe / falta / N/A) según el repo si lo tienes.
-4. Lista de riesgos si lanzamos sin ítem X.
-
-## Límites
-- No redactar políticas legales finales como si fueran asesoramiento jurídico.
-- No afirmar que las páginas ya están publicadas.
-
-## Entregables
-Markdown para CSN Knowledge + lista de incidencias sugeridas.
-\`\`\`
-
-## 6. Qué revisar en la respuesta de Cursor
-
-Éxito: mapa alineado con tu brief; legales marcados para revisión humana. Fallo: promete cumplimiento legal sin revisión.
-
-## 7. Cuándo terminar el día
-
-- [ ] Artículo Policy en CSN Knowledge con checklist y responsables.
-- [ ] Esquema de navegación guardado.
-- [ ] Incidencias creadas solo si hay bloqueos reales.
-
-## 8. Qué queda pendiente
-
-Revisión legal profesional; diseño visual detallado (puede ir en paralelo al Día 4).
+## 9. Pendiente
+- Implementación plantillas → Día 4.
 `;
 }

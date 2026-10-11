@@ -37,6 +37,7 @@
     "csn:console-acceptance": "node scripts/csn-console-acceptance.mjs",
     "csn:sync-7day-guide": "node scripts/csn-sync-7day-guide.mjs",
     "csn:7day-walkthrough": "node scripts/csn-7day-guide-qa-walkthrough.mjs",
+    "csn:verify-notion-guide": "node scripts/csn-verify-notion-guide-publish.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {

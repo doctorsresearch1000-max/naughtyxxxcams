@@ -1,0 +1,10 @@
+{
+  "reportId": "csn:report:csn:run:qa-guia-7d-1791712562062:p01:1791712761705",
+  "executionStatus": "failed",
+  "verificationLabel": "Registrado desde consola web",
+  "summary": "Fallo simulado walkthrough",
+  "evidenceUrls": [],
+  "tests": [],
+  "advancePhase": false,
+  "recordedAt": "2026-10-11T09:59:21.705Z"
+}

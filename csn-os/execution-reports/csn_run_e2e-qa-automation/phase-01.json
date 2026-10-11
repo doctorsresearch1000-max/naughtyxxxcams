@@ -1,0 +1,9 @@
+{
+  "reportId": "csn:report:csn:run:e2e-qa-automation:p01:1791711368490",
+  "executionStatus": "failed",
+  "verificationLabel": "Prueba UX",
+  "summary": "Fallo simulado para verificar bloqueo",
+  "evidenceUrls": [],
+  "advancePhase": false,
+  "recordedAt": "2026-10-11T09:36:08.490Z"
+}

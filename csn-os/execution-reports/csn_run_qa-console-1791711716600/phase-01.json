@@ -1,0 +1,10 @@
+{
+  "reportId": "csn:report:csn:run:qa-console-1791711716600:p01:1791711911633",
+  "executionStatus": "failed",
+  "verificationLabel": "Registrado desde consola web",
+  "summary": "Fallo simulado consola",
+  "evidenceUrls": [],
+  "tests": [],
+  "advancePhase": false,
+  "recordedAt": "2026-10-11T09:45:11.633Z"
+}

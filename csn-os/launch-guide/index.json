@@ -8,42 +8,42 @@
     },
     {
       "day": 2,
-      "title": "Evalúa el dominio y prepara la infraestructura",
-      "pageTitle": "Guía 7 días — Día 2 — Evalúa el dominio y prepara la infraestructura",
+      "title": "Dominio y entorno de trabajo",
+      "pageTitle": "Guía 7 días — Día 2 — Dominio y entorno de trabajo",
       "file": "dia-02.md"
     },
     {
       "day": 3,
-      "title": "Diseña la estructura y revisa requisitos legales",
-      "pageTitle": "Guía 7 días — Día 3 — Diseña la estructura y revisa requisitos legales",
+      "title": "Keywords, arquitectura pSEO y diseño",
+      "pageTitle": "Guía 7 días — Día 3 — Keywords, arquitectura pSEO y diseño",
       "file": "dia-03.md"
     },
     {
       "day": 4,
-      "title": "Prepara el repositorio y comprueba la calidad",
-      "pageTitle": "Guía 7 días — Día 4 — Prepara el repositorio y comprueba la calidad",
+      "title": "Plantilla maestra de perfil",
+      "pageTitle": "Guía 7 días — Día 4 — Plantilla maestra de perfil",
       "file": "dia-04.md"
     },
     {
       "day": 5,
-      "title": "Configura integraciones y feeds",
-      "pageTitle": "Guía 7 días — Día 5 — Configura integraciones y feeds",
+      "title": "Feeds e integración de datos",
+      "pageTitle": "Guía 7 días — Día 5 — Feeds e integración de datos",
       "file": "dia-05.md"
     },
     {
       "day": 6,
-      "title": "Prepara el SEO y evalúa autoridad",
-      "pageTitle": "Guía 7 días — Día 6 — Prepara el SEO y evalúa autoridad",
+      "title": "SEO técnico y reglas de indexación",
+      "pageTitle": "Guía 7 días — Día 6 — SEO técnico y reglas de indexación",
       "file": "dia-06.md"
     },
     {
       "day": 7,
-      "title": "Comprueba la web y decide el lanzamiento",
-      "pageTitle": "Guía 7 días — Día 7 — Comprueba la web y decide el lanzamiento",
+      "title": "Preview, pruebas y decisión",
+      "pageTitle": "Guía 7 días — Día 7 — Preview, pruebas y decisión",
       "file": "dia-07.md"
     }
   ],
-  "version": "practical-v1",
+  "version": "pseo-v2-notion-rich",
   "generatedFrom": [
     "csn-os/launch-guide/days/*",
     "scripts/csn-task-manifest-v2.json",

@@ -1,85 +1,79 @@
 import { notionLinks } from "../guide-context.mjs";
+import { link, promptFence } from "../guide-sections.mjs";
+import { PROMPT_PSEO_SCALE_RULES } from "../prompts-pseo.mjs";
 
 export function renderDay06() {
-  const n = notionLinks();
-  return `# Día 6 — Prepara el SEO y evalúa autoridad
+  const u = notionLinks();
+  const promptTech = `# Día 6 — SEO técnico en repo (inspección)
+
+Repo: [URL]
+Preview: [localhost:3000 o pages.dev]
+
+Implementar o verificar en código:
+- title/description por plantilla perfil y categoría
+- canonical
+- robots meta / noindex reglas perfiles no elegibles
+- sitemap generation y exclusión thin/duplicados
+- enlaces internos relacionados
+- 404 slug inválido
+
+Referencias útiles en este stack: src/lib/seo/, sitemap routes, profileContentQuality.
+
+Etiqueta cada ítem: Implementado | Probado local | Documentado | Pendiente.
+No afirmar indexación Google.`;
+
+  return `# Día 6 — SEO técnico y reglas de indexación pSEO
 
 ## 1. Qué vas a conseguir hoy
+- Reglas de **elegibilidad** antes de escalar URLs.
+- Cambios o informe SEO técnico en repo.
+- **Muestra 5 perfiles + 2 categorías** revisados (metadata + contenido).
+- Sitemap plan en Knowledge (Unverified en GSC hasta captura).
 
-Al menos **dos oportunidades SEO** en Notion, un **plan de sitemap** (sin afirmar envío a Google si no lo verificaste) y **una oportunidad de backlink** identificada, con gate de pago en Pending si implica dinero.
+## 2. Antes de empezar
+- Feed Día 5 documentado.
+- Preview local o pages.dev (ver Día 4).
 
-## 2. Qué necesitas antes de empezar
-
-- URL de staging o, en QA, URL de ejemplo acordada (ej. preview de Cloudflare).
-- **SEO:** optimización para buscadores (títulos, URLs, sitemap).
-- **GSC (Google Search Console):** herramienta gratuita de Google para ver indexación (opcional hoy).
-
-## 3. Tiempo estimado y dependencias
-
-| | |
-|--|--|
-| **Tiempo** | 3–5 horas |
-| **Herramientas de pago** | Opcionales (Ahrefs, etc.) |
+## 3. Tiempo
+- **4–6 h**
 
 ## 4. Pasos
 
-### Paso 1 — Crear SEO Opportunities
+### Paso 1 — Reglas escala pSEO
+- **Qué:** Prompt §5A → Knowledge «pSEO — Reglas indexación».
 
-- **Qué hacer:** [SEO Opportunities](${n.seoOpportunities}) → **New** (mínimo 2) · título, URL objetivo, prioridad · enlaza Site y Project Run.
-- **Comprobar:** ≥2 filas.
+### Paso 2 — SEO técnico código
+- **Qué:** Prompt §5B; commits en repo si aplica.
 
-### Paso 2 — Plan de sitemap en Knowledge
+### Paso 3 — SEO Opportunities
+- **Qué:** ${link("SEO Opportunities", u.seoOpportunities)} ≥2 tareas técnicas (canonical, sitemap, etc.).
 
-- **Qué hacer:** Artículo Runbook: URL del sitemap (ej. \`/sitemap.xml\`), pasos para enviarlo en GSC. Marca **Unverified** hasta tener captura de GSC.
-- **Comprobar:** No dice «enviado» sin prueba.
+### Paso 4 — Backlink (identificar solo)
+- **Qué:** ${link("Backlink Opportunities", u.backlinkOpportunities)} una oportunidad; gate Pending si pago.
 
-### Paso 3 — Backlink identificado
+### Paso 5 — Revisión muestra
+- **Qué:** Lista URLs en run Notes; pass/fail por fila reglas Día 3.
 
-- **Qué hacer:** [Backlink Opportunities](${n.backlinkOpportunities}) → **New** · sitio objetivo · notas de tráfico/DR si las tienes gratis · **Outreach** = Identified.
-- **Comprobar:** No envías emails de pago sin gate.
+## 5. Prompts
 
-### Paso 4 — Gate si el enlace es de pago
+### 5A — Reglas indexación
+${promptFence(PROMPT_PSEO_SCALE_RULES)}
 
-- **Qué hacer:** [Human Gates](${n.humanGates}) · **backlink** · Scope un placement · **Limits** USD · **Pending**.
+### 5B — SEO técnico
+${promptFence(promptTech)}
 
-## 5. Prompt listo para copiar en Cursor
+## 6. Respuesta Cursor
+- Tabla regla → archivo → prueba local.
 
-\`\`\`
-# Día 6 — SEO técnico en el repo (sin GSC remoto)
+## 7. Comprobar
+- [ ] Reglas escritas
+- [ ] Muestra revisada
+- [ ] Sitemap accesible en preview si implementado
 
-## Objetivo
-Revisar el código para SEO on-page y proponer entradas para Notion.
+## 8. Si falla
+- Sin preview público: solo localhost + anotar limitación.
 
-## Contexto
-- Repo: [URL]
-- URL pública o preview: [URL]
-- Nicho: [BRIEF]
-
-## Tareas
-1. Revisar metadata, sitemap, robots si existen en el repo.
-2. Proponer ≥2 SEO Opportunities (título, URL, prioridad P0-P2).
-3. Pasos para verificar sitemap (marcar Unverified si no puedes abrir GSC).
-4. Una idea de backlink realista (sin contactar aún).
-
-## Límites
-- No afirmar posiciones en Google ni DR inventados.
-
-## Entregables
-Texto para pegar en SEO Opportunities y Knowledge.
-\`\`\`
-
-## 6. Qué revisar en la respuesta de Cursor
-
-Éxito: referencias a archivos reales del repo. Fallo: métricas inventadas.
-
-## 7. Cuándo terminar el día
-
-- [ ] ≥2 SEO Opportunities.
-- [ ] Plan sitemap documentado (Unverified si aplica).
-- [ ] Backlink Opportunity + gate Pending si hay coste.
-
-## 8. Qué queda pendiente
-
-Outreach real, enlaces de pago, verificación GSC (días posteriores).
+## 9. Pendiente
+- GSC verificación externa.
 `;
 }

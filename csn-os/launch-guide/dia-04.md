@@ -1,84 +1,133 @@
-# Día 4 — Prepara el repositorio y comprueba la calidad
+# Día 4 — Plantilla maestra de perfil (código funcionando)
 
 ## 1. Qué vas a conseguir hoy
+- Repositorio operativo en tu máquina (o documentado bloqueo).
+- **Plantilla de perfil** implementada o corregida en código.
+- **Muestra:** 3 perfiles probados (live / offline / datos mínimos).
+- Fila [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) sandbox + evidencia CI si hay GitHub.
 
-El **enlace al código** documentado en Notion, una fila de **release en entorno sandbox** y **evidencia de que las pruebas automáticas (CI) se ejecutan** en GitHub — sin desplegar a producción.
+## 2. Antes de empezar
+- Arquitectura pSEO Día 3.
+- GitHub y Node instalados (para este stack).
 
-## 2. Qué necesitas antes de empezar
 
-- URL del repositorio GitHub (HTTPS público o al que tengas acceso).
-- Cuenta GitHub para ver **Actions** (pestaña de automatización).
+### Si aún no tienes repositorio de código
 
-**CI (integración continua):** programa que ejecuta lint y tests cada vez que subes cambios.
+**Opción A — Ya tienes cuenta GitHub:** crea un repositorio vacío privado o usa una plantilla Next.js acordada con tu equipo. Copia la URL `https://github.com/usuario/repo` al cuaderno.
 
-## 3. Tiempo estimado y dependencias
+**Opción B — Usas este stack de referencia (monorepo cam Next.js):** clona o haz fork de `https://github.com/doctorsresearch1000-max/naughtyxxxcams` solo si tu alcance lo autoriza (QA). Abre el proyecto en Cursor.
 
-| | |
-|--|--|
-| **Tiempo** | 2–3 horas |
-| **Depende de** | Repositorio existente |
-| **Si no hay repo** | Usa el día para documentar «repo pendiente» y salta implementación hasta tener URL |
+**Opción C — Sin acceso GitHub hoy:** marca en Notion «repo pendiente» y en Día 4 ejecuta solo el prompt de lectura si alguien te pasa un ZIP; **no** puedes marcar CI ni plantilla como «probado» hasta tener el código local.
+
+Etiqueta siempre: **Documentado** | **Implementado** | **Probado** | **Pendiente**.
+
+
+## 3. Tiempo
+- **6–8 h** si hay que implementar; **2–3 h** si solo ajustes.
 
 ## 4. Pasos
 
-### Paso 1 — Documentar el repositorio
+### Paso 1 — Repo y CI
+- **Qué:** Seguir 
+### Si aún no tienes repositorio de código
 
-- **Qué hacer:** Copia la URL `https://github.com/...` en Notes del Site o en Knowledge.
-- **Dónde:** [CSN Sites](https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca) o [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85).
-- **Comprobar:** La URL abre el repo correcto.
+**Opción A — Ya tienes cuenta GitHub:** crea un repositorio vacío privado o usa una plantilla Next.js acordada con tu equipo. Copia la URL `https://github.com/usuario/repo` al cuaderno.
 
-### Paso 2 — Crear fila de release sandbox
+**Opción B — Usas este stack de referencia (monorepo cam Next.js):** clona o haz fork de `https://github.com/doctorsresearch1000-max/naughtyxxxcams` solo si tu alcance lo autoriza (QA). Abre el proyecto en Cursor.
 
-- **Qué hacer:** [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) → **New** · **Environment** = sandbox (o staging) · **Status** = Not started · enlaza Site y Project Run.
-- **Comprobar:** Existe al menos una fila de release para tu run.
+**Opción C — Sin acceso GitHub hoy:** marca en Notion «repo pendiente» y en Día 4 ejecuta solo el prompt de lectura si alguien te pasa un ZIP; **no** puedes marcar CI ni plantilla como «probado» hasta tener el código local.
 
-### Paso 3 — Verificar GitHub Actions
+Etiqueta siempre: **Documentado** | **Implementado** | **Probado** | **Pendiente**.
+; prompt repo §5B.
+- **Dónde:** [CSN Sites](https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca) Notes con URL repo.
+- **Si no hay repo:** incidente [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66); solo documentación; **no** marcar plantilla Probada.
 
-- **Qué hacer:** En GitHub → pestaña **Actions** → abre el último workflow de lint/test en `main` o en un PR reciente. Copia la URL del run.
-- **Dónde:** Pega la URL en **Notes** de la fila CSN Releases o en Knowledge.
-- **Comprobar:** No marques éxito sin URL real; si falló, anota «falló» y el enlace.
-- **Local (opcional):** si tienes Node instalado, en la carpeta del repo: `npm run lint` y `npm test` si el README lo indica.
+### Paso 2 — Implementar plantilla maestra
+- **Qué:** Prompt §5A en Cursor con repo abierto.
+- **Comprobar:** Cambios en archivos perfil/SEO reales (ver prompt).
+- **Muestra:** 3 URLs locales documentadas.
 
-### Paso 4 — Actualizar release cuando haya SHA
+### Paso 3 — Release sandbox
+- **Qué:** [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) Environment sandbox; Notes con SHA y enlace Actions si existe.
 
-- **Qué hacer:** Si hay commit reciente, pon **Git SHA** corto en la release y **Status** = In progress.
+### Paso 4 — Knowledge
+- **Qué:** Artículo «Plantilla perfil v1» con rutas y reglas LIVE/OFFLINE.
 
-## 5. Prompt listo para copiar en Cursor
 
-```
-# Día 4 — Revisión de repo y CI (sin deploy)
+### Cómo obtener una URL de preview (staging)
+
+1. **Local (desarrollo):** con el repo abierto en Cursor/terminal, ejecuta lo que indique el README (en este stack suele ser `npm run dev` → `http://localhost:3000`). Eso es preview **local**, válida como evidencia en QA si la anotas en Notion (no es producción).
+2. **Cloudflare Pages (si el proyecto ya está conectado):** en el panel Cloudflare → Pages → tu proyecto → pestaña **Deployments** → abre la URL `*.pages.dev` del último deploy de rama preview. Requiere permiso en Cloudflare.
+3. **Si no hay deploy:** registra en [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) «Preview no disponible — falta deploy» y en Día 7 cierra con checklist **local** probada; no afirmes staging público sin URL.
+
+
+## 5. Prompts
+
+### 5A — Plantilla maestra
+```text
+# Día 4 — Plantilla maestra de perfil de modelo
 
 ## Objetivo
-Inspeccionar el repositorio del sitio y decir qué comprobaciones de calidad existen. No desplegar a producción.
+Diseñar e implementar (o corregir) la plantilla reutilizable de perfil en el repositorio real. Trabajo en código; yo registro evidencia en Notion.
 
-## Contexto
-- Repo: [URL GITHUB]
-- QA o producción: [QA / Producción]
+## Repositorio
+[URL GITHUB — obligatorio para marcar «Implementado»]
 
-## Tareas
-1. Localizar workflows en .github/workflows y resumir qué ejecutan.
-2. Indicar comandos locales recomendados (lint, test, build).
-3. Listar archivos clave de configuración (package.json, wrangler, etc.).
-4. Decir qué evidencia debo pegar en Notion (URL de Actions, SHA).
+## Archivos de referencia en este stack (inspeccionar, no asumir)
+- src/lib/profile/modelProfile.ts — ModelProfileView, status live/offline
+- src/components/profile/ModelProfileSlushyView.tsx — UI perfil
+- src/lib/seo/model-profile-metadata.ts — metadata SEO
+- src/lib/profile/useProfileStreamPlayer.ts — LIVE API cliente
+- Rutas bajo src/app/ que sirven /model o perfil (buscar profileSlug)
 
-## Límites
-- No ejecutar deploy ni cambiar secrets.
-- Etiquetar: Implementado / Solo documentado / No probado.
+## Requisitos de la plantilla
+1. Identidad: nombre artístico, slug estable, sin inventar biografía factual.
+2. LIVE/OFFLINE coherente entre badge, reproductor y metadata (documentar fuente de verdad).
+3. Categorías/atributos solo si existen en datos del feed.
+4. Title/description/canonical únicos por perfil; no duplicar solo cambiando nombre.
+5. Estados vacíos: sin foto, sin categoría, modelo eliminado del feed.
+6. Enlaces internos a categoría y perfiles relacionados con reglas claras.
+7. Móvil y rendimiento: no cargar iframe live si offline.
+
+## Alcance
+- Editar solo archivos de perfil/SEO necesarios.
+- Sin deploy, sin secretos, sin Notion API.
+
+## Muestra antes de escalar
+Implementar o verificar **3 perfiles** (1 live, 1 offline, 1 datos mínimos) con datos reales o mock QA etiquetado.
 
 ## Entregables
-Informe breve en español + URL sugerida para Notes de CSN Releases.
+- Resumen de cambios y archivos tocados.
+- Checklist: Implementado / Probado local / Solo documentado.
+- Capturas o rutas locales a probar (ej. /model/[slug]).
+- Texto para CSN Knowledge «Plantilla perfil v1».
 ```
 
-## 6. Qué revisar en la respuesta de Cursor
+### 5B — Repo y CI
+```text
+# Día 4 — Preparar repo y CI (sin deploy)
 
-Éxito: nombra workflows reales del repo. Fallo: «todo verde» sin haber leído el repo.
+Repo: [URL]
 
-## 7. Cuándo terminar el día
+1. Clonar/abrir en Cursor.
+2. Listar workflows .github/workflows.
+3. Comandos: npm install, npm run lint, npm test, npm run build (si existe).
+4. Crear rama de trabajo para plantilla perfil.
 
-- [ ] URL de repo en Notion.
-- [ ] Fila CSN Releases sandbox.
-- [ ] URL de GitHub Actions en Notes (o «pendiente» documentado con motivo).
+Entrega: URLs Actions si existen; qué está Probado local vs Pendiente.
+```
 
-## 8. Qué queda pendiente
+## 6. Respuesta Cursor
+- Diff lógico, checklist Implementado/Probado; comandos ejecutados.
 
-Arreglar CI rojo (día siguiente o incidencia); deploy sigue prohibido sin gates posteriores.
+## 7. Comprobar
+- [ ] Repo local corre (dev) o bloqueo documentado
+- [ ] 3 perfiles revisados en navegador
+- [ ] Release + CI documentados
+
+## 8. Si falla
+- CI rojo: anotar URL fallo; no deploy.
+- Build local falla: pegar error en Incidents.
+
+## 9. Pendiente
+- Deploy preview cloud → Día 7 si permisos Cloudflare.

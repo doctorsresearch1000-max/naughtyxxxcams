@@ -1,90 +1,78 @@
 import { notionLinks } from "../guide-context.mjs";
+import { PREVIEW_STAGING, SIN_REPOSITORIO, link, promptFence } from "../guide-sections.mjs";
+import { PROMPT_MASTER_PROFILE } from "../prompts-pseo.mjs";
 
 export function renderDay04() {
-  const n = notionLinks();
-  return `# Día 4 — Prepara el repositorio y comprueba la calidad
+  const u = notionLinks();
+  const promptRepo = `# Día 4 — Preparar repo y CI (sin deploy)
+
+Repo: [URL]
+
+1. Clonar/abrir en Cursor.
+2. Listar workflows .github/workflows.
+3. Comandos: npm install, npm run lint, npm test, npm run build (si existe).
+4. Crear rama de trabajo para plantilla perfil.
+
+Entrega: URLs Actions si existen; qué está Probado local vs Pendiente.`;
+
+  return `# Día 4 — Plantilla maestra de perfil (código funcionando)
 
 ## 1. Qué vas a conseguir hoy
+- Repositorio operativo en tu máquina (o documentado bloqueo).
+- **Plantilla de perfil** implementada o corregida en código.
+- **Muestra:** 3 perfiles probados (live / offline / datos mínimos).
+- Fila ${link("CSN Releases", u.csnReleases)} sandbox + evidencia CI si hay GitHub.
 
-El **enlace al código** documentado en Notion, una fila de **release en entorno sandbox** y **evidencia de que las pruebas automáticas (CI) se ejecutan** en GitHub — sin desplegar a producción.
+## 2. Antes de empezar
+- Arquitectura pSEO Día 3.
+- GitHub y Node instalados (para este stack).
 
-## 2. Qué necesitas antes de empezar
+${SIN_REPOSITORIO}
 
-- URL del repositorio GitHub (HTTPS público o al que tengas acceso).
-- Cuenta GitHub para ver **Actions** (pestaña de automatización).
-
-**CI (integración continua):** programa que ejecuta lint y tests cada vez que subes cambios.
-
-## 3. Tiempo estimado y dependencias
-
-| | |
-|--|--|
-| **Tiempo** | 2–3 horas |
-| **Depende de** | Repositorio existente |
-| **Si no hay repo** | Usa el día para documentar «repo pendiente» y salta implementación hasta tener URL |
+## 3. Tiempo
+- **6–8 h** si hay que implementar; **2–3 h** si solo ajustes.
 
 ## 4. Pasos
 
-### Paso 1 — Documentar el repositorio
+### Paso 1 — Repo y CI
+- **Qué:** Seguir ${SIN_REPOSITORIO}; prompt repo §5B.
+- **Dónde:** ${link("CSN Sites", u.csnSites)} Notes con URL repo.
+- **Si no hay repo:** incidente ${link("CSN Incidents", u.csnIncidents)}; solo documentación; **no** marcar plantilla Probada.
 
-- **Qué hacer:** Copia la URL \`https://github.com/...\` en Notes del Site o en Knowledge.
-- **Dónde:** [CSN Sites](${n.csnSites}) o [CSN Knowledge](${n.csnKnowledge}).
-- **Comprobar:** La URL abre el repo correcto.
+### Paso 2 — Implementar plantilla maestra
+- **Qué:** Prompt §5A en Cursor con repo abierto.
+- **Comprobar:** Cambios en archivos perfil/SEO reales (ver prompt).
+- **Muestra:** 3 URLs locales documentadas.
 
-### Paso 2 — Crear fila de release sandbox
+### Paso 3 — Release sandbox
+- **Qué:** ${link("CSN Releases", u.csnReleases)} Environment sandbox; Notes con SHA y enlace Actions si existe.
 
-- **Qué hacer:** [CSN Releases](${n.csnReleases}) → **New** · **Environment** = sandbox (o staging) · **Status** = Not started · enlaza Site y Project Run.
-- **Comprobar:** Existe al menos una fila de release para tu run.
+### Paso 4 — Knowledge
+- **Qué:** Artículo «Plantilla perfil v1» con rutas y reglas LIVE/OFFLINE.
 
-### Paso 3 — Verificar GitHub Actions
+${PREVIEW_STAGING}
 
-- **Qué hacer:** En GitHub → pestaña **Actions** → abre el último workflow de lint/test en \`main\` o en un PR reciente. Copia la URL del run.
-- **Dónde:** Pega la URL en **Notes** de la fila CSN Releases o en Knowledge.
-- **Comprobar:** No marques éxito sin URL real; si falló, anota «falló» y el enlace.
-- **Local (opcional):** si tienes Node instalado, en la carpeta del repo: \`npm run lint\` y \`npm test\` si el README lo indica.
+## 5. Prompts
 
-### Paso 4 — Actualizar release cuando haya SHA
+### 5A — Plantilla maestra
+${promptFence(PROMPT_MASTER_PROFILE)}
 
-- **Qué hacer:** Si hay commit reciente, pon **Git SHA** corto en la release y **Status** = In progress.
+### 5B — Repo y CI
+${promptFence(promptRepo)}
 
-## 5. Prompt listo para copiar en Cursor
+## 6. Respuesta Cursor
+- Diff lógico, checklist Implementado/Probado; comandos ejecutados.
 
-\`\`\`
-# Día 4 — Revisión de repo y CI (sin deploy)
+## 7. Comprobar
+- [ ] Repo local corre (dev) o bloqueo documentado
+- [ ] 3 perfiles revisados en navegador
+- [ ] Release + CI documentados
 
-## Objetivo
-Inspeccionar el repositorio del sitio y decir qué comprobaciones de calidad existen. No desplegar a producción.
+## 8. Si falla
+- CI rojo: anotar URL fallo; no deploy.
+- Build local falla: pegar error en Incidents.
 
-## Contexto
-- Repo: [URL GITHUB]
-- QA o producción: [QA / Producción]
-
-## Tareas
-1. Localizar workflows en .github/workflows y resumir qué ejecutan.
-2. Indicar comandos locales recomendados (lint, test, build).
-3. Listar archivos clave de configuración (package.json, wrangler, etc.).
-4. Decir qué evidencia debo pegar en Notion (URL de Actions, SHA).
-
-## Límites
-- No ejecutar deploy ni cambiar secrets.
-- Etiquetar: Implementado / Solo documentado / No probado.
-
-## Entregables
-Informe breve en español + URL sugerida para Notes de CSN Releases.
-\`\`\`
-
-## 6. Qué revisar en la respuesta de Cursor
-
-Éxito: nombra workflows reales del repo. Fallo: «todo verde» sin haber leído el repo.
-
-## 7. Cuándo terminar el día
-
-- [ ] URL de repo en Notion.
-- [ ] Fila CSN Releases sandbox.
-- [ ] URL de GitHub Actions en Notes (o «pendiente» documentado con motivo).
-
-## 8. Qué queda pendiente
-
-Arreglar CI rojo (día siguiente o incidencia); deploy sigue prohibido sin gates posteriores.
+## 9. Pendiente
+- Deploy preview cloud → Día 7 si permisos Cloudflare.
 `;
 }
