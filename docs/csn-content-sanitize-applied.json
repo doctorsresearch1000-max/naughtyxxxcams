@@ -1,14 +1,14 @@
 {
-  "at": "2026-10-11T09:35:06.810Z",
+  "at": "2026-10-11T09:47:12.491Z",
   "blocked": false,
   "rootPageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
-  "hubMarker": "csn-hub-marker-v5",
+  "hubMarker": "csn-hub-marker-v6",
   "corrections": [],
   "hub": {
     "rootUrl": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
-    "hubMarker": "csn-hub-marker-v5",
+    "hubMarker": "csn-hub-marker-v6",
     "productionCount": 0,
-    "qaCount": 8
+    "qaCount": 9
   },
   "legacyIntegrityOk": true,
   "legacyBefore": {

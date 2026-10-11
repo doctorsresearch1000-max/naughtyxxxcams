@@ -9,7 +9,7 @@ const phasesMeta = JSON.parse(
 
 const rt = (text) => [{ text: { content: (text || "").slice(0, 2000) } }];
 
-function slugKey(name) {
+export function slugKey(name) {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")

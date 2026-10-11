@@ -4,7 +4,7 @@ import { deleteBlocksExceptChildPagesAndDatabases, rt } from "./notion-markdown-
 import { PRIMARY_ENTRY_TITLE } from "./primary-entry-page.mjs";
 import { buildHubSnapshots } from "./project-ux.mjs";
 
-const HUB_MARKER = "csn-hub-marker-v5";
+const HUB_MARKER = "csn-hub-marker-v6";
 
 function link(label, url) {
   return [{ type: "text", text: { content: label, link: url ? { url } : null } }];
@@ -68,11 +68,20 @@ export async function syncCanonicalRootHub(manifest) {
         ),
       },
     },
+    {
+      object: "block",
+      type: "callout",
+      callout: {
+        icon: { emoji: "🖥️" },
+        rich_text: rt(
+          "Consola operativa (formularios reales, servidor autorizado): abre /csn-console en el despliegue del repo. Requiere token CSN_CONSOLE_TOKEN (no es la clave de Notion). Notion no ejecuta acciones; la consola sí.",
+        ),
+      },
+    },
 
     h2("A. Crear un sitio nuevo"),
-    bullet(
-      "Registra el sitio, crea el plan de 12 fases y las tareas de ejecución en un solo paso (terminal con acceso al repo).",
-    ),
+    bullet("Preferido: formulario en /csn-console (crea en Notion vía API del servidor)."),
+    bullet("Alternativa CLI con acceso al repo:"),
     codeLine(
       'npm run csn -- proyecto crear --nombre="Mi sitio" --launch-key=mi-sitio --brief="Objetivo, nicho y alcance" --repo=https://github.com/org/repo --production=true',
     ),

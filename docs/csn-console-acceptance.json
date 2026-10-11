@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-11T09:46:16.300Z",
+  "launchKey": "qa-console-1791711716600",
+  "legacyBefore": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacyAfter": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "checks": {
+    "create": true,
+    "notionRun": true,
+    "nextTask": true,
+    "progressFromTasks": true,
+    "prompt": true,
+    "successRecord": true,
+    "failureBlocks": true,
+    "idempotent": true,
+    "legacyUnchanged": true,
+    "allPass": true
+  },
+  "interface": "/csn-console",
+  "apiBase": "/api/csn"
+}
