@@ -35,7 +35,9 @@ Machine-readable IDs: `scripts/notion-csn-isolated-manifest.json`.
 
 ## Master SOP (12 phases)
 
-On the root page: full **Master SOP (12 phases)** with executable bullets, **Phase 2 expireddomains.net** workflow, and **[Verified]** / **[Unverified]** labels per phase. Supported views are documented for manual creation in Notion UI (API does not expose view definitions).
+On the root page: **Master SOP (12 phases)** checklist. Full executable runbooks: [12-Phase Operational Runbooks](https://app.notion.com/p/12-Phase-Operational-Runbooks-3f684cd085ae81c486c9f909182fa38c) (see also `docs/notion-csn-operational-report.md`).
+
+Operational task manifest v2: `npm run notion:csn-operational` → 28 tasks in Tasks DB (`csn:task:v2:pNN:MM` External IDs).
 
 ## Sandbox QA (`QA-SANDBOX-NOTION`)
 

@@ -168,6 +168,32 @@ async function getDataSourceId(notion, databaseId) {
   return ds;
 }
 
+async function findChildDatabaseByTitle(notion, parentPageId, title) {
+  let cursor;
+  do {
+    const res = await notion.blocks.children.list({
+      block_id: parentPageId,
+      start_cursor: cursor,
+      page_size: 100,
+    });
+    for (const block of res.results) {
+      if (block.type !== "child_database") continue;
+      try {
+        const db = await notion.databases.retrieve({ database_id: block.id });
+        const dbTitle = db.title?.map((t) => t.plain_text).join("") ?? "";
+        if (dbTitle === title) {
+          const dsId = db.data_sources?.[0]?.id;
+          return { id: db.id, dataSourceId: dsId, title, url: db.url };
+        }
+      } catch {
+        /* skip */
+      }
+    }
+    cursor = res.has_more ? res.next_cursor : undefined;
+  } while (cursor);
+  return null;
+}
+
 async function ensureDatabase(notion, manifest, key, title, properties, parentPageId) {
   if (manifest.databases?.[key]?.id) {
     try {
@@ -176,6 +202,12 @@ async function ensureDatabase(notion, manifest, key, title, properties, parentPa
     } catch {
       delete manifest.databases[key];
     }
+  }
+  const existing = await findChildDatabaseByTitle(notion, parentPageId, title);
+  if (existing?.dataSourceId) {
+    manifest.databases = manifest.databases || {};
+    manifest.databases[key] = existing;
+    return existing;
   }
   const created = await notion.databases.create({
     parent: { type: "page_id", page_id: parentPageId },

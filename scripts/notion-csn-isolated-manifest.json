@@ -2,88 +2,88 @@
   "version": 1,
   "databases": {
     "csnSites": {
-      "id": "8c724803-29d2-44cf-9635-db698ec34800",
-      "dataSourceId": "16ac2141-3c13-44d5-b78c-2bc4c4c53d7c",
+      "id": "7b6afa6b-844b-438f-9321-0cdb8ee728ca",
+      "dataSourceId": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
       "title": "CSN Sites",
-      "url": "https://app.notion.com/p/8c72480329d244cf9635db698ec34800"
+      "url": "https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca"
     },
     "sopVersions": {
-      "id": "7bb21a35-e3fb-4545-b63c-ecb1adf4ece9",
-      "dataSourceId": "526a9117-f39c-4bd3-a1cb-20657c89214e",
+      "id": "9ed26a47-a251-42e8-a987-676d698b004c",
+      "dataSourceId": "a14777aa-6ca0-471e-a7ca-50ff07d9bcea",
       "title": "SOP Versions",
-      "url": "https://app.notion.com/p/7bb21a35e3fb4545b63cecb1adf4ece9"
+      "url": "https://app.notion.com/p/9ed26a47a25142e8a987676d698b004c"
     },
     "projectRuns": {
-      "id": "9bb6ddac-8698-4a74-9db5-a967436047a1",
-      "dataSourceId": "50c39479-e33c-4c65-b114-4600eafadb01",
+      "id": "d0e397e4-95e5-44d2-8a68-99bc6a1e654f",
+      "dataSourceId": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
       "title": "Project Runs",
-      "url": "https://app.notion.com/p/9bb6ddac86984a749db5a967436047a1"
+      "url": "https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f"
     },
     "tasks": {
-      "id": "025baa95-9f08-432f-982a-4bd4dd7b5f1b",
-      "dataSourceId": "ae4e1b24-d72d-4067-a10a-8f1ace7b4275",
+      "id": "30d3973d-e3e3-40b0-957a-9f8c34db43ee",
+      "dataSourceId": "f0c88978-015a-4b67-8a6d-3f493d53c425",
       "title": "Tasks",
-      "url": "https://app.notion.com/p/025baa959f08432f982a4bd4dd7b5f1b"
+      "url": "https://app.notion.com/p/30d3973de3e340b0957a9f8c34db43ee"
     },
     "domainCandidates": {
-      "id": "d1ea7d54-2253-445b-aa06-667270e2688a",
-      "dataSourceId": "f1774a89-a039-4541-8086-26c8024aa146",
+      "id": "6b212615-0945-4bc3-b615-faca86776831",
+      "dataSourceId": "9977bb7c-6fc2-4440-8ab2-11da37efec28",
       "title": "Domain Candidates",
-      "url": "https://app.notion.com/p/d1ea7d542253445baa06667270e2688a"
+      "url": "https://app.notion.com/p/6b21261509454bc3b615faca86776831"
     },
     "seoOpportunities": {
-      "id": "36da9cdf-48f1-4d81-a3b6-e07409743a3e",
-      "dataSourceId": "67374270-91f6-481f-82be-41e9536c793d",
+      "id": "050ba07c-be8f-45ca-93fa-9bb30d9ed739",
+      "dataSourceId": "7d043e28-9232-48a9-9504-4c393e21f1c5",
       "title": "SEO Opportunities",
-      "url": "https://app.notion.com/p/36da9cdf48f14d81a3b6e07409743a3e"
+      "url": "https://app.notion.com/p/050ba07cbe8f45ca93fa9bb30d9ed739"
     },
     "backlinkOpportunities": {
-      "id": "9496f874-dfa4-47c9-8c09-76c5e05bec43",
-      "dataSourceId": "893603ee-a6e7-41cf-8be3-068529623ec3",
+      "id": "ff38edc7-8b1d-43ce-b692-6c630058066e",
+      "dataSourceId": "38d91ac0-255f-41ee-b307-294ebf67e007",
       "title": "Backlink Opportunities",
-      "url": "https://app.notion.com/p/9496f874dfa447c98c0976c5e05bec43"
+      "url": "https://app.notion.com/p/ff38edc78b1d43ceb6926c630058066e"
     },
     "feedSyncRuns": {
-      "id": "4c8e9760-2465-4e9d-bf45-4c62b6e60bad",
-      "dataSourceId": "48219d1b-3286-48e1-a185-e832a2fc2226",
+      "id": "ffc92a97-84af-41a0-b993-6cbfe0ca2831",
+      "dataSourceId": "32be837e-338b-482b-a679-3c4258a20de9",
       "title": "Feed Sync Runs",
-      "url": "https://app.notion.com/p/4c8e976024654e9dbf454c62b6e60bad"
+      "url": "https://app.notion.com/p/ffc92a9784af41a0b9936cbfe0ca2831"
     },
     "csnReleases": {
-      "id": "0c191658-f145-4c16-84a6-ab3db7ddee29",
-      "dataSourceId": "e0f6bf07-5e21-441d-b2b3-fee92d107dd6",
+      "id": "aec67ee4-0ad2-476a-b498-c4207c76fbd7",
+      "dataSourceId": "b5a395e4-d8e5-4f3c-938d-2044a83de749",
       "title": "CSN Releases",
-      "url": "https://app.notion.com/p/0c191658f1454c1684a6ab3db7ddee29"
+      "url": "https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7"
     },
     "csnIncidents": {
-      "id": "b8489c8f-da8e-4f22-a1c0-88c312337068",
-      "dataSourceId": "a61cc5f5-b70f-4c09-94e1-cfb479177cd4",
+      "id": "793edf56-ea43-41cf-baaf-2c3dd0976b66",
+      "dataSourceId": "5bace1da-4a65-4888-8294-8504825d61e0",
       "title": "CSN Incidents",
-      "url": "https://app.notion.com/p/b8489c8fda8e4f22a1c088c312337068"
+      "url": "https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66"
     },
     "csnMaintenance": {
-      "id": "36171408-9a75-451e-97d5-73bffa462330",
-      "dataSourceId": "892543dd-d543-483a-b0bb-59351669c3b5",
+      "id": "e1dc3148-41b8-4783-a79e-185b0fde5280",
+      "dataSourceId": "7f33e6bc-92a0-441c-805e-b9aea54a6444",
       "title": "CSN Maintenance",
-      "url": "https://app.notion.com/p/361714089a75451e97d573bffa462330"
+      "url": "https://app.notion.com/p/e1dc314841b84783a79e185b0fde5280"
     },
     "csnKnowledge": {
-      "id": "55afb219-330a-430b-b44b-78be3693563d",
-      "dataSourceId": "486763c4-49a3-448e-95c8-b12c78c3c9fc",
+      "id": "3d7f94b0-d329-4789-846a-b221945c5b85",
+      "dataSourceId": "fa22a017-b68d-4516-8d8b-21f9af8e47fb",
       "title": "CSN Knowledge",
-      "url": "https://app.notion.com/p/55afb219330a430bb44b78be3693563d"
+      "url": "https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85"
     },
     "launchKpiSnapshots": {
-      "id": "96187b61-1d53-433e-9c2f-8083378402b9",
-      "dataSourceId": "7b18d071-e781-4ca1-ab87-33010e3973e0",
+      "id": "f01f1be5-8f36-4081-92d1-7fbe6eff7ca8",
+      "dataSourceId": "126ac339-d482-408d-b1c0-c72096febe47",
       "title": "Launch KPI Snapshots",
-      "url": "https://app.notion.com/p/96187b611d53433e9c2f8083378402b9"
+      "url": "https://app.notion.com/p/f01f1be58f36408192d17fbe6eff7ca8"
     },
     "humanGates": {
-      "id": "1e929eb1-94e5-48fb-b4fd-a8fe05cb3355",
-      "dataSourceId": "2289078e-fbf0-4937-88b0-7ad4fd47e221",
+      "id": "80625683-1553-451d-9c84-528f2a3ad654",
+      "dataSourceId": "351d0959-e66e-4370-9039-52e8a80b9bf9",
       "title": "Human Gates",
-      "url": "https://app.notion.com/p/1e929eb194e548fbb4fda8fe05cb3355"
+      "url": "https://app.notion.com/p/806256831553451d9c84528f2a3ad654"
     }
   },
   "legacyBaselineBefore": {
@@ -97,8 +97,7 @@
     "kpi2": 4
   },
   "parentPageId": "3f484cd0-85ae-8032-bff1-c16e871e6357",
-  "rootPageId": "3f684cd0-85ae-8167-bf90-d1f31b07025e",
-  "rootPageUrl": "https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae8167bf90d1f31b07025e",
+  "rootPageUrl": "https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae811fa929c4b4ccbcb56a",
   "sopBlocksAppended": true,
   "legacyBaselineAfter": {
     "hub": 4,
@@ -113,20 +112,131 @@
   "legacyIntegrityOk": true,
   "qa": {
     "first": {
-      "siteId": "3f684cd0-85ae-8190-9ade-c1e2750d9470",
-      "runId": "3f684cd0-85ae-8114-82ee-cfda48080b19",
+      "siteId": "3f684cd0-85ae-81e8-9c32-d84530bd0a66",
+      "runId": "3f684cd0-85ae-8163-bd91-c543e4878c1c",
       "siteCount": 1,
       "runCount": 1,
       "idempotent": true
     },
     "second": {
-      "siteId": "3f684cd0-85ae-8190-9ade-c1e2750d9470",
-      "runId": "3f684cd0-85ae-8114-82ee-cfda48080b19",
+      "siteId": "3f684cd0-85ae-81e8-9c32-d84530bd0a66",
+      "runId": "3f684cd0-85ae-8163-bd91-c543e4878c1c",
       "siteCount": 1,
       "runCount": 1,
       "idempotent": true
     },
     "idempotent": true
   },
-  "completedAt": "2026-10-11T07:41:46.829Z"
+  "completedAt": "2026-10-11T07:49:03.661Z",
+  "rootPageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+  "runbookPageUrl": "https://app.notion.com/p/12-Phase-Operational-Runbooks-3f684cd085ae81c486c9f909182fa38c",
+  "runbookPageId": "3f684cd0-85ae-81c4-86c9-f909182fa38c",
+  "operational": {
+    "completedAt": "2026-10-11T07:52:45.620Z",
+    "runbookPageId": "3f684cd0-85ae-81c4-86c9-f909182fa38c",
+    "taskManifestVersion": 2,
+    "taskUpsert": {
+      "created": 28,
+      "updated": 0,
+      "total": 28
+    },
+    "qa": {
+      "phasesWithTasks": {
+        "1": {
+          "count": 3,
+          "ids": [
+            "csn:task:v2:p01:01",
+            "csn:task:v2:p01:02",
+            "csn:task:v2:p01:03"
+          ]
+        },
+        "2": {
+          "count": 4,
+          "ids": [
+            "csn:task:v2:p02:01",
+            "csn:task:v2:p02:02",
+            "csn:task:v2:p02:03",
+            "csn:task:v2:p02:04"
+          ]
+        },
+        "3": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p03:01",
+            "csn:task:v2:p03:02"
+          ]
+        },
+        "4": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p04:01",
+            "csn:task:v2:p04:02"
+          ]
+        },
+        "5": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p05:01",
+            "csn:task:v2:p05:02"
+          ]
+        },
+        "6": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p06:01",
+            "csn:task:v2:p06:02"
+          ]
+        },
+        "7": {
+          "count": 1,
+          "ids": [
+            "csn:task:v2:p07:01"
+          ]
+        },
+        "8": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p08:01",
+            "csn:task:v2:p08:02"
+          ]
+        },
+        "9": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p09:01",
+            "csn:task:v2:p09:02"
+          ]
+        },
+        "10": {
+          "count": 3,
+          "ids": [
+            "csn:task:v2:p10:01",
+            "csn:task:v2:p10:02",
+            "csn:task:v2:p10:03"
+          ]
+        },
+        "11": {
+          "count": 2,
+          "ids": [
+            "csn:task:v2:p11:01",
+            "csn:task:v2:p11:02"
+          ]
+        },
+        "12": {
+          "count": 3,
+          "ids": [
+            "csn:task:v2:p12:01",
+            "csn:task:v2:p12:02",
+            "csn:task:v2:p12:03"
+          ]
+        }
+      },
+      "notionTaskRows": 31,
+      "missingManifestInNotion": [],
+      "duplicateExternalIdsInManifest": [],
+      "qaSiteRecordClass": "QA test-only",
+      "qaKpiSnapshots": 1,
+      "idempotencyRerun": true
+    }
+  }
 }
