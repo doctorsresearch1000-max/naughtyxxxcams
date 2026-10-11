@@ -1,0 +1,2250 @@
+{
+  "auditedAt": "2026-10-11T11:28:36.288Z",
+  "readOnly": true,
+  "allowedApiSurface": [
+    "databases.retrieve",
+    "dataSources.retrieve",
+    "dataSources.query",
+    "views.list",
+    "views.retrieve",
+    "pages.retrieve",
+    "blocks.children.list",
+    "search"
+  ],
+  "countsStart": {
+    "hub": 4,
+    "ops": 19,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacySix": {
+    "hub": {
+      "label": "CAM SITE NETWORK OS",
+      "databaseId": "3f384cd0-85ae-80bd-be51-c17104511bfa",
+      "dataSourceId": "3f384cd0-85ae-8078-9afc-000be75ab268",
+      "url": "https://app.notion.com/p/3f384cd085ae80bdbe51c17104511bfa",
+      "title": "CAM SITE NETWORK OS",
+      "descriptionExcerpt": "Registro y monitorización central de todos los dominios de la red.\nAquí controlo el estado, ingresos mensuales, clicks diarios, páginas indexadas y hosting de cada sitio.",
+      "isInline": false,
+      "rowCount": 4,
+      "propertyTypes": {
+        "GSC": "rich_text",
+        "Monthly Revenue": "rich_text",
+        "Indexed Pages": "rich_text",
+        "Domains": "rich_text",
+        "Goal Clicks": "rich_text",
+        "KPI History": "relation",
+        "Daily Clicks": "number",
+        "Deployments & Releases": "rich_text",
+        "Status": "rich_text",
+        "GitHub Repos": "rich_text",
+        "Hosting / Platform": "title"
+      },
+      "relations": {
+        "KPI History": {
+          "data_source_id": "439defb6-f966-4b56-9547-866c3e565fc1",
+          "type": "dual_property"
+        }
+      },
+      "views": [
+        {
+          "id": "3f384cd0-85ae-806e-b551-000c6735b369",
+          "name": "/database",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-8157-a40d-000c75fcf0df",
+          "name": "CSN · 1 — Network overview",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-8138-b0b2-000c31bafdb4",
+          "name": "CSN · 2 — Needs attention (sites Pending)",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"zZUd\",\"rich_text\":{\"contains\":\"Pending\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-8115-b686-000c293db746",
+          "name": "CSN · 3 — Active sites",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"zZUd\",\"rich_text\":{\"contains\":\"Active\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-8126-8e3f-000cabf5c47e",
+          "name": "CSN · 4 — Quick access (áreas CSN)",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-8178-ac9f-000c0567bfa4",
+          "name": "CSN · 5 — By site (dominios)",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-810f-8ed8-000c0e8edaa0",
+          "name": "CSN · 6 — Sitios Pending (bandeja)",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"zZUd\",\"rich_text\":{\"contains\":\"Pending\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-81ea-b1e0-000c6300395f",
+          "name": "CSN · 7 — Acceso: usar OPERATIONS CENTER",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Pending": 1,
+          "Active": 3
+        }
+      },
+      "samples": [
+        {
+          "id": "3f484cd0-85ae-8032-bff1-c16e871e6357",
+          "props": {
+            "Monthly Revenue": "$0.00",
+            "Domains": "clickforcamgirls.com",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": null,
+            "Status": "Pending",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        },
+        {
+          "id": "3f484cd0-85ae-800d-a256-e4c5526ec8fa",
+          "props": {
+            "GSC": "https://search.google.com/search-console/performance/search-analytics?resource_i",
+            "Monthly Revenue": "$116.31",
+            "Indexed Pages": "8,932",
+            "Domains": "www.telehub.cam",
+            "Goal Clicks": "1,000",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": 521,
+            "Deployments & Releases": "9th October 2026",
+            "Status": "Active",
+            "GitHub Repos": "https://github.com/doctorsresearch1000-max/TeleHub",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        },
+        {
+          "id": "3f384cd0-85ae-80e4-bd3f-cc84f90bb0de",
+          "props": {
+            "GSC": "https://search.google.com/search-console/performance/search-analytics?resource_i",
+            "Monthly Revenue": "$0.00",
+            "Indexed Pages": "0",
+            "Domains": "www.maturecamrooms.com",
+            "Goal Clicks": "100",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": 0,
+            "Deployments & Releases": "9th October 2026",
+            "Status": "Active",
+            "GitHub Repos": "https://github.com/doctorsresearch1000-max/maturecamrooms",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        },
+        {
+          "id": "3f384cd0-85ae-801c-8ddb-f78c64aa7fc2",
+          "props": {
+            "GSC": "https://search.google.com/search-console/performance/search-analytics?resource_i",
+            "Monthly Revenue": "$0.00",
+            "Indexed Pages": "2",
+            "Domains": "www.naughtyxxxcams.com",
+            "Goal Clicks": "100",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": 0,
+            "Deployments & Releases": "9th October 2026",
+            "Status": "Active",
+            "GitHub Repos": "https://github.com/doctorsresearch1000-max/naughtyxxxcams",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        }
+      ]
+    },
+    "ops": {
+      "label": "OPERATIONS CENTER",
+      "databaseId": "3f484cd0-85ae-804d-b61a-d87b93c11734",
+      "dataSourceId": "3fd84cd0-85ae-82af-94b9-074cf3e37156",
+      "url": "https://app.notion.com/p/3f484cd085ae804db61ad87b93c11734",
+      "title": "OPERATIONS CENTER",
+      "descriptionExcerpt": "Control operativo de todos los sitios de CAM SITE NETWORK OS.\nAquí gestiono tareas, incidencias técnicas, despliegues y mantenimiento de toda la red.",
+      "isInline": false,
+      "rowCount": 19,
+      "propertyTypes": {
+        "Due Date (date)": "date",
+        "Due Date": "rich_text",
+        "CSN Task Key": "rich_text",
+        "Cam Site": "relation",
+        "Issue": "relation",
+        "Task": "rich_text",
+        "KPI History": "relation",
+        "Category ": "rich_text",
+        "Routine": "relation",
+        "Deployment": "relation",
+        "Status": "rich_text",
+        "Site": "rich_text",
+        "Next Action": "title",
+        "Priority": "rich_text"
+      },
+      "relations": {
+        "Cam Site": {
+          "data_source_id": "3f384cd0-85ae-8078-9afc-000be75ab268",
+          "type": "single_property"
+        },
+        "Issue": {
+          "data_source_id": "ea084cd0-85ae-83ac-9f12-07292a3bb2da",
+          "type": "single_property"
+        },
+        "KPI History": {
+          "data_source_id": "aa2b3bfd-eb29-4057-b3de-4899c3ea69e5",
+          "type": "dual_property"
+        },
+        "Routine": {
+          "data_source_id": "60284cd0-85ae-8292-8363-07d4ecd2598b",
+          "type": "single_property"
+        },
+        "Deployment": {
+          "data_source_id": "36c84cd0-85ae-822f-a249-877e009315f9",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "08684cd0-85ae-832f-a69a-8898369f6d80",
+          "name": "/database",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-819d-b9f7-000ca971c1a6",
+          "name": "OC · All Tasks",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-81fd-8138-000c942e372d",
+          "name": "OC · In progress",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"xRut\",\"rich_text\":{\"contains\":\"In Progress\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-817a-87d9-000ce679b108",
+          "name": "OC · Blocked",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"xRut\",\"rich_text\":{\"contains\":\"Blocked\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-813a-af7a-000c334243cd",
+          "name": "OC · Today / due text set",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"S;@W\",\"rich_text\":{\"is_not_empty\":true}},{\"property\":\"xRut\",\"rich_text\":{\"does_not_contain\":\"Done\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-811e-bb88-000cdc03ccc1",
+          "name": "OC · Overdue (abiertas con fecha)",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"S;@W\",\"rich_text\":{\"is_not_empty\":true}},{\"property\":\"xRut\",\"rich_text\":{\"does_not_contain\":\"Done\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-8141-8e45-000c1a4bd85c",
+          "name": "OC · Upcoming (Ready)",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"xRut\",\"rich_text\":{\"contains\":\"Ready\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-81e3-a979-000c4e39df88",
+          "name": "OC · By Site",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-81b8-bcbd-000c63ce88b5",
+          "name": "Bandeja · All Tasks",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-81ee-8dae-000c398ec13f",
+          "name": "Bandeja · Today",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"xRut\",\"rich_text\":{\"does_not_contain\":\"Done\"}},{\"property\":\"@iw~\",\"date\":{\"equals\":\"today\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-81fb-82d6-000c29e3a646",
+          "name": "Bandeja · Overdue",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"xRut\",\"rich_text\":{\"does_not_contain\":\"Done\"}},{\"property\":\"@iw~\",\"date\":{\"before\":\"today\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-8139-8f34-000c247edf03",
+          "name": "Bandeja · Blocked",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"xRut\",\"rich_text\":{\"contains\":\"Blocked\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-81d7-888c-000c7062562a",
+          "name": "Bandeja · In Progress",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"xRut\",\"rich_text\":{\"contains\":\"In Progress\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-81f7-a34e-000c2cd8b153",
+          "name": "Bandeja · Upcoming",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"xRut\",\"rich_text\":{\"does_not_contain\":\"Done\"}},{\"property\":\"@iw~\",\"date\":{\"after\":\"today\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-81b4-b05c-000cf22f7650",
+          "name": "Bandeja · Unscheduled",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"xRut\",\"rich_text\":{\"does_not_contain\":\"Done\"}},{\"property\":\"@iw~\",\"date\":{\"is_empty\":true}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-8146-a398-000c22755a14",
+          "name": "Bandeja · By Site",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Ready": 11,
+          "In Progress": 7,
+          "Done": 1
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8134-afc5-eb64f520e583",
+          "props": {
+            "CSN Task Key": "csn:ops:v2:routine:3f684cd0-85ae-816a-b637-cadf195ae476",
+            "Cam Site": "[relation:0]",
+            "Issue": "[relation:0]",
+            "Task": "Revisar cobertura de indexación en Search Console",
+            "KPI History": "[relation:0]",
+            "Category ": "Search Console e indexación",
+            "Routine": "[relation:1]",
+            "Deployment": "[relation:0]",
+            "Status": "Ready",
+            "Site": "Toda la red",
+            "Next Action": "Revisar cobertura de indexación en Search Console",
+            "Priority": "P1 High"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-819c-8d3a-d81fcc9f7faf",
+          "props": {
+            "CSN Task Key": "csn:ops:v2:routine:3f684cd0-85ae-8113-bd15-d7c7f6c5c3a4",
+            "Cam Site": "[relation:1]",
+            "Issue": "[relation:0]",
+            "Task": "Comprobar que el deploy programado salió en verde",
+            "KPI History": "[relation:0]",
+            "Category ": "Despliegue y CI",
+            "Routine": "[relation:1]",
+            "Deployment": "[relation:0]",
+            "Status": "Ready",
+            "Site": "MatureCamRooms",
+            "Next Action": "Comprobar que el deploy programado salió en verde",
+            "Priority": "P1 High"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-819c-98aa-cec7cfbac68d",
+          "props": {
+            "CSN Task Key": "csn:ops:v2:routine:3f684cd0-85ae-81f1-8b72-e051e14f9fbb",
+            "Cam Site": "[relation:1]",
+            "Issue": "[relation:0]",
+            "Task": "Auditar el sitemap: URLs por tipo y muestreo de 50 modelos con 200",
+            "KPI History": "[relation:0]",
+            "Category ": "Sitemap y SEO técnico",
+            "Routine": "[relation:1]",
+            "Deployment": "[relation:0]",
+            "Status": "Ready",
+            "Site": "MatureCamRooms",
+            "Next Action": "Auditar el sitemap: URLs por tipo y muestreo de 50 modelos con 200",
+            "Priority": "P1 High"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-811b-a1e2-f9b6f11289bc",
+          "props": {
+            "CSN Task Key": "csn:ops:v2:routine:3f684cd0-85ae-81bd-8577-c79714f4e57e",
+            "Cam Site": "[relation:0]",
+            "Issue": "[relation:0]",
+            "Task": "Comprobar /api/crak/health y que el feed devuelve modelos",
+            "KPI History": "[relation:0]",
+            "Category ": "Feed y afiliación",
+            "Routine": "[relation:1]",
+            "Deployment": "[relation:0]",
+            "Status": "Ready",
+            "Site": "Toda la red",
+            "Next Action": "Comprobar /api/crak/health y que el feed devuelve modelos",
+            "Priority": "P2 Medium"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-818a-a3c7-cef43cd428b3",
+          "props": {
+            "CSN Task Key": "csn:ops:v2:routine:3f684cd0-85ae-8165-bf3e-feb26dc99269",
+            "Cam Site": "[relation:1]",
+            "Issue": "[relation:0]",
+            "Task": "Medir velocidad: Lighthouse móvil y tiempo de carga de categorías",
+            "KPI History": "[relation:0]",
+            "Category ": "Rendimiento",
+            "Routine": "[relation:1]",
+            "Deployment": "[relation:0]",
+            "Status": "Ready",
+            "Site": "MatureCamRooms",
+            "Next Action": "Medir velocidad: Lighthouse móvil y tiempo de carga de categorías",
+            "Priority": "P2 Medium"
+          }
+        }
+      ]
+    },
+    "issues": {
+      "label": "ISSUES & INCIDENTS",
+      "databaseId": "3f484cd0-85ae-80dd-aedb-f0e4004e88ea",
+      "dataSourceId": "ea084cd0-85ae-83ac-9f12-07292a3bb2da",
+      "url": "https://app.notion.com/p/3f484cd085ae80ddaedbf0e4004e88ea",
+      "title": "ISSUES & INCIDENTS",
+      "descriptionExcerpt": "Registro y seguimiento de errores y fallos técnicos de la red. Aquí documento, priorizo y resuelvo bloqueos de indexación, caídas de servidor y problemas de API.",
+      "isInline": false,
+      "rowCount": 8,
+      "propertyTypes": {
+        "Causa": "rich_text",
+        "Next Action": "rich_text",
+        "Priority": "select",
+        "Due Date": "date",
+        "Resuelto el": "date",
+        "Guía relacionada": "relation",
+        "Solución aplicada": "rich_text",
+        "Detectado el": "date",
+        "Category": "select",
+        "Status": "status",
+        "Site": "multi_select",
+        "Task": "title"
+      },
+      "relations": {
+        "Guía relacionada": {
+          "data_source_id": "41284cd0-85ae-829e-ac42-0771e6b6f412",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "afb84cd0-85ae-834f-95bc-0847f019a5d1",
+          "name": "/database",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-811c-9b3d-000c1edecb4a",
+          "name": "OC · Open incidents",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"or\":[{\"property\":\"xRut\",\"status\":{\"equals\":\"Abierto\"}},{\"property\":\"xRut\",\"status\":{\"equals\":\"Investigando\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-81ac-9247-000cc95bae63",
+          "name": "OC · High priority",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"MQYU\",\"select\":{\"equals\":\"Alta\"}}"
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Abierto": 3,
+          "Mitigado": 1,
+          "Investigando": 1,
+          "Resuelto": 3
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-81d2-97bf-e5670618543e",
+          "props": {
+            "Next Action": "Ejecutar la rama cursor/desktop-menu-infinite.",
+            "Priority": "Media",
+            "Guía relacionada": "[relation:0]",
+            "Category": "Errores de la web",
+            "Status": "Abierto",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "El escritorio no tiene el menú nuevo ni el scroll infinito (solo se actualizó el móvil)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81b4-bd3a-c92210d6fa36",
+          "props": {
+            "Causa": "Al quitar los tags de la consulta a CRAK se perdieron esas señales.",
+            "Next Action": "Decidir si se recuperan con pasadas por tag cuando el feed las traiga.",
+            "Priority": "Media",
+            "Guía relacionada": "[relation:0]",
+            "Solución aplicada": "Redirección 308 de /category/cougar y /category/mom a /category/mature y enlaces",
+            "Category": "Indexación y SEO",
+            "Status": "Mitigado",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Cougar y Mom sin modelos tras ampliar el catálogo"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8159-aa3e-f91cf6751304",
+          "props": {
+            "Causa": "Pendiente de medir.",
+            "Next Action": "Ejecutar la rama cursor/nav-speed y comparar tiempos antes y después.",
+            "Priority": "Alta",
+            "Guía relacionada": "[relation:0]",
+            "Category": "Rendimiento",
+            "Status": "Investigando",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Navegación lenta: 4-5 s al cambiar de sección o categoría"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81d6-a729-ecd9f1003f32",
+          "props": {
+            "Causa": "El secreto CLOUDFLARE_API_TOKEN del repo no es válido o no tiene permiso sobre P",
+            "Next Action": "Crear un token nuevo con permiso Cloudflare Pages: Edit, guardarlo en el secreto",
+            "Priority": "Alta",
+            "Guía relacionada": "[relation:0]",
+            "Category": "Credenciales y accesos",
+            "Status": "Abierto",
+            "Site": [
+              "NaughtyXXXCams"
+            ],
+            "Task": "Deploy de GitHub Actions falla con token de Cloudflare inválido (códigos 9109 y 10000)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-812a-ac0f-f7e7b5f52754",
+          "props": {
+            "Causa": "Los cambios estaban en ramas cursor/* sin mergear a main; producción sirve main.",
+            "Next Action": "Comprobar siempre si el deploy es Preview o Production.",
+            "Priority": "Media",
+            "Guía relacionada": "[relation:0]",
+            "Solución aplicada": "Mergear la rama a main y esperar el deploy en verde.",
+            "Category": "Despliegue y CI",
+            "Status": "Resuelto",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Cambios de la web no visibles en producción a pesar de builds en verde"
+          }
+        }
+      ]
+    },
+    "deploy": {
+      "label": "DEPLOYMENTS & RELEASES",
+      "databaseId": "3f484cd0-85ae-8011-af56-e1adfd30300b",
+      "dataSourceId": "36c84cd0-85ae-822f-a249-877e009315f9",
+      "url": "https://app.notion.com/p/3f484cd085ae8011af56e1adfd30300b",
+      "title": "DEPLOYMENTS & RELEASES",
+      "descriptionExcerpt": "Historial de cambios y actualizaciones de código enviadas a producción. Aquí audito los despliegues de Cloudflare, cambios en Next.js y releases aplicadas a cada dominio.",
+      "isInline": false,
+      "rowCount": 7,
+      "propertyTypes": {
+        "Next Action": "rich_text",
+        "Priority": "select",
+        "Due Date": "date",
+        "Verificado": "checkbox",
+        "Category": "select",
+        "Commit": "rich_text",
+        "Cómo volver atrás": "rich_text",
+        "Publicada el": "date",
+        "Status": "status",
+        "Rama": "rich_text",
+        "Site": "multi_select",
+        "PR": "url",
+        "Task": "title"
+      },
+      "relations": {},
+      "views": [
+        {
+          "id": "59584cd0-85ae-82b3-9dc3-88762c288ae2",
+          "name": "/database",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-8132-b969-000cd6693e16",
+          "name": "OC · Upcoming",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"or\":[{\"property\":\"xRut\",\"status\":{\"equals\":\"Planeada\"}},{\"property\":\"xRut\",\"status\":{\"equals\":\"En preview\"}}]}"
+        },
+        {
+          "id": "3f684cd0-85ae-8108-818f-000c10477e70",
+          "name": "OC · High priority",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"MQYU\",\"select\":{\"equals\":\"Alta\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-8173-9ff1-000ce8a55c03",
+          "name": "OC · Not verified",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"hFdm\",\"checkbox\":{\"equals\":false}}"
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Planeada": 2,
+          "En preview": 1,
+          "Publicada": 4
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-81d4-b47c-e11dbe0a0e25",
+          "props": {
+            "Next Action": "Enviar el prompt a Cursor tras la rama de velocidad.",
+            "Priority": "Media",
+            "Verificado": false,
+            "Category": "Diseño y UX",
+            "Status": "Planeada",
+            "Rama": "cursor/desktop-menu-infinite",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Menú de escritorio, chip Cougar fuera y scroll infinito en la home"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-816f-beb4-d56f6f5e33f1",
+          "props": {
+            "Next Action": "Enviar el prompt a Cursor y comparar tiempos antes y después.",
+            "Priority": "Alta",
+            "Verificado": false,
+            "Category": "Rendimiento",
+            "Status": "Planeada",
+            "Rama": "cursor/nav-speed",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Velocidad de navegación instantánea"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81f4-8c91-d073b6d9f6b5",
+          "props": {
+            "Next Action": "Esperar el verde en Actions, comprobar la preview y mergear con «Create a merge ",
+            "Priority": "Alta",
+            "Verificado": false,
+            "Category": "SEO y sitemap",
+            "Commit": "23a0fd0, e9c9cba, 7a96d38 y 616d318",
+            "Cómo volver atrás": "Revertir el merge en main.",
+            "Status": "En preview",
+            "Rama": "cursor/catalog-widen-1244",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Catálogo ampliado (~9055 modelos), snapshot estático y deploy diario"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8170-874a-f197a6db6887",
+          "props": {
+            "Priority": "Alta",
+            "Verificado": true,
+            "Category": "SEO y sitemap",
+            "Commit": "a156605 y 1ac5a87 (merge b61a4c2)",
+            "Cómo volver atrás": "Revertir el merge b61a4c2 en main.",
+            "Status": "Publicada",
+            "Rama": "cursor/catalog-seo-infinite-1244",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Catálogo completo, sitemap en shards, menú por facetas, scroll y favicon (PR #2)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81bb-a2b1-c5117dd5b5b7",
+          "props": {
+            "Priority": "Alta",
+            "Verificado": true,
+            "Category": "Infraestructura y CI",
+            "Commit": "fdda904 y fd829b8",
+            "Cómo volver atrás": "Revertir el commit y volver a poner las variables a mano en Cloudflare.",
+            "Status": "Publicada",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Sincronización automática de CRAK a Production y Preview"
+          }
+        }
+      ]
+    },
+    "kv": {
+      "label": "KNOWLEDGE VAULT",
+      "databaseId": "3f484cd0-85ae-800b-a34c-d0d4101255a0",
+      "dataSourceId": "41284cd0-85ae-829e-ac42-0771e6b6f412",
+      "url": "https://app.notion.com/p/3f484cd085ae800ba34cd0d4101255a0",
+      "title": "KNOWLEDGE VAULT",
+      "descriptionExcerpt": "Base de conocimiento, documentación técnica y recursos clave de la red. Aquí almaceno guías de arquitectura, estrategias SEO, prompts de Cursor y credenciales del proyecto.",
+      "isInline": false,
+      "rowCount": 1,
+      "propertyTypes": {
+        "Estado": "select",
+        "Última revisión": "date",
+        "Tipo": "select",
+        "Site": "multi_select",
+        "Category": "select",
+        "Nombre": "title"
+      },
+      "relations": {},
+      "views": [
+        {
+          "id": "1db84cd0-85ae-8358-8c80-08a216cf946b",
+          "name": "/database",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-81b3-ae6c-000c0da4ae4c",
+          "name": "CSN · Knowledge — Vigente",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"@?bR\",\"select\":{\"equals\":\"Vigente\"}}"
+        }
+      ],
+      "statusHistogram": {
+        "Estado": {
+          "Vigente": 1
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8106-97d3-f7c09d37ab57",
+          "props": {
+            "Estado": "Vigente",
+            "Tipo": "Guía",
+            "Site": [
+              "Toda la red"
+            ],
+            "Category": "Despliegue y CI",
+            "Nombre": "Cómo publicar en producción"
+          }
+        }
+      ]
+    },
+    "routine": {
+      "label": "ROUTINE & MAINTENANCE",
+      "databaseId": "3f484cd0-85ae-80a8-9091-e7bf1a16ba70",
+      "dataSourceId": "60284cd0-85ae-8292-8363-07d4ecd2598b",
+      "url": "https://app.notion.com/p/3f484cd085ae80a89091e7bf1a16ba70",
+      "title": "ROUTINE & MAINTENANCE",
+      "descriptionExcerpt": "Gestión de revisiones periódicas y tareas recurrentes de mantenimiento. Aquí programo los chequeos de Search Console, auditorías de sitemaps y limpiezas de código.",
+      "isInline": false,
+      "rowCount": 9,
+      "propertyTypes": {
+        "Frecuencia": "select",
+        "Next Action": "rich_text",
+        "Priority": "select",
+        "Due Date": "date",
+        "Category": "select",
+        "Status": "status",
+        "Site": "multi_select",
+        "Última ejecución": "date",
+        "Task": "title"
+      },
+      "relations": {},
+      "views": [
+        {
+          "id": "18484cd0-85ae-82d9-bc58-087919c61698",
+          "name": "/database",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        },
+        {
+          "id": "3f684cd0-85ae-819b-8e03-000c9c5caef6",
+          "name": "OC · Pending",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"property\":\"xRut\",\"status\":{\"equals\":\"Pendiente\"}}"
+        },
+        {
+          "id": "3f684cd0-85ae-81a5-9b71-000cbe192abe",
+          "name": "OC · High priority pending",
+          "type": "table",
+          "hasFilter": true,
+          "filterSummary": "{\"and\":[{\"property\":\"xRut\",\"status\":{\"equals\":\"Pendiente\"}},{\"property\":\"MQYU\",\"select\":{\"equals\":\"Alta\"}}]}"
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Hecha": 1,
+          "Pendiente": 8
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8159-aee3-d40e14f8a51e",
+          "props": {
+            "Frecuencia": "Trimestral",
+            "Next Action": "Comprobar que los textos siguen en todas las páginas.",
+            "Priority": "Media",
+            "Category": "Legal y cumplimiento",
+            "Status": "Hecha",
+            "Site": [
+              "Toda la red"
+            ],
+            "Task": "Revisar aviso 18+, términos y DMCA"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-810b-9a62-ff2a6c0deadd",
+          "props": {
+            "Frecuencia": "Mensual",
+            "Next Action": "Borrar ramas cursor/** ya mergeadas y revisar los avisos de Node y Ubuntu.",
+            "Priority": "Baja",
+            "Category": "Limpieza de código",
+            "Status": "Pendiente",
+            "Site": [
+              "Toda la red"
+            ],
+            "Task": "Limpieza de código: ramas viejas, dependencias y avisos del CI"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81b1-8456-e960b73da46c",
+          "props": {
+            "Frecuencia": "Trimestral",
+            "Next Action": "Comprobar caducidades en Cloudflare y GitHub. No escribir aquí ningún valor.",
+            "Priority": "Alta",
+            "Category": "Seguridad y accesos",
+            "Status": "Pendiente",
+            "Site": [
+              "Toda la red"
+            ],
+            "Task": "Revisar y renovar tokens y secretos"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8115-aae2-d33c6ee10f84",
+          "props": {
+            "Frecuencia": "Mensual",
+            "Next Action": "Listar las URLs rotas y quitarlas del sitemap.",
+            "Priority": "Media",
+            "Category": "Contenido y modelos",
+            "Status": "Pendiente",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Revisar fichas con 404 o sin miniatura"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8165-bf3e-feb26dc99269",
+          "props": {
+            "Frecuencia": "Mensual",
+            "Next Action": "Anotar los tiempos y comparar con el mes anterior.",
+            "Priority": "Media",
+            "Category": "Rendimiento",
+            "Status": "Pendiente",
+            "Site": [
+              "MatureCamRooms"
+            ],
+            "Task": "Medir velocidad: Lighthouse móvil y tiempo de carga de categorías"
+          }
+        }
+      ]
+    }
+  },
+  "kpiLegacy": {
+    "kpi1": {
+      "label": "KPI History (legacy 1)",
+      "databaseId": "00fb3a37-ccb2-4275-bce3-068b7b08b7e4",
+      "dataSourceId": "439defb6-f966-4b56-9547-866c3e565fc1",
+      "url": "https://app.notion.com/p/00fb3a37ccb24275bce3068b7b08b7e4",
+      "title": "KPI History",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 52,
+      "propertyTypes": {
+        "Monthly Revenue": "number",
+        "Indexed Pages": "number",
+        "Date": "date",
+        "Daily Clicks": "number",
+        "Source record": "relation",
+        "Name": "title"
+      },
+      "relations": {
+        "Source record": {
+          "data_source_id": "3f384cd0-85ae-8078-9afc-000be75ab268",
+          "type": "dual_property"
+        }
+      },
+      "views": [
+        {
+          "id": "f4d8e05d-30e4-416d-b3f6-1486659268e3",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-81fd-9194-e9e09bbcbc8e",
+          "props": {
+            "Monthly Revenue": 0,
+            "Indexed Pages": 2,
+            "Date": "2026-10-11",
+            "Daily Clicks": 0,
+            "Source record": "[relation:1]",
+            "Name": "2026-10-11 — naughtyxxxcams.com"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81c0-aa2f-e53fbe7fbcb4",
+          "props": {
+            "Monthly Revenue": 0,
+            "Indexed Pages": 0,
+            "Date": "2026-10-11",
+            "Daily Clicks": 0,
+            "Source record": "[relation:1]",
+            "Name": "2026-10-11 — maturecamrooms.com"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8145-b6d9-e3d697a495d4",
+          "props": {
+            "Monthly Revenue": 116.31,
+            "Indexed Pages": 8932,
+            "Date": "2026-10-11",
+            "Daily Clicks": 521,
+            "Source record": "[relation:1]",
+            "Name": "2026-10-11 — telehub.cam"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8102-838f-dcf23df0a63b",
+          "props": {
+            "Monthly Revenue": 0,
+            "Indexed Pages": null,
+            "Date": "2026-10-11",
+            "Daily Clicks": null,
+            "Source record": "[relation:1]",
+            "Name": "2026-10-11 — CloudFlare Pages"
+          }
+        },
+        {
+          "id": "3f584cd0-85ae-8105-adc2-d292b8ea3b5d",
+          "props": {
+            "Monthly Revenue": 0,
+            "Indexed Pages": 1,
+            "Date": "2026-10-10",
+            "Daily Clicks": 0,
+            "Source record": "[relation:1]",
+            "Name": "2026-10-10 — naughtyxxxcams.com"
+          }
+        }
+      ]
+    },
+    "kpi2": {
+      "label": "KPI History (legacy 2)",
+      "databaseId": "efdaa399-b73c-4e83-9bbd-f7cdaceb9daa",
+      "dataSourceId": "aa2b3bfd-eb29-4057-b3de-4899c3ea69e5",
+      "url": "https://app.notion.com/p/efdaa399b73c4e839bbdf7cdaceb9daa",
+      "title": "KPI History",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 4,
+      "propertyTypes": {
+        "Monthly Revenue": "number",
+        "Daily Clicks": "number",
+        "Source record": "relation",
+        "Indexed Pages": "number",
+        "Date": "date",
+        "Name": "title"
+      },
+      "relations": {
+        "Source record": {
+          "data_source_id": "3fd84cd0-85ae-82af-94b9-074cf3e37156",
+          "type": "dual_property"
+        }
+      },
+      "views": [
+        {
+          "id": "06e82634-b258-4c6f-8f0e-e3ae83139c9e",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": [
+        {
+          "id": "3f584cd0-85ae-81ee-b87a-c3daab493413",
+          "props": {
+            "Monthly Revenue": null,
+            "Daily Clicks": null,
+            "Source record": "[relation:1]",
+            "Indexed Pages": null,
+            "Date": "2026-10-10",
+            "Name": "2026-10-10 — Untitled"
+          }
+        },
+        {
+          "id": "3f584cd0-85ae-8120-981f-f2bf810f35ba",
+          "props": {
+            "Monthly Revenue": null,
+            "Daily Clicks": null,
+            "Source record": "[relation:1]",
+            "Indexed Pages": null,
+            "Date": "2026-10-10",
+            "Name": "2026-10-10 — Untitled"
+          }
+        },
+        {
+          "id": "3f584cd0-85ae-8170-8418-e4e3d2f3e1ef",
+          "props": {
+            "Monthly Revenue": null,
+            "Daily Clicks": null,
+            "Source record": "[relation:1]",
+            "Indexed Pages": null,
+            "Date": "2026-10-10",
+            "Name": "2026-10-10 — Untitled"
+          }
+        },
+        {
+          "id": "3f584cd0-85ae-8104-aee6-feff975df892",
+          "props": {
+            "Monthly Revenue": null,
+            "Daily Clicks": null,
+            "Source record": "[relation:1]",
+            "Indexed Pages": null,
+            "Date": "2026-10-10",
+            "Name": "2026-10-10 — Untitled"
+          }
+        }
+      ]
+    }
+  },
+  "isolatedFourteen": {
+    "csnSites": {
+      "label": "CSN Sites",
+      "databaseId": "7b6afa6b-844b-438f-9321-0cdb8ee728ca",
+      "dataSourceId": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+      "url": "https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca",
+      "title": "CSN Sites",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 11,
+      "propertyTypes": {
+        "Repository URL": "url",
+        "Project Brief": "rich_text",
+        "Estado del proyecto": "select",
+        "Notes": "rich_text",
+        "External ID": "rich_text",
+        "Nicho": "rich_text",
+        "Record Class": "select",
+        "Stack": "rich_text",
+        "Objetivo principal": "rich_text",
+        "Monetización": "rich_text",
+        "Primary Phase": "number",
+        "Status": "status",
+        "Domain": "url",
+        "Launch Key": "rich_text",
+        "Site Name": "title"
+      },
+      "relations": {},
+      "views": [
+        {
+          "id": "38db7523-81ab-4084-b899-48656181b657",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "In progress": 11
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-81f9-9241-d1993b06bbac",
+          "props": {
+            "Repository URL": "[url]",
+            "Project Brief": "Sitio de prueba para validar la guía de 7 días. Nicho: live cams. Sin deploy ni ",
+            "Estado del proyecto": "En planificación",
+            "External ID": "csn:site:qa-guia-7d-1791712857710",
+            "Nicho": "Live cams (QA)",
+            "Record Class": "QA test-only",
+            "Stack": "Pendiente",
+            "Objetivo principal": "Validar recorrido día 1",
+            "Monetización": "Pendiente",
+            "Primary Phase": 1,
+            "Status": "In progress",
+            "Launch Key": "qa-guia-7d-1791712857710",
+            "Site Name": "QA Guía 7 días qa-guia-7d-1791712857710"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81ca-bf2e-eb99fc5777bf",
+          "props": {
+            "Repository URL": "[url]",
+            "Project Brief": "Sitio de prueba para validar la guía de 7 días. Nicho: live cams. Sin deploy ni ",
+            "Estado del proyecto": "En planificación",
+            "External ID": "csn:site:qa-guia-7d-1791712562062",
+            "Nicho": "Live cams (QA)",
+            "Record Class": "QA test-only",
+            "Stack": "Pendiente",
+            "Objetivo principal": "Validar recorrido día 1",
+            "Monetización": "Pendiente",
+            "Primary Phase": 1,
+            "Status": "In progress",
+            "Launch Key": "qa-guia-7d-1791712562062",
+            "Site Name": "QA Guía 7 días qa-guia-7d-1791712562062"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-814d-8133-f20dec822770",
+          "props": {
+            "Repository URL": "[url]",
+            "Project Brief": "Proyecto de aceptación consola web. Nicho test. Sin deploy.",
+            "Estado del proyecto": "En planificación",
+            "External ID": "csn:site:qa-console-1791711716600",
+            "Nicho": "QA",
+            "Record Class": "QA test-only",
+            "Stack": "Pendiente",
+            "Objetivo principal": "Validar flujo guiado",
+            "Monetización": "Pendiente",
+            "Primary Phase": 1,
+            "Status": "In progress",
+            "Launch Key": "qa-console-1791711716600",
+            "Site Name": "QA Consola qa-console-1791711716600"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81bc-bfc0-da3ee0e389bb",
+          "props": {
+            "Repository URL": "[url]",
+            "Project Brief": "Proyecto E2E automatizado. No es producción.",
+            "Estado del proyecto": "En planificación",
+            "External ID": "csn:site:e2e-qa-automation",
+            "Nicho": "Ficticio",
+            "Record Class": "QA test-only",
+            "Stack": "Next.js (pendiente confirmar)",
+            "Objetivo principal": "Probar flujo CSN",
+            "Monetización": "Pendiente",
+            "Primary Phase": 1,
+            "Status": "In progress",
+            "Launch Key": "e2e-qa-automation",
+            "Site Name": "E2E QA automation (test-only)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-816a-8a97-f78141727e45",
+          "props": {
+            "Repository URL": "[url]",
+            "Project Brief": "Proyecto E2E automatizado. No es producción.",
+            "Estado del proyecto": "En planificación",
+            "External ID": "csn:site:e2e-qa-1791709841650",
+            "Nicho": "Ficticio",
+            "Record Class": "QA test-only",
+            "Stack": "Next.js (pendiente confirmar)",
+            "Objetivo principal": "Probar flujo CSN",
+            "Monetización": "Pendiente",
+            "Primary Phase": 1,
+            "Status": "In progress",
+            "Launch Key": "e2e-qa-1791709841650",
+            "Site Name": "E2E QA e2e-qa-1791709841650"
+          }
+        }
+      ]
+    },
+    "sopVersions": {
+      "label": "SOP Versions",
+      "databaseId": "9ed26a47-a251-42e8-a987-676d698b004c",
+      "dataSourceId": "a14777aa-6ca0-471e-a7ca-50ff07d9bcea",
+      "url": "https://app.notion.com/p/9ed26a47a25142e8a987676d698b004c",
+      "title": "SOP Versions",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 24,
+      "propertyTypes": {
+        "Notes": "rich_text",
+        "Verified": "checkbox",
+        "Version": "rich_text",
+        "Status": "select",
+        "Supersedes": "rich_text",
+        "Effective Date": "date",
+        "Scope": "select",
+        "Artifact Type": "select",
+        "Validation Status": "select",
+        "Repository Path": "rich_text",
+        "Artifact ID": "rich_text",
+        "Change Summary": "rich_text",
+        "Phase": "number",
+        "Owner": "rich_text",
+        "Dependencies": "rich_text",
+        "Name": "title"
+      },
+      "relations": {},
+      "views": [
+        {
+          "id": "dae234f0-9672-4658-a52c-723d876d4a35",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Active": 24
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8115-af60-ee951a239b0f",
+          "props": {
+            "Verified": false,
+            "Version": "1.0.0",
+            "Status": "Active",
+            "Scope": "network-wide",
+            "Artifact Type": "Prompt Template",
+            "Validation Status": "Approved",
+            "Repository Path": "csn-os/prompt-templates/blocked-planning.md",
+            "Artifact ID": "csn:prompttpl:v1:blocked-planning",
+            "Phase": null,
+            "Name": "blocked-planning"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8125-b4a8-ddbf8c8730ab",
+          "props": {
+            "Verified": false,
+            "Version": "1.0.0",
+            "Status": "Active",
+            "Scope": "network-wide",
+            "Artifact Type": "Prompt Template",
+            "Validation Status": "Approved",
+            "Repository Path": "csn-os/prompt-templates/execution-phase.md",
+            "Artifact ID": "csn:prompttpl:v1:execution-phase",
+            "Phase": null,
+            "Name": "execution-phase"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8179-97ef-e58e3aa9a538",
+          "props": {
+            "Verified": true,
+            "Version": "1.0.0",
+            "Status": "Active",
+            "Scope": "network-wide",
+            "Artifact Type": "Phase Specification",
+            "Validation Status": "Approved",
+            "Repository Path": "csn-os/phase-specs/phase-12.md",
+            "Artifact ID": "csn:phase:v1:12",
+            "Phase": 12,
+            "Name": "Phase 12 Specification"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-817b-b4a7-e1c26d1b9218",
+          "props": {
+            "Verified": true,
+            "Version": "1.0.0",
+            "Status": "Active",
+            "Scope": "network-wide",
+            "Artifact Type": "Phase Specification",
+            "Validation Status": "Approved",
+            "Repository Path": "csn-os/phase-specs/phase-11.md",
+            "Artifact ID": "csn:phase:v1:11",
+            "Phase": 11,
+            "Name": "Phase 11 Specification"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8147-a168-e8198f0038a4",
+          "props": {
+            "Verified": true,
+            "Version": "1.0.0",
+            "Status": "Active",
+            "Scope": "network-wide",
+            "Artifact Type": "Phase Specification",
+            "Validation Status": "Approved",
+            "Repository Path": "csn-os/phase-specs/phase-10.md",
+            "Artifact ID": "csn:phase:v1:10",
+            "Phase": 10,
+            "Name": "Phase 10 Specification"
+          }
+        }
+      ]
+    },
+    "projectRuns": {
+      "label": "Project Runs",
+      "databaseId": "d0e397e4-95e5-44d2-8a68-99bc6a1e654f",
+      "dataSourceId": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+      "url": "https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f",
+      "title": "Project Runs",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 11,
+      "propertyTypes": {
+        "SOP Version": "relation",
+        "Source Versions": "rich_text",
+        "Estado verificación": "select",
+        "Started": "date",
+        "Current Phase": "number",
+        "Launch Key": "rich_text",
+        "Evidence URL": "url",
+        "Generated Prompt Path": "rich_text",
+        "External ID": "rich_text",
+        "Site": "relation",
+        "Architecture Summary": "rich_text",
+        "Prompt Notion URL": "url",
+        "Run Type": "select",
+        "Último informe ejecución": "rich_text",
+        "Generated Prompt ID": "rich_text",
+        "Status": "status",
+        "Project Brief": "rich_text",
+        "Run Name": "title"
+      },
+      "relations": {
+        "SOP Version": {
+          "data_source_id": "a14777aa-6ca0-471e-a7ca-50ff07d9bcea",
+          "type": "single_property"
+        },
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "3fe87cec-0f2e-4e95-97e0-ba9132bb681e",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "In progress": 11
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-81ac-bc37-eb9be13d9a0d",
+          "props": {
+            "SOP Version": "[relation:0]",
+            "Source Versions": "{\"phaseSpec\":{\"id\":\"csn:phase:v1:01\",\"version\":\"1.0.0\",\"status\":\"Approved\"},\"sta",
+            "Estado verificación": "Registrado desde consola web",
+            "Current Phase": 1,
+            "Launch Key": "qa-guia-7d-1791712857710",
+            "Evidence URL": "[url]",
+            "Generated Prompt Path": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_qa-guia-7d-1791712857710",
+            "External ID": "csn:run:qa-guia-7d-1791712857710",
+            "Site": "[relation:1]",
+            "Prompt Notion URL": "[url]",
+            "Run Type": "QA Sandbox",
+            "Último informe ejecución": "failed: Fallo simulado walkthrough",
+            "Generated Prompt ID": "csn:prompt:csn:taskrun:csn:run:qa-guia-7d-1791712857710:p01:01:b7ddc9f0d53d",
+            "Status": "In progress",
+            "Project Brief": "Sitio de prueba para validar la guía de 7 días. Nicho: live cams. Sin deploy ni ",
+            "Run Name": "Lanzamiento — QA Guía 7 días qa-guia-7d-1791712857710"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-811d-ac11-cbaca4fb0dee",
+          "props": {
+            "SOP Version": "[relation:0]",
+            "Source Versions": "{\"phaseSpec\":{\"id\":\"csn:phase:v1:01\",\"version\":\"1.0.0\",\"status\":\"Approved\"},\"sta",
+            "Estado verificación": "Registrado desde consola web",
+            "Current Phase": 1,
+            "Launch Key": "qa-guia-7d-1791712562062",
+            "Evidence URL": "[url]",
+            "Generated Prompt Path": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_qa-guia-7d-1791712562062",
+            "External ID": "csn:run:qa-guia-7d-1791712562062",
+            "Site": "[relation:1]",
+            "Prompt Notion URL": "[url]",
+            "Run Type": "QA Sandbox",
+            "Último informe ejecución": "failed: Fallo simulado walkthrough",
+            "Generated Prompt ID": "csn:prompt:csn:taskrun:csn:run:qa-guia-7d-1791712562062:p01:01:9d5afe000444",
+            "Status": "In progress",
+            "Project Brief": "Sitio de prueba para validar la guía de 7 días. Nicho: live cams. Sin deploy ni ",
+            "Run Name": "Lanzamiento — QA Guía 7 días qa-guia-7d-1791712562062"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81c2-b1d1-e7b50fc8d4b1",
+          "props": {
+            "SOP Version": "[relation:0]",
+            "Source Versions": "{\"phaseSpec\":{\"id\":\"csn:phase:v1:01\",\"version\":\"1.0.0\",\"status\":\"Approved\"},\"sta",
+            "Estado verificación": "Registrado desde consola web",
+            "Current Phase": 1,
+            "Launch Key": "qa-console-1791711716600",
+            "Evidence URL": "[url]",
+            "Generated Prompt Path": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_qa-console-1791711716600",
+            "External ID": "csn:run:qa-console-1791711716600",
+            "Site": "[relation:1]",
+            "Prompt Notion URL": "[url]",
+            "Run Type": "QA Sandbox",
+            "Último informe ejecución": "failed: Fallo simulado consola",
+            "Generated Prompt ID": "csn:prompt:csn:taskrun:csn:run:qa-console-1791711716600:p01:01:0461460e4501",
+            "Status": "In progress",
+            "Project Brief": "Proyecto de aceptación consola web. Nicho test. Sin deploy.",
+            "Run Name": "Lanzamiento — QA Consola qa-console-1791711716600"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81af-88c0-e3ab26bd26b6",
+          "props": {
+            "SOP Version": "[relation:0]",
+            "Source Versions": "{\"phaseSpec\":{\"id\":\"csn:phase:v1:01\",\"version\":\"1.0.0\",\"status\":\"Approved\"},\"sta",
+            "Estado verificación": "Prueba UX",
+            "Current Phase": 1,
+            "Launch Key": "e2e-qa-automation",
+            "Evidence URL": "[url]",
+            "Generated Prompt Path": "csn-os/generated-prompts/csn_prompt_csn_run_e2e-qa-automation_p01_ae364099f183.m",
+            "External ID": "csn:run:e2e-qa-automation",
+            "Site": "[relation:1]",
+            "Prompt Notion URL": "[url]",
+            "Run Type": "QA Sandbox",
+            "Último informe ejecución": "failed: Fallo simulado para verificar bloqueo",
+            "Generated Prompt ID": "csn:prompt:csn:run:e2e-qa-automation:p01:ae364099f183",
+            "Status": "In progress",
+            "Project Brief": "Proyecto E2E automatizado. No es producción.",
+            "Run Name": "Lanzamiento — E2E QA automation (test-only)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-817a-a81a-ce68698b0564",
+          "props": {
+            "SOP Version": "[relation:0]",
+            "Source Versions": "{\"phaseSpec\":{\"id\":\"csn:phase:v1:05\",\"version\":\"1.0.0\",\"status\":\"Approved\"},\"sta",
+            "Estado verificación": "Verificado en sandbox",
+            "Current Phase": 1,
+            "Launch Key": "e2e-qa-1791709841650",
+            "Evidence URL": "[url]",
+            "Generated Prompt Path": "csn-os/generated-prompts/csn_prompt_csn_run_e2e-qa-1791709841650_p05_bd1ad17bb12",
+            "External ID": "csn:run:e2e-qa-1791709841650",
+            "Site": "[relation:1]",
+            "Prompt Notion URL": "[url]",
+            "Run Type": "QA Sandbox",
+            "Último informe ejecución": "verified_sandbox: E2E test run — sin cambios reales",
+            "Generated Prompt ID": "csn:prompt:csn:run:e2e-qa-1791709841650:p05:bd1ad17bb12d",
+            "Status": "In progress",
+            "Project Brief": "Proyecto E2E automatizado. No es producción.",
+            "Run Name": "Lanzamiento — E2E QA e2e-qa-1791709841650"
+          }
+        }
+      ]
+    },
+    "tasks": {
+      "label": "Tasks",
+      "databaseId": "30d3973d-e3e3-40b0-957a-9f8c34db43ee",
+      "dataSourceId": "f0c88978-015a-4b67-8a6d-3f493d53c425",
+      "url": "https://app.notion.com/p/30d3973de3e340b0957a9f8c34db43ee",
+      "title": "Tasks",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 340,
+      "propertyTypes": {
+        "Required Evidence": "rich_text",
+        "Project Run": "relation",
+        "Status": "status",
+        "Record Type": "select",
+        "Task Definition Ref": "rich_text",
+        "Instructions": "rich_text",
+        "Site": "relation",
+        "Ruta prompt local": "rich_text",
+        "Expected Output": "rich_text",
+        "Phase": "number",
+        "Completion Condition": "rich_text",
+        "Prompt Notion URL": "url",
+        "Due": "date",
+        "Owner": "rich_text",
+        "Resultado ejecución": "rich_text",
+        "Depends On": "rich_text",
+        "External ID": "rich_text",
+        "Acceptance Criteria": "rich_text",
+        "Prerequisites": "rich_text",
+        "Human Gate": "relation",
+        "Task": "title"
+      },
+      "relations": {
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        },
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        },
+        "Human Gate": {
+          "data_source_id": "351d0959-e66e-4370-9039-52e8a80b9bf9",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "86b8cd64-1799-4696-afee-82afb3a888c3",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Blocked": 14,
+          "Not started": 309,
+          "Done": 12,
+          "In progress": 5
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8193-8a02-dcb2148f323e",
+          "props": {
+            "Required Evidence": "Fallo simulado walkthrough",
+            "Project Run": "[relation:1]",
+            "Status": "Blocked",
+            "Record Type": "Execution task",
+            "Task Definition Ref": "csn:taskdef:v1:p01:01",
+            "Site": "[relation:1]",
+            "Ruta prompt local": "csn-os/generated-prompts/csn_prompt_csn_taskrun_csn_run_qa-guia-7d-1791712857710",
+            "Phase": 1,
+            "Prompt Notion URL": "[url]",
+            "Resultado ejecución": "failed: Fallo simulado walkthrough",
+            "External ID": "csn:taskrun:csn:run:qa-guia-7d-1791712857710:p01:01",
+            "Human Gate": "[relation:0]",
+            "Task": "Open Project Run for launch or QA sandbox"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-819b-9c90-dd04107d36b6",
+          "props": {
+            "Required Evidence": "Fallo simulado walkthrough",
+            "Project Run": "[relation:1]",
+            "Status": "Blocked",
+            "Record Type": "Execution task",
+            "Task Definition Ref": "csn:taskdef:v1:p01:02",
+            "Site": "[relation:1]",
+            "Phase": 1,
+            "Resultado ejecución": "failed: Fallo simulado walkthrough",
+            "External ID": "csn:taskrun:csn:run:qa-guia-7d-1791712857710:p01:02",
+            "Human Gate": "[relation:0]",
+            "Task": "Create or link CSN Sites row"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81d1-a631-e4e6dd514868",
+          "props": {
+            "Required Evidence": "Fallo simulado walkthrough",
+            "Project Run": "[relation:1]",
+            "Status": "Blocked",
+            "Record Type": "Execution task",
+            "Task Definition Ref": "csn:taskdef:v1:p01:03",
+            "Site": "[relation:1]",
+            "Phase": 1,
+            "Resultado ejecución": "failed: Fallo simulado walkthrough",
+            "External ID": "csn:taskrun:csn:run:qa-guia-7d-1791712857710:p01:03",
+            "Human Gate": "[relation:0]",
+            "Task": "Request scoped Human Gate for run intake"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8155-91c6-f388c48e0cf4",
+          "props": {
+            "Project Run": "[relation:1]",
+            "Status": "Not started",
+            "Record Type": "Execution task",
+            "Task Definition Ref": "csn:taskdef:v1:p02:01",
+            "Site": "[relation:1]",
+            "Phase": 2,
+            "External ID": "csn:taskrun:csn:run:qa-guia-7d-1791712857710:p02:01",
+            "Human Gate": "[relation:0]",
+            "Task": "expireddomains.net search and export"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8164-88a4-f2e0531b8053",
+          "props": {
+            "Project Run": "[relation:1]",
+            "Status": "Not started",
+            "Record Type": "Execution task",
+            "Task Definition Ref": "csn:taskdef:v1:p02:02",
+            "Site": "[relation:1]",
+            "Phase": 2,
+            "External ID": "csn:taskrun:csn:run:qa-guia-7d-1791712857710:p02:02",
+            "Human Gate": "[relation:0]",
+            "Task": "Historical / Wayback review per candidate"
+          }
+        }
+      ]
+    },
+    "domainCandidates": {
+      "label": "Domain Candidates",
+      "databaseId": "6b212615-0945-4bc3-b615-faca86776831",
+      "dataSourceId": "9977bb7c-6fc2-4440-8ab2-11da37efec28",
+      "url": "https://app.notion.com/p/6b21261509454bc3b615faca86776831",
+      "title": "Domain Candidates",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Source": "select",
+        "Notes": "rich_text",
+        "Ahrefs DR": "number",
+        "Site": "relation",
+        "Status": "status",
+        "Project Run": "relation",
+        "Wayback Last Good": "date",
+        "Domain": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        },
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "95046bc9-81f0-4365-a712-5001ef8ddde8",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "seoOpportunities": {
+      "label": "SEO Opportunities",
+      "databaseId": "050ba07c-be8f-45ca-93fa-9bb30d9ed739",
+      "dataSourceId": "7d043e28-9232-48a9-9504-4c393e21f1c5",
+      "url": "https://app.notion.com/p/050ba07cbe8f45ca93fa9bb30d9ed739",
+      "title": "SEO Opportunities",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Status": "status",
+        "Notes": "rich_text",
+        "Site": "relation",
+        "Target URL": "url",
+        "Project Run": "relation",
+        "Priority": "select",
+        "Opportunity": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        },
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "7577933b-b333-4a54-a7e6-fa0187071bb5",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "backlinkOpportunities": {
+      "label": "Backlink Opportunities",
+      "databaseId": "ff38edc7-8b1d-43ce-b692-6c630058066e",
+      "dataSourceId": "38d91ac0-255f-41ee-b307-294ebf67e007",
+      "url": "https://app.notion.com/p/ff38edc78b1d43ceb6926c630058066e",
+      "title": "Backlink Opportunities",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Outreach Status": "select",
+        "Site": "relation",
+        "Project Run": "relation",
+        "Notes": "rich_text",
+        "Status": "status",
+        "DR / Traffic": "rich_text",
+        "Target": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        },
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "30884aab-4acf-487c-ac0e-9c4af9e48b19",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "feedSyncRuns": {
+      "label": "Feed Sync Runs",
+      "databaseId": "ffc92a97-84af-41a0-b993-6cbfe0ca2831",
+      "dataSourceId": "32be837e-338b-482b-a679-3c4258a20de9",
+      "url": "https://app.notion.com/p/ffc92a9784af41a0b9936cbfe0ca2831",
+      "title": "Feed Sync Runs",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Feed Provider": "rich_text",
+        "Finished": "date",
+        "Rows Upserted": "number",
+        "Site": "relation",
+        "Project Run": "relation",
+        "Started": "date",
+        "Status": "status",
+        "Run": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        },
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "43f08cdf-e0fb-4a11-8252-3266500378df",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "csnReleases": {
+      "label": "CSN Releases",
+      "databaseId": "aec67ee4-0ad2-476a-b498-c4207c76fbd7",
+      "dataSourceId": "b5a395e4-d8e5-4f3c-938d-2044a83de749",
+      "url": "https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7",
+      "title": "CSN Releases",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Git SHA": "rich_text",
+        "Environment": "select",
+        "Status": "status",
+        "Project Run": "relation",
+        "Site": "relation",
+        "Deployed At": "date",
+        "Release": "title"
+      },
+      "relations": {
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        },
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "6de03ddf-35be-4504-8334-6d11ef00e463",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "csnIncidents": {
+      "label": "CSN Incidents",
+      "databaseId": "793edf56-ea43-41cf-baaf-2c3dd0976b66",
+      "dataSourceId": "5bace1da-4a65-4888-8294-8504825d61e0",
+      "url": "https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66",
+      "title": "CSN Incidents",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Resolved At": "date",
+        "Site": "relation",
+        "Status": "status",
+        "Severity": "select",
+        "Detected At": "date",
+        "Project Run": "relation",
+        "Incident": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        },
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "1917f042-6c24-4774-8b09-772c1cd0099c",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "csnMaintenance": {
+      "label": "CSN Maintenance",
+      "databaseId": "e1dc3148-41b8-4783-a79e-185b0fde5280",
+      "dataSourceId": "7f33e6bc-92a0-441c-805e-b9aea54a6444",
+      "url": "https://app.notion.com/p/e1dc314841b84783a79e185b0fde5280",
+      "title": "CSN Maintenance",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 0,
+      "propertyTypes": {
+        "Status": "status",
+        "Site": "relation",
+        "Next Due": "date",
+        "Cadence": "select",
+        "Routine": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "4da34ce1-a22f-4756-a095-d99d6a1a7937",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": []
+    },
+    "csnKnowledge": {
+      "label": "CSN Knowledge",
+      "databaseId": "3d7f94b0-d329-4789-846a-b221945c5b85",
+      "dataSourceId": "fa22a017-b68d-4516-8d8b-21f9af8e47fb",
+      "url": "https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85",
+      "title": "CSN Knowledge",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 12,
+      "propertyTypes": {
+        "Status": "status",
+        "Last Reviewed": "date",
+        "Site": "relation",
+        "Category": "select",
+        "Article": "title"
+      },
+      "relations": {
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "786a2552-00d4-4be1-9325-004512af5986",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Done": 12
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8126-974c-dc6951d6d746",
+          "props": {
+            "Status": "Done",
+            "Site": "[relation:0]",
+            "Category": "Policy",
+            "Article": "TEMPLATE: Human Gate request"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-819f-abaa-cecb9a658188",
+          "props": {
+            "Status": "Done",
+            "Site": "[relation:0]",
+            "Category": "Policy",
+            "Article": "TEMPLATE: Launch KPI snapshot"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81a7-aef2-fc06dbc7c3dc",
+          "props": {
+            "Status": "Done",
+            "Site": "[relation:0]",
+            "Category": "Runbook",
+            "Article": "TEMPLATE: Maintenance record"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-813b-a888-f803131c7132",
+          "props": {
+            "Status": "Done",
+            "Site": "[relation:0]",
+            "Category": "Runbook",
+            "Article": "TEMPLATE: Incident record"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8185-8eee-c5522333b9e3",
+          "props": {
+            "Status": "Done",
+            "Site": "[relation:0]",
+            "Category": "Runbook",
+            "Article": "TEMPLATE: Release and deployment evidence"
+          }
+        }
+      ]
+    },
+    "launchKpiSnapshots": {
+      "label": "Launch KPI Snapshots",
+      "databaseId": "f01f1be5-8f36-4081-92d1-7fbe6eff7ca8",
+      "dataSourceId": "126ac339-d482-408d-b1c0-c72096febe47",
+      "url": "https://app.notion.com/p/f01f1be58f36408192d17fbe6eff7ca8",
+      "title": "Launch KPI Snapshots",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 1,
+      "propertyTypes": {
+        "Daily Clicks": "number",
+        "Project Run": "relation",
+        "Site": "relation",
+        "Indexed Pages": "number",
+        "Captured At": "date",
+        "Monthly Revenue": "number",
+        "Record Class": "select",
+        "Snapshot": "title"
+      },
+      "relations": {
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        },
+        "Site": {
+          "data_source_id": "d4f60f60-3d18-44ee-8d35-677b04b4d545",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "79380a72-fead-40be-82ae-f8ef709d1c03",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {},
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-8129-8a29-c0dbb61106d3",
+          "props": {
+            "Daily Clicks": 0,
+            "Project Run": "[relation:1]",
+            "Site": "[relation:1]",
+            "Indexed Pages": 0,
+            "Captured At": "2026-10-11",
+            "Monthly Revenue": 0,
+            "Record Class": "QA test-only",
+            "Snapshot": "csn:qa-sandbox-notion:launch:v1:kpi:1"
+          }
+        }
+      ]
+    },
+    "humanGates": {
+      "label": "Human Gates",
+      "databaseId": "80625683-1553-451d-9c84-528f2a3ad654",
+      "dataSourceId": "351d0959-e66e-4370-9039-52e8a80b9bf9",
+      "url": "https://app.notion.com/p/806256831553451d9c84528f2a3ad654",
+      "title": "Human Gates",
+      "descriptionExcerpt": "",
+      "isInline": false,
+      "rowCount": 6,
+      "propertyTypes": {
+        "Scope": "rich_text",
+        "Status": "select",
+        "Approved At": "date",
+        "Approver": "rich_text",
+        "Target External ID": "rich_text",
+        "Limits": "rich_text",
+        "Project Run": "relation",
+        "Target Type": "select",
+        "Gate": "title"
+      },
+      "relations": {
+        "Project Run": {
+          "data_source_id": "c3db8f1e-15f4-4d17-ac08-f718cba1dac8",
+          "type": "single_property"
+        }
+      },
+      "views": [
+        {
+          "id": "39718549-78a6-4f9b-ac23-de481c10ec4d",
+          "name": "Default view",
+          "type": "table",
+          "hasFilter": false,
+          "filterSummary": null
+        }
+      ],
+      "statusHistogram": {
+        "Status": {
+          "Pending": 5,
+          "Approved": 1
+        }
+      },
+      "samples": [
+        {
+          "id": "3f684cd0-85ae-813b-a6eb-d8a37ed338d5",
+          "props": {
+            "Scope": "Production deploy to hosts listed in Scope for one run External ID.",
+            "Status": "Pending",
+            "Approver": "Unassigned — policy template only",
+            "Target External ID": "csn:gate:policy:production_deploy",
+            "Limits": "Maintenance window; rollback owner named.",
+            "Project Run": "[relation:1]",
+            "Target Type": "production_deploy",
+            "Gate": "POLICY: production_deploy gate (template)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-813f-a356-e494a1c476ea",
+          "props": {
+            "Scope": "Deploy to named staging hosts with possible public DNS impact.",
+            "Status": "Pending",
+            "Approver": "Unassigned — policy template only",
+            "Target External ID": "csn:gate:policy:staging_deploy",
+            "Limits": "No production traffic; time-boxed window.",
+            "Project Run": "[relation:1]",
+            "Target Type": "staging_deploy",
+            "Gate": "POLICY: staging_deploy gate (template)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81c0-95c9-d3fc038e4e9b",
+          "props": {
+            "Scope": "One backlink target URL / placement ID in Target External ID.",
+            "Status": "Pending",
+            "Approver": "Unassigned — policy template only",
+            "Target External ID": "csn:gate:policy:backlink",
+            "Limits": "Max USD; no bundle approvals.",
+            "Project Run": "[relation:1]",
+            "Target Type": "backlink",
+            "Gate": "POLICY: backlink paid placement gate (template)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8107-83b2-c28945a3f427",
+          "props": {
+            "Scope": "Register one domain named in Target External ID at stated registrar.",
+            "Status": "Pending",
+            "Approver": "Unassigned — policy template only",
+            "Target External ID": "csn:gate:policy:domain_candidate",
+            "Limits": "Max USD in Limits field; single domain only.",
+            "Project Run": "[relation:1]",
+            "Target Type": "domain_candidate",
+            "Gate": "POLICY: domain_candidate gate (template)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8186-82ff-d1d6c39dc3e2",
+          "props": {
+            "Scope": "Intake for a single Project Run External ID — Notion ops / sandbox only unless e",
+            "Status": "Pending",
+            "Approver": "Unassigned — policy template only",
+            "Target External ID": "csn:gate:policy:project_run",
+            "Limits": "Max spend $0 unless Limits updated; no domain purchase or prod deploy.",
+            "Project Run": "[relation:1]",
+            "Target Type": "project_run",
+            "Gate": "POLICY: project_run gate (template)"
+          }
+        }
+      ]
+    }
+  },
+  "sopRoot": {
+    "rootPageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+    "url": "https://app.notion.com/p/Cam-Playbook-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
+    "title": "Cam Playbook — SOP System",
+    "blockTypes": {
+      "heading_1": 1,
+      "paragraph": 6,
+      "heading_2": 5,
+      "bulleted_list_item": 20,
+      "divider": 1,
+      "heading_3": 2,
+      "child_database": 14,
+      "child_page": 9
+    },
+    "childDatabases": [
+      {
+        "blockId": "7b6afa6b-844b-438f-9321-0cdb8ee728ca",
+        "title": "CSN Sites"
+      },
+      {
+        "blockId": "9ed26a47-a251-42e8-a987-676d698b004c",
+        "title": "SOP Versions"
+      },
+      {
+        "blockId": "d0e397e4-95e5-44d2-8a68-99bc6a1e654f",
+        "title": "Project Runs"
+      },
+      {
+        "blockId": "30d3973d-e3e3-40b0-957a-9f8c34db43ee",
+        "title": "Tasks"
+      },
+      {
+        "blockId": "6b212615-0945-4bc3-b615-faca86776831",
+        "title": "Domain Candidates"
+      },
+      {
+        "blockId": "050ba07c-be8f-45ca-93fa-9bb30d9ed739",
+        "title": "SEO Opportunities"
+      },
+      {
+        "blockId": "ff38edc7-8b1d-43ce-b692-6c630058066e",
+        "title": "Backlink Opportunities"
+      },
+      {
+        "blockId": "ffc92a97-84af-41a0-b993-6cbfe0ca2831",
+        "title": "Feed Sync Runs"
+      },
+      {
+        "blockId": "aec67ee4-0ad2-476a-b498-c4207c76fbd7",
+        "title": "CSN Releases"
+      },
+      {
+        "blockId": "793edf56-ea43-41cf-baaf-2c3dd0976b66",
+        "title": "CSN Incidents"
+      },
+      {
+        "blockId": "e1dc3148-41b8-4783-a79e-185b0fde5280",
+        "title": "CSN Maintenance"
+      },
+      {
+        "blockId": "3d7f94b0-d329-4789-846a-b221945c5b85",
+        "title": "CSN Knowledge"
+      },
+      {
+        "blockId": "f01f1be5-8f36-4081-92d1-7fbe6eff7ca8",
+        "title": "Launch KPI Snapshots"
+      },
+      {
+        "blockId": "80625683-1553-451d-9c84-528f2a3ad654",
+        "title": "Human Gates"
+      }
+    ],
+    "childPages": [
+      "12-Phase Operational Runbooks",
+      "CSN OS — Panel de proyectos",
+      "Guía 7 días — Día 1 — Producto, estilo visual y base",
+      "Guía 7 días — Día 2 — Mercado, dominio y entorno",
+      "Guía 7 días — Día 3 — Keywords y arquitectura pSEO",
+      "Guía 7 días — Día 4 — Web funcional v1",
+      "Guía 7 días — Día 5 — Feed y monetización",
+      "Guía 7 días — Día 6 — SEO técnico y calidad",
+      "Guía 7 días — Día 7 — Validación y lanzamiento"
+    ]
+  },
+  "manifestRootPageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
+  "runbookPageId": "3f684cd0-85ae-81c4-86c9-f909182fa38c",
+  "countsEnd": {
+    "hub": 4,
+    "ops": 19,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "countsUnchanged": true
+}
