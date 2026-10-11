@@ -1,4 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { NOT_FOUND_PAGE_METADATA } from "@/lib/seo/notFoundMetadata";
+
+export const metadata: Metadata = NOT_FOUND_PAGE_METADATA;
 
 export default function GlobalNotFound() {
   return (

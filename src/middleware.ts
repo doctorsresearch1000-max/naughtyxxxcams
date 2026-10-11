@@ -9,6 +9,7 @@ import {
   isPublicProfileHtmlPath,
   PROFILE_PAGE_CACHE_CONTROL,
 } from "@/lib/http/profilePageCache";
+import { isLegacyRootSpamPath } from "@/lib/seo/legacyRootPaths";
 
 const READ_METHODS = new Set(["GET", "HEAD"]);
 
@@ -61,7 +62,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 308);
   }
 
-  return continueRequest(request, request.nextUrl.pathname);
+  const pathname = request.nextUrl.pathname;
+  if (isLegacyRootSpamPath(pathname)) {
+    return new NextResponse("This URL has been permanently removed.", {
+      status: 410,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Robots-Tag": "noindex, nofollow",
+        "Cache-Control": "public, max-age=86400",
+      },
+    });
+  }
+
+  return continueRequest(request, pathname);
 }
 
 export const config = {

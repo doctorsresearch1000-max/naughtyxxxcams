@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { permanentRedirect, redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import { ExploreMain } from "@/components/explore/ExploreMain";
 import { isExploreCategorySlug } from "@/lib/explore/categorySlugs";
 import { isExploreCatalogSlug } from "@/lib/explore/exploreCatalog";
@@ -21,9 +21,18 @@ type ExplorePageProps = {
   searchParams: Promise<{ cat?: string; show?: string; filter?: string }>;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: ExplorePageProps): Promise<Metadata> {
+  const { cat } = await searchParams;
   const canonical = exploreCanonicalUrl(null);
   const copy = generateExploreSeoCopy(null);
+
+  const catKey = cat?.trim().toLowerCase();
+  const hasJunkQuery =
+    Boolean(catKey) &&
+    !isExploreCategorySlug(catKey!) &&
+    !isExploreCatalogSlug(catKey!);
 
   return {
     title: copy.title,
@@ -31,6 +40,9 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical,
     },
+    robots: hasJunkQuery
+      ? { index: false, follow: true, googleBot: { index: false, follow: true } }
+      : { index: true, follow: true, googleBot: { index: true, follow: true } },
     openGraph: {
       title: copy.title,
       description: copy.description,
@@ -50,14 +62,15 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
     permanentRedirect("/explore");
   }
 
-  if (cat?.trim() && isExploreCategorySlug(cat)) {
-    redirect(explorePathForCategorySlug(cat));
-  }
-
   const catalogCat = cat?.trim().toLowerCase();
-  if (catalogCat && isExploreCatalogSlug(catalogCat)) {
-    const bootstrap = await getExploreServerBootstrap(catalogCat);
-    return <ExploreMain categorySlug={catalogCat} bootstrap={bootstrap} />;
+  if (catalogCat) {
+    if (isExploreCategorySlug(catalogCat)) {
+      permanentRedirect(explorePathForCategorySlug(catalogCat));
+    }
+    if (isExploreCatalogSlug(catalogCat)) {
+      permanentRedirect(`/category/${catalogCat}`);
+    }
+    permanentRedirect("/explore");
   }
 
   const bootstrap = await getExploreServerBootstrap(null);
