@@ -40,6 +40,7 @@
     "csn:verify-notion-guide": "node scripts/csn-verify-notion-guide-publish.mjs",
     "csn:legacy-ops-inspect": "node scripts/csn-legacy-ops-inspect.mjs",
     "csn:legacy-ops-centralize": "node scripts/csn-legacy-ops-centralize.mjs",
+    "csn:legacy-ops-fix2": "node scripts/csn-legacy-ops-fix2.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {

@@ -87,3 +87,11 @@ npm run csn:legacy-ops-inspect
 npm run csn:legacy-ops-centralize
 npm run csn:legacy-ops-centralize -- --dry-run
 ```
+
+---
+
+## Fix 2 (2026-10-11) — bandeja relacional
+
+Informe detallado: **`docs/csn-legacy-ops-fix2-report.md`** · evidencia: **`docs/csn-legacy-ops-fix2-applied.json`** · `npm run csn:legacy-ops-fix2`
+
+Resumen: relaciones `Issue` / `Deployment` / `Routine` / `Cam Site`, propiedad `Due Date (date)`, 15 tareas centrales enlazadas, vistas `Bandeja · *`, ops 4→19 filas sin tocar bases especializadas.

@@ -1,0 +1,256 @@
+{
+  "marker": "csn-legacy-ops-fix2-v1",
+  "at": "2026-10-11T11:13:49.316Z",
+  "dryRun": false,
+  "countsBefore": {
+    "hub": 4,
+    "ops": 19,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "countsAfter": {
+    "hub": 4,
+    "ops": 19,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "schema": {
+    "added": []
+  },
+  "actionable": {
+    "issues": 4,
+    "deploy": 3,
+    "routine": 8,
+    "skipped": [
+      {
+        "kind": "issue",
+        "id": "3f584cd0-85ae-80e6-9c58-ca92ccf3e9db",
+        "reason": "title_empty_requires_approval",
+        "status": "Abierto"
+      }
+    ]
+  },
+  "linked": {
+    "existingOpsUpdated": [],
+    "created": [],
+    "skippedDuplicates": [
+      {
+        "kind": "issue",
+        "sourceId": "3f684cd0-85ae-81d2-97bf-e5670618543e",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "issue",
+        "sourceId": "3f684cd0-85ae-81b4-bd3a-c92210d6fa36",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "issue",
+        "sourceId": "3f684cd0-85ae-8159-aa3e-f91cf6751304",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "issue",
+        "sourceId": "3f684cd0-85ae-81d6-a729-ecd9f1003f32",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "deploy",
+        "sourceId": "3f684cd0-85ae-81d4-b47c-e11dbe0a0e25",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "deploy",
+        "sourceId": "3f684cd0-85ae-816f-beb4-d56f6f5e33f1",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "deploy",
+        "sourceId": "3f684cd0-85ae-81f4-8c91-d073b6d9f6b5",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-810b-9a62-ff2a6c0deadd",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-81b1-8456-e960b73da46c",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-8115-aae2-d33c6ee10f84",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-8165-bf3e-feb26dc99269",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-81bd-8577-c79714f4e57e",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-81f1-8b72-e051e14f9fbb",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-8113-bd15-d7c7f6c5c3a4",
+        "reason": "relation_exists"
+      },
+      {
+        "kind": "routine",
+        "sourceId": "3f684cd0-85ae-816a-b637-cadf195ae476",
+        "reason": "relation_exists"
+      }
+    ],
+    "dateMigrations": [],
+    "dateUnparsed": []
+  },
+  "viewResults": {
+    "ops": {
+      "created": [],
+      "skipped": [
+        "Bandeja · All Tasks",
+        "Bandeja · Today",
+        "Bandeja · Overdue",
+        "Bandeja · Blocked",
+        "Bandeja · In Progress",
+        "Bandeja · Upcoming",
+        "Bandeja · Unscheduled",
+        "Bandeja · By Site"
+      ]
+    },
+    "hub": {
+      "created": [],
+      "skipped": [
+        "CSN · 6 — Sitios Pending (bandeja)",
+        "CSN · 7 — Acceso: usar OPERATIONS CENTER"
+      ]
+    }
+  },
+  "verification": {
+    "defaultViewPreserved": true,
+    "bandejaViews": [
+      {
+        "name": "Bandeja · All Tasks",
+        "filter": null
+      },
+      {
+        "name": "Bandeja · Today",
+        "filter": {
+          "and": [
+            {
+              "property": "xRut",
+              "rich_text": {
+                "does_not_contain": "Done"
+              }
+            },
+            {
+              "property": "@iw~",
+              "date": {
+                "equals": "today"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Bandeja · Overdue",
+        "filter": {
+          "and": [
+            {
+              "property": "xRut",
+              "rich_text": {
+                "does_not_contain": "Done"
+              }
+            },
+            {
+              "property": "@iw~",
+              "date": {
+                "before": "today"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Bandeja · Blocked",
+        "filter": {
+          "property": "xRut",
+          "rich_text": {
+            "contains": "Blocked"
+          }
+        }
+      },
+      {
+        "name": "Bandeja · In Progress",
+        "filter": {
+          "property": "xRut",
+          "rich_text": {
+            "contains": "In Progress"
+          }
+        }
+      },
+      {
+        "name": "Bandeja · Upcoming",
+        "filter": {
+          "and": [
+            {
+              "property": "xRut",
+              "rich_text": {
+                "does_not_contain": "Done"
+              }
+            },
+            {
+              "property": "@iw~",
+              "date": {
+                "after": "today"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Bandeja · Unscheduled",
+        "filter": {
+          "and": [
+            {
+              "property": "xRut",
+              "rich_text": {
+                "does_not_contain": "Done"
+              }
+            },
+            {
+              "property": "@iw~",
+              "date": {
+                "is_empty": true
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Bandeja · By Site",
+        "filter": null
+      }
+    ]
+  },
+  "opsRowDelta": 0,
+  "descriptionsUnchanged": true,
+  "specializedRowCountsUnchanged": true
+}
