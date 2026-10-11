@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-11T09:36:10.943Z",
+  "hubCentroAcciones": true,
+  "hubPreview": "Centro de acciones — Cam Sites — SOP System. Elige crear un sitio, continuar un ",
+  "qaProjectFound": true,
+  "qaIsTestOnly": true,
+  "continueHasNextTask": true,
+  "continueHasSteps": true,
+  "promptGenerated": true,
+  "promptNotionUrl": "https://app.notion.com/p/Prompt-Cursor-Open-Project-Run-for-launch-or-QA-sandbox-3f684cd085ae8135a454c6e8640f5bc8",
+  "failureBlocks": true,
+  "checks": {
+    "entryClear": true,
+    "planIdentifiable": true,
+    "promptSpecific": true,
+    "failureBlocksAdvance": true,
+    "qaSeparated": true,
+    "allPass": true
+  }
+}

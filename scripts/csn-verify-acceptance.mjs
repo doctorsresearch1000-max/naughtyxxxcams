@@ -100,7 +100,7 @@ async function main() {
     legacyCounts: legacy,
     acceptance: {
       nav1_title: title === PRIMARY_ENTRY_TITLE,
-      nav2_empieza: hub.ok,
+      nav2_centroAcciones: hub.ok,
       nav3_db14: fp.match,
       nav4_promptFromTask: Boolean(promptUrl),
       nav5_duplicateNamed: dupTitle.includes("OBSOLETO"),

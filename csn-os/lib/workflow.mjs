@@ -80,6 +80,12 @@ export async function createProject({
   repositoryUrl,
   projectBrief,
 }) {
+  const intakeWarnings = [];
+  if (!projectBrief?.trim() || projectBrief === "Pendiente") {
+    intakeWarnings.push(
+      "Project Brief vacío: los prompts de fase ≥2 quedarán bloqueados hasta completarlo en Notion o con --brief=",
+    );
+  }
   const manifest = loadManifest();
   const notion = getNotion();
   const sitesDb = getDb(manifest, "csnSites");
@@ -142,10 +148,12 @@ export async function createProject({
     runId: run.id,
     launchKey: lk,
     executionTasks: tasks,
+    intakeWarnings,
+    nextStep: `npm run csn -- continuar --launch-key=${lk}`,
   };
 }
 
-async function executionTasksForRun(notion, manifest, runId) {
+export async function executionTasksForRun(notion, manifest, runId) {
   const tasksDb = getDb(manifest, "tasks");
   const all = [];
   let c;

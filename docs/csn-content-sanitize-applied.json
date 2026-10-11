@@ -1,28 +1,14 @@
 {
-  "at": "2026-10-11T09:28:57.969Z",
+  "at": "2026-10-11T09:35:06.810Z",
   "blocked": false,
   "rootPageId": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
-  "hubMarker": "csn-hub-marker-v4",
+  "hubMarker": "csn-hub-marker-v5",
   "corrections": [],
   "hub": {
     "rootUrl": "https://app.notion.com/p/Cam-Sites-SOP-System-3f684cd085ae811fa929c4b4ccbcb56a",
-    "runUrl": "https://app.notion.com/p/Lanzamiento-DEMO-QA-LIVE-OFFLINE-Cam-Profiles-3f684cd085ae8118a3efd5d25a6f6bb0",
-    "taskUrl": "https://app.notion.com/p/QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae812a96acee9c9e69ba82",
-    "promptUrl": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f",
-    "promptLinks": [
-      {
-        "name": "[QA] Coherencia LIVE/OFFLINE en perfiles de modelo",
-        "url": "https://app.notion.com/p/Prompt-Cursor-QA-Coherencia-LIVE-OFFLINE-en-perfiles-de-modelo-3f684cd085ae816f939cd41fb9e15b4f"
-      },
-      {
-        "name": "CI workflow verification (repo)",
-        "url": "https://app.notion.com/p/Prompt-Cursor-CI-workflow-verification-repo-3f684cd085ae81e7a1d5d072de997352"
-      },
-      {
-        "name": "Document affiliate credential storage (outside Notion)",
-        "url": "https://app.notion.com/p/Prompt-Cursor-Document-affiliate-credential-storage-outside-Notion-3f684cd085ae810cbf1dfa186d6e6c39"
-      }
-    ]
+    "hubMarker": "csn-hub-marker-v5",
+    "productionCount": 0,
+    "qaCount": 8
   },
   "legacyIntegrityOk": true,
   "legacyBefore": {

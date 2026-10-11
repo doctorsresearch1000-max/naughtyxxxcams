@@ -105,22 +105,7 @@ async function main() {
   const run = (await queryByRichText(notion, manifest.databases.projectRuns.dataSourceId, "External ID", DEMO_RUN_EXT))[0];
   const task = (await queryByRichText(notion, manifest.databases.tasks.dataSourceId, "External ID", DEMO_TASK_LIVE))[0];
 
-  const hub = await syncCanonicalRootHub(manifest, {
-    runUrl: run?.url,
-    taskUrl: task?.url,
-    promptUrl: task?.properties["Prompt Notion URL"]?.url,
-    promptLinks: await (async () => {
-      const out = [];
-      for (const p of published.filter((x) => x.notionUrl)) {
-        const row = (await queryByRichText(notion, manifest.databases.tasks.dataSourceId, "External ID", p.taskExternalId))[0];
-        out.push({
-          name: row?.properties?.Task?.title?.[0]?.plain_text || p.taskExternalId,
-          url: p.notionUrl,
-        });
-      }
-      return out;
-    })(),
-  });
+  const hub = await syncCanonicalRootHub(manifest);
 
   await syncParentContainerIndex(notion, hub.rootUrl);
   const verify = await verifyRootHubFirstBlock(notion, manifest.rootPageId);

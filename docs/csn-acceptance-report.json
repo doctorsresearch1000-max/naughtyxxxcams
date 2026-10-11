@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-11T09:26:34.513Z",
+  "at": "2026-10-11T09:35:19.554Z",
   "primaryPage": {
     "id": "3f684cd0-85ae-811f-a929-c4b4ccbcb56a",
     "title": "Cam Sites — SOP System",
@@ -8,7 +8,7 @@
   },
   "navigation": {
     "hubOk": true,
-    "hubPreview": "Empieza aquí — Cam Sites — SOP System es tu centro operativo: proyecto → tarea →",
+    "hubPreview": "Centro de acciones — Cam Sites — SOP System. Elige crear un sitio, continuar un ",
     "dbFingerprint": {
       "match": true,
       "dbCount": 14,
@@ -72,7 +72,7 @@
   },
   "acceptance": {
     "nav1_title": true,
-    "nav2_empieza": true,
+    "nav2_centroAcciones": true,
     "nav3_db14": true,
     "nav4_promptFromTask": true,
     "nav5_duplicateNamed": true,

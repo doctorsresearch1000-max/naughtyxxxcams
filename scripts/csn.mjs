@@ -17,6 +17,13 @@ import {
 } from "../csn-os/lib/workflow.mjs";
 import { assemblePrompt } from "../csn-os/lib/assemble-prompt.mjs";
 import { syncProjectPanel } from "./csn-panel-sync.mjs";
+import {
+  listProjects,
+  getContinueGuide,
+  getSiteMaintenanceOverview,
+  runExternalIdFromLaunchKey,
+  validateIntake,
+} from "../csn-os/lib/project-ux.mjs";
 
 dotenv.config({ path: new URL("../.env", import.meta.url).pathname });
 
@@ -31,22 +38,24 @@ function parseArgs(argv) {
   return { cmd, opts };
 }
 
+function resolveRunExternalId(opts) {
+  if (opts["run-external-id"]) return opts["run-external-id"];
+  if (opts["launch-key"]) return runExternalIdFromLaunchKey(opts["launch-key"]);
+  return null;
+}
+
 function printPlan(plan) {
-  console.log(`\n📋 Plan de trabajo — ${plan.runName} (${plan.runExternalId})`);
-  console.log(`   Clase: ${plan.recordClass} | Dominio: ${plan.domain || "(pendiente)"} | Fase actual: ${plan.currentPhase}\n`);
+  console.log(`\n📋 Plan de trabajo — ${plan.runName}`);
+  console.log(`   Clave: ${plan.runExternalId.replace("csn:run:", "")} | Clase: ${plan.recordClass} | Fase: ${plan.currentPhase}\n`);
   for (const p of Object.values(plan.phases).sort((a, b) => a.id - b.id)) {
     const icon =
       p.status === "complete" ? "✅" : p.status === "current" ? "▶️" : p.status === "locked" ? "🔒" : "⬜";
     console.log(
       `${icon} Fase ${p.id}: ${p.nameEs} — tareas ${p.tasksDone}/${p.tasksTotal}${p.blockers?.length ? ` ⚠ ${p.blockers.join("; ")}` : ""}`,
     );
-    console.log(`   ${p.summaryEs}`);
   }
-  console.log(
-    "\nSiguiente paso recomendado: generar prompt para fase",
-    plan.nextRecommendedPhase,
-    "→ npm run csn -- prompt --run-external-id=" + plan.runExternalId + " --phase=" + plan.nextRecommendedPhase,
-  );
+  const lk = plan.runExternalId.replace("csn:run:", "");
+  console.log(`\nSiguiente paso: npm run csn -- prompt --launch-key=${lk}\n`);
 }
 
 async function diagnostico() {
@@ -57,17 +66,20 @@ async function diagnostico() {
     JSON.stringify(
       {
         queFunciona: [
-          "CLI csn (proyecto, plan, prompt, resultado)",
-          "Generador assemble-prompt + artefactos en csn-os/",
-          "14 DB aisladas en raíz canónica",
-          "Task definition vs execution task",
+          "proyecto crear + continuar + prompt/resultado por --launch-key",
+          "Plan 12 fases y tareas de ejecución en Notion",
+          "Publicación de prompts en página hija de la tarea",
+          "Bloqueo de tareas ante fallos (estado Blocked)",
         ],
-        desconectado: [
-          "Notion no ejecuta Node: el panel enlaza instrucciones CLI",
-          "Vistas filtradas: creación API limitada",
+        manualEnNotion: [
+          "Aprobaciones Human Gates (producción, dominio, etc.)",
+          "Filas de mantenimiento/incidencias si aún no existen",
         ],
-        falta: ["Copiar al portapapeles nativo en CI", "UI Notion sin botones reales"],
-        duplicado: ["Segunda raíz parcial (3 DB) — ignorar"],
+        noImplementado: [
+          "Botones ni formularios nativos en Notion",
+          "Planificación automática de arquitectura sin brief del operador",
+          "Selección de siguiente tarea sin leer estado en Notion",
+        ],
         canonicalRoot: manifest.rootPageId,
         legacyCounts: legacy,
       },
@@ -83,23 +95,24 @@ async function main() {
   const { cmd, opts } = parseArgs(raw);
   if (!cmd || cmd === "help") {
     console.log(`
-CSN OS — comandos:
+CSN OS — comandos (usa --launch-key= cuando puedas; evita memorizar IDs):
 
-  diagnostico                    Estado del sistema
-  schema                         Aplicar propiedades operativas en Notion
-  panel                          Sincronizar página «Panel de proyectos»
-  sync-hub                       Hub en raíz + runbooks ES + prompts QA
-  proyecto crear --nombre=...      Crear sitio + run + tareas (--qa=true por defecto)
-  plan --run-external-id=...     Ver plan de 12 fases
-  readiness --run-external-id=... --phase=N
-  sync-tareas --run-external-id=...
-  prompt --run-external-id=... --phase=N [--print]
-  resultado --run-external-id=... --phase=N --json=archivo.json
+  diagnostico
+  schema | panel | sync-hub
+  proyecto crear --nombre=... --launch-key=... --brief=... [--repo=] [--production=true]
+  proyectos [--solo-produccion]
+  continuar --launch-key=...     Plan, bloqueos, tarea sugerida y pasos
+  mantener --launch-key=...      Mantenimiento e incidencias del sitio
+  plan --launch-key=... | --run-external-id=...
+  prompt --launch-key=... [--phase=N] [--print]
+  resultado --launch-key=... --json=informe.json [--phase=N]
+  readiness --launch-key=... --phase=N
 
-Ejemplo:
-  npm run csn -- proyecto crear --nombre="Mi Sitio QA" --launch-key=mi-sitio-qa
-  npm run csn -- plan --run-external-id=csn:run:mi-sitio-qa
-  npm run csn -- prompt --run-external-id=csn:run:mi-sitio-qa --phase=5 --print
+Ejemplo flujo completo:
+  npm run csn -- proyecto crear --nombre="Mi sitio" --launch-key=mi-sitio --brief="Alcance..."
+  npm run csn -- continuar --launch-key=mi-sitio
+  npm run csn -- prompt --launch-key=mi-sitio --print
+  npm run csn -- resultado --launch-key=mi-sitio --json=informe.json
 `);
     return;
   }
@@ -131,10 +144,22 @@ Ejemplo:
     return;
   }
   if (cmd === "proyecto-crear") {
+    const isProduction = opts.production === "true";
+    const intake = validateIntake({
+      siteName: opts.nombre,
+      projectBrief: opts.brief,
+      domain: opts.dominio,
+      production: isProduction,
+      isQa: !isProduction,
+    });
+    if (!intake.ok) {
+      console.warn("⚠ Requisitos incompletos para un flujo sin bloqueos:\n - " + intake.missing.join("\n - "));
+      console.warn(intake.note);
+    }
     const r = await createProject({
       siteName: opts.nombre || "Nuevo sitio QA",
       launchKey: opts["launch-key"],
-      isQa: opts.qa !== "false" && opts.production !== "true",
+      isQa: !isProduction,
       domain: opts.dominio,
       niche: opts.nicho,
       stack: opts.stack,
@@ -146,37 +171,85 @@ Ejemplo:
     console.log(JSON.stringify(r, null, 2));
     return;
   }
+  if (cmd === "proyectos") {
+    const list = await listProjects({
+      includeQa: opts["solo-produccion"] !== true,
+      productionOnly: opts["solo-produccion"] === true,
+    });
+    console.log(JSON.stringify(list, null, 2));
+    return;
+  }
+  if (cmd === "continuar") {
+    const lk = opts["launch-key"];
+    if (!lk) {
+      const list = await listProjects({ includeQa: true });
+      console.log("Proyectos registrados:\n");
+      for (const p of list) {
+        console.log(
+          `${p.isQa ? "[QA] " : ""}${p.siteName} — fase ${p.currentPhase}, ${p.progressPercent}% — continuar: npm run csn -- continuar --launch-key=${p.launchKey}`,
+        );
+      }
+      return;
+    }
+    const guide = await getContinueGuide(lk);
+    console.log(JSON.stringify(guide, null, 2));
+    return;
+  }
+  if (cmd === "mantener") {
+    const lk = opts["launch-key"];
+    if (!lk) {
+      console.error("Indica --launch-key=<clave del proyecto>");
+      process.exit(1);
+    }
+    const m = await getSiteMaintenanceOverview(lk);
+    console.log(JSON.stringify(m, null, 2));
+    return;
+  }
+  const runExt = resolveRunExternalId(opts);
+  if (!runExt && ["plan", "readiness", "sync-tareas", "prompt", "resultado"].includes(cmd)) {
+    console.error("Falta --launch-key= o --run-external-id=");
+    process.exit(1);
+  }
   if (cmd === "plan") {
-    const plan = await getWorkPlan(opts["run-external-id"]);
-    printPlan(plan);
+    printPlan(await getWorkPlan(runExt));
     return;
   }
   if (cmd === "readiness") {
-    const r = await checkPhaseReadiness(opts["run-external-id"], Number(opts.phase || 1));
+    const r = await checkPhaseReadiness(runExt, Number(opts.phase || 1));
     console.log(JSON.stringify(r, null, 2));
     return;
   }
   if (cmd === "sync-tareas") {
     const manifest = loadManifest();
-    const r = await syncExecutionTasksForRun(getNotion(), manifest, opts["run-external-id"]);
+    const r = await syncExecutionTasksForRun(getNotion(), manifest, runExt);
     console.log(r);
     return;
   }
   if (cmd === "prompt") {
     const manifest = loadManifest();
-    const phase = Number(opts.phase || 1);
+    let phase = opts.phase ? Number(opts.phase) : null;
+    if (!phase) {
+      const plan = await getWorkPlan(runExt);
+      phase = plan.nextRecommendedPhase;
+    }
     const result = await assemblePrompt({
       manifest,
-      runExternalId: opts["run-external-id"],
+      runExternalId: runExt,
       phase,
+      taskExternalId: opts["task-external-id"],
     });
     console.log(JSON.stringify({ ...result, copyHint: `cat ${result.path}` }, null, 2));
     if (opts.print) console.log("\n" + fs.readFileSync(result.path, "utf8"));
     return;
   }
   if (cmd === "resultado") {
+    let phase = opts.phase ? Number(opts.phase) : null;
+    if (!phase) {
+      const plan = await getWorkPlan(runExt);
+      phase = plan.nextRecommendedPhase;
+    }
     const body = JSON.parse(fs.readFileSync(opts.json, "utf8"));
-    const r = await recordExecutionResult(opts["run-external-id"], Number(opts.phase), body);
+    const r = await recordExecutionResult(runExt, phase, body);
     console.log(r);
     return;
   }
