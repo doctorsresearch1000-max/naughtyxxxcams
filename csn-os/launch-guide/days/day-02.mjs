@@ -1,102 +1,80 @@
-import { DOMAIN_SCORE_GUIDE, notionLinks } from "../guide-context.mjs";
-import { APROBACION_HUMANA, RELACIONAR_EN_NOTION, link, promptFence } from "../guide-sections.mjs";
+import { REPO_REFERENCE } from "../guide-context.mjs";
+import { notionOptionalBlock, promptFence } from "../guide-product-format.mjs";
+import { link } from "../guide-sections.mjs";
+import { notionLinks } from "../guide-context.mjs";
+
+const PROMPT = `# Día 2 — Mercado, dominio y entorno (producto primero)
+
+Inspecciona repo y brief-producto.md del Día 1.
+
+## Mercado (máx. 2–3 h — luego código)
+- 3–5 competidores del nicho: layout, categorías, perfiles, CTAs.
+- Tabla: qué copiar (patrón) vs diferenciar.
+- Sin inventar tráfico ni rankings.
+
+## Dominio (máx. 1–2 h)
+- 3 candidatos (expireddomains o manual); Wayback si accesible.
+- Elegir favorito provisional; NO comprar sin aprobación humana.
+- Plan hosting en texto (Cloudflare Pages, etc.) sin cambiar DNS prod.
+
+## Código (resto del día)
+- Continuar UI según opción A–E del Día 1.
+- Commit en rama feature/dia-2.
+
+## Archivos
+- docs/competencia.md, docs/dominio.md
+- Código UI en progreso
+
+## Entregables
+- Decisión dominio provisional + competencia documentada
+- Progreso visible en localhost`;
 
 export function renderDay02() {
   const u = notionLinks();
-  const promptA = `# Día 2 — Tabla comparativa dominios (sin Notion)
+  return `# Día 2 — Mercado, dominio y entorno
 
-Yo creo filas en Notion. Tú organizas:
-- Nicho: [cuaderno]
-- Dominios: [lista]
-- Notas Wayback: [pegar]
+## 1. Qué construyes hoy
+**Contexto de mercado** + **dominio provisional** + **más UI en local** (no una jornada solo de formularios).
 
-Entrega: tabla 1-5, párrafo dominio preferido, texto gate compra (Pending, tope USD).
-No inventar compra ni Ahrefs.`;
+## 2. Cómo debe verse / comportarse
+La web en local debe **avanzar** (header, grid o feed según Día 1) mientras documentas competencia en paralelo.
 
-  const promptB = `# Día 2 — Plan DNS/hosting (documentación)
+## 3. Antes de empezar
+- Día 1 cerrado (opción A–E + dev arrancado o bloqueo conocido).
+- Brief en \`docs/brief-producto.md\`.
 
-Repo: [URL o desconocido]
-QA o prod: [ ]
-Dominio preferido: [ ]
+## 4. Pasos en Cursor
+1. Prompt §5 → competencia + dominio (documentos).
+2. 1–2 h dominio: Wayback + favorito; gate compra **sin pagar** (ver Notion opcional).
+3. Resto: implementar navegación/categorías placeholder según diseño.
 
-Si hay repo: leer README/wrangler. Tabla DNS sin secretos. QA: sin cambios DNS producción.
-Entrega: markdown para CSN Knowledge.`;
+## 5. Prompt
 
-  return `# Día 2 — Dominio y entorno de trabajo
+${promptFence(PROMPT)}
 
-## 1. Qué vas a conseguir hoy
-- ≥3 candidatos en Notion, historial Wayback, favorito justificado.
-- Gate compra **Pending** (sin pagar).
-- Plan DNS/hosting documentado.
-- **Puedes cerrar el día sin comprar el dominio.**
-
-## 2. Antes de empezar
-- Día 1 hecho (run + site).
-- Glosario: **dominio**, **dominio expirado**, **Wayback** (web.archive.org), **DNS**, **staging** (prueba, no público final).
-
-## 3. Tiempo y dependencias
-- **3–5 h** investigación; compra = días (aprobación).
-- **Depende:** gate alcance Día 1 si restringe investigación.
-
-${APROBACION_HUMANA}
-
-## 4. Pasos
-
-### Paso 1 — Tres candidatos
-- **Qué:** https://www.expireddomains.net/ → Deleted Domains → anota ≥3 nombres.
-- **Dónde:** ${link("Domain Candidates", u.domainCandidates)} → New cada uno; Source expireddomains.net; enlaza Site y Project Run.
-
-${RELACIONAR_EN_NOTION}
-
-- **Si falla:** registro en expireddomains → Source manual en Notes.
-
-### Paso 2 — Wayback
-- **Qué:** web.archive.org por candidato; Blocked si spam/malware.
-- **Dónde:** Notes de cada fila.
-- **Si falla:** anotar «sin historial»; no asumir limpio.
-
-### Paso 3 — Comparar
-${DOMAIN_SCORE_GUIDE}
-- Marca un favorito **In progress**; frase en ${link("Project Runs", u.projectRuns)} Notes.
-
-### Paso 4 — Gate compra (sin pagar)
-- **Qué:** ${link("Human Gates", u.humanGates)} → domain_candidate; Target External ID csn:domain:DOMINIO:EXTERNAL_ID_RUN; Limits USD; **Pending**; STOP checkout.
-
-### Paso 5 — Estado gate
-- **Qué:** Nota en run: compra pendiente; captura opcional.
-
-### Paso 6 — Decisión escrita
-- **Qué:** Notes favorito ≥50 caracteres; Current Phase 3 en run.
-
-### Paso 7 — Plan DNS
-- **Qué:** ${link("CSN Knowledge", u.csnKnowledge)} artículo Runbook «DNS — [sitio]»; sin contraseñas; QA: sin DNS producción.
-
-### Paso 8 — Checklist sandbox
-- **Qué:** Notes run: hostnames prueba; «DNS prod: sin cambios».
-
-## 5. Prompts Cursor
-
-### Investigación dominios
-${promptFence(promptA)}
-
-### Plan DNS
-${promptFence(promptB)}
-
-## 6. Respuesta esperada de Cursor
-- Tablas y textos para pegar; sin afirmar compra.
+## 6. Archivos
+- \`docs/competencia.md\`, \`docs/dominio.md\`
+- Componentes de listado/categoría en \`src/\`
 
 ## 7. Comprobar
-- [ ] ≥3 candidatos + Wayback
-- [ ] Favorito + gate Pending
-- [ ] Plan DNS en Knowledge
-- [ ] Sin pago sin Approved
+- [ ] Tabla competidores con URLs reales visitadas
+- [ ] Dominio favorito con notas Wayback (o «sin historio»)
+- [ ] Cambio visible en localhost vs Día 1
 
 ## 8. Si falla
-- Todos malos → nuevos candidatos paso 1.
-- Gate rechazado → otro dominio.
+- Sin tiempo dominio → documentar «pendiente» y seguir UI.
+- Compra bloqueada → esperado; seguir en local.
 
-## 9. Pendiente
-- Compra y DNS real → tras Approved.
-- **Siguiente:** Día 3 pSEO.
+## 9. Estado
+| Competencia | Dominio | Código UI |
+|-------------|---------|-----------|
+
+## 10. Desbloquea
+**Día 3** — keywords y arquitectura URL alineada al layout elegido.
+
+### Dominio (opcional Notion, ≤30 min)
+Si registras: ${link("Domain Candidates", u.domainCandidates)} + ${link("Human Gates", u.humanGates)} compra Pending.
+
+${notionOptionalBlock()}
 `;
 }

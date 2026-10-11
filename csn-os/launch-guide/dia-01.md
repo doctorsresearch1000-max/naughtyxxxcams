@@ -1,120 +1,116 @@
-# Día 1 — Define tu proyecto
+# Día 1 — Producto, estilo visual y base del proyecto
 
-## 1. Qué vas a conseguir hoy (tangible)
-- Brief escrito en lenguaje claro.
-- Tres filas en Notion: Project Run, CSN Site, Human Gate (alcance).
-- Textos listos para copiar desde Cursor.
+## 1. Qué parte de la web construyes hoy
+La **identidad del producto**: qué sitio de cams es, cómo se ve y navega, y un proyecto **ejecutable en local** (o bloqueo documentado).
 
-## 2. Qué necesitas antes de empezar
-- Acceso a [Cam Sites — SOP System](https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae811fa929c4b4ccbcb56a)
-- 45–90 minutos
-- Decidir QA vs producción
+## 2. Cómo debe verse / comportarse
+Según la opción **A–E** que elijas (no la elige Cursor sin preguntarte):
 
 
-## Tu cuaderno de proyecto (rellénalo una vez)
+## Opciones de dirección de producto (elige UNA — no la elige Cursor)
 
-- **Nombre del sitio (público):**
-- **QA (prueba) o producción:**
-- **Nicho y países/idiomas:**
-- **Qué debe hacer la web para el visitante (5-10 frases):**
-- **Identificador interno (una palabra, ej. mi-cams-2026):**
-- **URL del repositorio:** (o «pendiente»)
-- **Dominio objetivo:** (o «por decidir»)
-- **Responsable de aprobaciones (nombre o «pendiente»):**
+**A. Directorio clásico** — Grid de tarjetas, LIVE/OFFLINE, filtros y categorías visibles. Mejor para pSEO y directorios.
 
+**B. Tube site** — Grid denso, miniaturas grandes, categorías/etiquetas, páginas detalle. Descubrimiento visual.
 
-## 3. Tiempo y dependencias
-- **Tiempo:** 1–2 h
-- **Depende de:** nada
-- **Puede alargarse:** definir quién aprueba gates
+**C. Descubrimiento tipo TikTok** — Mobile-first, tarjetas grandes o feed vertical. No asumir autoplay ni feed infinito sin datos del proveedor. Evaluar SEO desktop y rutas indexables.
+
+**D. Híbrido** — Directorio SEO + módulo descubrimiento visual. Perfiles con CTA claro.
+
+**E. Editorial / magazine** — Bloques destacados, menos densidad. Solo con estrategia editorial real.
+
+Si no hay decisión documentada, **detente y pregunta al usuario** cuál opción (A–E) antes de implementar UI.
 
 
-### Aprobaciones humanas (Human Gate)
+Resultado mínimo al cerrar el día: puedes abrir **localhost** y reconocer la dirección elegida (aunque falten datos reales).
 
-- **Qué es:** una fila en [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) que autoriza gasto, compra o deploy.
-- **Quién aprueba:** la persona responsable de tu proyecto (propietario del negocio o técnico senior). Si no la conoces, deja **Status = Pending** y en **Notes** del run escribe: «Aprobador pendiente de asignar — no realizar compra/deploy».
-- **Cómo continuar sin aprobador:** puedes hacer trabajo que no gaste dinero ni cambie producción (documentación, código en repo, preview local) mientras el Scope del gate lo permita.
+## 3. Qué necesitas antes de empezar
+- Cursor con el repo clonado (fork de https://github.com/doctorsresearch1000-max/naughtyxxxcams si no tienes otro).
+- Node.js LTS.
+- 2–3 referencias visuales (URLs o capturas) si las tienes.
 
+## 4. Pasos en Cursor
+1. Abre el repo → explora rutas y componentes de listado/perfil.
+2. Rellena el brief (nicho, idiomas, monetización, páginas).
+3. **Elige A–E** y anótalo en `docs/brief-producto.md`.
+4. Pega el prompt §5 → aplica design system y arranque local.
+5. `npm install` y `npm run dev` → anota URL y errores.
 
-## 4. Pasos numerados
-
-### Paso 1 — Brief
-- **Qué:** Rellena el cuaderno (sobre todo qué hace la web para el visitante).
-- **Dónde:** Bloc o Notes del run.
-- **Comprobar:** Alguien no técnico lo entiende.
-- **Si falla:** Usa el prompt del §5.
-
-### Paso 2 — Project Run
-- **Qué:** [Project Runs](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) → New.
-- **Campos:** Run Name; Run Type = QA Sandbox o New Site Launch; Launch Key = identificador; External ID = csn:run:identificador; Status In progress; Current Phase 1.
-- **SOP Version:** ver anexo abajo.
-- **Comprobar:** Launch Key no vacío.
-- **Si falla:** Sin acceso a la base → pedir invitación a Cam Sites SOP System.
-
-
-### Cómo elegir SOP Version
-
-1. En la fila Project Run, propiedad **SOP Version**.
-2. Si ves una sola opción con estado activo o título «Active», selecciónala.
-3. Si la lista está vacía: deja el campo vacío, anota en **Notes** «SOP Version pendiente — pedir a administrador» y **no bloquea** seguir el cuaderno y Cursor; solo afecta trazabilidad interna.
-
-
-### Paso 3 — CSN Sites
-- **Qué:** [CSN Sites](https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca) → New → Site Name; Domain = pendiente o dominio futuro; Record Class = QA test-only si es prueba; mismo Launch Key.
-- **Relación:** enlaza Site en Project Run.
-
-
-### Cómo relacionar dos filas en Notion (Site ↔ Project Run, etc.)
-
-1. Abre la fila del **Project Run** (clic en el título de la fila para abrir la página).
-2. Busca la propiedad **Site** (tipo «Relation» / relación).
-3. Haz clic en el campo vacío → escribe el nombre de tu sitio → elige la ficha que creaste en CSN Sites.
-4. Si no aparece, confirma que ya guardaste la fila en CSN Sites y que el nombre coincide.
-5. Repite el mismo patrón en otras bases (Domain Candidates, etc.) para enlazar **Site** y **Project Run**.
-
-
-- **Si falla:** Production marcado por error → corregir a QA test-only.
-
-### Paso 4 — Human Gate alcance
-- **Qué:** [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) → New → Target Type project_run; Target External ID = External ID del run; Scope (Notion + código sin compras); Limits 0 USD en QA; Status Pending.
-- **Comprobar:** Scope no dice «todo permitido».
-- **Si falla:** Sin aprobador → Pending + nota en Notes (ver §8).
-
-## 5. Prompt para Cursor (copiar bloque completo)
+## 5. Prompt completo
 
 ```text
-# Redactar brief y textos Notion — Día 1
+# Día 1 — Producto, estilo visual y base del proyecto
 
-NO tienes acceso a Notion. Solo produces texto para que yo pegue.
+## Rol
+Arquitecto de producto + frontend senior. Inspecciona el repositorio ANTES de proponer cambios.
 
-Contexto (yo relleno):
-- Nombre sitio:
-- QA o producción:
-- Nicho e idiomas:
-- Identificador interno:
+## Repositorio
+[URL o ruta local — ej. https://github.com/doctorsresearch1000-max/naughtyxxxcams]
 
-Tareas:
-1. Mejorar brief (público, propuesta, secciones: home, categorías, perfiles modelo, legales).
-2. Proponer Run Name y External ID (csn:run:identificador).
-3. Redactar Scope/Limits Human Gate (sin gasto si QA).
-4. Checklist final.
+## PASO 0 — Decisión humana obligatoria
+Si el brief no incluye la opción visual (A directorio / B tube / C TikTok-style / D híbrido / E editorial):
+- Pregunta al usuario cuál elige y por qué.
+- NO implementes una UI genérica hasta tener respuesta.
 
-No inventar dominio comprado ni deploy.
+## Tareas (código + documentos locales, no Notion API)
+
+1. Leer README, package.json, src/app o pages, componentes de listado/perfil existentes.
+2. Redactar brief producto: nicho, países/idiomas, propuesta valor, fuente modelos, afiliación, páginas esenciales, éxito medible.
+3. Con la opción A–E elegida, producir **design system v0** en markdown: paleta, tipografía, tarjetas, badges LIVE/OFFLINE, header/footer móvil+desktop, espaciado, estados vacíos, accesibilidad.
+4. Si hay referencia visual del usuario: traducir a tokens (sin copiar assets protegidos).
+5. Preparar entorno: npm install, npm run dev — reportar errores reales.
+6. Si el repo está vacío o es plantilla: crear estructura mínima acorde a la opción elegida (rutas home + listado + perfil placeholder).
+
+## Archivos que puedes tocar (inspeccionar primero)
+- src/app/** o pages/**
+- src/components/** (feed, profile)
+- src/app/globals.css o tokens Tailwind
+- docs/ o DESIGN.md en raíz (crear si no existe)
+
+## Límites
+- No Notion API. No deploy. No inventar datos de modelos.
+- Etiquetar cada entrega: Documentado | Implementado | Probado | Pendiente.
+
+## Entregables
+- brief-producto.md (o DESIGN.md)
+- Comandos ejecutados y URL local si dev arranca
+- Lista de gaps para Día 4
 ```
 
-## 6. Qué debe devolver Cursor
-- Brief mejorado, textos Scope/Limits, checklist.
-- Etiquetas: Documentado (no Implementado en código).
+## 6. Archivos que Cursor debería tocar
+- `docs/brief-producto.md` o `DESIGN.md`
+- `src/app/globals.css`, layout, componentes de tarjeta/header
+- Rutas home / categoría / perfil según opción elegida
 
-## 7. Cómo comprobar
-- [ ] Cuaderno completo
-- [ ] Project Run + Site relacionados
-- [ ] Human Gate creado (Pending OK)
+## 7. Comprobar (visual + funcional)
+- [ ] Opción A–E escrita por el humano (no inferida sin preguntar)
+- [ ] `npm run dev` arranca o error copiado en texto
+- [ ] Home muestra estructura acorde a la opción (grid, feed, etc.)
+- [ ] Badges LIVE/OFFLINE definidos en diseño (aunque mock)
 
-## 8. Si falla o falta permiso
-- Gate Pending: continuar Día 2 solo documentación/dominios si Scope lo permite.
-- Sin Notion: guardar textos de Cursor y registrar cuando tengas acceso.
+## 8. Si falla
+- Build roto → pegar log; no marcar Probado.
+- Sin decisión visual → no implementar UI definitiva; solo preguntar.
 
-## 9. Hecho vs pendiente
-- **Hecho:** brief + filas Notion.
-- **Pendiente:** aprobación humana, repo (Día 4), dominio comprado (Día 2+).
+## 9. Estado
+| Ítem | Estado |
+|------|--------|
+| Brief | |
+| Dirección A–E | |
+| Design system | |
+| App local | |
+
+## 10. Desbloquea
+**Día 2** — competencia y dominio sin dejar de codear en local.
+
+
+## Registro operativo en Notion (opcional — no bloquea el código)
+
+Solo si tu equipo usa CSN para trazabilidad:
+
+- [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) — notas del día, Evidence URL cuando tengas preview.
+- [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) — bloqueos reales (sin API key, build roto).
+- [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) — compras, DNS prod, deploy prod (Pending hasta aprobación).
+
+No crees filas antes de tener un resultado en el producto que registrar.
+

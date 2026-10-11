@@ -1,60 +1,73 @@
-# Día 5 — Feeds e integración de datos
+# Día 5 — Datos, feed y monetización
 
-## 1. Qué vas a conseguir hoy
-- Artículo **secretos** (nombres, no valores).
-- **Feed Sync Run** en Notion (real o simulado QA).
-- Perfiles en preview/local usando **datos reales o mock QA** etiquetado.
+## 1. Qué construyes hoy
+La web muestra **datos trazables** y **enlaces de afiliado** comprobados (o mocks QA explícitos).
 
-## 2. Antes de empezar
-- Plantilla Día 4 al menos Implementada en local.
-- Acceso a quien gestione secrets (o solo documentar).
+## 2. Cómo debe verse / comportarse
+Tarjetas y perfiles reflejan el feed; CTAs visibles y correctos; sin nombres/atributos inventados.
 
-## 3. Tiempo
-- **3–5 h**
+## 3. Antes de empezar
+- Día 4 navegable.
+- Acceso a secrets o acuerdo de usar solo mock.
 
-## 4. Pasos
-
-### Paso 1 — Policy secretos
-- **Qué:** [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85) Policy; prompt §5.
-- **Comprobar:** cero claves en Notion.
-
-### Paso 2 — Mapeo campos feed → plantilla
-- **Qué:** Tabla en Knowledge «Feed → perfil» desde salida Cursor.
-
-### Paso 3 — Feed Sync Run
-- **Qué:** [Feed Sync Runs](https://app.notion.com/p/ffc92a9784af41a0b9936cbfe0ca2831) New; Rows 0 + Notes «simulado QA» si no hay API.
-
-### Paso 4 — Probar 2 perfiles con datos feed
-- **Qué:** localhost; anotar slugs en run Notes.
-- **Si falla API:** usar mock del repo; marcar **No probado con API real**.
+## 4. Pasos en Cursor
+1. Prompt §5 → leer código feed.
+2. Conectar o mock; recargar 5 perfiles en local.
+3. Clic derecho CTA → URL contiene parámetros esperados (sin pegar keys).
 
 ## 5. Prompt
+
 ```text
-# Día 5 — Integración feed CrakRevenue / datos modelo
+# Día 5 — Datos, feed y monetización
 
-Repo: [URL]
-QA o prod: [ ]
+INSPECCIONA integración real ANTES de cambiar:
+- src/lib/crackrevenue/**, APIs feed, env vars documentadas (nombres solo).
+- Mapeo campos → tarjetas, filtros, perfil.
 
-1. Localizar fuente performer/model (ej. src/lib/crackrevenue/, APIs feed).
-2. Listar campos reales disponibles para plantilla perfil (nombre, slug, live, categorías, imágenes).
-3. Documentar env vars (nombres solo): CRAKREVENUE_API_KEY en GitHub Secrets y Cloudflare — nunca valores.
-4. Si hay script sync: cómo ejecutarlo en QA o simular con mock etiquetado QA.
-5. Verificar que perfiles muestran datos del feed, no inventados.
+## Tareas
+1. Tabla campo proveedor → UI (solo campos que existen).
+2. Implementar/corregir adaptador feed o documentar mock QA claramente.
+3. Probar LIVE/OFFLINE con datos reales O mock etiquetado «QA-MOCK».
+4. CTAs afiliado: jerkmateAffiliate / buildJerkmateAffiliateUrl — verificar URLs generadas en 2 perfiles.
+5. Errores: duplicados, modelo eliminado, imagen faltante.
+6. Secretos: solo GitHub Secrets / Cloudflare — nunca en repo ni chat.
 
-Sin keys en chat. Sin afirmar sync prod sin log.
-Entrega: markdown Policy secretos + pasos Feed Sync Run + qué campos faltan en feed.
+## Si faltan credenciales
+- Adapter + fixtures en tests o mock; registrar bloqueo exacto.
+- NO afirmar «integración real» hasta llamada API exitosa.
+
+## Entregables
+- docs/feed-mapeo.md
+- Evidencia: slugs probados + screenshot o descripción CTA
 ```
 
-## 6. Respuesta Cursor
-- Lista archivos feed; instrucciones sync; sin API keys.
+## 6. Archivos
+- `src/lib/crackrevenue/**`
+- Componentes CTA perfil/tarjeta
+- `.env.example` si falta documentación de vars
 
 ## 7. Comprobar
-- [ ] Policy secretos
-- [ ] Feed Sync Run
-- [ ] 2 perfiles con datos trazables al feed o mock QA
+- [ ] 2 perfiles con datos del feed o mock etiquetado
+- [ ] CTA afiliado generado (Implementado/Probado)
+- [ ] Sin API keys en git diff
 
 ## 8. Si falla
-- Sin API key: solo documentado + simulación.
+- Sin API key → mock + bloqueo en docs/feed-mapeo.md; Pendiente integración real.
 
-## 9. Pendiente
-- Sync producción tras gates.
+## 9. Estado
+| Feed real | Mock QA | Monetización probada |
+
+## 10. Desbloquea
+**Día 6** — SEO técnico en rutas reales.
+
+
+## Registro operativo en Notion (opcional — no bloquea el código)
+
+Solo si tu equipo usa CSN para trazabilidad:
+
+- [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) — notas del día, Evidence URL cuando tengas preview.
+- [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) — bloqueos reales (sin API key, build roto).
+- [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) — compras, DNS prod, deploy prod (Pending hasta aprobación).
+
+No crees filas antes de tener un resultado en el producto que registrar.
+

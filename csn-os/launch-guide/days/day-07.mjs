@@ -1,63 +1,66 @@
-import { notionLinks } from "../guide-context.mjs";
-import { PREVIEW_STAGING, link, promptFence } from "../guide-sections.mjs";
-import { PROMPT_DAY7_VALIDATION } from "../prompts-pseo.mjs";
+import { notionOptionalBlock, promptFence } from "../guide-product-format.mjs";
+
+const PROMPT = `# Día 7 — Validación y preparación de lanzamiento
+
+INSPECCIONA build actual y docs previos. Sin deploy producción.
+
+## Funcional + visual
+Checklist: home→categoría→perfil, móvil+desktop, filtros si existen, LIVE/OFFLINE, imágenes fallback, CTAs, legales/enlaces +18, consola sin errores críticos.
+
+## SEO muestra
+5 perfiles + 2 categorías: title, canonical, robots, internal links, 404.
+
+## Preview
+- pages.dev o preview CI si existe → usar esa URL.
+- Solo localhost → etiquetar «LOCAL ONLY»; no presentar como URL pública.
+- No inventar deploy ni indexación Google.
+
+## Salida
+Tabla PASS/FAIL | bloqueantes | decisión: solicitar lanzamiento / corregir / bloqueado
+
+## Gates
+Producción, compras, DNS → aprobación humana externa a este prompt.`;
 
 export function renderDay07() {
-  const u = notionLinks();
-  return `# Día 7 — Preview, pruebas y decisión de lanzamiento
+  return `# Día 7 — Validación y preparación del lanzamiento
 
-## 1. Qué vas a conseguir hoy
-- **URL de preview** (local o pages.dev) registrada como evidencia.
-- Checklist pSEO + funcional **pass/fail**.
-- Gates producción Pending o N/A (QA).
-- KPI snapshot + mantenimiento; decisión escrita lanzar / esperar / no listo.
+## 1. Qué construyes hoy
+**Veredicto del producto**: qué funciona, qué bloquea lanzamiento, evidencia reproducible.
 
-## 2. Antes de empezar
-- Días 4–6 con muestra perfiles.
-- Checklist legal Día 3.
+## 2. Cómo debe verse / comportarse
+Igual que Días 4–6 en la muestra; sin regresiones visuales obvias.
 
-${PREVIEW_STAGING}
+## 3. Antes de empezar
+- Días 4–6 con estados documentados.
+- Preview: \`npm run dev\` (local) o URL pages.dev si tienes deploy preview.
 
-## 3. Tiempo
-- **4–8 h** pruebas; deploy prod otro día.
+## 4. Pasos en Cursor
+1. Prompt §5 → tabla pruebas.
+2. Recorrer manualmente checklist en navegador.
+3. Decisión escrita en \`docs/launch-readiness.md\`.
 
-## 4. Pasos
+## 5. Prompt
 
-### Paso 1 — Preview
-- **Qué:** Obtener URL según anexo; **example.com no cuenta como preview real**.
-- **Evidencia:** ${link("Project Runs", u.projectRuns)} Evidence URL.
+${promptFence(PROMPT)}
 
-### Paso 2 — Validación Cursor
-- **Qué:** Prompt §5 con lista exacta de URLs muestra.
-
-### Paso 3 — Staging release
-- **Qué:** ${link("CSN Releases", u.csnReleases)} staging Done si hay deploy; si solo local, Notes «evidencia local».
-
-### Paso 4 — Gate producción
-- **Qué:** Production class → gate production_deploy Pending; QA → Notes N/A.
-
-### Paso 5 — KPI + Maintenance
-- **Qué:** ${link("Launch KPI Snapshots", u.launchKpiSnapshots)} (ceros QA OK); ${link("CSN Maintenance", u.csnMaintenance)} ≥2 filas.
-
-### Paso 6 — Decisión
-- **Qué:** Notes run: «lanzar / no / esperar aprobación» sin afirmar prod live sin gate.
-
-## 5. Prompt validación
-${promptFence(PROMPT_DAY7_VALIDATION)}
-
-## 6. Respuesta Cursor
-- Tabla pruebas; bloqueantes vs mejoras.
+## 6. Archivos
+- \`docs/launch-readiness.md\` (crear)
+- Fixes menores solo si bloqueantes
 
 ## 7. Comprobar
-- [ ] Evidence URL real (local o pages.dev)
-- [ ] Muestra pSEO revisada
-- [ ] Gate prod OK
-- [ ] Decisión escrita
+- [ ] Tabla PASS/FAIL completa
+- [ ] Evidence URL = local o pages.dev (etiquetado)
+- [ ] Sin «listo prod» sin gate humano
 
 ## 8. Si falla
-- Sin preview: no cerrar como «listo prod»; registrar bloqueo e Incidents.
+- Bloqueante → lista priorizada; no cerrar como listo.
 
-## 9. Pendiente
-- Deploy prod, DNS, compras — solo con Approved.
+## 9. Estado
+| Funcional | SEO muestra | Preview | Decisión |
+
+## 10. Fin calendario
+Mantenimiento y deploy prod fuera de esta guía hasta aprobaciones.
+
+${notionOptionalBlock()}
 `;
 }

@@ -2,48 +2,48 @@
   "days": [
     {
       "day": 1,
-      "title": "Define tu proyecto",
-      "pageTitle": "Guía 7 días — Día 1 — Define tu proyecto",
+      "title": "Producto, estilo visual y base",
+      "pageTitle": "Guía 7 días — Día 1 — Producto, estilo visual y base",
       "file": "dia-01.md"
     },
     {
       "day": 2,
-      "title": "Dominio y entorno de trabajo",
-      "pageTitle": "Guía 7 días — Día 2 — Dominio y entorno de trabajo",
+      "title": "Mercado, dominio y entorno",
+      "pageTitle": "Guía 7 días — Día 2 — Mercado, dominio y entorno",
       "file": "dia-02.md"
     },
     {
       "day": 3,
-      "title": "Keywords, arquitectura pSEO y diseño",
-      "pageTitle": "Guía 7 días — Día 3 — Keywords, arquitectura pSEO y diseño",
+      "title": "Keywords y arquitectura pSEO",
+      "pageTitle": "Guía 7 días — Día 3 — Keywords y arquitectura pSEO",
       "file": "dia-03.md"
     },
     {
       "day": 4,
-      "title": "Plantilla maestra de perfil",
-      "pageTitle": "Guía 7 días — Día 4 — Plantilla maestra de perfil",
+      "title": "Web funcional v1",
+      "pageTitle": "Guía 7 días — Día 4 — Web funcional v1",
       "file": "dia-04.md"
     },
     {
       "day": 5,
-      "title": "Feeds e integración de datos",
-      "pageTitle": "Guía 7 días — Día 5 — Feeds e integración de datos",
+      "title": "Feed y monetización",
+      "pageTitle": "Guía 7 días — Día 5 — Feed y monetización",
       "file": "dia-05.md"
     },
     {
       "day": 6,
-      "title": "SEO técnico y reglas de indexación",
-      "pageTitle": "Guía 7 días — Día 6 — SEO técnico y reglas de indexación",
+      "title": "SEO técnico y calidad",
+      "pageTitle": "Guía 7 días — Día 6 — SEO técnico y calidad",
       "file": "dia-06.md"
     },
     {
       "day": 7,
-      "title": "Preview, pruebas y decisión",
-      "pageTitle": "Guía 7 días — Día 7 — Preview, pruebas y decisión",
+      "title": "Validación y lanzamiento",
+      "pageTitle": "Guía 7 días — Día 7 — Validación y lanzamiento",
       "file": "dia-07.md"
     }
   ],
-  "version": "pseo-v2-notion-rich",
+  "version": "product-build-v3",
   "generatedFrom": [
     "csn-os/launch-guide/days/*",
     "scripts/csn-task-manifest-v2.json",

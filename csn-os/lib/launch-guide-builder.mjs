@@ -43,7 +43,7 @@ export function buildAllDays(outDir) {
     JSON.stringify(
       {
         days: index,
-        version: "pseo-v2-notion-rich",
+        version: "product-build-v3",
         generatedFrom: ["csn-os/launch-guide/days/*", "scripts/csn-task-manifest-v2.json", "notion-csn-isolated-manifest.json"],
       },
       null,

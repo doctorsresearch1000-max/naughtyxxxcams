@@ -1,79 +1,69 @@
-import { notionLinks } from "../guide-context.mjs";
-import { link, promptFence } from "../guide-sections.mjs";
-import { PROMPT_PSEO_SCALE_RULES } from "../prompts-pseo.mjs";
+import { notionOptionalBlock, promptFence } from "../guide-product-format.mjs";
+
+const PROMPT = `# Día 6 — SEO técnico, calidad y rendimiento
+
+INSPECCIONA rutas y plantillas implementadas en Días 4–5.
+
+## Implementar o corregir
+- title/description únicos por plantilla
+- canonical, robots/noindex para no elegibles
+- sitemap (solo URLs canónicas elegibles según docs/pseo-arquitectura.md)
+- internal links, 404 perfil
+- offline/eliminado según política
+- JSON-LD solo si datos reales lo permiten
+- rendimiento: imágenes, lazy load, LCP básico en muestra
+- coherencia HTML inicial vs estado LIVE/OFFLINE vs metadata
+
+## Muestra obligatoria
+- 5 perfiles + 2 categorías (si existen datos)
+- Tabla PASS/FAIL por comprobación
+
+## Sin
+- Umbral mágico de palabras
+- Afirmar indexación Google
+
+## Entregables
+- docs/seo-tecnico-auditoria.md con archivo:línea por hallazgo`;
 
 export function renderDay06() {
-  const u = notionLinks();
-  const promptTech = `# Día 6 — SEO técnico en repo (inspección)
+  return `# Día 6 — SEO técnico, calidad y rendimiento
 
-Repo: [URL]
-Preview: [localhost:3000 o pages.dev]
+## 1. Qué construyes hoy
+**Reglas pSEO aplicadas en código** + auditoría reproducible.
 
-Implementar o verificar en código:
-- title/description por plantilla perfil y categoría
-- canonical
-- robots meta / noindex reglas perfiles no elegibles
-- sitemap generation y exclusión thin/duplicados
-- enlaces internos relacionados
-- 404 slug inválido
+## 2. Cómo debe verse / comportarse
+View-source de muestra: títulos únicos; perfiles thin con noindex o no en sitemap.
 
-Referencias útiles en este stack: src/lib/seo/, sitemap routes, profileContentQuality.
+## 3. Antes de empezar
+- Rutas de perfil/categoría funcionando con datos Día 5.
 
-Etiqueta cada ítem: Implementado | Probado local | Documentado | Pendiente.
-No afirmar indexación Google.`;
+## 4. Pasos en Cursor
+1. Prompt §5.
+2. \`npm run build\` si existe; revisar sitemap generado.
+3. Completar tabla 5+2 URLs.
 
-  return `# Día 6 — SEO técnico y reglas de indexación pSEO
+## 5. Prompt
 
-## 1. Qué vas a conseguir hoy
-- Reglas de **elegibilidad** antes de escalar URLs.
-- Cambios o informe SEO técnico en repo.
-- **Muestra 5 perfiles + 2 categorías** revisados (metadata + contenido).
-- Sitemap plan en Knowledge (Unverified en GSC hasta captura).
+${promptFence(PROMPT)}
 
-## 2. Antes de empezar
-- Feed Día 5 documentado.
-- Preview local o pages.dev (ver Día 4).
-
-## 3. Tiempo
-- **4–6 h**
-
-## 4. Pasos
-
-### Paso 1 — Reglas escala pSEO
-- **Qué:** Prompt §5A → Knowledge «pSEO — Reglas indexación».
-
-### Paso 2 — SEO técnico código
-- **Qué:** Prompt §5B; commits en repo si aplica.
-
-### Paso 3 — SEO Opportunities
-- **Qué:** ${link("SEO Opportunities", u.seoOpportunities)} ≥2 tareas técnicas (canonical, sitemap, etc.).
-
-### Paso 4 — Backlink (identificar solo)
-- **Qué:** ${link("Backlink Opportunities", u.backlinkOpportunities)} una oportunidad; gate Pending si pago.
-
-### Paso 5 — Revisión muestra
-- **Qué:** Lista URLs en run Notes; pass/fail por fila reglas Día 3.
-
-## 5. Prompts
-
-### 5A — Reglas indexación
-${promptFence(PROMPT_PSEO_SCALE_RULES)}
-
-### 5B — SEO técnico
-${promptFence(promptTech)}
-
-## 6. Respuesta Cursor
-- Tabla regla → archivo → prueba local.
+## 6. Archivos
+- \`src/lib/seo/**\`, sitemap route, robots
+- \`profileContentQuality\` o similar si existe
 
 ## 7. Comprobar
-- [ ] Reglas escritas
-- [ ] Muestra revisada
-- [ ] Sitemap accesible en preview si implementado
+- [ ] 5 perfiles + 2 categorías auditados
+- [ ] sitemap no lista URLs prohibidas por arquitectura
+- [ ] 404 en slug inventado
 
 ## 8. Si falla
-- Sin preview público: solo localhost + anotar limitación.
+- Build falla → priorizar errores antes de SEO.
 
-## 9. Pendiente
-- GSC verificación externa.
+## 9. Estado
+| Metadata | Sitemap | Rendimiento muestra |
+
+## 10. Desbloquea
+**Día 7** — validación integral.
+
+${notionOptionalBlock()}
 `;
 }

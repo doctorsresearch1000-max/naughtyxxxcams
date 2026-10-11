@@ -24,35 +24,13 @@ export function notionLinks() {
 }
 
 export const DAY_HEADINGS = [
-  { day: 1, short: "Define tu proyecto", tagline: "Brief, público, alcance y registros mínimos en Notion." },
-  { day: 2, short: "Dominio y entorno de trabajo", tagline: "Candidatos de dominio, aprobaciones y plan DNS sin comprar sin permiso." },
-  { day: 3, short: "Keywords, arquitectura pSEO y diseño", tagline: "Mapa long tail, familias de URL, legales y wireframe." },
-  { day: 4, short: "Plantilla maestra de perfil", tagline: "Primera versión funcional en el repositorio (muestra de perfiles)." },
-  { day: 5, short: "Feeds e integración de datos", tagline: "Conectar o simular el proveedor; secretos fuera de Notion." },
-  { day: 6, short: "SEO técnico y reglas de indexación", tagline: "Canonicals, sitemap, elegibilidad pSEO y QA de muestra." },
-  { day: 7, short: "Preview, pruebas y decisión", tagline: "Validación real, evidencias y gates de lanzamiento." },
+  { day: 1, short: "Producto, estilo visual y base", tagline: "Brief, elección A–E, design system y app local." },
+  { day: 2, short: "Mercado, dominio y entorno", tagline: "Competencia, dominio provisional, sigues en local." },
+  { day: 3, short: "Keywords y arquitectura pSEO", tagline: "Mapa long tail + URLs alineadas al diseño elegido." },
+  { day: 4, short: "Web funcional v1", tagline: "Home, directorio, categorías, plantilla perfil en código." },
+  { day: 5, short: "Feed y monetización", tagline: "Datos reales o mocks QA; CTAs afiliado verificados." },
+  { day: 6, short: "SEO técnico y calidad", tagline: "Canonicals, sitemap, muestra 5+2, rendimiento." },
+  { day: 7, short: "Validación y lanzamiento", tagline: "PASS/FAIL, preview real, decisión sin prod sin gate." },
 ];
 
-export const CUADERNO_BLOQUE = `
-## Tu cuaderno de proyecto (rellénalo una vez)
-
-- **Nombre del sitio (público):**
-- **QA (prueba) o producción:**
-- **Nicho y países/idiomas:**
-- **Qué debe hacer la web para el visitante (5-10 frases):**
-- **Identificador interno (una palabra, ej. mi-cams-2026):**
-- **URL del repositorio:** (o «pendiente»)
-- **Dominio objetivo:** (o «por decidir»)
-- **Responsable de aprobaciones (nombre o «pendiente»):**
-`;
-
-export const DOMAIN_SCORE_GUIDE = `
-| Criterio | 1 (peor) | 5 (mejor) |
-|----------|----------|-----------|
-| Encaje con tu nicho | Confuso | Claro para tu público |
-| Memorabilidad | Largo o raro | Corto y memorable |
-| Historial Wayback | Spam/malware | Limpio o vacío |
-| TLD | Poco adecuado | Adecuado al mercado |
-
-Métricas de pago (Ahrefs, etc.): opcionales.
-`;
+export const REPO_REFERENCE = "https://github.com/doctorsresearch1000-max/naughtyxxxcams";

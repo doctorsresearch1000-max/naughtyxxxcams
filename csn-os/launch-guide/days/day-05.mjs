@@ -1,67 +1,68 @@
-import { notionLinks } from "../guide-context.mjs";
-import { link, promptFence } from "../guide-sections.mjs";
+import { notionOptionalBlock, promptFence } from "../guide-product-format.mjs";
+
+const PROMPT = `# Día 5 — Datos, feed y monetización
+
+INSPECCIONA integración real ANTES de cambiar:
+- src/lib/crackrevenue/**, APIs feed, env vars documentadas (nombres solo).
+- Mapeo campos → tarjetas, filtros, perfil.
+
+## Tareas
+1. Tabla campo proveedor → UI (solo campos que existen).
+2. Implementar/corregir adaptador feed o documentar mock QA claramente.
+3. Probar LIVE/OFFLINE con datos reales O mock etiquetado «QA-MOCK».
+4. CTAs afiliado: jerkmateAffiliate / buildJerkmateAffiliateUrl — verificar URLs generadas en 2 perfiles.
+5. Errores: duplicados, modelo eliminado, imagen faltante.
+6. Secretos: solo GitHub Secrets / Cloudflare — nunca en repo ni chat.
+
+## Si faltan credenciales
+- Adapter + fixtures en tests o mock; registrar bloqueo exacto.
+- NO afirmar «integración real» hasta llamada API exitosa.
+
+## Entregables
+- docs/feed-mapeo.md
+- Evidencia: slugs probados + screenshot o descripción CTA`;
 
 export function renderDay05() {
-  const u = notionLinks();
-  const promptFeed = `# Día 5 — Integración feed CrakRevenue / datos modelo
+  return `# Día 5 — Datos, feed y monetización
 
-Repo: [URL]
-QA o prod: [ ]
+## 1. Qué construyes hoy
+La web muestra **datos trazables** y **enlaces de afiliado** comprobados (o mocks QA explícitos).
 
-1. Localizar fuente performer/model (ej. src/lib/crackrevenue/, APIs feed).
-2. Listar campos reales disponibles para plantilla perfil (nombre, slug, live, categorías, imágenes).
-3. Documentar env vars (nombres solo): CRAKREVENUE_API_KEY en GitHub Secrets y Cloudflare — nunca valores.
-4. Si hay script sync: cómo ejecutarlo en QA o simular con mock etiquetado QA.
-5. Verificar que perfiles muestran datos del feed, no inventados.
+## 2. Cómo debe verse / comportarse
+Tarjetas y perfiles reflejan el feed; CTAs visibles y correctos; sin nombres/atributos inventados.
 
-Sin keys en chat. Sin afirmar sync prod sin log.
-Entrega: markdown Policy secretos + pasos Feed Sync Run + qué campos faltan en feed.`;
+## 3. Antes de empezar
+- Día 4 navegable.
+- Acceso a secrets o acuerdo de usar solo mock.
 
-  return `# Día 5 — Feeds e integración de datos
-
-## 1. Qué vas a conseguir hoy
-- Artículo **secretos** (nombres, no valores).
-- **Feed Sync Run** en Notion (real o simulado QA).
-- Perfiles en preview/local usando **datos reales o mock QA** etiquetado.
-
-## 2. Antes de empezar
-- Plantilla Día 4 al menos Implementada en local.
-- Acceso a quien gestione secrets (o solo documentar).
-
-## 3. Tiempo
-- **3–5 h**
-
-## 4. Pasos
-
-### Paso 1 — Policy secretos
-- **Qué:** ${link("CSN Knowledge", u.csnKnowledge)} Policy; prompt §5.
-- **Comprobar:** cero claves en Notion.
-
-### Paso 2 — Mapeo campos feed → plantilla
-- **Qué:** Tabla en Knowledge «Feed → perfil» desde salida Cursor.
-
-### Paso 3 — Feed Sync Run
-- **Qué:** ${link("Feed Sync Runs", u.feedSyncRuns)} New; Rows 0 + Notes «simulado QA» si no hay API.
-
-### Paso 4 — Probar 2 perfiles con datos feed
-- **Qué:** localhost; anotar slugs en run Notes.
-- **Si falla API:** usar mock del repo; marcar **No probado con API real**.
+## 4. Pasos en Cursor
+1. Prompt §5 → leer código feed.
+2. Conectar o mock; recargar 5 perfiles en local.
+3. Clic derecho CTA → URL contiene parámetros esperados (sin pegar keys).
 
 ## 5. Prompt
-${promptFence(promptFeed)}
 
-## 6. Respuesta Cursor
-- Lista archivos feed; instrucciones sync; sin API keys.
+${promptFence(PROMPT)}
+
+## 6. Archivos
+- \`src/lib/crackrevenue/**\`
+- Componentes CTA perfil/tarjeta
+- \`.env.example\` si falta documentación de vars
 
 ## 7. Comprobar
-- [ ] Policy secretos
-- [ ] Feed Sync Run
-- [ ] 2 perfiles con datos trazables al feed o mock QA
+- [ ] 2 perfiles con datos del feed o mock etiquetado
+- [ ] CTA afiliado generado (Implementado/Probado)
+- [ ] Sin API keys en git diff
 
 ## 8. Si falla
-- Sin API key: solo documentado + simulación.
+- Sin API key → mock + bloqueo en docs/feed-mapeo.md; Pendiente integración real.
 
-## 9. Pendiente
-- Sync producción tras gates.
+## 9. Estado
+| Feed real | Mock QA | Monetización probada |
+
+## 10. Desbloquea
+**Día 6** — SEO técnico en rutas reales.
+
+${notionOptionalBlock()}
 `;
 }

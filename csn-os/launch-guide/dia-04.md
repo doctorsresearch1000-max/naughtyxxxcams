@@ -1,133 +1,84 @@
-# Día 4 — Plantilla maestra de perfil (código funcionando)
+# Día 4 — Construcción de la web funcional
 
-## 1. Qué vas a conseguir hoy
-- Repositorio operativo en tu máquina (o documentado bloqueo).
-- **Plantilla de perfil** implementada o corregida en código.
-- **Muestra:** 3 perfiles probados (live / offline / datos mínimos).
-- Fila [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) sandbox + evidencia CI si hay GitHub.
+## 1. Qué construyes hoy
+**Primera versión navegable**: home, listados, **plantilla maestra de perfil** en el repo real.
 
-## 2. Antes de empezar
-- Arquitectura pSEO Día 3.
-- GitHub y Node instalados (para este stack).
+## 2. Cómo debe verse / comportarse
+Exactamente la opción **A–E** del Día 1 — no un tema genérico oscuro/neón por defecto.
 
+## 3. Antes de empezar
+- `docs/pseo-arquitectura.md` y `docs/especificacion-paginas.md`.
+- Dev server funcionando.
 
-### Si aún no tienes repositorio de código
+## 4. Pasos en Cursor
+1. Prompt §5 con repo abierto.
+2. Implementar en orden: layout → home → categoría → perfil.
+3. Probar 3 slugs en navegador; capturar qué es mock.
 
-**Opción A — Ya tienes cuenta GitHub:** crea un repositorio vacío privado o usa una plantilla Next.js acordada con tu equipo. Copia la URL `https://github.com/usuario/repo` al cuaderno.
+## 5. Prompt
 
-**Opción B — Usas este stack de referencia (monorepo cam Next.js):** clona o haz fork de `https://github.com/doctorsresearch1000-max/naughtyxxxcams` solo si tu alcance lo autoriza (QA). Abre el proyecto en Cursor.
-
-**Opción C — Sin acceso GitHub hoy:** marca en Notion «repo pendiente» y en Día 4 ejecuta solo el prompt de lectura si alguien te pasa un ZIP; **no** puedes marcar CI ni plantilla como «probado» hasta tener el código local.
-
-Etiqueta siempre: **Documentado** | **Implementado** | **Probado** | **Pendiente**.
-
-
-## 3. Tiempo
-- **6–8 h** si hay que implementar; **2–3 h** si solo ajustes.
-
-## 4. Pasos
-
-### Paso 1 — Repo y CI
-- **Qué:** Seguir 
-### Si aún no tienes repositorio de código
-
-**Opción A — Ya tienes cuenta GitHub:** crea un repositorio vacío privado o usa una plantilla Next.js acordada con tu equipo. Copia la URL `https://github.com/usuario/repo` al cuaderno.
-
-**Opción B — Usas este stack de referencia (monorepo cam Next.js):** clona o haz fork de `https://github.com/doctorsresearch1000-max/naughtyxxxcams` solo si tu alcance lo autoriza (QA). Abre el proyecto en Cursor.
-
-**Opción C — Sin acceso GitHub hoy:** marca en Notion «repo pendiente» y en Día 4 ejecuta solo el prompt de lectura si alguien te pasa un ZIP; **no** puedes marcar CI ni plantilla como «probado» hasta tener el código local.
-
-Etiqueta siempre: **Documentado** | **Implementado** | **Probado** | **Pendiente**.
-; prompt repo §5B.
-- **Dónde:** [CSN Sites](https://app.notion.com/p/7b6afa6b844b438f93210cdb8ee728ca) Notes con URL repo.
-- **Si no hay repo:** incidente [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66); solo documentación; **no** marcar plantilla Probada.
-
-### Paso 2 — Implementar plantilla maestra
-- **Qué:** Prompt §5A en Cursor con repo abierto.
-- **Comprobar:** Cambios en archivos perfil/SEO reales (ver prompt).
-- **Muestra:** 3 URLs locales documentadas.
-
-### Paso 3 — Release sandbox
-- **Qué:** [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) Environment sandbox; Notes con SHA y enlace Actions si existe.
-
-### Paso 4 — Knowledge
-- **Qué:** Artículo «Plantilla perfil v1» con rutas y reglas LIVE/OFFLINE.
-
-
-### Cómo obtener una URL de preview (staging)
-
-1. **Local (desarrollo):** con el repo abierto en Cursor/terminal, ejecuta lo que indique el README (en este stack suele ser `npm run dev` → `http://localhost:3000`). Eso es preview **local**, válida como evidencia en QA si la anotas en Notion (no es producción).
-2. **Cloudflare Pages (si el proyecto ya está conectado):** en el panel Cloudflare → Pages → tu proyecto → pestaña **Deployments** → abre la URL `*.pages.dev` del último deploy de rama preview. Requiere permiso en Cloudflare.
-3. **Si no hay deploy:** registra en [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) «Preview no disponible — falta deploy» y en Día 7 cierra con checklist **local** probada; no afirmes staging público sin URL.
-
-
-## 5. Prompts
-
-### 5A — Plantilla maestra
 ```text
-# Día 4 — Plantilla maestra de perfil de modelo
+# Día 4 — Construcción web funcional v1
 
-## Objetivo
-Diseñar e implementar (o corregir) la plantilla reutilizable de perfil en el repositorio real. Trabajo en código; yo registro evidencia en Notion.
+INSPECCIONA TODO el repo antes de editar: brief, DESIGN, pseo-arquitectura, especificacion-paginas, opción A–E.
 
-## Repositorio
-[URL GITHUB — obligatorio para marcar «Implementado»]
+## Implementar en código (no solo markdown)
+- App shell: header, footer, nav móvil+desktop según diseño Día 1.
+- Home acorde a A–E.
+- Directorio/categorías prioritarias (mín. 2 rutas).
+- Sistema tarjetas modelo (imagen, nombre, LIVE/OFFLINE, atributos reales o mock QA etiquetado).
+- Plantilla maestra perfil: src/lib/profile/*, src/components/profile/*, metadata en src/lib/seo/*
+- Responsive, empty states, 404 perfil inexistente.
+- Primera pasada metadata (title/description) en plantillas.
 
-## Archivos de referencia en este stack (inspeccionar, no asumir)
-- src/lib/profile/modelProfile.ts — ModelProfileView, status live/offline
-- src/components/profile/ModelProfileSlushyView.tsx — UI perfil
-- src/lib/seo/model-profile-metadata.ts — metadata SEO
-- src/lib/profile/useProfileStreamPlayer.ts — LIVE API cliente
-- Rutas bajo src/app/ que sirven /model o perfil (buscar profileSlug)
+## Plantilla perfil — obligatorio
+- Slug estable; sin biografía inventada.
+- Offline vs live coherente (modelProfile.ts, useProfileStreamPlayer si existe).
+- Related links, canonical placeholder, noindex si datos insuficientes.
 
-## Requisitos de la plantilla
-1. Identidad: nombre artístico, slug estable, sin inventar biografía factual.
-2. LIVE/OFFLINE coherente entre badge, reproductor y metadata (documentar fuente de verdad).
-3. Categorías/atributos solo si existen en datos del feed.
-4. Title/description/canonical únicos por perfil; no duplicar solo cambiando nombre.
-5. Estados vacíos: sin foto, sin categoría, modelo eliminado del feed.
-6. Enlaces internos a categoría y perfiles relacionados con reglas claras.
-7. Móvil y rendimiento: no cargar iframe live si offline.
+## Híbrido / TikTok
+- Si D: implementar módulo descubrimiento + directorio indexable.
+- Si C: interacción esencial SIN sacrificar rutas crawlables.
 
-## Alcance
-- Editar solo archivos de perfil/SEO necesarios.
-- Sin deploy, sin secretos, sin Notion API.
-
-## Muestra antes de escalar
-Implementar o verificar **3 perfiles** (1 live, 1 offline, 1 datos mínimos) con datos reales o mock QA etiquetado.
+## Pruebas
+- npm run dev → navegar home → categoría → 3 perfiles (mock OK si etiquetado).
+- npm run lint / npm test si existen.
 
 ## Entregables
-- Resumen de cambios y archivos tocados.
-- Checklist: Implementado / Probado local / Solo documentado.
-- Capturas o rutas locales a probar (ej. /model/[slug]).
-- Texto para CSN Knowledge «Plantilla perfil v1».
+- Lista archivos modificados
+- Estado: Implementado / Probado local por ruta
 ```
 
-### 5B — Repo y CI
-```text
-# Día 4 — Preparar repo y CI (sin deploy)
+## 6. Archivos (referencia stack https://github.com/doctorsresearch1000-max/naughtyxxxcams)
+- `src/app/**` rutas
+- `src/components/profile/ModelProfileSlushyView.tsx` (o equivalente)
+- `src/lib/profile/modelProfile.ts`
+- `src/lib/seo/model-profile-metadata.ts`
+- `src/components/feed/**` tarjetas
 
-Repo: [URL]
-
-1. Clonar/abrir en Cursor.
-2. Listar workflows .github/workflows.
-3. Comandos: npm install, npm run lint, npm test, npm run build (si existe).
-4. Crear rama de trabajo para plantilla perfil.
-
-Entrega: URLs Actions si existen; qué está Probado local vs Pendiente.
-```
-
-## 6. Respuesta Cursor
-- Diff lógico, checklist Implementado/Probado; comandos ejecutados.
-
-## 7. Comprobar
-- [ ] Repo local corre (dev) o bloqueo documentado
-- [ ] 3 perfiles revisados en navegador
-- [ ] Release + CI documentados
+## 7. Comprobar visual + funcional
+- [ ] Navegación home → categoría → perfil sin 500
+- [ ] LIVE/OFFLINE no contradictorio en un perfil offline de prueba
+- [ ] Móvil: header usable
+- [ ] lint/test si CI existe
 
 ## 8. Si falla
-- CI rojo: anotar URL fallo; no deploy.
-- Build local falla: pegar error en Incidents.
+- Tests rojos → arreglar o documentar Pendiente con enlace Actions.
 
-## 9. Pendiente
-- Deploy preview cloud → Día 7 si permisos Cloudflare.
+## 9. Estado
+| Home | Categorías | Perfil | Metadata |
+
+## 10. Desbloquea
+**Día 5** — datos y monetización reales.
+
+
+## Registro operativo en Notion (opcional — no bloquea el código)
+
+Solo si tu equipo usa CSN para trazabilidad:
+
+- [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) — notas del día, Evidence URL cuando tengas preview.
+- [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) — bloqueos reales (sin API key, build roto).
+- [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) — compras, DNS prod, deploy prod (Pending hasta aprobación).
+
+No crees filas antes de tener un resultado en el producto que registrar.
+

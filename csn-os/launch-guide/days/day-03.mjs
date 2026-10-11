@@ -1,93 +1,72 @@
-import { notionLinks } from "../guide-context.mjs";
-import { link, promptFence } from "../guide-sections.mjs";
-import { PROMPT_KEYWORD_RESEARCH } from "../prompts-pseo.mjs";
+import { notionOptionalBlock, promptFence } from "../guide-product-format.mjs";
+
+const PROMPT = `# Día 3 — Keywords, arquitectura pSEO y especificación de páginas
+
+INSPECCIONA: docs/brief-producto.md, opción A–E, rutas en src/app, campos feed si existen.
+
+## Regla
+La arquitectura URL y el wireframe deben coincidir con la opción visual:
+- Tube site ≠ TikTok-style en rutas y densidad de grid.
+- No interfaz genérica compartida por capricho.
+
+## Keywords
+- Familias long tail: categoría, atributo, geo, nombre modelo (si datos).
+- Marcar: comprobado | hipótesis | validación externa pendiente.
+- NO volúmenes ni KD inventados.
+
+## Por familia de página documentar
+- Intención, patrón URL, fuente datos, plantilla React, internal links, meta, index sí/no/condicional, riesgos thin/duplicate/cannibal.
+
+## Páginas a especificar (contenido + comportamiento)
+Home, directorio, categorías, perfil, búsqueda/filtros (solo si valor), legales, 404/empty.
+
+## Salida
+- docs/pseo-arquitectura.md
+- docs/especificacion-paginas.md
+
+No generar miles de URLs de filtros combinados.`;
 
 export function renderDay03() {
-  const u = notionLinks();
-  const promptArch = `# Día 3 — Arquitectura pSEO (familias de página)
+  return `# Día 3 — Keywords, arquitectura pSEO y especificación de páginas
 
-Basado en el mapa de keywords ya acordado.
+## 1. Qué construyes hoy
+El **plano SEO y de páginas** que el código seguirá en Días 4–6 (no solo Notion).
 
-Define para cada familia (directorio, categoría, subcategoría, perfil, búsqueda solo si útil):
-- Intención búsqueda
-- Patrón URL (ej. /c/[slug], /model/[slug])
-- Fuente datos (feed campo X)
-- Plantilla React/route
-- Enlaces internos entrantes/salientes
-- Index: sí/no/condicional
-- Riesgos: thin, duplicado, canibalización
+## 2. Cómo debe verse / comportarse
+Cada familia de URL debe mapear a una **plantilla visual** coherente con A–E (ej. perfil en tube = detalle con media; directorio = grid SEO).
 
-NO generar todas las combinaciones de filtros. NO inventar volúmenes.
-Entrega: tabla + diagrama texto + política LIVE/OFFLINE en SERP si aplica.`;
+## 3. Antes de empezar
+- Opción A–E documentada.
+- Repo con rutas inspeccionables.
 
-  const promptLegal = `# Día 3 — Checklist legal y wireframe (documentación)
+## 4. Pasos en Cursor
+1. Leer rutas y componentes actuales.
+2. Prompt §5 → dos docs en \`docs/\`.
+3. Lista 5 URLs de muestra para implementar en Día 4.
 
-Brief: [cuaderno]
-Repo si existe: [URL]
+## 5. Prompt
 
-Mapa páginas + menú texto + checklist age/privacy/terms/2257 (marcar revisión legal humana).
-No asesoría jurídica definitiva.`;
+${promptFence(PROMPT)}
 
-  return `# Día 3 — Keywords, arquitectura pSEO y diseño
-
-## 1. Qué vas a conseguir hoy
-- **Mapa keywords long tail** con familias y prioridades (sin volúmenes inventados).
-- **Arquitectura pSEO** (URLs, plantillas, indexación).
-- **Wireframe** navegación + checklist legal en ${link("CSN Knowledge", u.csnKnowledge)}.
-- Decisión qué familias existen (directorio, categoría, perfil; filtros solo si aportan).
-
-## 2. Antes de empezar
-- Cuaderno Día 1.
-- Opcional: repo clonado para que Cursor lea rutas reales.
-
-## 3. Tiempo
-- **4–6 h** (investigación + documentación).
-- No depende de dominio comprado.
-
-## 4. Pasos
-
-### Paso 1 — Investigación keywords (Cursor)
-- **Qué:** Ejecutar prompt §5A; pegar resultado en Knowledge «pSEO — Mapa keywords».
-- **Comprobar:** Cada fila tiene fuente (repo/brief/hipótesis).
-- **Si falla:** sin repo, usar solo brief y marcar hipótesis.
-
-### Paso 2 — Arquitectura pSEO
-- **Qué:** Prompt §5B → artículo «pSEO — Arquitectura URLs».
-- **Comprobar:** Reglas anti-canibalización escritas.
-
-### Paso 3 — Wireframe y legales
-- **Qué:** Prompt §5C → Policy «Checklist legal y páginas».
-- **Dónde:** ${link("CSN Knowledge", u.csnKnowledge)}
-
-### Paso 4 — SEO Opportunities (mínimo 2)
-- **Qué:** ${link("SEO Opportunities", u.seoOpportunities)} desde ideas del mapa (título, URL objetivo, prioridad).
-
-### Paso 5 — Notion run
-- **Qué:** Current Phase 7 cuando Knowledge tenga los tres artículos.
-
-## 5. Prompts
-
-### 5A — Keywords long tail
-${promptFence(PROMPT_KEYWORD_RESEARCH)}
-
-### 5B — Arquitectura
-${promptFence(promptArch)}
-
-### 5C — Legal + wireframe
-${promptFence(promptLegal)}
-
-## 6. Respuesta Cursor
-- Tablas markdown listas para Knowledge; sin métricas falsas.
+## 6. Archivos
+- \`docs/pseo-arquitectura.md\`
+- \`docs/especificacion-paginas.md\`
+- Ajustes menores de rutas placeholder si hace falta
 
 ## 7. Comprobar
-- [ ] Mapa keywords + arquitectura + legal
-- [ ] ≥2 SEO Opportunities
-- [ ] LIVE/OFFLINE documentado si aplica
+- [ ] Cada familia tiene patrón URL + plantilla nombrada en repo
+- [ ] LIVE/OFFLINE reflejado en spec si aplica
+- [ ] Sin tabla de keywords con volúmenes ficticios
 
 ## 8. Si falla
-- Sin repo: arquitectura provisional; marcar «validar con código Día 4».
+- Sin datos feed → spec con campos «pendiente proveedor».
 
-## 9. Pendiente
-- Implementación plantillas → Día 4.
+## 9. Estado
+| Mapa keywords | Arquitectura | Spec páginas |
+
+## 10. Desbloquea
+**Día 4** — implementación navegable v1.
+
+${notionOptionalBlock()}
 `;
 }

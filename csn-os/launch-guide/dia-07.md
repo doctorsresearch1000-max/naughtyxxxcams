@@ -1,90 +1,71 @@
-# Día 7 — Preview, pruebas y decisión de lanzamiento
+# Día 7 — Validación y preparación del lanzamiento
 
-## 1. Qué vas a conseguir hoy
-- **URL de preview** (local o pages.dev) registrada como evidencia.
-- Checklist pSEO + funcional **pass/fail**.
-- Gates producción Pending o N/A (QA).
-- KPI snapshot + mantenimiento; decisión escrita lanzar / esperar / no listo.
+## 1. Qué construyes hoy
+**Veredicto del producto**: qué funciona, qué bloquea lanzamiento, evidencia reproducible.
 
-## 2. Antes de empezar
-- Días 4–6 con muestra perfiles.
-- Checklist legal Día 3.
+## 2. Cómo debe verse / comportarse
+Igual que Días 4–6 en la muestra; sin regresiones visuales obvias.
 
+## 3. Antes de empezar
+- Días 4–6 con estados documentados.
+- Preview: `npm run dev` (local) o URL pages.dev si tienes deploy preview.
 
-### Cómo obtener una URL de preview (staging)
+## 4. Pasos en Cursor
+1. Prompt §5 → tabla pruebas.
+2. Recorrer manualmente checklist en navegador.
+3. Decisión escrita en `docs/launch-readiness.md`.
 
-1. **Local (desarrollo):** con el repo abierto en Cursor/terminal, ejecuta lo que indique el README (en este stack suele ser `npm run dev` → `http://localhost:3000`). Eso es preview **local**, válida como evidencia en QA si la anotas en Notion (no es producción).
-2. **Cloudflare Pages (si el proyecto ya está conectado):** en el panel Cloudflare → Pages → tu proyecto → pestaña **Deployments** → abre la URL `*.pages.dev` del último deploy de rama preview. Requiere permiso en Cloudflare.
-3. **Si no hay deploy:** registra en [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) «Preview no disponible — falta deploy» y en Día 7 cierra con checklist **local** probada; no afirmes staging público sin URL.
+## 5. Prompt
 
-
-## 3. Tiempo
-- **4–8 h** pruebas; deploy prod otro día.
-
-## 4. Pasos
-
-### Paso 1 — Preview
-- **Qué:** Obtener URL según anexo; **example.com no cuenta como preview real**.
-- **Evidencia:** [Project Runs](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) Evidence URL.
-
-### Paso 2 — Validación Cursor
-- **Qué:** Prompt §5 con lista exacta de URLs muestra.
-
-### Paso 3 — Staging release
-- **Qué:** [CSN Releases](https://app.notion.com/p/aec67ee40ad2476ab498c4207c76fbd7) staging Done si hay deploy; si solo local, Notes «evidencia local».
-
-### Paso 4 — Gate producción
-- **Qué:** Production class → gate production_deploy Pending; QA → Notes N/A.
-
-### Paso 5 — KPI + Maintenance
-- **Qué:** [Launch KPI Snapshots](https://app.notion.com/p/f01f1be58f36408192d17fbe6eff7ca8) (ceros QA OK); [CSN Maintenance](https://app.notion.com/p/e1dc314841b84783a79e185b0fde5280) ≥2 filas.
-
-### Paso 6 — Decisión
-- **Qué:** Notes run: «lanzar / no / esperar aprobación» sin afirmar prod live sin gate.
-
-## 5. Prompt validación
 ```text
-# Día 7 — Validación muestra pSEO + lanzamiento
+# Día 7 — Validación y preparación de lanzamiento
 
-## Objetivo
-Validar muestra representativa y checklist de lanzamiento. Sin deploy producción.
+INSPECCIONA build actual y docs previos. Sin deploy producción.
+
+## Funcional + visual
+Checklist: home→categoría→perfil, móvil+desktop, filtros si existen, LIVE/OFFLINE, imágenes fallback, CTAs, legales/enlaces +18, consola sin errores críticos.
+
+## SEO muestra
+5 perfiles + 2 categorías: title, canonical, robots, internal links, 404.
 
 ## Preview
-[URL localhost o pages.dev]
+- pages.dev o preview CI si existe → usar esa URL.
+- Solo localhost → etiquetar «LOCAL ONLY»; no presentar como URL pública.
+- No inventar deploy ni indexación Google.
 
-## Pruebas obligatorias (marcar cada una)
-1. Home y navegación a categoría y perfil.
-2. Perfil LIVE: badge y CTA coherentes.
-3. Perfil OFFLINE: sin stream engañoso.
-4. View-source o herramientas dev: title, canonical, meta robots en muestra.
-5. Sitemap accesible si existe; contar que no incluya URLs bloqueadas.
-6. Age gate y enlaces legales desde footer.
-7. Enlaces afiliado no rotos (muestra).
+## Salida
+Tabla PASS/FAIL | bloqueantes | decisión: solicitar lanzamiento / corregir / bloqueado
 
-## pSEO muestra
-Revisar exactamente: [LISTA 3-5 URLs de perfiles + 2 categorías]
-
-## Límites
-- No afirmar indexación Google sin GSC.
-- No deploy prod sin gate humano.
-
-## Entregables
-- Tabla pass/fail por prueba
-- Decisión: listo para pedir deploy / necesita más trabajo / bloqueado por [razón]
-- Texto Evidence URL y notas para Project Run
+## Gates
+Producción, compras, DNS → aprobación humana externa a este prompt.
 ```
 
-## 6. Respuesta Cursor
-- Tabla pruebas; bloqueantes vs mejoras.
+## 6. Archivos
+- `docs/launch-readiness.md` (crear)
+- Fixes menores solo si bloqueantes
 
 ## 7. Comprobar
-- [ ] Evidence URL real (local o pages.dev)
-- [ ] Muestra pSEO revisada
-- [ ] Gate prod OK
-- [ ] Decisión escrita
+- [ ] Tabla PASS/FAIL completa
+- [ ] Evidence URL = local o pages.dev (etiquetado)
+- [ ] Sin «listo prod» sin gate humano
 
 ## 8. Si falla
-- Sin preview: no cerrar como «listo prod»; registrar bloqueo e Incidents.
+- Bloqueante → lista priorizada; no cerrar como listo.
 
-## 9. Pendiente
-- Deploy prod, DNS, compras — solo con Approved.
+## 9. Estado
+| Funcional | SEO muestra | Preview | Decisión |
+
+## 10. Fin calendario
+Mantenimiento y deploy prod fuera de esta guía hasta aprobaciones.
+
+
+## Registro operativo en Notion (opcional — no bloquea el código)
+
+Solo si tu equipo usa CSN para trazabilidad:
+
+- [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) — notas del día, Evidence URL cuando tengas preview.
+- [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) — bloqueos reales (sin API key, build roto).
+- [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) — compras, DNS prod, deploy prod (Pending hasta aprobación).
+
+No crees filas antes de tener un resultado en el producto que registrar.
+

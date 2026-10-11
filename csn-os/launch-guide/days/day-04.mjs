@@ -1,78 +1,80 @@
-import { notionLinks } from "../guide-context.mjs";
-import { PREVIEW_STAGING, SIN_REPOSITORIO, link, promptFence } from "../guide-sections.mjs";
-import { PROMPT_MASTER_PROFILE } from "../prompts-pseo.mjs";
+import { REPO_REFERENCE } from "../guide-context.mjs";
+import { notionOptionalBlock, promptFence } from "../guide-product-format.mjs";
+
+const PROMPT = `# Día 4 — Construcción web funcional v1
+
+INSPECCIONA TODO el repo antes de editar: brief, DESIGN, pseo-arquitectura, especificacion-paginas, opción A–E.
+
+## Implementar en código (no solo markdown)
+- App shell: header, footer, nav móvil+desktop según diseño Día 1.
+- Home acorde a A–E.
+- Directorio/categorías prioritarias (mín. 2 rutas).
+- Sistema tarjetas modelo (imagen, nombre, LIVE/OFFLINE, atributos reales o mock QA etiquetado).
+- Plantilla maestra perfil: src/lib/profile/*, src/components/profile/*, metadata en src/lib/seo/*
+- Responsive, empty states, 404 perfil inexistente.
+- Primera pasada metadata (title/description) en plantillas.
+
+## Plantilla perfil — obligatorio
+- Slug estable; sin biografía inventada.
+- Offline vs live coherente (modelProfile.ts, useProfileStreamPlayer si existe).
+- Related links, canonical placeholder, noindex si datos insuficientes.
+
+## Híbrido / TikTok
+- Si D: implementar módulo descubrimiento + directorio indexable.
+- Si C: interacción esencial SIN sacrificar rutas crawlables.
+
+## Pruebas
+- npm run dev → navegar home → categoría → 3 perfiles (mock OK si etiquetado).
+- npm run lint / npm test si existen.
+
+## Entregables
+- Lista archivos modificados
+- Estado: Implementado / Probado local por ruta`;
 
 export function renderDay04() {
-  const u = notionLinks();
-  const promptRepo = `# Día 4 — Preparar repo y CI (sin deploy)
+  return `# Día 4 — Construcción de la web funcional
 
-Repo: [URL]
+## 1. Qué construyes hoy
+**Primera versión navegable**: home, listados, **plantilla maestra de perfil** en el repo real.
 
-1. Clonar/abrir en Cursor.
-2. Listar workflows .github/workflows.
-3. Comandos: npm install, npm run lint, npm test, npm run build (si existe).
-4. Crear rama de trabajo para plantilla perfil.
+## 2. Cómo debe verse / comportarse
+Exactamente la opción **A–E** del Día 1 — no un tema genérico oscuro/neón por defecto.
 
-Entrega: URLs Actions si existen; qué está Probado local vs Pendiente.`;
+## 3. Antes de empezar
+- \`docs/pseo-arquitectura.md\` y \`docs/especificacion-paginas.md\`.
+- Dev server funcionando.
 
-  return `# Día 4 — Plantilla maestra de perfil (código funcionando)
+## 4. Pasos en Cursor
+1. Prompt §5 con repo abierto.
+2. Implementar en orden: layout → home → categoría → perfil.
+3. Probar 3 slugs en navegador; capturar qué es mock.
 
-## 1. Qué vas a conseguir hoy
-- Repositorio operativo en tu máquina (o documentado bloqueo).
-- **Plantilla de perfil** implementada o corregida en código.
-- **Muestra:** 3 perfiles probados (live / offline / datos mínimos).
-- Fila ${link("CSN Releases", u.csnReleases)} sandbox + evidencia CI si hay GitHub.
+## 5. Prompt
 
-## 2. Antes de empezar
-- Arquitectura pSEO Día 3.
-- GitHub y Node instalados (para este stack).
+${promptFence(PROMPT)}
 
-${SIN_REPOSITORIO}
+## 6. Archivos (referencia stack ${REPO_REFERENCE})
+- \`src/app/**\` rutas
+- \`src/components/profile/ModelProfileSlushyView.tsx\` (o equivalente)
+- \`src/lib/profile/modelProfile.ts\`
+- \`src/lib/seo/model-profile-metadata.ts\`
+- \`src/components/feed/**\` tarjetas
 
-## 3. Tiempo
-- **6–8 h** si hay que implementar; **2–3 h** si solo ajustes.
-
-## 4. Pasos
-
-### Paso 1 — Repo y CI
-- **Qué:** Seguir ${SIN_REPOSITORIO}; prompt repo §5B.
-- **Dónde:** ${link("CSN Sites", u.csnSites)} Notes con URL repo.
-- **Si no hay repo:** incidente ${link("CSN Incidents", u.csnIncidents)}; solo documentación; **no** marcar plantilla Probada.
-
-### Paso 2 — Implementar plantilla maestra
-- **Qué:** Prompt §5A en Cursor con repo abierto.
-- **Comprobar:** Cambios en archivos perfil/SEO reales (ver prompt).
-- **Muestra:** 3 URLs locales documentadas.
-
-### Paso 3 — Release sandbox
-- **Qué:** ${link("CSN Releases", u.csnReleases)} Environment sandbox; Notes con SHA y enlace Actions si existe.
-
-### Paso 4 — Knowledge
-- **Qué:** Artículo «Plantilla perfil v1» con rutas y reglas LIVE/OFFLINE.
-
-${PREVIEW_STAGING}
-
-## 5. Prompts
-
-### 5A — Plantilla maestra
-${promptFence(PROMPT_MASTER_PROFILE)}
-
-### 5B — Repo y CI
-${promptFence(promptRepo)}
-
-## 6. Respuesta Cursor
-- Diff lógico, checklist Implementado/Probado; comandos ejecutados.
-
-## 7. Comprobar
-- [ ] Repo local corre (dev) o bloqueo documentado
-- [ ] 3 perfiles revisados en navegador
-- [ ] Release + CI documentados
+## 7. Comprobar visual + funcional
+- [ ] Navegación home → categoría → perfil sin 500
+- [ ] LIVE/OFFLINE no contradictorio en un perfil offline de prueba
+- [ ] Móvil: header usable
+- [ ] lint/test si CI existe
 
 ## 8. Si falla
-- CI rojo: anotar URL fallo; no deploy.
-- Build local falla: pegar error en Incidents.
+- Tests rojos → arreglar o documentar Pendiente con enlace Actions.
 
-## 9. Pendiente
-- Deploy preview cloud → Día 7 si permisos Cloudflare.
+## 9. Estado
+| Home | Categorías | Perfil | Metadata |
+
+## 10. Desbloquea
+**Día 5** — datos y monetización reales.
+
+${notionOptionalBlock()}
 `;
 }

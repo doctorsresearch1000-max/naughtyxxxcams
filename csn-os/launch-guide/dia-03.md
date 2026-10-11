@@ -1,112 +1,77 @@
-# Día 3 — Keywords, arquitectura pSEO y diseño
+# Día 3 — Keywords, arquitectura pSEO y especificación de páginas
 
-## 1. Qué vas a conseguir hoy
-- **Mapa keywords long tail** con familias y prioridades (sin volúmenes inventados).
-- **Arquitectura pSEO** (URLs, plantillas, indexación).
-- **Wireframe** navegación + checklist legal en [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85).
-- Decisión qué familias existen (directorio, categoría, perfil; filtros solo si aportan).
+## 1. Qué construyes hoy
+El **plano SEO y de páginas** que el código seguirá en Días 4–6 (no solo Notion).
 
-## 2. Antes de empezar
-- Cuaderno Día 1.
-- Opcional: repo clonado para que Cursor lea rutas reales.
+## 2. Cómo debe verse / comportarse
+Cada familia de URL debe mapear a una **plantilla visual** coherente con A–E (ej. perfil en tube = detalle con media; directorio = grid SEO).
 
-## 3. Tiempo
-- **4–6 h** (investigación + documentación).
-- No depende de dominio comprado.
+## 3. Antes de empezar
+- Opción A–E documentada.
+- Repo con rutas inspeccionables.
 
-## 4. Pasos
+## 4. Pasos en Cursor
+1. Leer rutas y componentes actuales.
+2. Prompt §5 → dos docs en `docs/`.
+3. Lista 5 URLs de muestra para implementar en Día 4.
 
-### Paso 1 — Investigación keywords (Cursor)
-- **Qué:** Ejecutar prompt §5A; pegar resultado en Knowledge «pSEO — Mapa keywords».
-- **Comprobar:** Cada fila tiene fuente (repo/brief/hipótesis).
-- **Si falla:** sin repo, usar solo brief y marcar hipótesis.
+## 5. Prompt
 
-### Paso 2 — Arquitectura pSEO
-- **Qué:** Prompt §5B → artículo «pSEO — Arquitectura URLs».
-- **Comprobar:** Reglas anti-canibalización escritas.
-
-### Paso 3 — Wireframe y legales
-- **Qué:** Prompt §5C → Policy «Checklist legal y páginas».
-- **Dónde:** [CSN Knowledge](https://app.notion.com/p/3d7f94b0d3294789846ab221945c5b85)
-
-### Paso 4 — SEO Opportunities (mínimo 2)
-- **Qué:** [SEO Opportunities](https://app.notion.com/p/050ba07cbe8f45ca93fa9bb30d9ed739) desde ideas del mapa (título, URL objetivo, prioridad).
-
-### Paso 5 — Notion run
-- **Qué:** Current Phase 7 cuando Knowledge tenga los tres artículos.
-
-## 5. Prompts
-
-### 5A — Keywords long tail
 ```text
-# Día 3 — Investigación keywords long tail (pSEO cams)
+# Día 3 — Keywords, arquitectura pSEO y especificación de páginas
 
-## Objetivo
-Producir un mapa de keywords y arquitectura de URLs para un sitio de webcam. Yo validaré volúmenes fuera de Cursor si hace falta.
+INSPECCIONA: docs/brief-producto.md, opción A–E, rutas en src/app, campos feed si existen.
 
-## Lo que TÚ (Cursor) puedes hacer
-- Inferir patrones de búsqueda del nicho a partir del brief y del código (categorías, atributos, slugs en repo).
-- Leer rutas y componentes (ej. perfiles, categorías) si tengo repo abierto.
-- Proponer familias de página, intención, URL patrón, riesgo de canibalización.
-- Marcar cada fila: Fuente = repo | brief | hipótesis (requiere validación externa).
+## Regla
+La arquitectura URL y el wireframe deben coincidir con la opción visual:
+- Tube site ≠ TikTok-style en rutas y densidad de grid.
+- No interfaz genérica compartida por capricho.
 
-## Lo que NO debes hacer
-- Inventar volúmenes de búsqueda, KD, tráfico o rankings de competidores.
-- Afirmar que has consultado Google Search Console o Ahrefs.
-- Listar miles de URLs sin justificar datos y utilidad.
+## Keywords
+- Familias long tail: categoría, atributo, geo, nombre modelo (si datos).
+- Marcar: comprobado | hipótesis | validación externa pendiente.
+- NO volúmenes ni KD inventados.
 
-## Contexto (editar antes de enviar)
-- Brief y mercados/idiomas: [PEGAR DEL CUADERNO]
-- Repo (si existe): [URL o ruta local]
-- Competidores que YO nombre: [lista o «ninguno aún»]
+## Por familia de página documentar
+- Intención, patrón URL, fuente datos, plantilla React, internal links, meta, index sí/no/condicional, riesgos thin/duplicate/cannibal.
 
-## Entregables
-1. Tabla: familia (directorio / categoría / perfil / otro), intención, ejemplo keyword long tail, URL patrón, plantilla, prioridad P0-P2, riesgo canibalización.
-2. Reglas LIVE vs OFFLINE en URLs/títulos solo si los datos del feed lo permiten.
-3. Lista de validaciones externas (GSC, búsqueda manual, herramienta SEO) sin inventar resultados.
-4. Bloque «Qué pegar en CSN Knowledge» (markdown).
+## Páginas a especificar (contenido + comportamiento)
+Home, directorio, categorías, perfil, búsqueda/filtros (solo si valor), legales, 404/empty.
+
+## Salida
+- docs/pseo-arquitectura.md
+- docs/especificacion-paginas.md
+
+No generar miles de URLs de filtros combinados.
 ```
 
-### 5B — Arquitectura
-```text
-# Día 3 — Arquitectura pSEO (familias de página)
-
-Basado en el mapa de keywords ya acordado.
-
-Define para cada familia (directorio, categoría, subcategoría, perfil, búsqueda solo si útil):
-- Intención búsqueda
-- Patrón URL (ej. /c/[slug], /model/[slug])
-- Fuente datos (feed campo X)
-- Plantilla React/route
-- Enlaces internos entrantes/salientes
-- Index: sí/no/condicional
-- Riesgos: thin, duplicado, canibalización
-
-NO generar todas las combinaciones de filtros. NO inventar volúmenes.
-Entrega: tabla + diagrama texto + política LIVE/OFFLINE en SERP si aplica.
-```
-
-### 5C — Legal + wireframe
-```text
-# Día 3 — Checklist legal y wireframe (documentación)
-
-Brief: [cuaderno]
-Repo si existe: [URL]
-
-Mapa páginas + menú texto + checklist age/privacy/terms/2257 (marcar revisión legal humana).
-No asesoría jurídica definitiva.
-```
-
-## 6. Respuesta Cursor
-- Tablas markdown listas para Knowledge; sin métricas falsas.
+## 6. Archivos
+- `docs/pseo-arquitectura.md`
+- `docs/especificacion-paginas.md`
+- Ajustes menores de rutas placeholder si hace falta
 
 ## 7. Comprobar
-- [ ] Mapa keywords + arquitectura + legal
-- [ ] ≥2 SEO Opportunities
-- [ ] LIVE/OFFLINE documentado si aplica
+- [ ] Cada familia tiene patrón URL + plantilla nombrada en repo
+- [ ] LIVE/OFFLINE reflejado en spec si aplica
+- [ ] Sin tabla de keywords con volúmenes ficticios
 
 ## 8. Si falla
-- Sin repo: arquitectura provisional; marcar «validar con código Día 4».
+- Sin datos feed → spec con campos «pendiente proveedor».
 
-## 9. Pendiente
-- Implementación plantillas → Día 4.
+## 9. Estado
+| Mapa keywords | Arquitectura | Spec páginas |
+
+## 10. Desbloquea
+**Día 4** — implementación navegable v1.
+
+
+## Registro operativo en Notion (opcional — no bloquea el código)
+
+Solo si tu equipo usa CSN para trazabilidad:
+
+- [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) — notas del día, Evidence URL cuando tengas preview.
+- [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) — bloqueos reales (sin API key, build roto).
+- [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) — compras, DNS prod, deploy prod (Pending hasta aprobación).
+
+No crees filas antes de tener un resultado en el producto que registrar.
+

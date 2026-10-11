@@ -1,98 +1,74 @@
-# Día 6 — SEO técnico y reglas de indexación pSEO
+# Día 6 — SEO técnico, calidad y rendimiento
 
-## 1. Qué vas a conseguir hoy
-- Reglas de **elegibilidad** antes de escalar URLs.
-- Cambios o informe SEO técnico en repo.
-- **Muestra 5 perfiles + 2 categorías** revisados (metadata + contenido).
-- Sitemap plan en Knowledge (Unverified en GSC hasta captura).
+## 1. Qué construyes hoy
+**Reglas pSEO aplicadas en código** + auditoría reproducible.
 
-## 2. Antes de empezar
-- Feed Día 5 documentado.
-- Preview local o pages.dev (ver Día 4).
+## 2. Cómo debe verse / comportarse
+View-source de muestra: títulos únicos; perfiles thin con noindex o no en sitemap.
 
-## 3. Tiempo
-- **4–6 h**
+## 3. Antes de empezar
+- Rutas de perfil/categoría funcionando con datos Día 5.
 
-## 4. Pasos
+## 4. Pasos en Cursor
+1. Prompt §5.
+2. `npm run build` si existe; revisar sitemap generado.
+3. Completar tabla 5+2 URLs.
 
-### Paso 1 — Reglas escala pSEO
-- **Qué:** Prompt §5A → Knowledge «pSEO — Reglas indexación».
+## 5. Prompt
 
-### Paso 2 — SEO técnico código
-- **Qué:** Prompt §5B; commits en repo si aplica.
-
-### Paso 3 — SEO Opportunities
-- **Qué:** [SEO Opportunities](https://app.notion.com/p/050ba07cbe8f45ca93fa9bb30d9ed739) ≥2 tareas técnicas (canonical, sitemap, etc.).
-
-### Paso 4 — Backlink (identificar solo)
-- **Qué:** [Backlink Opportunities](https://app.notion.com/p/ff38edc78b1d43ceb6926c630058066e) una oportunidad; gate Pending si pago.
-
-### Paso 5 — Revisión muestra
-- **Qué:** Lista URLs en run Notes; pass/fail por fila reglas Día 3.
-
-## 5. Prompts
-
-### 5A — Reglas indexación
 ```text
-# Día 6 — Reglas de indexación y QA pSEO
+# Día 6 — SEO técnico, calidad y rendimiento
 
-## Objetivo
-Definir y verificar reglas antes de escalar miles de URLs. Inspeccionar el repo.
+INSPECCIONA rutas y plantillas implementadas en Días 4–5.
 
-## Repo y preview
-- Repo: [URL]
-- Preview local o pages.dev: [URL o «solo localhost»]
+## Implementar o corregir
+- title/description únicos por plantilla
+- canonical, robots/noindex para no elegibles
+- sitemap (solo URLs canónicas elegibles según docs/pseo-arquitectura.md)
+- internal links, 404 perfil
+- offline/eliminado según política
+- JSON-LD solo si datos reales lo permiten
+- rendimiento: imágenes, lazy load, LCP básico en muestra
+- coherencia HTML inicial vs estado LIVE/OFFLINE vs metadata
 
-## Comprobaciones en código
-- robots.txt / meta robots en plantillas
-- sitemap: solo URLs canónicas elegibles
-- canonical en perfil y categoría
-- detección duplicados / thin content (helpers existentes, ej. profileContentQuality)
-- HTTP 404 para slugs inexistentes
-- JSON-LD si existe, sin inventar campos
+## Muestra obligatoria
+- 5 perfiles + 2 categorías (si existen datos)
+- Tabla PASS/FAIL por comprobación
 
-## Reglas de elegibilidad (documentar, no imponer conteo de palabras fijo)
-- Datos mínimos por perfil para indexar
-- Perfiles offline/eliminados: noindex o 404 según política
-- Categorías vacías: no generar
+## Sin
+- Umbral mágico de palabras
+- Afirmar indexación Google
 
 ## Entregables
-- Tabla regla → dónde se implementa (archivo) → cómo probar localmente
-- Lista URLs de muestra (5 perfiles + 2 categorías) para revisión manual
-- Entradas sugeridas para SEO Opportunities en Notion (sin afirmar indexación en Google)
+- docs/seo-tecnico-auditoria.md con archivo:línea por hallazgo
 ```
 
-### 5B — SEO técnico
-```text
-# Día 6 — SEO técnico en repo (inspección)
-
-Repo: [URL]
-Preview: [localhost:3000 o pages.dev]
-
-Implementar o verificar en código:
-- title/description por plantilla perfil y categoría
-- canonical
-- robots meta / noindex reglas perfiles no elegibles
-- sitemap generation y exclusión thin/duplicados
-- enlaces internos relacionados
-- 404 slug inválido
-
-Referencias útiles en este stack: src/lib/seo/, sitemap routes, profileContentQuality.
-
-Etiqueta cada ítem: Implementado | Probado local | Documentado | Pendiente.
-No afirmar indexación Google.
-```
-
-## 6. Respuesta Cursor
-- Tabla regla → archivo → prueba local.
+## 6. Archivos
+- `src/lib/seo/**`, sitemap route, robots
+- `profileContentQuality` o similar si existe
 
 ## 7. Comprobar
-- [ ] Reglas escritas
-- [ ] Muestra revisada
-- [ ] Sitemap accesible en preview si implementado
+- [ ] 5 perfiles + 2 categorías auditados
+- [ ] sitemap no lista URLs prohibidas por arquitectura
+- [ ] 404 en slug inventado
 
 ## 8. Si falla
-- Sin preview público: solo localhost + anotar limitación.
+- Build falla → priorizar errores antes de SEO.
 
-## 9. Pendiente
-- GSC verificación externa.
+## 9. Estado
+| Metadata | Sitemap | Rendimiento muestra |
+
+## 10. Desbloquea
+**Día 7** — validación integral.
+
+
+## Registro operativo en Notion (opcional — no bloquea el código)
+
+Solo si tu equipo usa CSN para trazabilidad:
+
+- [Project Run](https://app.notion.com/p/d0e397e495e544d28a6899bc6a1e654f) — notas del día, Evidence URL cuando tengas preview.
+- [CSN Incidents](https://app.notion.com/p/793edf56ea4341cfbaaf2c3dd0976b66) — bloqueos reales (sin API key, build roto).
+- [Human Gates](https://app.notion.com/p/806256831553451d9c84528f2a3ad654) — compras, DNS prod, deploy prod (Pending hasta aprobación).
+
+No crees filas antes de tener un resultado en el producto que registrar.
+

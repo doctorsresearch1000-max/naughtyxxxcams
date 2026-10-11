@@ -4,7 +4,7 @@ import { deleteBlocksExceptChildPagesAndDatabases, rt } from "./notion-markdown-
 import { PRIMARY_ENTRY_TITLE } from "./primary-entry-page.mjs";
 import { DAY_PLAN } from "./launch-guide-builder.mjs";
 
-const HUB_MARKER = "csn-hub-marker-v9-pseo";
+const HUB_MARKER = "csn-hub-marker-v10-build";
 
 function link(label, url) {
   return [{ type: "text", text: { content: label, link: url ? { url } : null } }];
@@ -66,7 +66,7 @@ export async function syncCanonicalRootHub(manifest, opts = {}) {
       type: "paragraph",
       paragraph: {
         rich_text: rt(
-          `De una idea a tu web de cams en 7 días. Sigue una jornada cada vez. No necesitas conocer el sistema interno. (${HUB_MARKER})`,
+          `Construye tu web de cams en 7 jornadas: producto, diseño, código, datos, SEO y validación. Cursor + tu repositorio son el camino principal; Notion es opcional para evidencias. (${HUB_MARKER})`,
         ),
       },
     },
@@ -76,7 +76,7 @@ export async function syncCanonicalRootHub(manifest, opts = {}) {
       type: "paragraph",
       paragraph: {
         rich_text: rt(
-          "Esta guía te lleva paso a paso: definir el proyecto, elegir dominio, preparar el código, integraciones, SEO y comprobar la web antes de lanzar. Usarás Notion para anotar decisiones y Cursor para ayuda en el repositorio. Las compras y los cambios en producción siempre requieren aprobación de una persona responsable.",
+          "Día 1: eliges el tipo de web (directorio, tube, TikTok-style, híbrido o editorial) y el sistema visual — tú decides, no Cursor. Días 4–7: implementas en tu repositorio con prompts que exigen inspeccionar el código antes de editar. Notion solo al final de cada jornada si quieres registrar evidencias. Compras y producción requieren aprobación humana.",
         ),
       },
     },
@@ -187,7 +187,7 @@ export async function verifyRootHubFirstBlock(notion, rootId) {
     if (v.type === "title") title = v.title.map((t) => t.plain_text).join("");
   }
   return {
-    ok: joined.includes("GUÍA DE LANZAMIENTO") && joined.includes("csn-hub-marker-v9-pseo"),
+    ok: joined.includes("GUÍA DE LANZAMIENTO") && joined.includes("csn-hub-marker-v10-build"),
     pageTitle: title,
     expectedTitle: PRIMARY_ENTRY_TITLE,
     titleOk: title === PRIMARY_ENTRY_TITLE,
