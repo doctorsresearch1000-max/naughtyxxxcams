@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "databases": {
+    "csnSites": {
+      "id": "8c724803-29d2-44cf-9635-db698ec34800",
+      "dataSourceId": "16ac2141-3c13-44d5-b78c-2bc4c4c53d7c",
+      "title": "CSN Sites",
+      "url": "https://app.notion.com/p/8c72480329d244cf9635db698ec34800"
+    },
+    "sopVersions": {
+      "id": "7bb21a35-e3fb-4545-b63c-ecb1adf4ece9",
+      "dataSourceId": "526a9117-f39c-4bd3-a1cb-20657c89214e",
+      "title": "SOP Versions",
+      "url": "https://app.notion.com/p/7bb21a35e3fb4545b63cecb1adf4ece9"
+    },
+    "projectRuns": {
+      "id": "9bb6ddac-8698-4a74-9db5-a967436047a1",
+      "dataSourceId": "50c39479-e33c-4c65-b114-4600eafadb01",
+      "title": "Project Runs",
+      "url": "https://app.notion.com/p/9bb6ddac86984a749db5a967436047a1"
+    },
+    "tasks": {
+      "id": "025baa95-9f08-432f-982a-4bd4dd7b5f1b",
+      "dataSourceId": "ae4e1b24-d72d-4067-a10a-8f1ace7b4275",
+      "title": "Tasks",
+      "url": "https://app.notion.com/p/025baa959f08432f982a4bd4dd7b5f1b"
+    },
+    "domainCandidates": {
+      "id": "d1ea7d54-2253-445b-aa06-667270e2688a",
+      "dataSourceId": "f1774a89-a039-4541-8086-26c8024aa146",
+      "title": "Domain Candidates",
+      "url": "https://app.notion.com/p/d1ea7d542253445baa06667270e2688a"
+    },
+    "seoOpportunities": {
+      "id": "36da9cdf-48f1-4d81-a3b6-e07409743a3e",
+      "dataSourceId": "67374270-91f6-481f-82be-41e9536c793d",
+      "title": "SEO Opportunities",
+      "url": "https://app.notion.com/p/36da9cdf48f14d81a3b6e07409743a3e"
+    },
+    "backlinkOpportunities": {
+      "id": "9496f874-dfa4-47c9-8c09-76c5e05bec43",
+      "dataSourceId": "893603ee-a6e7-41cf-8be3-068529623ec3",
+      "title": "Backlink Opportunities",
+      "url": "https://app.notion.com/p/9496f874dfa447c98c0976c5e05bec43"
+    },
+    "feedSyncRuns": {
+      "id": "4c8e9760-2465-4e9d-bf45-4c62b6e60bad",
+      "dataSourceId": "48219d1b-3286-48e1-a185-e832a2fc2226",
+      "title": "Feed Sync Runs",
+      "url": "https://app.notion.com/p/4c8e976024654e9dbf454c62b6e60bad"
+    },
+    "csnReleases": {
+      "id": "0c191658-f145-4c16-84a6-ab3db7ddee29",
+      "dataSourceId": "e0f6bf07-5e21-441d-b2b3-fee92d107dd6",
+      "title": "CSN Releases",
+      "url": "https://app.notion.com/p/0c191658f1454c1684a6ab3db7ddee29"
+    },
+    "csnIncidents": {
+      "id": "b8489c8f-da8e-4f22-a1c0-88c312337068",
+      "dataSourceId": "a61cc5f5-b70f-4c09-94e1-cfb479177cd4",
+      "title": "CSN Incidents",
+      "url": "https://app.notion.com/p/b8489c8fda8e4f22a1c088c312337068"
+    },
+    "csnMaintenance": {
+      "id": "36171408-9a75-451e-97d5-73bffa462330",
+      "dataSourceId": "892543dd-d543-483a-b0bb-59351669c3b5",
+      "title": "CSN Maintenance",
+      "url": "https://app.notion.com/p/361714089a75451e97d573bffa462330"
+    },
+    "csnKnowledge": {
+      "id": "55afb219-330a-430b-b44b-78be3693563d",
+      "dataSourceId": "486763c4-49a3-448e-95c8-b12c78c3c9fc",
+      "title": "CSN Knowledge",
+      "url": "https://app.notion.com/p/55afb219330a430bb44b78be3693563d"
+    },
+    "launchKpiSnapshots": {
+      "id": "96187b61-1d53-433e-9c2f-8083378402b9",
+      "dataSourceId": "7b18d071-e781-4ca1-ab87-33010e3973e0",
+      "title": "Launch KPI Snapshots",
+      "url": "https://app.notion.com/p/96187b611d53433e9c2f8083378402b9"
+    },
+    "humanGates": {
+      "id": "1e929eb1-94e5-48fb-b4fd-a8fe05cb3355",
+      "dataSourceId": "2289078e-fbf0-4937-88b0-7ad4fd47e221",
+      "title": "Human Gates",
+      "url": "https://app.notion.com/p/1e929eb194e548fbb4fda8fe05cb3355"
+    }
+  },
+  "legacyBaselineBefore": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "parentPageId": "3f484cd0-85ae-8032-bff1-c16e871e6357",
+  "rootPageId": "3f684cd0-85ae-8167-bf90-d1f31b07025e",
+  "rootPageUrl": "https://app.notion.com/p/Cam-Site-Network-OS-SOP-System-Isolated-3f684cd085ae8167bf90d1f31b07025e",
+  "sopBlocksAppended": true,
+  "legacyBaselineAfter": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacyIntegrityOk": true,
+  "qa": {
+    "first": {
+      "siteId": "3f684cd0-85ae-8190-9ade-c1e2750d9470",
+      "runId": "3f684cd0-85ae-8114-82ee-cfda48080b19",
+      "siteCount": 1,
+      "runCount": 1,
+      "idempotent": true
+    },
+    "second": {
+      "siteId": "3f684cd0-85ae-8190-9ade-c1e2750d9470",
+      "runId": "3f684cd0-85ae-8114-82ee-cfda48080b19",
+      "siteCount": 1,
+      "runCount": 1,
+      "idempotent": true
+    },
+    "idempotent": true
+  },
+  "completedAt": "2026-10-11T07:41:46.829Z"
+}

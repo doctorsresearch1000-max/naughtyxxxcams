@@ -20,6 +20,7 @@
     "test:ads": "node scripts/verify-jerkmate-creatives.mjs",
     "notion:setup-kpi-history": "node scripts/setup-databases.js",
     "notion:sync-kpis": "node scripts/sync-kpis.js",
+    "notion:csn-stage-c": "node scripts/notion-csn-isolated-stage-c.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {
