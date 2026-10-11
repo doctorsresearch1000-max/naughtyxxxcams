@@ -1,0 +1,334 @@
+{
+  "at": "2026-10-11T11:05:55.696Z",
+  "countsBefore": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "areas": {
+    "hub": {
+      "label": "CAM SITE NETWORK OS",
+      "resolved": {
+        "kind": "database",
+        "databaseId": "3f384cd0-85ae-80bd-be51-c17104511bfa",
+        "title": " CAM SITE NETWORK OS",
+        "properties": {},
+        "dataSourceId": "3f384cd0-85ae-8078-9afc-000be75ab268"
+      },
+      "blockFingerprint": {
+        "count": 0,
+        "types": {}
+      },
+      "sampleRows": [
+        {
+          "id": "3f484cd0-85ae-8032-bff1-c16e871e6357",
+          "props": {
+            "GSC": "rich_text",
+            "Monthly Revenue": "rich_text",
+            "Indexed Pages": "rich_text",
+            "Domains": "rich_text",
+            "Goal Clicks": "rich_text",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": "number",
+            "Deployments & Releases": "rich_text",
+            "Status": "rich_text",
+            "GitHub Repos": "rich_text",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        },
+        {
+          "id": "3f484cd0-85ae-800d-a256-e4c5526ec8fa",
+          "props": {
+            "GSC": "rich_text",
+            "Monthly Revenue": "rich_text",
+            "Indexed Pages": "rich_text",
+            "Domains": "rich_text",
+            "Goal Clicks": "rich_text",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": "number",
+            "Deployments & Releases": "rich_text",
+            "Status": "rich_text",
+            "GitHub Repos": "rich_text",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        },
+        {
+          "id": "3f384cd0-85ae-80e4-bd3f-cc84f90bb0de",
+          "props": {
+            "GSC": "rich_text",
+            "Monthly Revenue": "rich_text",
+            "Indexed Pages": "rich_text",
+            "Domains": "rich_text",
+            "Goal Clicks": "rich_text",
+            "KPI History": "[relation:13]",
+            "Daily Clicks": "number",
+            "Deployments & Releases": "rich_text",
+            "Status": "rich_text",
+            "GitHub Repos": "rich_text",
+            "Hosting / Platform": "CloudFlare Pages"
+          }
+        }
+      ]
+    },
+    "ops": {
+      "label": "OPERATIONS CENTER",
+      "resolved": {
+        "kind": "database",
+        "databaseId": "3f484cd0-85ae-804d-b61a-d87b93c11734",
+        "title": "OPERATIONS CENTER",
+        "properties": {},
+        "dataSourceId": "3fd84cd0-85ae-82af-94b9-074cf3e37156"
+      },
+      "blockFingerprint": {
+        "count": 0,
+        "types": {}
+      },
+      "sampleRows": [
+        {
+          "id": "3f484cd0-85ae-80b6-bc72-f072478f6665",
+          "props": {
+            "Due Date": "rich_text",
+            "Task": "rich_text",
+            "KPI History": "[relation:1]",
+            "Category ": "rich_text",
+            "Status": "rich_text",
+            "Site": "rich_text",
+            "Next Action": "ClickForCamGirls — Infrastructure (Ready)",
+            "Priority": "rich_text"
+          }
+        },
+        {
+          "id": "3f484cd0-85ae-80b9-80d1-d2c3e15e259a",
+          "props": {
+            "Due Date": "rich_text",
+            "Task": "rich_text",
+            "KPI History": "[relation:1]",
+            "Category ": "rich_text",
+            "Status": "rich_text",
+            "Site": "rich_text",
+            "Next Action": "MatureCamRooms — SEO (In Progress)",
+            "Priority": "rich_text"
+          }
+        },
+        {
+          "id": "3f484cd0-85ae-80aa-8eed-e1b180af54aa",
+          "props": {
+            "Due Date": "rich_text",
+            "Task": "rich_text",
+            "KPI History": "[relation:1]",
+            "Category ": "rich_text",
+            "Status": "rich_text",
+            "Site": "rich_text",
+            "Next Action": "NaughtyXXXCams — SEO (In Progress)",
+            "Priority": "rich_text"
+          }
+        }
+      ]
+    },
+    "issues": {
+      "label": "ISSUES & INCIDENTS",
+      "resolved": {
+        "kind": "database",
+        "databaseId": "3f484cd0-85ae-80dd-aedb-f0e4004e88ea",
+        "title": " ISSUES & INCIDENTS",
+        "properties": {},
+        "dataSourceId": "ea084cd0-85ae-83ac-9f12-07292a3bb2da"
+      },
+      "blockFingerprint": {
+        "count": 0,
+        "types": {}
+      },
+      "sampleRows": [
+        {
+          "id": "3f684cd0-85ae-81d2-97bf-e5670618543e",
+          "props": {
+            "Causa": "rich_text",
+            "Next Action": "rich_text",
+            "Priority": "Media",
+            "Guía relacionada": "[relation:0]",
+            "Solución aplicada": "rich_text",
+            "Category": "Errores de la web",
+            "Status": "Abierto",
+            "Site": "multi_select",
+            "Task": "El escritorio no tiene el menú nuevo ni el scroll infinito (solo se actualizó el móvil)"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81b4-bd3a-c92210d6fa36",
+          "props": {
+            "Causa": "rich_text",
+            "Next Action": "rich_text",
+            "Priority": "Media",
+            "Guía relacionada": "[relation:0]",
+            "Solución aplicada": "rich_text",
+            "Category": "Indexación y SEO",
+            "Status": "Mitigado",
+            "Site": "multi_select",
+            "Task": "Cougar y Mom sin modelos tras ampliar el catálogo"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-8159-aa3e-f91cf6751304",
+          "props": {
+            "Causa": "rich_text",
+            "Next Action": "rich_text",
+            "Priority": "Alta",
+            "Guía relacionada": "[relation:0]",
+            "Solución aplicada": "rich_text",
+            "Category": "Rendimiento",
+            "Status": "Investigando",
+            "Site": "multi_select",
+            "Task": "Navegación lenta: 4-5 s al cambiar de sección o categoría"
+          }
+        }
+      ]
+    },
+    "deploy": {
+      "label": "DEPLOYMENTS & RELEASES",
+      "resolved": {
+        "kind": "database",
+        "databaseId": "3f484cd0-85ae-8011-af56-e1adfd30300b",
+        "title": " DEPLOYMENTS & RELEASES",
+        "properties": {},
+        "dataSourceId": "36c84cd0-85ae-822f-a249-877e009315f9"
+      },
+      "blockFingerprint": {
+        "count": 0,
+        "types": {}
+      },
+      "sampleRows": [
+        {
+          "id": "3f684cd0-85ae-81d4-b47c-e11dbe0a0e25",
+          "props": {
+            "Next Action": "rich_text",
+            "Priority": "Media",
+            "Verificado": "checkbox",
+            "Category": "Diseño y UX",
+            "Commit": "rich_text",
+            "Cómo volver atrás": "rich_text",
+            "Status": "Planeada",
+            "Rama": "rich_text",
+            "Site": "multi_select",
+            "PR": "url",
+            "Task": "Menú de escritorio, chip Cougar fuera y scroll infinito en la home"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-816f-beb4-d56f6f5e33f1",
+          "props": {
+            "Next Action": "rich_text",
+            "Priority": "Alta",
+            "Verificado": "checkbox",
+            "Category": "Rendimiento",
+            "Commit": "rich_text",
+            "Cómo volver atrás": "rich_text",
+            "Status": "Planeada",
+            "Rama": "rich_text",
+            "Site": "multi_select",
+            "PR": "url",
+            "Task": "Velocidad de navegación instantánea"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81f4-8c91-d073b6d9f6b5",
+          "props": {
+            "Next Action": "rich_text",
+            "Priority": "Alta",
+            "Verificado": "checkbox",
+            "Category": "SEO y sitemap",
+            "Commit": "rich_text",
+            "Cómo volver atrás": "rich_text",
+            "Status": "En preview",
+            "Rama": "rich_text",
+            "Site": "multi_select",
+            "PR": "url",
+            "Task": "Catálogo ampliado (~9055 modelos), snapshot estático y deploy diario"
+          }
+        }
+      ]
+    },
+    "kv": {
+      "label": "KNOWLEDGE VAULT",
+      "resolved": {
+        "kind": "database",
+        "databaseId": "3f484cd0-85ae-800b-a34c-d0d4101255a0",
+        "title": " KNOWLEDGE VAULT",
+        "properties": {},
+        "dataSourceId": "41284cd0-85ae-829e-ac42-0771e6b6f412"
+      },
+      "blockFingerprint": {
+        "count": 0,
+        "types": {}
+      },
+      "sampleRows": [
+        {
+          "id": "3f684cd0-85ae-8106-97d3-f7c09d37ab57",
+          "props": {
+            "Estado": "Vigente",
+            "Tipo": "Guía",
+            "Site": "multi_select",
+            "Category": "Despliegue y CI",
+            "Nombre": "Cómo publicar en producción"
+          }
+        }
+      ]
+    },
+    "routine": {
+      "label": "ROUTINE & MAINTENANCE",
+      "resolved": {
+        "kind": "database",
+        "databaseId": "3f484cd0-85ae-80a8-9091-e7bf1a16ba70",
+        "title": "ROUTINE & MAINTENANCE ",
+        "properties": {},
+        "dataSourceId": "60284cd0-85ae-8292-8363-07d4ecd2598b"
+      },
+      "blockFingerprint": {
+        "count": 0,
+        "types": {}
+      },
+      "sampleRows": [
+        {
+          "id": "3f684cd0-85ae-8159-aee3-d40e14f8a51e",
+          "props": {
+            "Frecuencia": "Trimestral",
+            "Next Action": "rich_text",
+            "Priority": "Media",
+            "Category": "Legal y cumplimiento",
+            "Status": "Hecha",
+            "Site": "multi_select",
+            "Task": "Revisar aviso 18+, términos y DMCA"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-810b-9a62-ff2a6c0deadd",
+          "props": {
+            "Frecuencia": "Mensual",
+            "Next Action": "rich_text",
+            "Priority": "Baja",
+            "Category": "Limpieza de código",
+            "Status": "Pendiente",
+            "Site": "multi_select",
+            "Task": "Limpieza de código: ramas viejas, dependencias y avisos del CI"
+          }
+        },
+        {
+          "id": "3f684cd0-85ae-81b1-8456-e960b73da46c",
+          "props": {
+            "Frecuencia": "Trimestral",
+            "Next Action": "rich_text",
+            "Priority": "Alta",
+            "Category": "Seguridad y accesos",
+            "Status": "Pendiente",
+            "Site": "multi_select",
+            "Task": "Revisar y renovar tokens y secretos"
+          }
+        }
+      ]
+    }
+  }
+}

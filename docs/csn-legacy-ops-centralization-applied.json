@@ -1,0 +1,150 @@
+{
+  "marker": "csn-legacy-ops-dashboard-v1",
+  "at": "2026-10-11T11:06:36.092Z",
+  "dryRun": false,
+  "countsBefore": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "countsAfter": {
+    "hub": 4,
+    "ops": 4,
+    "kv": 1,
+    "routine": 9,
+    "issues": 8,
+    "deploy": 7,
+    "kpi1": 52,
+    "kpi2": 4
+  },
+  "legacyIntegrityOk": true,
+  "descriptionsUnchanged": true,
+  "descriptionsBefore": {
+    "hub": "Registro y monitorización central de todos los dominios de la red.\nAquí controlo el estado, ingresos mensuales, clicks diarios, páginas indexadas y hosting de cada sitio.",
+    "ops": "Control operativo de todos los sitios de CAM SITE NETWORK OS.\nAquí gestiono tareas, incidencias técnicas, despliegues y mantenimiento de toda la red.",
+    "issues": "Registro y seguimiento de errores y fallos técnicos de la red. Aquí documento, priorizo y resuelvo bloqueos de indexación, caídas de servidor y problemas de API.",
+    "deploy": "Historial de cambios y actualizaciones de código enviadas a producción. Aquí audito los despliegues de Cloudflare, cambios en Next.js y releases aplicadas a cada dominio.",
+    "kv": "Base de conocimiento, documentación técnica y recursos clave de la red. Aquí almaceno guías de arquitectura, estrategias SEO, prompts de Cursor y credenciales del proyecto.",
+    "routine": "Gestión de revisiones periódicas y tareas recurrentes de mantenimiento. Aquí programo los chequeos de Search Console, auditorías de sitemaps y limpiezas de código."
+  },
+  "descriptionsAfter": {
+    "hub": "Registro y monitorización central de todos los dominios de la red.\nAquí controlo el estado, ingresos mensuales, clicks diarios, páginas indexadas y hosting de cada sitio.",
+    "ops": "Control operativo de todos los sitios de CAM SITE NETWORK OS.\nAquí gestiono tareas, incidencias técnicas, despliegues y mantenimiento de toda la red.",
+    "issues": "Registro y seguimiento de errores y fallos técnicos de la red. Aquí documento, priorizo y resuelvo bloqueos de indexación, caídas de servidor y problemas de API.",
+    "deploy": "Historial de cambios y actualizaciones de código enviadas a producción. Aquí audito los despliegues de Cloudflare, cambios en Next.js y releases aplicadas a cada dominio.",
+    "kv": "Base de conocimiento, documentación técnica y recursos clave de la red. Aquí almaceno guías de arquitectura, estrategias SEO, prompts de Cursor y credenciales del proyecto.",
+    "routine": "Gestión de revisiones periódicas y tareas recurrentes de mantenimiento. Aquí programo los chequeos de Search Console, auditorías de sitemaps y limpiezas de código."
+  },
+  "viewResults": {
+    "hub": {
+      "viewsBefore": 6,
+      "viewsAfter": 6,
+      "created": [],
+      "skipped": [
+        "CSN · 1 — Network overview",
+        "CSN · 2 — Needs attention (sites Pending)",
+        "CSN · 3 — Active sites",
+        "CSN · 4 — Quick access (áreas CSN)",
+        "CSN · 5 — By site (dominios)"
+      ],
+      "viewNames": [
+        "/database",
+        "CSN · 1 — Network overview",
+        "CSN · 2 — Needs attention (sites Pending)",
+        "CSN · 3 — Active sites",
+        "CSN · 4 — Quick access (áreas CSN)",
+        "CSN · 5 — By site (dominios)"
+      ]
+    },
+    "ops": {
+      "viewsBefore": 8,
+      "viewsAfter": 8,
+      "created": [],
+      "skipped": [
+        "OC · All Tasks",
+        "OC · In progress",
+        "OC · Blocked",
+        "OC · Today / due text set",
+        "OC · Overdue (abiertas con fecha)",
+        "OC · Upcoming (Ready)",
+        "OC · By Site"
+      ],
+      "viewNames": [
+        "/database",
+        "OC · All Tasks",
+        "OC · In progress",
+        "OC · Blocked",
+        "OC · Today / due text set",
+        "OC · Overdue (abiertas con fecha)",
+        "OC · Upcoming (Ready)",
+        "OC · By Site"
+      ]
+    },
+    "issues": {
+      "viewsBefore": 3,
+      "viewsAfter": 3,
+      "created": [],
+      "skipped": [
+        "OC · Open incidents",
+        "OC · High priority"
+      ],
+      "viewNames": [
+        "/database",
+        "OC · Open incidents",
+        "OC · High priority"
+      ]
+    },
+    "deploy": {
+      "viewsBefore": 4,
+      "viewsAfter": 4,
+      "created": [],
+      "skipped": [
+        "OC · Upcoming",
+        "OC · High priority",
+        "OC · Not verified"
+      ],
+      "viewNames": [
+        "/database",
+        "OC · Upcoming",
+        "OC · High priority",
+        "OC · Not verified"
+      ]
+    },
+    "routine": {
+      "viewsBefore": 3,
+      "viewsAfter": 3,
+      "created": [],
+      "skipped": [
+        "OC · Pending",
+        "OC · High priority pending"
+      ],
+      "viewNames": [
+        "/database",
+        "OC · Pending",
+        "OC · High priority pending"
+      ]
+    },
+    "kv": {
+      "viewsBefore": 2,
+      "viewsAfter": 2,
+      "created": [],
+      "skipped": [
+        "CSN · Knowledge — Vigente"
+      ],
+      "viewNames": [
+        "/database",
+        "CSN · Knowledge — Vigente"
+      ]
+    }
+  },
+  "apiLimits": {
+    "fullPageDatabaseBlocks": "Las seis URLs son bases full-page: blocks.children.append en database_id devuelve «Block does not support children».",
+    "unifiedTray": "La bandeja unificada se implementa como vistas OC · en OPERATIONS CENTER más vistas OC · en issues/deploy/routine (misma fuente de verdad, sin filas duplicadas).",
+    "overdueDates": "Due Date en OPERATIONS CENTER es rich_text (no date): no hay filtro fiable «vencido hoy» vía API."
+  }
+}

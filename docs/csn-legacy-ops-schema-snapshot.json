@@ -1,0 +1,348 @@
+{
+  "hub": {
+    "databaseId": "3f384cd0-85ae-80bd-be51-c17104511bfa",
+    "dataSourceId": "3f384cd0-85ae-8078-9afc-000be75ab268",
+    "props": {
+      "GSC": "rich_text",
+      "Monthly Revenue": "rich_text",
+      "Indexed Pages": "rich_text",
+      "Domains": "rich_text",
+      "Goal Clicks": "rich_text",
+      "KPI History": "relation",
+      "Daily Clicks": "number",
+      "Deployments & Releases": "rich_text",
+      "Status": "rich_text",
+      "GitHub Repos": "rich_text",
+      "Hosting / Platform": "title"
+    },
+    "rowCount": 4,
+    "enumVals": {
+      "GSC": [
+        "https://search.google.com/search-console/performance/search-analytics?resource_i"
+      ],
+      "Monthly Revenue": [
+        "$0.00",
+        "$116.31"
+      ],
+      "Indexed Pages": [
+        "8,932",
+        "0",
+        "2"
+      ],
+      "Domains": [
+        "clickforcamgirls.com",
+        "www.telehub.cam",
+        "www.maturecamrooms.com",
+        "www.naughtyxxxcams.com"
+      ],
+      "Goal Clicks": [
+        "1,000",
+        "100"
+      ],
+      "KPI History": [],
+      "Daily Clicks": [],
+      "Deployments & Releases": [
+        "9th October 2026"
+      ],
+      "Status": [
+        "Pending",
+        "Active"
+      ],
+      "GitHub Repos": [
+        "https://github.com/doctorsresearch1000-max/TeleHub",
+        "https://github.com/doctorsresearch1000-max/maturecamrooms",
+        "https://github.com/doctorsresearch1000-max/naughtyxxxcams"
+      ],
+      "Hosting / Platform": []
+    },
+    "views": 1
+  },
+  "ops": {
+    "databaseId": "3f484cd0-85ae-804d-b61a-d87b93c11734",
+    "dataSourceId": "3fd84cd0-85ae-82af-94b9-074cf3e37156",
+    "props": {
+      "Due Date": "rich_text",
+      "Task": "rich_text",
+      "KPI History": "relation",
+      "Category ": "rich_text",
+      "Status": "rich_text",
+      "Site": "rich_text",
+      "Next Action": "title",
+      "Priority": "rich_text"
+    },
+    "rowCount": 4,
+    "enumVals": {
+      "Due Date": [
+        "11-09-2026"
+      ],
+      "Task": [
+        "Complete initial setup",
+        "Audit sitemap and indexing",
+        "Review organic traffic"
+      ],
+      "KPI History": [],
+      "Category ": [
+        "Infrastructure",
+        "SEO"
+      ],
+      "Status": [
+        "Ready",
+        "In Progress",
+        "Done"
+      ],
+      "Site": [
+        "ClickForCamGirls",
+        "MatureCamRooms",
+        "NaughtyXXXCams",
+        "TeleHub"
+      ],
+      "Next Action": [],
+      "Priority": [
+        "P3 Low",
+        "P0 Critical",
+        "P1 High",
+        "P2 Medium"
+      ]
+    },
+    "views": 1
+  },
+  "issues": {
+    "databaseId": "3f484cd0-85ae-80dd-aedb-f0e4004e88ea",
+    "dataSourceId": "ea084cd0-85ae-83ac-9f12-07292a3bb2da",
+    "props": {
+      "Causa": "rich_text",
+      "Next Action": "rich_text",
+      "Priority": "select",
+      "Due Date": "date",
+      "Resuelto el": "date",
+      "Guía relacionada": "relation",
+      "Solución aplicada": "rich_text",
+      "Detectado el": "date",
+      "Category": "select",
+      "Status": "status",
+      "Site": "multi_select",
+      "Task": "title"
+    },
+    "rowCount": 8,
+    "enumVals": {
+      "Causa": [
+        "Al quitar los tags de la consulta a CRAK se perdieron esas señales.",
+        "Pendiente de medir.",
+        "El secreto CLOUDFLARE_API_TOKEN del repo no es válido o no tiene permiso sobre P",
+        "Los cambios estaban en ramas cursor/* sin mergear a main; producción sirve main.",
+        "El primer script mezclaba variables enmascaradas devueltas por la API de Cloudfl",
+        "Las variables CRAK solo estaban en el entorno Production de Cloudflare, no en Pr"
+      ],
+      "Next Action": [
+        "Ejecutar la rama cursor/desktop-menu-infinite.",
+        "Decidir si se recuperan con pasadas por tag cuando el feed las traiga.",
+        "Ejecutar la rama cursor/nav-speed y comparar tiempos antes y después.",
+        "Crear un token nuevo con permiso Cloudflare Pages: Edit, guardarlo en el secreto",
+        "Comprobar siempre si el deploy es Preview o Production.",
+        "Vigilar que el paso de sync no falle en silencio.",
+        "Cambiar las claves solo en GitHub; si se cambian en Cloudflare se sobrescriben."
+      ],
+      "Priority": [
+        "Media",
+        "Alta"
+      ],
+      "Due Date": [],
+      "Resuelto el": [],
+      "Guía relacionada": [],
+      "Solución aplicada": [
+        "Redirección 308 de /category/cougar y /category/mom a /category/mature y enlaces",
+        "Mergear la rama a main y esperar el deploy en verde.",
+        "El script escribe solo las claves CRAK desde GitHub (commit fd829b8).",
+        "El workflow de GitHub copia CRAK_* desde los secretos de GitHub a Production y P"
+      ],
+      "Detectado el": [],
+      "Category": [
+        "Errores de la web",
+        "Indexación y SEO",
+        "Rendimiento",
+        "Credenciales y accesos",
+        "Despliegue y CI",
+        "API y feed (CRAK)"
+      ],
+      "Status": [
+        "Abierto",
+        "Mitigado",
+        "Investigando",
+        "Resuelto"
+      ],
+      "Site": [
+        "MatureCamRooms",
+        "NaughtyXXXCams"
+      ],
+      "Task": []
+    },
+    "views": 1
+  },
+  "deploy": {
+    "databaseId": "3f484cd0-85ae-8011-af56-e1adfd30300b",
+    "dataSourceId": "36c84cd0-85ae-822f-a249-877e009315f9",
+    "props": {
+      "Next Action": "rich_text",
+      "Priority": "select",
+      "Due Date": "date",
+      "Verificado": "checkbox",
+      "Category": "select",
+      "Commit": "rich_text",
+      "Cómo volver atrás": "rich_text",
+      "Publicada el": "date",
+      "Status": "status",
+      "Rama": "rich_text",
+      "Site": "multi_select",
+      "PR": "url",
+      "Task": "title"
+    },
+    "rowCount": 7,
+    "enumVals": {
+      "Next Action": [
+        "Enviar el prompt a Cursor tras la rama de velocidad.",
+        "Enviar el prompt a Cursor y comparar tiempos antes y después.",
+        "Esperar el verde en Actions, comprobar la preview y mergear con «Create a merge ",
+        "Probar el pop-up en ventana de incógnito y medir el CLS en Lighthouse móvil."
+      ],
+      "Priority": [
+        "Media",
+        "Alta"
+      ],
+      "Due Date": [],
+      "Verificado": [],
+      "Category": [
+        "Diseño y UX",
+        "Rendimiento",
+        "SEO y sitemap",
+        "Infraestructura y CI",
+        "Función nueva"
+      ],
+      "Commit": [
+        "23a0fd0, e9c9cba, 7a96d38 y 616d318",
+        "a156605 y 1ac5a87 (merge b61a4c2)",
+        "fdda904 y fd829b8",
+        "cc01328",
+        "3fdcbf9"
+      ],
+      "Cómo volver atrás": [
+        "Revertir el merge en main.",
+        "Revertir el merge b61a4c2 en main.",
+        "Revertir el commit y volver a poner las variables a mano en Cloudflare.",
+        "Revertir el commit en main y volver a desplegar."
+      ],
+      "Publicada el": [],
+      "Status": [
+        "Planeada",
+        "En preview",
+        "Publicada"
+      ],
+      "Rama": [
+        "cursor/desktop-menu-infinite",
+        "cursor/nav-speed",
+        "cursor/catalog-widen-1244",
+        "cursor/catalog-seo-infinite-1244",
+        "cursor/age-gate-categories",
+        "cursor/dynamic-model-cta-1244"
+      ],
+      "Site": [
+        "MatureCamRooms"
+      ],
+      "PR": [],
+      "Task": []
+    },
+    "views": 1
+  },
+  "kv": {
+    "databaseId": "3f484cd0-85ae-800b-a34c-d0d4101255a0",
+    "dataSourceId": "41284cd0-85ae-829e-ac42-0771e6b6f412",
+    "props": {
+      "Estado": "select",
+      "Última revisión": "date",
+      "Tipo": "select",
+      "Site": "multi_select",
+      "Category": "select",
+      "Nombre": "title"
+    },
+    "rowCount": 1,
+    "enumVals": {
+      "Estado": [
+        "Vigente"
+      ],
+      "Última revisión": [],
+      "Tipo": [
+        "Guía"
+      ],
+      "Site": [
+        "Toda la red"
+      ],
+      "Category": [
+        "Despliegue y CI"
+      ],
+      "Nombre": []
+    },
+    "views": 1
+  },
+  "routine": {
+    "databaseId": "3f484cd0-85ae-80a8-9091-e7bf1a16ba70",
+    "dataSourceId": "60284cd0-85ae-8292-8363-07d4ecd2598b",
+    "props": {
+      "Frecuencia": "select",
+      "Next Action": "rich_text",
+      "Priority": "select",
+      "Due Date": "date",
+      "Category": "select",
+      "Status": "status",
+      "Site": "multi_select",
+      "Última ejecución": "date",
+      "Task": "title"
+    },
+    "rowCount": 9,
+    "enumVals": {
+      "Frecuencia": [
+        "Trimestral",
+        "Mensual",
+        "Semanal",
+        "Quincenal"
+      ],
+      "Next Action": [
+        "Comprobar que los textos siguen en todas las páginas.",
+        "Borrar ramas cursor/** ya mergeadas y revisar los avisos de Node y Ubuntu.",
+        "Comprobar caducidades en Cloudflare y GitHub. No escribir aquí ningún valor.",
+        "Listar las URLs rotas y quitarlas del sitemap.",
+        "Anotar los tiempos y comparar con el mes anterior.",
+        "Si falla, revisar los secretos de CRAK en GitHub.",
+        "Comparar el nº de URLs con la auditoría anterior.",
+        "Revisar el último run en GitHub Actions y la fecha del sitemap.xml.",
+        "Mirar páginas 'Rastreadas, actualmente sin indexar' y si suben las 'Indexadas'."
+      ],
+      "Priority": [
+        "Media",
+        "Baja",
+        "Alta"
+      ],
+      "Due Date": [],
+      "Category": [
+        "Legal y cumplimiento",
+        "Limpieza de código",
+        "Seguridad y accesos",
+        "Contenido y modelos",
+        "Rendimiento",
+        "Feed y afiliación",
+        "Sitemap y SEO técnico",
+        "Despliegue y CI",
+        "Search Console e indexación"
+      ],
+      "Status": [
+        "Hecha",
+        "Pendiente"
+      ],
+      "Site": [
+        "Toda la red",
+        "MatureCamRooms"
+      ],
+      "Última ejecución": [],
+      "Task": []
+    },
+    "views": 1
+  }
+}

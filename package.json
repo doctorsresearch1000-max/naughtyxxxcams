@@ -38,6 +38,8 @@
     "csn:sync-7day-guide": "node scripts/csn-sync-7day-guide.mjs",
     "csn:7day-walkthrough": "node scripts/csn-7day-guide-qa-walkthrough.mjs",
     "csn:verify-notion-guide": "node scripts/csn-verify-notion-guide-publish.mjs",
+    "csn:legacy-ops-inspect": "node scripts/csn-legacy-ops-inspect.mjs",
+    "csn:legacy-ops-centralize": "node scripts/csn-legacy-ops-centralize.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {
