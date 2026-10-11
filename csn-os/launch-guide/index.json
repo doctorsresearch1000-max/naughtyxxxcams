@@ -1,0 +1,70 @@
+{
+  "days": [
+    {
+      "day": 1,
+      "title": "Definir el proyecto y los requisitos iniciales",
+      "file": "dia-01.md",
+      "phases": [
+        1
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Dominio, infraestructura y arquitectura",
+      "file": "dia-02.md",
+      "phases": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Experiencia, estructura y cumplimiento inicial",
+      "file": "dia-03.md",
+      "phases": [
+        7
+      ]
+    },
+    {
+      "day": 4,
+      "title": "Repositorio, CI y calidad de código",
+      "file": "dia-04.md",
+      "phases": [
+        5
+      ]
+    },
+    {
+      "day": 5,
+      "title": "Integraciones, feeds y monetización técnica",
+      "file": "dia-05.md",
+      "phases": [
+        6
+      ]
+    },
+    {
+      "day": 6,
+      "title": "SEO, autoridad y validación previa al lanzamiento",
+      "file": "dia-06.md",
+      "phases": [
+        8,
+        9
+      ]
+    },
+    {
+      "day": 7,
+      "title": "Staging, decisión de lanzamiento y operación posterior",
+      "file": "dia-07.md",
+      "phases": [
+        10,
+        11,
+        12
+      ]
+    }
+  ],
+  "generatedFrom": [
+    "csn-task-manifest-v2.json",
+    "phases-meta.json",
+    "csn-phase-runbooks.json"
+  ]
+}

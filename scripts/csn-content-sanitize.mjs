@@ -132,7 +132,7 @@ async function main() {
     at: new Date().toISOString(),
     blocked: false,
     rootPageId: rootId,
-    hubMarker: "csn-hub-marker-v6",
+    hubMarker: "csn-hub-marker-v7-7day",
     corrections: [...siteFixes, ...runFixes],
     hub,
     legacyIntegrityOk: JSON.stringify(legacyBefore) === JSON.stringify(legacyAfter),

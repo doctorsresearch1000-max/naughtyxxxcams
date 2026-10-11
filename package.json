@@ -35,6 +35,8 @@
     "csn:content-sanitize": "node scripts/csn-content-sanitize.mjs",
     "csn:verify-ux-flow": "node scripts/csn-verify-ux-flow.mjs",
     "csn:console-acceptance": "node scripts/csn-console-acceptance.mjs",
+    "csn:sync-7day-guide": "node scripts/csn-sync-7day-guide.mjs",
+    "csn:7day-walkthrough": "node scripts/csn-7day-guide-qa-walkthrough.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },
   "dependencies": {

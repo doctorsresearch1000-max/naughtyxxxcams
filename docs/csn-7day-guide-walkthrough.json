@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-11T10:06:05.490Z",
+  "launchKey": "qa-guia-7d-1791712857710",
+  "checks": {
+    "hub7day": true,
+    "day1PageExists": true,
+    "createWithoutManualCli": true,
+    "firstTask": true,
+    "findDay1Task": true,
+    "promptCopyReady": true,
+    "registerEvidence": true,
+    "blockedOnFail": true,
+    "idempotent": true,
+    "legacyUnchanged": true,
+    "allPass": true
+  },
+  "day1GuideUrl": "https://app.notion.com/p/Gu-a-7-d-as-D-a-1-Definir-el-proyecto-y-los-requisitos-iniciales-3f684cd085ae81209538e8937196d167"
+}
