@@ -1,25 +1,25 @@
 # E2E operacional CSN OS
 
-2026-10-11T08:25:48.546Z
+2026-10-11T08:53:52.312Z
 
-**FAIL**
+**PASS**
 
 ```json
 {
   "A": {
-    "siteExternalId": "csn:site:e2e-qa-1791707104885",
-    "runExternalId": "csn:run:e2e-qa-1791707104885",
-    "siteId": "3f684cd0-85ae-8184-9c23-cc4016ff64c8",
-    "runId": "3f684cd0-85ae-810e-a25f-d9da689db379",
-    "launchKey": "e2e-qa-1791707104885",
+    "siteExternalId": "csn:site:e2e-qa-1791708627619",
+    "runExternalId": "csn:run:e2e-qa-1791708627619",
+    "siteId": "3f684cd0-85ae-814f-b85a-e03b64f0f108",
+    "runId": "3f684cd0-85ae-8147-92bb-dd5881aa95c4",
+    "launchKey": "e2e-qa-1791708627619",
     "executionTasks": {
       "created": 28,
       "reused": 0
     }
   },
   "B": {
-    "runExternalId": "csn:run:e2e-qa-1791707104885",
-    "runName": "Lanzamiento — E2E QA e2e-qa-1791707104885",
+    "runExternalId": "csn:run:e2e-qa-1791708627619",
+    "runName": "Lanzamiento — E2E QA e2e-qa-1791708627619",
     "currentPhase": 1,
     "recordClass": "QA test-only",
     "domain": "",
@@ -177,8 +177,9 @@
   },
   "B_pass": true,
   "C": {
-    "pass": false,
-    "path": "/workspace/csn-os/generated-prompts/csn_prompt_csn_run_e2e-qa-1791707104885_p05_93332a2cb79d.md"
+    "pass": true,
+    "path": "/workspace/csn-os/generated-prompts/csn_prompt_csn_run_e2e-qa-1791708627619_p05_4c063b13cbd1.md",
+    "notionUrl": "https://app.notion.com/p/Prompt-Cursor-Repository-and-branch-strategy-3f684cd085ae81198bd7dc301daa0173"
   },
   "D": {
     "pass": true,
@@ -189,8 +190,8 @@
   "E": {
     "pass": true,
     "rec": {
-      "reportId": "csn:report:csn:run:e2e-qa-1791707104885:p05:1791707131175",
-      "path": "/workspace/csn-os/execution-reports/csn_run_e2e-qa-1791707104885/phase-05.json"
+      "reportId": "csn:report:csn:run:e2e-qa-1791708627619:p05:1791708663625",
+      "path": "/workspace/csn-os/execution-reports/csn_run_e2e-qa-1791708627619/phase-05.json"
     }
   },
   "F": {

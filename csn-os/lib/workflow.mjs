@@ -293,6 +293,9 @@ export async function recordExecutionResult(runExternalId, phase, report) {
         "Required Evidence": {
           rich_text: rt((report.evidenceUrls || []).join("\n") || report.summary || ""),
         },
+        "Resultado ejecución": {
+          rich_text: rt(`${report.executionStatus}: ${report.summary || ""}`.slice(0, 2000)),
+        },
       },
     });
   }

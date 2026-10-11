@@ -44,8 +44,14 @@ async function main() {
   const gen = await assemblePrompt({ manifest, runExternalId: results.A.runExternalId, phase: 5 });
   const text = fs.readFileSync(gen.path, "utf8");
   results.C = {
-    pass: !gen.blocked && text.includes("E2E QA") && text.includes("e2e-repo") && !text.includes("{{"),
+    pass:
+      !gen.blocked &&
+      text.includes("E2E QA") &&
+      text.includes("e2e-repo") &&
+      !text.includes("{{") &&
+      Boolean(gen.notionUrl),
     path: gen.path,
+    notionUrl: gen.notionUrl,
   };
 
   const blocked = await checkPhaseReadiness(results.A.runExternalId, 11);

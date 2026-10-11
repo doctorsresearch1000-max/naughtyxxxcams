@@ -28,6 +28,7 @@
     "csn:sandbox-test": "node scripts/csn-prompt-sandbox-test.mjs",
     "csn": "node scripts/csn.mjs",
     "csn:demo": "node scripts/csn-demo-live-offline.mjs",
+    "csn:sync-hub": "node scripts/csn-sync-hub.mjs",
     "csn:e2e": "node scripts/csn-e2e-operational.mjs",
     "test:kpi": "node --test scripts/kpi-enrichment/enrich.test.js"
   },

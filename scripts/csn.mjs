@@ -88,6 +88,7 @@ CSN OS — comandos:
   diagnostico                    Estado del sistema
   schema                         Aplicar propiedades operativas en Notion
   panel                          Sincronizar página «Panel de proyectos»
+  sync-hub                       Hub en raíz + runbooks ES + prompts QA
   proyecto crear --nombre=...      Crear sitio + run + tareas (--qa=true por defecto)
   plan --run-external-id=...     Ver plan de 12 fases
   readiness --run-external-id=... --phase=N
@@ -113,6 +114,12 @@ Ejemplo:
   if (cmd === "panel") {
     const url = await syncProjectPanel();
     console.log("Panel:", url);
+    return;
+  }
+  if (cmd === "sync-hub") {
+    const { spawn } = await import("child_process");
+    const r = spawn("node", [new URL("./csn-sync-hub.mjs", import.meta.url).pathname], { stdio: "inherit" });
+    r.on("close", (c) => process.exit(c ?? 0));
     return;
   }
   if (cmd === "demo-live-offline") {

@@ -1,0 +1,18 @@
+{
+  "reportId": "csn:report:csn:run:e2e-qa-1791708627619:p05:1791708663625",
+  "executionStatus": "verified_sandbox",
+  "verificationLabel": "Verificado en sandbox",
+  "summary": "E2E test run — sin cambios reales",
+  "evidenceUrls": [
+    "https://example.com/evidence-e2e"
+  ],
+  "tests": [
+    {
+      "cmd": "npm run lint",
+      "exit": 0,
+      "note": "simulado"
+    }
+  ],
+  "advancePhase": false,
+  "recordedAt": "2026-10-11T08:51:03.626Z"
+}

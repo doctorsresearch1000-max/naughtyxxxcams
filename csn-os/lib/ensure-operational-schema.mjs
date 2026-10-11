@@ -30,6 +30,7 @@ export async function ensureOperationalSchema(notion, manifest) {
   await notion.dataSources.update({
     data_source_id: runs,
     properties: {
+      "Prompt Notion URL": { url: {} },
       "Último informe ejecución": { rich_text: {} },
       "Estado verificación": {
         select: {
@@ -53,6 +54,8 @@ export async function ensureOperationalSchema(notion, manifest) {
   await notion.dataSources.update({
     data_source_id: tasks,
     properties: {
+      "Prompt Notion URL": { url: {} },
+      "Ruta prompt local": { rich_text: {} },
       "Resultado ejecución": { rich_text: {} },
     },
   });
