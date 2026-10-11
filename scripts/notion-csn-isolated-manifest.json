@@ -238,5 +238,7 @@
       "qaKpiSnapshots": 1,
       "idempotencyRerun": true
     }
-  }
+  },
+  "panelPageUrl": "https://app.notion.com/p/CSN-OS-Panel-de-proyectos-3f684cd085ae81baab3fdb738b779058",
+  "panelPageId": "3f684cd0-85ae-81ba-ab3f-db738b779058"
 }

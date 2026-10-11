@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { csnOsRoot } from "./manifest.mjs";
 import { parseFrontmatter, fillTemplate } from "./parse-frontmatter.mjs";
 import { getNotion, getDb, queryByRichText } from "./notion.mjs";
+import { checkPhaseReadiness } from "./workflow.mjs";
 
 const REQUIRED_BY_PHASE = {
   1: ["projectBrief"],
@@ -73,7 +74,39 @@ export async function assemblePrompt({ manifest, runExternalId, phase }) {
     architectureDecisionSummary: rt(run, "Architecture Summary"),
   };
 
-  const missing = (REQUIRED_BY_PHASE[phase] || ["projectBrief"]).filter((k) => !inputs[k]?.trim());
+  let missing = (REQUIRED_BY_PHASE[phase] || ["projectBrief"]).filter((k) => !inputs[k]?.trim());
+
+  let readiness = { ready: true, missing: [] };
+  try {
+    readiness = await checkPhaseReadiness(runExternalId, phase);
+    for (const m of readiness.missing) {
+      if (!missing.includes(m)) missing.push(m);
+    }
+  } catch {
+    /* plan optional during early setup */
+  }
+
+  const tasksDb = getDb(manifest, "tasks");
+  const phaseExec = await notion.dataSources.query({
+    data_source_id: tasksDb.dataSourceId,
+    filter: {
+      and: [
+        { property: "Record Type", select: { equals: "Execution task" } },
+        { property: "Project Run", relation: { contains: run.id } },
+        { property: "Phase", number: { equals: phase } },
+      ],
+    },
+    page_size: 50,
+  });
+  const taskPlan = phaseExec.results
+    .map((t) => {
+      const title = t.properties.Task?.title?.[0]?.plain_text || "";
+      const st = t.properties.Status?.status?.name || "";
+      const instr = t.properties.Instructions?.rich_text?.map((x) => x.plain_text).join("") || "";
+      const accept = t.properties["Acceptance Criteria"]?.rich_text?.map((x) => x.plain_text).join("") || "";
+      return `### ${title} (${st})\n${instr}\n**Aceptación:** ${accept}`;
+    })
+    .join("\n\n");
 
   const promptId = `csn:prompt:${runExternalId}:p${String(phase).padStart(2, "0")}:${crypto
     .createHash("sha256")
@@ -150,7 +183,10 @@ export async function assemblePrompt({ manifest, runExternalId, phase }) {
     AUTHORIZED_SCOPE: spec.body.match(/## Work sequence\n([\s\S]*?)\n##/)?.[1]?.trim() || "See phase spec.",
     EXCLUSIONS:
       "No domain purchase, paid backlinks, production DNS, or production deploy without Approved gate for that action. Do not modify legacy Notion KPI hub or unrelated production sites.",
-    IMPLEMENTATION_PLAN: spec.body.match(/## Work sequence\n([\s\S]*?)\n## Expected/)?.[1]?.trim() || "",
+    IMPLEMENTATION_PLAN:
+      (spec.body.match(/## Work sequence\n([\s\S]*?)\n## Expected/)?.[1]?.trim() || "") +
+      "\n\n## Tareas de ejecución (este proyecto)\n\n" +
+      (taskPlan || "(Sin tareas de ejecución para esta fase — ejecutar `npm run csn -- sync-tareas --run-external-id=...`)"),
     DELIVERABLES: spec.body.match(/## Expected deliverables\n([\s\S]*?)\n##/)?.[1]?.trim() || "",
     TESTING_PROCEDURE: spec.body.match(/## Tests and validation\n([\s\S]*?)\n##/)?.[1]?.trim() || "",
     ACCEPTANCE_CRITERIA: spec.body.match(/## Acceptance criteria\n([\s\S]*?)\n##/)?.[1]?.trim() || "",
@@ -161,6 +197,9 @@ export async function assemblePrompt({ manifest, runExternalId, phase }) {
     HANDOFF_CONTRACT:
       "Update Project Run Current Phase; mark execution tasks Done with evidence; list open gates; attach this prompt path; prepare inputs for next phase per phase spec exit section.",
     MISSING_INPUTS_LIST: missing.map((m) => `- ${m}`).join("\n") || "None",
+    READINESS_NOTE: readiness.ready
+      ? "Requisitos previos: OK (las aprobaciones humanas siguen siendo control manual)."
+      : "BLOQUEADO — resolver antes de implementar en Cursor.",
   };
 
   const content = fillTemplate(template, vars);

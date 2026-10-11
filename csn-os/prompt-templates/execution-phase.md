@@ -4,6 +4,8 @@
 **Generated at:** {{GENERATED_AT}}  
 **Source versions:** {{SOURCE_VERSIONS_JSON}}
 
+**Estado de requisitos:** {{READINESS_NOTE}}
+
 ---
 
 ## 1. Role and mission

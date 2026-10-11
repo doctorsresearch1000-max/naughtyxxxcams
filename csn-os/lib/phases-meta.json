@@ -1,0 +1,88 @@
+{
+  "phases": [
+    {
+      "id": 1,
+      "nameEs": "Intake y aprobación de alcance",
+      "nameEn": "Intake & human gate",
+      "summaryEs": "Definir el proyecto, crear registros y obtener aprobación de alcance antes de gastar o desplegar.",
+      "gates": ["project_run"]
+    },
+    {
+      "id": 2,
+      "nameEs": "Investigación de dominios expirados",
+      "nameEn": "Domain research",
+      "summaryEs": "Buscar candidatos en expireddomains.net, revisar historial y puntuar sin comprar.",
+      "gates": []
+    },
+    {
+      "id": 3,
+      "nameEs": "Selección y preparación de registro",
+      "nameEn": "Domain selection",
+      "summaryEs": "Elegir dominio y preparar compra; requiere gate domain_candidate Approved.",
+      "gates": ["domain_candidate"]
+    },
+    {
+      "id": 4,
+      "nameEs": "Arquitectura, DNS y hosting",
+      "nameEn": "DNS & hosting",
+      "summaryEs": "Documentar arquitectura y DNS; sin cutover de producción sin gate.",
+      "gates": ["staging_deploy"]
+    },
+    {
+      "id": 5,
+      "nameEs": "Repositorio y CI",
+      "nameEn": "Repository & CI",
+      "summaryEs": "Inspeccionar repo, CI y evidencias de lint/test.",
+      "gates": []
+    },
+    {
+      "id": 6,
+      "nameEs": "Afiliación e integración de feeds",
+      "nameEn": "Affiliate / feed",
+      "summaryEs": "APIs oficiales, secretos fuera de Notion, registrar Feed Sync Runs.",
+      "gates": []
+    },
+    {
+      "id": 7,
+      "nameEs": "Producto, UX, contenido y cumplimiento",
+      "nameEn": "Content & compliance",
+      "summaryEs": "Páginas legales y UX; escalar temas legales a revisión humana.",
+      "gates": []
+    },
+    {
+      "id": 8,
+      "nameEs": "SEO e indexación",
+      "nameEn": "SEO baseline",
+      "summaryEs": "Oportunidades SEO, sitemap y verificación en sitio renderizado.",
+      "gates": []
+    },
+    {
+      "id": 9,
+      "nameEs": "Autoridad y backlinks",
+      "nameEn": "Backlink outreach",
+      "summaryEs": "Oportunidades de enlace; pagos requieren gate backlink.",
+      "gates": ["backlink"]
+    },
+    {
+      "id": 10,
+      "nameEs": "Staging, QA y endurecimiento",
+      "nameEn": "Staging & QA",
+      "summaryEs": "Release en staging/sandbox, pruebas y Evidence URL.",
+      "gates": ["staging_deploy"]
+    },
+    {
+      "id": 11,
+      "nameEs": "Lanzamiento a producción",
+      "nameEn": "Production deploy",
+      "summaryEs": "Solo con gate production_deploy Approved; no automatizado.",
+      "gates": ["production_deploy"]
+    },
+    {
+      "id": 12,
+      "nameEs": "Medición, mantenimiento y handoff",
+      "nameEn": "KPI & handoff",
+      "summaryEs": "Launch KPI Snapshot (aislado), mantenimiento y cierre del run.",
+      "gates": []
+    }
+  ]
+}
