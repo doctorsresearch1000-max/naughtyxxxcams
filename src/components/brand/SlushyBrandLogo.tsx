@@ -1,9 +1,10 @@
 import Link from "next/link";
 
 type SlushyBrandLogoProps = {
-  /** Header: larger; compact: feed overlay */
-  variant?: "header" | "compact";
-  href?: string;
+  /** Header: larger; compact: feed overlay; modal: retention / marketing surfaces */
+  variant?: "header" | "compact" | "modal";
+  /** Omit link when `null` or empty string. */
+  href?: string | null;
   className?: string;
 };
 
@@ -12,10 +13,12 @@ export function SlushyBrandLogo({
   href = "/",
   className = "",
 }: SlushyBrandLogoProps) {
-  const isHeader = variant === "header";
-  const sizeClass = isHeader
-    ? "text-[1.35rem] leading-none sm:text-[1.5rem]"
-    : "text-base leading-none sm:text-lg";
+  const sizeClass =
+    variant === "modal"
+      ? "text-[1.55rem] leading-none sm:text-[1.75rem]"
+      : variant === "header"
+        ? "text-[1.35rem] leading-none sm:text-[1.5rem]"
+        : "text-base leading-none sm:text-lg";
 
   const inner = (
     <span
@@ -27,7 +30,7 @@ export function SlushyBrandLogo({
     </span>
   );
 
-  if (!href) {
+  if (href == null || href === "") {
     return inner;
   }
 
