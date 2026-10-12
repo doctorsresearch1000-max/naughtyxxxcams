@@ -9,6 +9,7 @@ import { HomeFeedWarm } from "@/components/feed/HomeFeedWarm";
 import { HomeFeedServerBridge } from "@/components/layout/HomeFeedServerBridge";
 import { SecondaryPageLayer } from "@/components/layout/SecondaryPageLayer";
 import { CatalogScrollRestore } from "@/components/navigation/CatalogScrollRestore";
+import { RetentionMiniAppPopup } from "@/components/retention-mini-app-popup";
 import "./globals.css";
 
 /** GA4 — override via `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Cloudflare / `.env.local`. */
@@ -88,6 +89,7 @@ export default function RootLayout({
           </div>
         </div>
         <AppChrome />
+        <RetentionMiniAppPopup />
         </AppProviders>
       </body>
     </html>

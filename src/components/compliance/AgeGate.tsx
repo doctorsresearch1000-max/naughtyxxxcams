@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-
-const STORAGE_KEY = "age_verified";
+import {
+  readAgeGateVerified,
+  writeAgeGateVerified,
+} from "@/lib/compliance/ageGateStorage";
 
 export function AgeGate() {
   const [mounted, setMounted] = useState(false);
@@ -10,7 +12,7 @@ export function AgeGate() {
 
   useEffect(() => {
     try {
-      setVerified(window.localStorage.getItem(STORAGE_KEY) === "true");
+      setVerified(readAgeGateVerified());
     } catch {
       setVerified(false);
     }
@@ -27,11 +29,7 @@ export function AgeGate() {
   }, [mounted, verified]);
 
   const confirm = useCallback(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, "true");
-    } catch {
-      /* ignore quota / private mode */
-    }
+    writeAgeGateVerified();
     setVerified(true);
   }, []);
 
