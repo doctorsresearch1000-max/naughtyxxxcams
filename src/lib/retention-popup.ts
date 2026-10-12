@@ -1,11 +1,9 @@
 import { readAgeGateVerified } from "@/lib/compliance/ageGateStorage";
 
 export const RETENTION_POPUP_DELAY_MS = 30_000;
-export const RETENTION_POPUP_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
-const LS_LAST_SHOWN_AT = "nx-retention-popup-last-shown-at";
-const SS_DISMISSED = "nx-retention-popup-dismissed";
-const SS_SHOWN = "nx-retention-popup-shown";
+/** Once per browser tab session — cleared when the tab/window session ends. */
+export const NAUGHTY_POPUP_SHOWN_SESSION_KEY = "naughty_popup_shown";
 
 /** Home / primary landers — retention timer waits for age gate on these routes. */
 export function isRetentionLandingPath(pathname: string): boolean {
@@ -22,61 +20,48 @@ export function isTelegramInAppBrowser(): boolean {
   return Boolean(initData?.trim());
 }
 
-function safeGetItem(storage: Storage, key: string): string | null {
+function safeGetSessionItem(key: string): string | null {
+  if (typeof window === "undefined") return null;
   try {
-    return storage.getItem(key);
+    return window.sessionStorage.getItem(key);
   } catch {
     return null;
   }
 }
 
-function safeSetItem(storage: Storage, key: string, value: string): void {
+function safeSetSessionItem(key: string, value: string): void {
+  if (typeof window === "undefined") return;
   try {
-    storage.setItem(key, value);
+    window.sessionStorage.setItem(key, value);
   } catch {
     /* ignore */
   }
 }
 
-export function wasRetentionPopupDismissedThisSession(): boolean {
-  if (typeof window === "undefined") return true;
-  return safeGetItem(sessionStorage, SS_DISMISSED) === "1";
-}
-
 export function wasRetentionPopupShownThisSession(): boolean {
-  if (typeof window === "undefined") return true;
-  return safeGetItem(sessionStorage, SS_SHOWN) === "1";
+  return (
+    safeGetSessionItem(NAUGHTY_POPUP_SHOWN_SESSION_KEY) === "true"
+  );
 }
 
-export function isRetentionPopupInCooldown(): boolean {
-  if (typeof window === "undefined") return true;
-  const raw = safeGetItem(localStorage, LS_LAST_SHOWN_AT);
-  if (!raw) return false;
-  const last = Number(raw);
-  if (!Number.isFinite(last)) return false;
-  return Date.now() - last < RETENTION_POPUP_COOLDOWN_MS;
+/** @deprecated Use {@link wasRetentionPopupShownThisSession} — dismiss shares the same session flag. */
+export function wasRetentionPopupDismissedThisSession(): boolean {
+  return wasRetentionPopupShownThisSession();
 }
 
 export function canShowRetentionPopup(): boolean {
   if (isTelegramInAppBrowser()) return false;
-  if (wasRetentionPopupDismissedThisSession()) return false;
   if (wasRetentionPopupShownThisSession()) return false;
-  if (isRetentionPopupInCooldown()) return false;
   return true;
 }
 
 export function markRetentionPopupShown(): void {
-  if (typeof window === "undefined") return;
-  safeSetItem(sessionStorage, SS_SHOWN, "1");
-  safeSetItem(localStorage, LS_LAST_SHOWN_AT, String(Date.now()));
+  safeSetSessionItem(NAUGHTY_POPUP_SHOWN_SESSION_KEY, "true");
 }
 
+/** Closing the modal or navigating away after show — no second display this session. */
 export function markRetentionPopupDismissed(): void {
-  if (typeof window === "undefined") return;
-  safeSetItem(sessionStorage, SS_DISMISSED, "1");
-  if (!wasRetentionPopupShownThisSession()) {
-    markRetentionPopupShown();
-  }
+  markRetentionPopupShown();
 }
 
 /**
