@@ -4,6 +4,10 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  isPublicIndexableProfileSlug,
+  sanitizeModelSlug,
+} from "./lib/canonical-model-slug.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_SITEMAP = join(
@@ -30,16 +34,7 @@ const USER_AGENT =
 const BRAND = process.env.CRAK_BRANDS?.trim() || "";
 
 function performerProfileSlug(raw) {
-  if (!raw?.trim()) return null;
-  const slug = decodeURIComponent(raw)
-    .trim()
-    .replace(/^@+/, "")
-    .toLowerCase()
-    .replace(/_/g, "-")
-    .replace(/[^a-z0-9-]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return slug.length > 0 ? slug : null;
+  return sanitizeModelSlug(raw);
 }
 
 function legacyCompact(slug) {
@@ -147,7 +142,7 @@ async function main() {
 
   for (const performer of pool) {
     const slug = slugFromPerformer(performer);
-    if (!slug) continue;
+    if (!slug || !isPublicIndexableProfileSlug(slug)) continue;
     if (findInPool(pool, slug)) {
       canonicalSlugs.add(slug);
     }

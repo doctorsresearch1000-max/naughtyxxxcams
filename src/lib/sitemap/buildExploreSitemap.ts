@@ -3,6 +3,7 @@ import { EXPLORE_CATEGORY_SLUGS } from "@/lib/explore/categorySlugs";
 import { explorePathForCategorySlug } from "@/lib/explore/paths";
 import { LEGAL_PAGE_PATHS } from "@/lib/site/legalContact";
 import { getSiteUrl } from "@/lib/sitemap/siteUrl";
+import { filterSitemapEntries } from "@/lib/sitemap/sitemapUrlPolicy";
 
 export function buildExploreSitemapEntries(now = new Date()): MetadataRoute.Sitemap {
   const baseUrl = getSiteUrl();
@@ -49,5 +50,5 @@ export function buildExploreSitemapEntries(now = new Date()): MetadataRoute.Site
     }),
   );
 
-  return [...staticRoutes, ...categoryRoutes];
+  return filterSitemapEntries([...staticRoutes, ...categoryRoutes]);
 }

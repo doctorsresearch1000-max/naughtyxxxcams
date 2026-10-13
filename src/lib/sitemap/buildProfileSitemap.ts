@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
 import { PROFILE_SITEMAP_CHUNK_SIZE } from "@/lib/sitemap/constants";
 import { collectPerformerProfileSlugs } from "@/lib/sitemap/performerSlugs";
-import { getSiteUrl } from "@/lib/sitemap/siteUrl";
+import {
+  filterSitemapEntries,
+  profileSitemapAbsoluteUrl,
+} from "@/lib/sitemap/sitemapUrlPolicy";
 
 export function chunkProfileSlugs(slugs: string[]): string[][] {
   if (slugs.length === 0) return [[]];
@@ -16,13 +19,18 @@ function slugsToSitemapEntries(
   slugs: string[],
   now: Date,
 ): MetadataRoute.Sitemap {
-  const baseUrl = getSiteUrl();
-  return slugs.map((slug) => ({
-    url: `${baseUrl}/profile/${encodeURIComponent(slug)}`,
-    lastModified: now,
-    changeFrequency: "daily" as const,
-    priority: 0.75,
-  }));
+  const entries: MetadataRoute.Sitemap = [];
+  for (const slug of slugs) {
+    const url = profileSitemapAbsoluteUrl(slug);
+    if (!url) continue;
+    entries.push({
+      url,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.75,
+    });
+  }
+  return filterSitemapEntries(entries);
 }
 
 export async function loadProfileSlugChunks(): Promise<string[][]> {

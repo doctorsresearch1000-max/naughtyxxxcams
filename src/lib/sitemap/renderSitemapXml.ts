@@ -1,4 +1,8 @@
 import type { MetadataRoute } from "next";
+import {
+  filterSitemapEntries,
+  filterSitemapIndexLocs,
+} from "@/lib/sitemap/sitemapUrlPolicy";
 
 function escapeXml(value: string): string {
   return value
@@ -16,7 +20,8 @@ export type SitemapIndexLoc = {
 };
 
 export function renderSitemapIndexXml(entries: SitemapIndexLoc[]): string {
-  const items = entries
+  const safeEntries = filterSitemapIndexLocs(entries);
+  const items = safeEntries
     .map((entry) => {
       const loc = escapeXml(entry.loc);
       const lastmod =
@@ -39,7 +44,8 @@ ${items}
 }
 
 export function renderSitemapXml(entries: MetadataRoute.Sitemap): string {
-  const urls = entries
+  const safeEntries = filterSitemapEntries(entries);
+  const urls = safeEntries
     .map((entry) => {
       const loc = escapeXml(entry.url);
       const lastmod =

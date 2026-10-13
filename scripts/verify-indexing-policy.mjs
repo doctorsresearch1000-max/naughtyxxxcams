@@ -55,4 +55,20 @@ if (!jsonLd.includes("sanitizeModelSlug")) {
   process.exit(1);
 }
 
+const pkg = JSON.parse(read("package.json"));
+if (!pkg.scripts?.["audit:canonical-slugs"]) {
+  console.error("FAIL: package.json must define audit:canonical-slugs");
+  process.exit(1);
+}
+if (!String(pkg.scripts["build:next"] || "").includes("audit:canonical-slugs")) {
+  console.error("FAIL: build:next must run audit:canonical-slugs before next build");
+  process.exit(1);
+}
+
+const policy = read("src/lib/sitemap/sitemapUrlPolicy.ts");
+if (!policy.includes("sanitizeModelSlug")) {
+  console.error("FAIL: sitemapUrlPolicy must sanitize profile slugs");
+  process.exit(1);
+}
+
 console.log("OK: indexing policy guards passed");
