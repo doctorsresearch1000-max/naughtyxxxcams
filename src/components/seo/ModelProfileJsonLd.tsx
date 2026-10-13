@@ -1,4 +1,6 @@
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import { sanitizeModelSlug } from "@/lib/profile/performerHandle";
+import { profileCanonicalUrl } from "@/lib/seo/canonical";
 
 type ModelProfileJsonLdProps = {
   model: ModelProfileView;
@@ -11,14 +13,19 @@ export function ModelProfileJsonLd({
   canonicalUrl,
   description,
 }: ModelProfileJsonLdProps) {
-  const personId = `${canonicalUrl}#person`;
+  const slug =
+    sanitizeModelSlug(model.profileSlug) ??
+    sanitizeModelSlug(model.name) ??
+    "model";
+  const safeCanonical = profileCanonicalUrl(slug);
+  const personId = `${safeCanonical}#person`;
   const image = model.avatar?.trim() || model.bannerUrl?.trim() || undefined;
 
   const payload = {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
-    "@id": canonicalUrl,
-    url: canonicalUrl,
+    "@id": safeCanonical,
+    url: safeCanonical,
     name: `${model.name} — Streamate profile`,
     description: description.slice(0, 500),
     inLanguage: "en",
@@ -30,12 +37,19 @@ export function ModelProfileJsonLd({
       "@type": "Person",
       "@id": personId,
       name: model.name,
-      url: canonicalUrl,
+      url: safeCanonical,
+      identifier: slug,
       ...(image ? { image } : {}),
       description: description.slice(0, 300),
       knowsLanguage: model.language,
       ...(typeof model.age === "number"
-        ? { additionalProperty: { "@type": "PropertyValue", name: "age", value: model.age } }
+        ? {
+            additionalProperty: {
+              "@type": "PropertyValue",
+              name: "age",
+              value: model.age,
+            },
+          }
         : {}),
     },
   };

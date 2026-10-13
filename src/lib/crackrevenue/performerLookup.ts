@@ -83,5 +83,3 @@ export async function findPerformerByProfileSlug(
 
   return match;
 }
-
-// fix typo CrackerPerformer -> CrackPerformer

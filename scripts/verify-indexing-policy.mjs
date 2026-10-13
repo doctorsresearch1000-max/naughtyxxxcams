@@ -37,4 +37,22 @@ if (!notFound.includes("NOT_FOUND_PAGE_METADATA")) {
   process.exit(1);
 }
 
+const liveRoute = read("src/app/live/[id]/route.ts");
+if (!liveRoute.includes("NextResponse.redirect(destination, 301)")) {
+  console.error("FAIL: /live/[id] must 301 to canonical profile");
+  process.exit(1);
+}
+
+const watchRoute = read("src/app/watch/[id]/route.ts");
+if (!watchRoute.includes("NextResponse.redirect(destination, 301)")) {
+  console.error("FAIL: /watch/[id] must 301 to canonical profile");
+  process.exit(1);
+}
+
+const jsonLd = read("src/components/seo/ModelProfileJsonLd.tsx");
+if (!jsonLd.includes("sanitizeModelSlug")) {
+  console.error("FAIL: profile JSON-LD must sanitize slug in URLs");
+  process.exit(1);
+}
+
 console.log("OK: indexing policy guards passed");

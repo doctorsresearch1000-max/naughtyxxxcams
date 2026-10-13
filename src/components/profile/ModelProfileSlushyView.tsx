@@ -4,6 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ApiAvatar } from "@/components/media/ApiAvatar";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import {
+  buildProfileIntentPageH1,
+  parseProfileIntentFromPathname,
+} from "@/lib/profile/profileIntentHeading";
 import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { ConversionSlideSheet } from "@/components/conversion/ConversionSlideSheet";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
@@ -86,6 +91,12 @@ export function ModelProfileSlushyView({
   seo,
   recommended,
 }: ModelProfileSlushyViewProps) {
+  const pathname = usePathname() || "";
+  const intent = parseProfileIntentFromPathname(pathname);
+  const pageTitle = intent
+    ? buildProfileIntentPageH1(intent, model.name)
+    : seo.landerH1;
+  const secondaryTitle = intent ? seo.landerH1 : null;
   const isLive = model.status === "live";
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -158,8 +169,13 @@ export function ModelProfileSlushyView({
 
         <section className="px-5 pt-4 text-center">
           <h1 className="text-2xl font-black leading-tight tracking-tight">
-            {seo.landerH1}
+            {pageTitle}
           </h1>
+          {secondaryTitle ? (
+            <h2 className="mt-2 text-sm font-bold leading-snug text-zinc-300">
+              {secondaryTitle}
+            </h2>
+          ) : null}
           <p className="mt-1 text-sm font-semibold text-zinc-400">
             {model.handle.startsWith("@") ? model.handle : `@${model.handle}`}
           </p>

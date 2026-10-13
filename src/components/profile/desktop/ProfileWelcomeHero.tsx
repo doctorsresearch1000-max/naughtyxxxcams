@@ -7,7 +7,9 @@ type ProfileWelcomeHeroProps = {
   model: ModelProfileView;
   welcomeText: string;
   likeKey: string;
-  landerH1: string;
+  pageTitle: string;
+  /** Shown as h2 on intent landers when the primary title is intent-specific. */
+  secondaryTitle?: string | null;
   children?: import("react").ReactNode;
 };
 
@@ -15,7 +17,8 @@ export function ProfileWelcomeHero({
   model,
   welcomeText,
   likeKey,
-  landerH1,
+  pageTitle,
+  secondaryTitle,
   children,
 }: ProfileWelcomeHeroProps) {
   return (
@@ -33,8 +36,13 @@ export function ProfileWelcomeHero({
       <div className="min-w-0 flex-1 text-center lg:text-left">
         <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
           <h1 className="text-xl font-black leading-snug tracking-tight text-white lg:text-2xl">
-            {landerH1}
+            {pageTitle}
           </h1>
+          {secondaryTitle ? (
+            <h2 className="mt-1 w-full text-sm font-bold leading-snug text-zinc-300 lg:text-base">
+              {secondaryTitle}
+            </h2>
+          ) : null}
           <span
             className={`rounded-full px-3 py-1 text-[10px] font-black uppercase ${
               model.status === "live"

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { FollowingLiveCard } from "@/lib/following/followingPageData";
-import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
-import { performerDisplayHandle } from "@/lib/profile/performerHandle";
+import {
+  modelProfileHref,
+  performerDisplayHandle,
+} from "@/lib/profile/performerHandle";
 
 type FollowingLiveGridProps = {
   cards: FollowingLiveCard[];
@@ -16,6 +18,11 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
     <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
       {visible.map((card) => {
         const handle = performerDisplayHandle(card.username);
+        const profileHref =
+          card.profilePath ??
+          modelProfileHref(card.username) ??
+          "/explore";
+
         return (
           <article
             key={card.id}
@@ -30,28 +37,22 @@ export function FollowingLiveGrid({ cards }: FollowingLiveGridProps) {
               unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/50" />
-            <a
-              href={ensureAffiliateSubid(card.affiliateUrl)}
-              target="_blank"
-              rel="nofollow noopener"
+            <Link
+              href={profileHref}
               className="absolute inset-0 z-0"
-              aria-label={`Watch live ${handle}`}
+              aria-label={`Open ${handle} profile`}
             />
             <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3">
               <span className="flex w-fit items-center gap-1 rounded-lg bg-[#39FF14] px-2 py-0.5 text-[9px] font-black tracking-wide text-black shadow-lg shadow-[#39FF14]/30">
                 ((o)) EN VIVO
               </span>
               <div className="space-y-1">
-                {card.profilePath ? (
-                  <Link
-                    href={card.profilePath}
-                    className="pointer-events-auto relative z-10 block text-sm font-extrabold text-white"
-                  >
-                    {handle}
-                  </Link>
-                ) : (
-                  <h3 className="text-sm font-extrabold text-white">{handle}</h3>
-                )}
+                <Link
+                  href={profileHref}
+                  className="pointer-events-auto relative z-10 block text-sm font-extrabold text-white"
+                >
+                  {handle}
+                </Link>
                 <span className="inline-flex text-[10px] font-bold text-[#39FF14]">
                   Watch live
                 </span>

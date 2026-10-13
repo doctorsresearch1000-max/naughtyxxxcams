@@ -59,10 +59,16 @@ function continueRequest(
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host");
   if (shouldRedirectWwwToApex(host)) {
-    return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 308);
+    return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 301);
   }
 
   const pathname = request.nextUrl.pathname;
+  if (/^\/(live|watch)\/[^/]+\/?$/i.test(pathname)) {
+    const response = continueRequest(request, pathname);
+    response.headers.set("X-Robots-Tag", "noindex, follow");
+    return response;
+  }
+
   if (isLegacyRootSpamPath(pathname)) {
     return new NextResponse("This URL has been permanently removed.", {
       status: 410,

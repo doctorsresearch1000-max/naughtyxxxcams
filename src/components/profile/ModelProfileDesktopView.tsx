@@ -1,6 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
+import { usePathname } from "next/navigation";
+import {
+  buildProfileIntentPageH1,
+  parseProfileIntentFromPathname,
+} from "@/lib/profile/profileIntentHeading";
 import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutboundLink";
 import { ChatWithModelCta } from "@/components/conversion/ChatWithModelCta";
 import { ProfileConversionBadges } from "@/components/profile/ProfileConversionBadges";
@@ -34,6 +39,12 @@ export function ModelProfileDesktopView({
   recommended,
   conversionAttentionPulse = false,
 }: ModelProfileDesktopViewProps) {
+  const pathname = usePathname() || "";
+  const intent = parseProfileIntentFromPathname(pathname);
+  const pageTitle = intent
+    ? buildProfileIntentPageH1(intent, model.name)
+    : seo.landerH1;
+  const secondaryTitle = intent ? seo.landerH1 : null;
   const likeKey = `profile-${model.profileSlug}`;
 
   const tags = model.performer
@@ -57,7 +68,8 @@ export function ModelProfileDesktopView({
           model={model}
           welcomeText={welcomeText}
           likeKey={likeKey}
-          landerH1={seo.landerH1}
+          pageTitle={pageTitle}
+          secondaryTitle={secondaryTitle}
         >
           <ChatWithModelCta
             modelName={model.displayName}

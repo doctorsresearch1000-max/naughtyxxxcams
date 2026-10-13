@@ -5,6 +5,7 @@ import {
   StoryAvatarRing,
   storyAvatarInnerClass,
 } from "@/components/cams/StoryAvatarRing";
+import { modelProfileHref } from "@/lib/profile/performerHandle";
 import type { FollowingNearbyItem } from "@/lib/following/followingPageData";
 
 type LiveNearbyCarouselProps = {
@@ -31,8 +32,10 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
     <section className="w-full overflow-visible" aria-label="Following stories">
       <div className={SCROLL_CLASS}>
         {visible.map((item) => {
-          const href = item.profilePath ?? item.affiliateUrl;
-          const external = !item.profilePath;
+          const href =
+            item.profilePath ??
+            modelProfileHref(item.label) ??
+            "/explore";
 
           const avatar = (
             <div className="flex w-[76px] shrink-0 snap-start flex-col items-center gap-2 lg:w-20 xl:w-24">
@@ -65,20 +68,6 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
 
           const wrapperClass =
             "shrink-0 transition-transform duration-200 hover:scale-[1.02]";
-
-          if (external) {
-            return (
-              <a
-                key={item.id}
-                href={href}
-                target="_blank"
-                rel="nofollow noopener"
-                className={wrapperClass}
-              >
-                {avatar}
-              </a>
-            );
-          }
 
           return (
             <Link key={item.id} href={href} className={wrapperClass}>
