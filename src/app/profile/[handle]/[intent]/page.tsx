@@ -75,6 +75,7 @@ export default async function ModelProfileIntentPage({ params }: PageProps) {
         model={modelData}
         seo={seoContent}
         recommended={recommended}
+        intent={intent}
       />
     </>
   );

@@ -8,10 +8,8 @@ import { FeedActionRail } from "@/components/feed/FeedActionRail";
 import { FeedPerformerLink } from "@/components/feed/FeedPerformerLink";
 import { useRegisterFeedBottomCta } from "@/components/layout/FeedBottomChromeContext";
 import { useConversionAttentionPulse } from "@/hooks/useConversionAttentionPulse";
-import {
-  performerDisplayHandle,
-  performerProfilePath,
-} from "@/lib/profile/performerHandle";
+import { performerDisplayHandle } from "@/lib/profile/performerHandle";
+import { modelProfileHref } from "@/lib/seo/modelPermalink";
 import { LiveStreamBadge } from "@/components/feed/LiveStreamBadge";
 import { LiveCommentTicker } from "@/components/feed/LiveCommentTicker";
 import { recordView } from "@/lib/user/userLibrary";
@@ -66,7 +64,7 @@ function LiveFeedCardInner({
   );
   const modelName =
     performer.nameClean || performer.name?.replace(/^@+/, "") || "Model";
-  const profileHref = performerProfilePath(
+  const profileHref = modelProfileHref(
     performer.nameClean || performer.name,
   );
   const affiliateUrl = performer.embedPlan.roomAffiliateUrl;

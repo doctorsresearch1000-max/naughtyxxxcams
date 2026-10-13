@@ -20,12 +20,15 @@ import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
+import type { ProfileIntentRoute } from "@/lib/seo/model-profile-metadata";
+import { buildProfileIntentPageH1 } from "@/lib/seo/model-profile-metadata";
 
 type ModelProfileDesktopViewProps = {
   model: ModelProfileView;
   seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
   conversionAttentionPulse?: boolean;
+  intent?: ProfileIntentRoute | null;
 };
 
 export function ModelProfileDesktopView({
@@ -33,8 +36,21 @@ export function ModelProfileDesktopView({
   seo,
   recommended,
   conversionAttentionPulse = false,
+  intent = null,
 }: ModelProfileDesktopViewProps) {
   const likeKey = `profile-${model.profileSlug}`;
+  const intentH1 =
+    intent != null
+      ? buildProfileIntentPageH1(
+          {
+            name: model.name,
+            handle: model.handle,
+            profileSlug: model.profileSlug,
+            status: model.status,
+          },
+          intent,
+        )
+      : null;
 
   const tags = model.performer
     ? performerDisplayTags(model.performer)
@@ -58,6 +74,7 @@ export function ModelProfileDesktopView({
           welcomeText={welcomeText}
           likeKey={likeKey}
           landerH1={seo.landerH1}
+          pageTitleH1={intentH1}
         >
           <ChatWithModelCta
             modelName={model.displayName}

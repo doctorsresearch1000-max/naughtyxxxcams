@@ -15,6 +15,7 @@
     "deploy": "NEXT_PUBLIC_SITE_URL=https://naughtyxxxcams.com NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=NaughtyXXXcamsbot npm run build && node scripts/opennext-deploy-and-promote.mjs",
     "preview": "npm run build && opennextjs-cloudflare preview",
     "lint": "next lint",
+    "verify:profile-links": "tsx scripts/verify-profile-internal-links.ts",
     "test:seo": "node scripts/verify-profile-indexable.mjs && node scripts/verify-room-titles.mjs && node scripts/verify-crak-subid.mjs && node scripts/verify-indexing-policy.mjs",
     "test:ads": "node scripts/verify-jerkmate-creatives.mjs",
     "notion:setup-kpi-history": "node scripts/setup-databases.js",

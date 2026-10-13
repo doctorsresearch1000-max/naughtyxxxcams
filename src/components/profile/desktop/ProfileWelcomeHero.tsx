@@ -8,6 +8,8 @@ type ProfileWelcomeHeroProps = {
   welcomeText: string;
   likeKey: string;
   landerH1: string;
+  /** When set (e.g. vip/leaks landers), this is the sole page `<h1>`. */
+  pageTitleH1?: string | null;
   children?: import("react").ReactNode;
 };
 
@@ -16,8 +18,12 @@ export function ProfileWelcomeHero({
   welcomeText,
   likeKey,
   landerH1,
+  pageTitleH1 = null,
   children,
 }: ProfileWelcomeHeroProps) {
+  const primaryHeading = pageTitleH1?.trim() || landerH1;
+  const secondaryHeading = pageTitleH1?.trim() ? landerH1 : null;
+
   return (
     <div className="flex flex-col gap-5 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 ring-1 ring-[#39FF14]/10 lg:flex-row lg:items-center">
       <div className="relative mx-auto h-28 w-28 shrink-0 overflow-hidden rounded-2xl ring-2 ring-[#39FF14]/35 lg:mx-0">
@@ -33,7 +39,7 @@ export function ProfileWelcomeHero({
       <div className="min-w-0 flex-1 text-center lg:text-left">
         <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
           <h1 className="text-xl font-black leading-snug tracking-tight text-white lg:text-2xl">
-            {landerH1}
+            {primaryHeading}
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-[10px] font-black uppercase ${
@@ -45,6 +51,11 @@ export function ProfileWelcomeHero({
             {model.status === "live" ? "Live" : "Offline"}
           </span>
         </div>
+        {secondaryHeading ? (
+          <h2 className="mt-2 text-base font-bold leading-snug text-zinc-200 lg:text-lg">
+            {secondaryHeading}
+          </h2>
+        ) : null}
         <p className="mt-1 text-sm font-semibold text-zinc-400">{model.handle}</p>
         <p className="mt-3 text-sm leading-relaxed text-zinc-300">
           <span className="font-bold text-[#39FF14]">Welcome — </span>

@@ -59,7 +59,7 @@ function continueRequest(
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host");
   if (shouldRedirectWwwToApex(host)) {
-    return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 308);
+    return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 301);
   }
 
   const pathname = request.nextUrl.pathname;

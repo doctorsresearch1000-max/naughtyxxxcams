@@ -4,6 +4,7 @@ import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
 import { isLanguageMetaTag } from "@/lib/media/performerCardMeta";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
+import { modelPermalinkPath } from "@/lib/seo/modelPermalink";
 
 export type AboutCard = {
   label: string;
@@ -168,7 +169,7 @@ export function toRecommendedProfile(
     avatar,
     countryCode: performer.characteristic?.country ?? "INT",
     live: performer.live !== false,
-    profilePath: `/profile/${slug}`,
+    profilePath: modelPermalinkPath(slug),
     affiliateUrl: buildModelAffiliateUrl(performer),
   };
 }

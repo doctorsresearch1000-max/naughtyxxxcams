@@ -15,7 +15,7 @@ export function hostnameFromRequestHost(hostHeader: string | null): string {
   return hostHeader.split(":")[0].trim().toLowerCase();
 }
 
-/** True when the request targets `www.{canonical}` and should 308 to apex. */
+/** True when the request targets `www.{canonical}` and should 301 to apex. */
 export function shouldRedirectWwwToApex(hostHeader: string | null): boolean {
   const host = hostnameFromRequestHost(hostHeader);
   if (!host.startsWith("www.")) return false;

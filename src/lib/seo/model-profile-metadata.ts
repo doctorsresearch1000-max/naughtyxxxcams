@@ -108,6 +108,17 @@ const OFFLINE_DESCRIPTION_TEMPLATES = [
 const VIP_TITLE_SUFFIX = " — VIP Access";
 const LEAKS_TITLE_SUFFIX = " — Media Hub";
 
+export function buildProfileIntentPageH1(
+  model: ModelProfileSeoModel,
+  intent: ProfileIntentRoute,
+): string {
+  const name = model.name.trim() || bareUsername(model.handle);
+  if (intent === "vip") {
+    return `${name} — VIP private cam access`;
+  }
+  return `${name} — gallery & media hub`;
+}
+
 function intentTitleSuffix(intent: ProfileIntentRoute | null): string {
   if (intent === "vip") return VIP_TITLE_SUFFIX;
   if (intent === "leaks") return LEAKS_TITLE_SUFFIX;

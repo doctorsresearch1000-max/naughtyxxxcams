@@ -2,6 +2,7 @@ import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { getPerformerKey, pickCoverUrl } from "@/lib/crackrevenue/api";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
+import { modelPermalinkPath } from "@/lib/seo/modelPermalink";
 import type { SavedModelRef } from "@/lib/user/userLibrary";
 
 export function savedModelRefFromPerformer(
@@ -37,6 +38,6 @@ export function savedModelRefFromProfile(model: ModelProfileView): SavedModelRef
     nameClean: model.displayName,
     name: model.name,
     posterUrl,
-    profilePath: `/profile/${model.profileSlug}`,
+    profilePath: modelPermalinkPath(model.profileSlug),
   };
 }

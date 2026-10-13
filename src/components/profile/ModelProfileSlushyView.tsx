@@ -24,11 +24,14 @@ import { savedModelRefFromProfile } from "@/lib/user/savedModelRef";
 import type { ModelProfileView } from "@/lib/profile/modelProfile";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
+import type { ProfileIntentRoute } from "@/lib/seo/model-profile-metadata";
+import { buildProfileIntentPageH1 } from "@/lib/seo/model-profile-metadata";
 
 type ModelProfileSlushyViewProps = {
   model: ModelProfileView;
   seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
+  intent?: ProfileIntentRoute | null;
 };
 
 function countryFlag(code: string): string {
@@ -85,8 +88,21 @@ export function ModelProfileSlushyView({
   model,
   seo,
   recommended,
+  intent = null,
 }: ModelProfileSlushyViewProps) {
   const isLive = model.status === "live";
+  const intentH1 =
+    intent != null
+      ? buildProfileIntentPageH1(
+          {
+            name: model.name,
+            handle: model.handle,
+            profileSlug: model.profileSlug,
+            status: model.status,
+          },
+          intent,
+        )
+      : null;
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const conversionAttentionPulse = useConversionAttentionPulse(true);
@@ -131,6 +147,7 @@ export function ModelProfileSlushyView({
         seo={seo}
         recommended={recommended}
         conversionAttentionPulse={conversionAttentionPulse}
+        intent={intent}
       />
     <main className="min-h-screen bg-[#0A0A0A] pb-28 text-white lg:hidden">
       <ConversionSlideSheet
@@ -158,8 +175,13 @@ export function ModelProfileSlushyView({
 
         <section className="px-5 pt-4 text-center">
           <h1 className="text-2xl font-black leading-tight tracking-tight">
-            {seo.landerH1}
+            {intentH1 ?? seo.landerH1}
           </h1>
+          {intentH1 ? (
+            <h2 className="mt-2 text-base font-bold leading-snug text-zinc-300">
+              {seo.landerH1}
+            </h2>
+          ) : null}
           <p className="mt-1 text-sm font-semibold text-zinc-400">
             {model.handle.startsWith("@") ? model.handle : `@${model.handle}`}
           </p>
