@@ -9,11 +9,14 @@
   --nx-action-hover: #00ff7f;
   --nx-live: #39ff14;
   --nx-live-fg: #0a0a0a;
-  --nx-story-ring: linear-gradient(
-    135deg,
-    #ff2d92 0%,
-    #e879f9 45%,
-    #a855f7 100%
+  --nx-story-ring: conic-gradient(
+    from 210deg,
+    #ff2d92 0deg,
+    #fb7185 72deg,
+    #f0abfc 144deg,
+    #e879f9 216deg,
+    #d946ef 288deg,
+    #ff2d92 360deg
   );
   --nx-radius-card: 0.5rem;
   --nx-radius-pill: 9999px;
