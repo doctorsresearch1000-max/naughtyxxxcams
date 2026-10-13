@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { ApiAvatar } from "@/components/media/ApiAvatar";
 import { LiveBadge } from "@/components/cams/LiveBadge";
-import { StoryAvatarRing } from "@/components/cams/StoryAvatarRing";
+import {
+  StoryAvatarRing,
+  storyAvatarInnerClass,
+} from "@/components/cams/StoryAvatarRing";
 import type { FollowingNearbyItem } from "@/lib/following/followingPageData";
 
 type LiveNearbyCarouselProps = {
@@ -11,8 +14,7 @@ type LiveNearbyCarouselProps = {
 const SCROLL_CLASS =
   "nx-chip-scroll hide-scrollbar -mx-0.5 flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-visible scroll-smooth px-0.5 py-4 lg:gap-4";
 
-const AVATAR_INNER =
-  "relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[14px] bg-[#1C1C1E] lg:h-20 lg:w-20 lg:rounded-full xl:h-24 xl:w-24";
+const AVATAR_INNER = storyAvatarInnerClass("circle");
 
 export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
   const visible = items.filter((item) => item.image?.trim());
@@ -34,7 +36,7 @@ export function LiveNearbyCarousel({ items }: LiveNearbyCarouselProps) {
 
           const avatar = (
             <div className="flex w-[76px] shrink-0 snap-start flex-col items-center gap-2 lg:w-20 xl:w-24">
-              <StoryAvatarRing>
+              <StoryAvatarRing shape="circle">
                 <div className={AVATAR_INNER}>
                   <ApiAvatar
                     src={item.image}
