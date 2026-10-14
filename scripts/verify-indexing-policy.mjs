@@ -37,15 +37,25 @@ if (!notFound.includes("NOT_FOUND_PAGE_METADATA")) {
   process.exit(1);
 }
 
+const playerRedirect = read("src/lib/seo/playerRouteRedirect.ts");
+if (!playerRedirect.includes("handlePlayerLegacyRoute")) {
+  console.error("FAIL: playerRouteRedirect must expose handlePlayerLegacyRoute");
+  process.exit(1);
+}
+if (!playerRedirect.includes("extractSlugFromPlayerRouteParam")) {
+  console.error("FAIL: playerRouteRedirect must extract slug fallback for 301");
+  process.exit(1);
+}
+
 const liveRoute = read("src/app/live/[id]/route.ts");
-if (!liveRoute.includes("NextResponse.redirect(destination, 301)")) {
-  console.error("FAIL: /live/[id] must 301 to canonical profile");
+if (!liveRoute.includes("handlePlayerLegacyRoute")) {
+  console.error("FAIL: /live/[id] must use defensive handlePlayerLegacyRoute");
   process.exit(1);
 }
 
 const watchRoute = read("src/app/watch/[id]/route.ts");
-if (!watchRoute.includes("NextResponse.redirect(destination, 301)")) {
-  console.error("FAIL: /watch/[id] must 301 to canonical profile");
+if (!watchRoute.includes("handlePlayerLegacyRoute")) {
+  console.error("FAIL: /watch/[id] must use defensive handlePlayerLegacyRoute");
   process.exit(1);
 }
 
