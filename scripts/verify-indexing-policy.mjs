@@ -75,6 +75,12 @@ if (!String(pkg.scripts["build:next"] || "").includes("audit:canonical-slugs")) 
   process.exit(1);
 }
 
+const lookup = read("src/lib/crackrevenue/performerLookup.ts");
+if (!lookup.includes("PROFILE_LOOKUP_FAIL_FAST_MAX_PAGES")) {
+  console.error("FAIL: performerLookup must fail-fast with bounded scan pages");
+  process.exit(1);
+}
+
 const policy = read("src/lib/sitemap/sitemapUrlPolicy.ts");
 if (!policy.includes("sanitizeModelSlug")) {
   console.error("FAIL: sitemapUrlPolicy must sanitize profile slugs");
