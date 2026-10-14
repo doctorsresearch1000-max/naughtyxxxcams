@@ -15,9 +15,7 @@ export default async function ProfileHandleLayout({
 }: ProfileHandleLayoutProps) {
   const { handle } = await params;
   const model = await resolveModelProfile(handle);
-  if (!model) {
-    notFound();
-  }
+  if (!model) notFound();
 
   return children;
 }

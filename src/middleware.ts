@@ -54,7 +54,7 @@ function continueRequest(
 
 /**
  * Edge: canonical host + cache hints only.
- * Profile existence is resolved at request time in RSC (`resolveModelProfile` + `notFound()`).
+ * Profile HTML is resolved in RSC (`resolveModelProfile`); 404 only for invalid slug syntax.
  */
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host");

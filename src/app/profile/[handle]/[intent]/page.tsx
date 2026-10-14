@@ -28,9 +28,7 @@ export async function generateMetadata({
   }
 
   const model = await resolveModelProfile(handle);
-  if (!model) {
-    notFound();
-  }
+  if (!model) notFound();
 
   return buildModelProfileNextMetadata(modelViewToSeoInput(model), {
     intent,
@@ -45,9 +43,7 @@ export default async function ModelProfileIntentPage({ params }: PageProps) {
   }
 
   const modelData = await resolveModelProfile(handle);
-  if (!modelData) {
-    notFound();
-  }
+  if (!modelData) notFound();
 
   const seoInput = modelViewToSeoInput(modelData);
   const seoContent = generateUniqueSEOContent(seoInput);

@@ -21,9 +21,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { handle } = await params;
   const model = await resolveModelProfile(handle);
-  if (!model) {
-    notFound();
-  }
+  if (!model) notFound();
 
   return buildModelProfileNextMetadata(modelViewToSeoInput(model), {
     bannerUrl: model.bannerUrl,
@@ -33,10 +31,7 @@ export async function generateMetadata({
 export default async function ModelProfilePage({ params }: PageProps) {
   const { handle } = await params;
   const modelData = await resolveModelProfile(handle);
-
-  if (!modelData) {
-    notFound();
-  }
+  if (!modelData) notFound();
 
   const seoInput = modelViewToSeoInput(modelData);
   const seoContent = generateUniqueSEOContent(seoInput);

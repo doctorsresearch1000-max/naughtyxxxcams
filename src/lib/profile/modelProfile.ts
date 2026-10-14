@@ -44,7 +44,82 @@ export type ModelProfileView = {
   crakLandingId: string;
   affiliateUrl: string;
   performer?: CrackPerformer;
+  /** True when Crak/Streamate lookup failed — static pSEO shell. */
+  catalogFallback?: boolean;
 };
+
+const FALLBACK_AVATAR = "/icon.png";
+
+function slugToPresentableName(slug: string): string {
+  const parts = slug.split("-").filter(Boolean);
+  if (parts.length === 0) return "Model";
+  return parts
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function buildFallbackPerformerStub(
+  slug: string,
+  name: string,
+): CrackPerformer {
+  return {
+    name,
+    nameClean: name,
+    itemId: slug,
+    live: false,
+    characteristic: {
+      languages: ["English"],
+      country: "INT",
+      ethnicities: ["International"],
+      bodyTypes: ["Alluring"],
+    },
+  };
+}
+
+/** Static profile shell when performers-ext has no row for this slug. */
+export function buildCatalogFallbackProfile(
+  handleParam: string,
+): ModelProfileView | null {
+  const slug = performerProfileSlug(handleParam);
+  if (!slug) return null;
+
+  const name = slugToPresentableName(slug);
+  const traits = sanitizeProfileTraits(
+    ["live cam", "HD stream", "international", "streamate"],
+    { profileSlug: slug },
+  );
+  const traitSlugs = traits
+    .map((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, ""))
+    .filter(Boolean);
+  const stub = buildFallbackPerformerStub(slug, name);
+  const avatar = FALLBACK_AVATAR;
+  const gallery = [avatar];
+
+  return {
+    name,
+    displayName: name.toUpperCase(),
+    handle: `@${slug}`,
+    profileSlug: slug,
+    status: "offline",
+    platform: "streamate",
+    bodyType: "Alluring",
+    language: "English",
+    country: "INT",
+    avatar,
+    bannerUrl: avatar,
+    gallery,
+    galleryItems: buildGalleryItems(gallery, traits),
+    traits,
+    traitSlugs,
+    aboutCards: buildAboutCards(stub, traits),
+    followersLabel: "Catalog",
+    badges: [],
+    bio: `${name} on NaughtyXxxCams — browse photos, traits, and live cam discovery. Check back for HD stream availability.`,
+    crakLandingId: resolveWidgetLandingId(),
+    affiliateUrl: buildModelAffiliateUrl(stub),
+    catalogFallback: true,
+  };
+}
 
 function displayName(p: CrackPerformer): string {
   if (p.nameClean?.trim()) return p.nameClean.trim();
@@ -154,10 +229,16 @@ async function resolveModelProfileUncached(
   const slug = performerProfileSlug(handleParam) ?? "";
   if (!slug) return null;
 
-  const match = await findPerformerByProfileSlug(slug);
-  if (!match) return null;
+  try {
+    const match = await findPerformerByProfileSlug(slug);
+    if (match) {
+      return toViewModel(match, slug);
+    }
+  } catch {
+    /* upstream timeout / network — serve catalog fallback */
+  }
 
-  return toViewModel(match, slug);
+  return buildCatalogFallbackProfile(handleParam);
 }
 
 /** Deduped per request (generateMetadata + page). */
