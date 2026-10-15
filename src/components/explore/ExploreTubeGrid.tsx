@@ -5,7 +5,12 @@ import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { JerkmateTubeAdCard } from "@/components/ads/JerkmateTubeAdCard";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { ExploreDesktopTheaterModal } from "@/components/explore/desktop/ExploreDesktopTheaterModal";
-import { buildGridWithJerkmateAds } from "@/lib/ads/inGridJerkmateAds";
+import {
+  buildGridWithJerkmateAds,
+  IN_GRID_JERKMATE_DESKTOP_EVERY_N,
+  IN_GRID_JERKMATE_EVERY_N,
+} from "@/lib/ads/inGridJerkmateAds";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { EXPLORE_TUBE_GRID_CLASS } from "@/lib/explore/exploreTubeLayout";
 import { filterFeedPerformers } from "@/lib/feed/filterPerformers";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
@@ -23,6 +28,10 @@ export function ExploreTubeGrid({
   emptyMessage = "No results. Try another filter or search.",
 }: ExploreTubeGridProps) {
   const [theaterIndex, setTheaterIndex] = useState<number | null>(null);
+  const isDesktopViewport = useMediaQuery("(min-width: 1024px)");
+  const adEveryN = isDesktopViewport
+    ? IN_GRID_JERKMATE_DESKTOP_EVERY_N
+    : IN_GRID_JERKMATE_EVERY_N;
 
   const cards = useMemo(
     () => filterFeedPerformers(performers),
@@ -48,8 +57,12 @@ export function ExploreTubeGrid({
   );
 
   const gridItems = useMemo(
-    () => buildGridWithJerkmateAds(visibleCards, { keyPrefix: "explore" }),
-    [visibleCards],
+    () =>
+      buildGridWithJerkmateAds(visibleCards, {
+        keyPrefix: "explore",
+        everyN: adEveryN,
+      }),
+    [visibleCards, adEveryN],
   );
 
   if (cards.length === 0) {

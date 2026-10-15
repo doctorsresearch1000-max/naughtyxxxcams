@@ -6,7 +6,12 @@ import { JerkmateTubeAdCard } from "@/components/ads/JerkmateTubeAdCard";
 import { ModelTubeCard } from "@/components/cams/ModelTubeCard";
 import { filterHomeMobilePerformers } from "@/lib/feed/filterHomeMobilePerformers";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
+import {
+  IN_GRID_JERKMATE_DESKTOP_EVERY_N,
+  IN_GRID_JERKMATE_EVERY_N,
+} from "@/lib/ads/inGridJerkmateAds";
 import { buildHomeGridItems } from "@/lib/home/homeGridWithAds";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MOBILE_HOME_GRID_CLASS } from "@/lib/layout/catalogGridLayout";
 import { useInfiniteScrollBatch } from "@/hooks/useInfiniteScrollBatch";
 
@@ -33,6 +38,11 @@ export function HomeTubeGrid({
   enableDesktopPreview = false,
   gridClassName = MOBILE_HOME_GRID_CLASS,
 }: HomeTubeGridProps) {
+  const isDesktopViewport = useMediaQuery("(min-width: 1024px)");
+  const adEveryN = isDesktopViewport
+    ? IN_GRID_JERKMATE_DESKTOP_EVERY_N
+    : IN_GRID_JERKMATE_EVERY_N;
+
   const cards = useMemo(
     () => filterHomeMobilePerformers(performers),
     [performers],
@@ -49,8 +59,8 @@ export function HomeTubeGrid({
   );
 
   const gridItems = useMemo(
-    () => buildHomeGridItems(visiblePerformers),
-    [visiblePerformers],
+    () => buildHomeGridItems(visiblePerformers, { everyN: adEveryN }),
+    [visiblePerformers, adEveryN],
   );
 
   if (cards.length === 0) {

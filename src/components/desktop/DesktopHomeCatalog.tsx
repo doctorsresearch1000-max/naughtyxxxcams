@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DesktopImmersiveRoomDialog } from "@/components/desktop/DesktopImmersiveRoomDialog";
 import { HomeTubeGrid } from "@/components/home/HomeTubeGrid";
@@ -10,7 +9,6 @@ import {
   type DesktopCatalogFilters,
   type DesktopLanguageFilter,
   type DesktopQualityFilter,
-  type DesktopShowTypeFilter,
 } from "@/lib/desktop/desktopCatalogFilters";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 import { HomeCatalogSectionTitle } from "@/components/home/HomeCatalogSectionTitle";
@@ -25,8 +23,6 @@ const DEFAULT_FILTERS: DesktopCatalogFilters = {
   search: "",
   language: "any",
   quality: "any",
-  showType: "any",
-  interactiveToy: false,
   categorySlug: "trending",
   sort: "trending",
 };
@@ -165,30 +161,6 @@ export function DesktopHomeCatalog({
                 { value: "hd", label: "HD" },
               ]}
             />
-            <SelectField<DesktopShowTypeFilter>
-              label="Show type"
-              value={filters.showType}
-              onChange={(showType) => setFilters((f) => ({ ...f, showType }))}
-              options={[
-                { value: "any", label: "Any" },
-                { value: "solo", label: "Solo" },
-                { value: "couple", label: "Couple" },
-              ]}
-            />
-            <label className="flex h-8 shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 text-[11px] font-semibold text-zinc-200">
-              <input
-                type="checkbox"
-                checked={filters.interactiveToy}
-                onChange={(e) =>
-                  setFilters((f) => ({
-                    ...f,
-                    interactiveToy: e.target.checked,
-                  }))
-                }
-                className="accent-[#39FF14]"
-              />
-              Interactive toy
-            </label>
           </div>
 
           <div className="nx-chip-scroll flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -209,12 +181,6 @@ export function DesktopHomeCatalog({
                 </button>
               );
             })}
-            <Link
-              href="/explore"
-              className="shrink-0 rounded-lg bg-zinc-900 px-3 py-2 text-[11px] font-bold tracking-wide text-zinc-300 ring-1 ring-zinc-800 transition hover:text-[#39FF14] hover:ring-[#39FF14]/35"
-            >
-              DIRECTORY
-            </Link>
           </div>
         </div>
       </div>

@@ -16,14 +16,11 @@ import {
 
 export type DesktopLanguageFilter = "any" | "en" | "es" | "fr";
 export type DesktopQualityFilter = "any" | "hd";
-export type DesktopShowTypeFilter = "any" | "solo" | "couple";
 
 export type DesktopCatalogFilters = {
   search: string;
   language: DesktopLanguageFilter;
   quality: DesktopQualityFilter;
-  showType: DesktopShowTypeFilter;
-  interactiveToy: boolean;
   categorySlug: string | null;
   sort: ExploreSortMode;
 };
@@ -64,28 +61,7 @@ function matchesQuality(
   );
 }
 
-function matchesShowType(
-  performer: CrackPerformer,
-  showType: DesktopShowTypeFilter,
-): boolean {
-  if (showType === "any") return true;
-  const tags = performerTagBlob(performer);
-  if (showType === "couple") {
-    return (
-      tagIncludes(performer, "couple") ||
-      tagIncludes(performer, "duo") ||
-      tags.includes("couples")
-    );
-  }
-  return (
-    !tagIncludes(performer, "couple") &&
-    !tagIncludes(performer, "duo") &&
-    !tags.includes("couples")
-  );
-}
-
-function matchesInteractiveToy(performer: CrackPerformer, on: boolean): boolean {
-  if (!on) return true;
+function matchesInteractiveToy(performer: CrackPerformer): boolean {
   return (
     tagIncludes(performer, "interactive") ||
     tagIncludes(performer, "toy") ||
@@ -109,7 +85,7 @@ function matchesCategoryPill(
         tagIncludes(performer, "just started")
       );
     case "interactive":
-      return matchesInteractiveToy(performer, true);
+      return matchesInteractiveToy(performer);
     case "live":
       return performer.live !== false;
     case "teen":
@@ -160,8 +136,6 @@ export function applyDesktopCatalogFilters<T extends CrackPerformer>(
   list = filterPerformersBySearch(list, filters.search) as T[];
   list = list.filter((p) => matchesLanguage(p, filters.language));
   list = list.filter((p) => matchesQuality(p, filters.quality));
-  list = list.filter((p) => matchesShowType(p, filters.showType));
-  list = list.filter((p) => matchesInteractiveToy(p, filters.interactiveToy));
   list = list.filter((p) => matchesCategoryPill(p, filters.categorySlug));
 
   const sortMode =
