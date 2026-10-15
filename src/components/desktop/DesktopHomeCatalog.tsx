@@ -19,6 +19,7 @@ import {
   CATALOG_PAGE_PADDING,
 } from "@/lib/layout/catalogGridLayout";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
+import { subscribeHomeCatalogSearch } from "@/lib/home/homeCatalogSearchSync";
 
 const DEFAULT_FILTERS: DesktopCatalogFilters = {
   search: "",
@@ -42,14 +43,14 @@ function SelectField<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <label className="flex min-w-0 flex-col gap-1">
-      <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+    <label className="flex min-w-0 shrink-0 items-center gap-1.5">
+      <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">
         {label}
       </span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as T)}
-        className="h-9 rounded-lg border border-zinc-800 bg-zinc-900 px-2 text-xs font-semibold text-zinc-100 outline-none focus:border-[#39FF14]/60 focus:ring-1 focus:ring-[#39FF14]/25"
+        className="h-8 min-w-[5.5rem] rounded-lg border border-zinc-800 bg-zinc-900 px-2 text-[11px] font-semibold text-zinc-100 outline-none focus:border-[#39FF14]/60 focus:ring-1 focus:ring-[#39FF14]/25"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -81,6 +82,12 @@ export function DesktopHomeCatalog({
 
   useEffect(() => {
     injectStreamPreconnects();
+  }, []);
+
+  useEffect(() => {
+    return subscribeHomeCatalogSearch((query) => {
+      setFilters((f) => ({ ...f, search: query }));
+    });
   }, []);
 
   useEffect(() => {
@@ -133,32 +140,11 @@ export function DesktopHomeCatalog({
         onClose={() => setRoomPerformer(null)}
       />
 
-      <HomeCatalogSectionTitle />
+      <HomeCatalogSectionTitle liveCount={liveCount} />
 
-      <div className="border-b border-zinc-800/80 bg-zinc-950/95 pb-3 pt-2 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1600px] flex-col gap-3">
-          <div className="relative">
-            <span
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
-              aria-hidden
-            >
-              🔍
-            </span>
-            <input
-              type="search"
-              value={filters.search}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, search: e.target.value }))
-              }
-              placeholder="Search models, tags, categories…"
-              className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-900 pl-10 pr-24 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-[#39FF14]/50 focus:ring-1 focus:ring-[#39FF14]/20"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-[#39FF14]/15 px-2.5 py-1 text-xs font-bold text-[#39FF14]">
-              {liveCount} live
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-end gap-3">
+      <div className="border-b border-zinc-800/80 bg-zinc-950/95 pb-2 pt-1 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1600px] flex-col gap-2">
+          <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <SelectField<DesktopLanguageFilter>
               label="Language"
               value={filters.language}
@@ -189,7 +175,7 @@ export function DesktopHomeCatalog({
                 { value: "couple", label: "Couple" },
               ]}
             />
-            <label className="flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-3 text-xs font-semibold text-zinc-200">
+            <label className="flex h-8 shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 text-[11px] font-semibold text-zinc-200">
               <input
                 type="checkbox"
                 checked={filters.interactiveToy}
@@ -233,7 +219,7 @@ export function DesktopHomeCatalog({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1800px] flex-1 py-3">
+      <div className="mx-auto w-full max-w-[1800px] flex-1 py-2">
         <div className="mb-3 flex flex-wrap items-baseline justify-end gap-2">
           <p className="text-xs font-semibold text-zinc-500">
             Showing {filtered.length} of {filtered.length} ·{" "}

@@ -80,6 +80,7 @@ export function ExploreTubeGrid({
             <JerkmateTubeAdCard
               key={item.key}
               adSlotIndex={item.adSlotIndex}
+              tileAspectClass="aspect-[4/3] lg:aspect-[16/10]"
             />
           ) : (
             <ModelTubeCard

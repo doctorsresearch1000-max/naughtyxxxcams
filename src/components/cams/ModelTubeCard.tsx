@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CardBookmarkButton } from "@/components/cams/CardBookmarkButton";
+import { CardTubeLikeButton } from "@/components/cams/CardTubeLikeButton";
 import { CamCardMeta } from "@/components/cams/CamCardMeta";
 import { LiveBadge } from "@/components/cams/LiveBadge";
 import { PlatformBadgePill } from "@/components/cams/PlatformBadgePill";
@@ -140,14 +141,21 @@ export function ModelTubeCard({
             </button>
           ) : null}
 
-          <CardBookmarkButton performer={performer} />
+          <div className="lg:hidden">
+            <CardBookmarkButton performer={performer} />
+          </div>
+          {enableDesktopPreview ? (
+            <div className="absolute left-1.5 top-1.5 z-10 hidden lg:block">
+              <CardTubeLikeButton feedKey={performer.feedKey} />
+            </div>
+          ) : null}
 
           {isLive ? (
-            <span className="absolute right-1.5 top-1.5 z-10">
-              <LiveBadge />
+            <span className="absolute right-1 top-1 z-10 lg:right-1.5 lg:top-1.5">
+              <LiveBadge className="lg:gap-0.5 lg:px-1 lg:py-px lg:text-[8px] [&_span]:lg:h-1 [&_span]:lg:w-1" />
             </span>
           ) : (
-            <span className="absolute right-1.5 top-1.5 z-10 rounded-md bg-zinc-800/90 px-1.5 py-0.5 text-[9px] font-bold uppercase text-zinc-300">
+            <span className="absolute right-1 top-1 z-10 rounded-md bg-zinc-800/90 px-1 py-0.5 text-[8px] font-bold uppercase text-zinc-300 lg:right-1.5 lg:top-1.5 lg:px-1.5 lg:text-[9px]">
               {uiStrings.offline}
             </span>
           )}

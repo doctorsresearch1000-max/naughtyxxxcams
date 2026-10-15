@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { IconSearchOutline } from "@/components/icons/LineIcons";
 import { dispatchExploreSearch } from "@/lib/explore/exploreSearchSync";
+import { dispatchHomeCatalogSearch } from "@/lib/home/homeCatalogSearchSync";
 
 const DESKTOP_LINKS = [
   { href: "/explore", label: "Explore" },
@@ -25,6 +26,7 @@ function isActive(pathname: string, href: string): boolean {
 export function DesktopHeaderNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const onHome = pathname === "/";
   const onExplore = pathname === "/explore" || pathname.startsWith("/explore/");
   const [query, setQuery] = useState("");
 
@@ -87,9 +89,18 @@ export function DesktopHeaderNav() {
             if (onExplore) {
               dispatchExploreSearch(v);
             }
+            if (onHome) {
+              dispatchHomeCatalogSearch(v);
+            }
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") submitSearch(query);
+            if (e.key === "Enter") {
+              if (onHome) {
+                dispatchHomeCatalogSearch(query);
+                return;
+              }
+              submitSearch(query);
+            }
           }}
           placeholder="Search models, tags..."
           className="h-10 w-full rounded-full border border-white/10 bg-zinc-900/90 pl-10 pr-4 text-[16px] text-white placeholder:text-zinc-500 outline-none focus:border-[#39FF14]/40 focus:ring-1 focus:ring-[#39FF14]/25 lg:text-sm touch-manipulation"

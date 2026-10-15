@@ -2,7 +2,7 @@ import type { FeedPerformer } from "@/lib/feed/filterPerformers";
 
 /** Corner pill — use pixel arbitrary sizes (Tailwind default theme has no h-4.5 / h-6.5). */
 const PILL_CLASS =
-  "pointer-events-none absolute bottom-1.5 right-1.5 left-auto top-auto z-10 m-0 inline-flex h-5 max-h-5 w-auto max-w-[min(42vw,5.5rem)] shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-black/85 px-1.5 py-0.5 backdrop-blur-sm md:h-[22px] md:max-h-[22px]";
+  "pointer-events-none absolute bottom-1.5 right-1.5 left-auto top-auto z-10 m-0 inline-flex h-5 max-h-5 w-auto max-w-[min(42vw,5.5rem)] shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-black/85 px-1.5 py-0.5 backdrop-blur-sm md:h-[22px] md:max-h-[22px] lg:bottom-1 lg:right-1 lg:h-[18px] lg:max-h-[18px] lg:px-1";
 
 type PlatformBadgePillProps = {
   performer: FeedPerformer;
@@ -21,7 +21,7 @@ export function PlatformBadgePill({ performer }: PlatformBadgePillProps) {
         src="/logos/jerkmate.png"
         alt="Jerkmate"
         data-jerkmate-badge="true"
-        className="block h-[13px] w-auto max-h-[13px] max-w-[4.25rem] object-contain object-left md:h-[15px] md:max-h-[15px] md:max-w-[4.75rem]"
+        className="block h-[13px] w-auto max-h-[13px] max-w-[4.25rem] object-contain object-left md:h-[15px] md:max-h-[15px] md:max-w-[4.75rem] lg:h-[12px] lg:max-h-[12px] lg:max-w-[3.75rem]"
         decoding="async"
       />
     </span>

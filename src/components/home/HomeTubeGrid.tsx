@@ -15,6 +15,8 @@ const BATCH = 16;
 
 const VIEWPORT_EAGER_COUNT = 6;
 
+const DESKTOP_TILE_ASPECT = "aspect-[4/3] lg:aspect-[16/10]";
+
 type HomeTubeGridProps = {
   performers: CrackPerformer[];
   emptyMessage?: string;
@@ -70,6 +72,9 @@ export function HomeTubeGrid({
                 key={item.key}
                 adSlotIndex={item.adSlotIndex}
                 priority={promoPriority}
+                tileAspectClass={
+                  enableDesktopPreview ? DESKTOP_TILE_ASPECT : undefined
+                }
               />
             );
           }
@@ -82,6 +87,12 @@ export function HomeTubeGrid({
               priority={viewportPriority}
               onQuickView={onQuickView}
               enableDesktopPreview={enableDesktopPreview}
+              tileAspectClass={
+                enableDesktopPreview ? DESKTOP_TILE_ASPECT : undefined
+              }
+              tileImageClass={
+                enableDesktopPreview ? "object-cover object-top" : undefined
+              }
             />
           );
         })}

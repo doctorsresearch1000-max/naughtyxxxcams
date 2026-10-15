@@ -13,6 +13,8 @@ type JerkmateTubeAdCardProps = {
   adSlotIndex: number;
   /** First viewport / first in-grid promo slot */
   priority?: boolean;
+  /** Match adjacent ModelTubeCard aspect (desktop grid alignment). */
+  tileAspectClass?: string;
 };
 
 /**
@@ -21,6 +23,7 @@ type JerkmateTubeAdCardProps = {
 export function JerkmateTubeAdCard({
   adSlotIndex,
   priority = false,
+  tileAspectClass = "aspect-[4/3]",
 }: JerkmateTubeAdCardProps) {
   const [src, setSrc] = useState(() => pickJerkmateGridCreative(adSlotIndex));
   const [loaded, setLoaded] = useState(false);
@@ -54,7 +57,7 @@ export function JerkmateTubeAdCard({
         aria-label="Sponsored Jerkmate offer"
       >
         <div
-          className="relative aspect-[4/3] overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 p-[2px] shadow-[0_0_20px_rgba(236,72,153,0.28)] ring-2 ring-pink-500 ring-offset-1 ring-offset-black transition duration-300 group-hover:shadow-[0_0_26px_rgba(34,211,238,0.35)] group-hover:ring-cyan-400"
+          className={`relative overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 p-[2px] shadow-[0_0_20px_rgba(236,72,153,0.28)] ring-2 ring-pink-500 ring-offset-1 ring-offset-black transition duration-300 group-hover:shadow-[0_0_26px_rgba(34,211,238,0.35)] group-hover:ring-cyan-400 ${tileAspectClass}`}
         >
           <div
             className="relative h-full w-full overflow-hidden rounded-[calc(var(--nx-radius-card)-3px)] bg-zinc-900"
