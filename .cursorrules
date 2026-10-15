@@ -1,0 +1,21 @@
+# Protocolo Anti-Basura y Control de Inventario SEO (.cursorrules)
+
+Estas reglas son **obligatorias** para todo código, Worker, ruta dinámica, sitemap o consulta a base de datos en este repositorio. Cualquier cambio debe cumplirlas para blindar el sitio frente a thin content y evitar la indexación de URLs basura.
+
+## 1. Principio de Inventario Mínimo (Sitemaps y Listados)
+
+- NUNCA expongas en sitemaps, páginas de facetas, categorías o listados dinámicos URLs que no superen estrictamente un umbral mínimo de contenido real (por ejemplo, `SITEMAP_MIN_LISTING_INVENTORY >= 3`).
+- Cualquier categoría, etiqueta o página de listado que no alcance el inventario mínimo debe devolver un `noindex` o ser excluida por completo del sitemap.
+
+## 2. Validación Estricta de Fichas Individuales
+
+- Ningún perfil de modelo o ficha individual puede renderizarse ni indexarse si no cuenta con un estado activo (`status = active`) y multimedia verificado (`has_media = true`).
+- Las páginas de perfiles vacíos, huérfanos o sin contenido multimedia deben redirigir o devolver un estado controlado, evitando por completo generar páginas de baja señal que dañen la autoridad del dominio ante Google.
+
+## 3. Blindaje de Canónicas y Parámetros
+
+- Toda URL que acepte parámetros de consulta (ordenación, filtros cruzados, paginaciones secundarias o variantes como `/leaks`, `/vip`, `/telegram`) DEBE incluir obligatoriamente una etiqueta `rel="canonical"` apuntando a la URL principal limpia o un tag `noindex, follow` para evitar la indexación de duplicados o la explosión de URLs basura generadas por bots.
+
+## 4. Sincronización Dinámica de Sitemaps
+
+- El sitemap nunca debe basarse en historiales estáticos o listados antiguos. Debe generarse de forma dinámica consultando únicamente registros que cumplan las condiciones de inventario activo y multimedia verificado.
