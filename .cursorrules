@@ -1,0 +1,50 @@
+# Protocolo Anti-Basura y Control de Inventario SEO (.cursorrules)
+
+Estas reglas son **obligatorias** para todo código nuevo o modificado en este repositorio: Workers, rutas dinámicas (App Router / route handlers), sitemaps, metadatos SEO, consultas a APIs o bases de datos, y listados/facetas. El objetivo es evitar thin content, URLs basura indexables y penalizaciones de calidad en buscadores.
+
+---
+
+## 1. Principio de Inventario Mínimo (Sitemaps y Listados)
+
+- **NUNCA** expongas en sitemaps, páginas de facetas, categorías o listados dinámicos URLs que no superen estrictamente un umbral mínimo de contenido real (por ejemplo, `SITEMAP_MIN_LISTING_INVENTORY >= 3`).
+- Cualquier categoría, etiqueta o página de listado que **no** alcance el inventario mínimo debe devolver **`noindex`** (o equivalente en metadata/robots) **o** ser **excluida por completo** del sitemap.
+- Antes de añadir una URL de listado al sitemap o permitir indexación, valida el conteo de ítems elegibles (perfiles activos con media) en esa faceta.
+
+---
+
+## 2. Validación Estricta de Fichas Individuales
+
+- Ningún perfil de modelo o ficha individual puede **renderizarse para indexación** si no cumple:
+  - estado activo (`status = active`, o el equivalente en el modelo de datos del proyecto), **y**
+  - multimedia verificado (`has_media = true`, o el equivalente verificable en API/datos).
+- Las páginas de perfiles vacíos, huérfanos o sin contenido multimedia deben **redirigir** (p. ej. 301/302 a URL canónica válida) o devolver un **estado controlado** (`404` / `noindex`), evitando por completo generar páginas de baja señal que dañen la autoridad del dominio.
+- No generes slugs en sitemap ni enlaces internos masivos hacia perfiles que no pasen esta validación.
+
+---
+
+## 3. Blindaje de Canónicas y Parámetros
+
+- Toda URL que acepte **parámetros de consulta** (ordenación, filtros cruzados, paginaciones secundarias o variantes como `/leaks`, `/vip`, `/telegram`) **DEBE** incluir obligatoriamente:
+  - una etiqueta **`rel="canonical"`** apuntando a la URL principal limpia, **o**
+  - metadata **`noindex, follow`** para evitar la indexación de duplicados o la explosión de URLs basura generadas por bots.
+- Las variantes de intención o query strings no canónicas no deben competir con la URL principal en el sitemap.
+- Implementa canónicas en `metadata` / `generateMetadata` / componentes JSON-LD de forma coherente con la política del sitio.
+
+---
+
+## 4. Sincronización Dinámica de Sitemaps
+
+- El sitemap **nunca** debe basarse en historiales estáticos, manifests obsoletos o listados antiguos como fuente de verdad para URLs indexables.
+- Debe generarse de forma **dinámica** consultando únicamente registros que cumplan las condiciones de **inventario activo** y **multimedia verificado** (alineado con las reglas 1 y 2).
+- Si se usa un manifest o caché (p. ej. slugs pregenerados), debe estar acoplado a auditorías/guards (`audit-canonical-slugs`, políticas en `sitemapUrlPolicy`, etc.) y rechazar entradas que no cumplan el umbral.
+
+---
+
+## Checklist rápido antes de merge
+
+1. ¿La URL nueva aparece en sitemap solo si el inventario ≥ umbral mínimo?
+2. ¿Cada perfil indexable tiene `active` + media verificada?
+3. ¿Query params / facetas / variantes tienen canonical o `noindex, follow`?
+4. ¿El sitemap se alimenta de datos vivos, no de listas muertas?
+
+Si una tarea contradice estas reglas, **prioriza el protocolo** y documenta la excepción solo con aprobación explícita del usuario.
