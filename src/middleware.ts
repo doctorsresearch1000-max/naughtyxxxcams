@@ -9,6 +9,7 @@ import {
   isPublicProfileHtmlPath,
   PROFILE_PAGE_CACHE_CONTROL,
 } from "@/lib/http/profilePageCache";
+import { edgeBlockedCountryResponseForRequest } from "@/lib/edge/cloudflareCountryBlock";
 import { isLegacyRootSpamPath } from "@/lib/seo/legacyRootPaths";
 
 const READ_METHODS = new Set(["GET", "HEAD"]);
@@ -57,6 +58,9 @@ function continueRequest(
  * Profile HTML is resolved in RSC (`resolveModelProfile`); 404 only for invalid slug syntax.
  */
 export function middleware(request: NextRequest) {
+  const countryBlock = edgeBlockedCountryResponseForRequest(request);
+  if (countryBlock) return countryBlock;
+
   const host = request.headers.get("host");
   if (shouldRedirectWwwToApex(host)) {
     return NextResponse.redirect(buildApexRedirectUrl(request.nextUrl), 301);

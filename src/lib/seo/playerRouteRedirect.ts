@@ -1,3 +1,4 @@
+import { edgeBlockedCountryResponseIfNeeded } from "@/lib/edge/cloudflareCountryBlock";
 import { NextResponse } from "next/server";
 import { findPerformerByProfileSlug } from "@/lib/crackrevenue/performerLookup";
 import { slugFromPerformer } from "@/lib/crackrevenue/performerCatalog";
@@ -84,6 +85,9 @@ export async function handlePlayerLegacyRoute(
   request: Request,
   id: string,
 ): Promise<NextResponse> {
+  const countryBlock = edgeBlockedCountryResponseIfNeeded(request.headers);
+  if (countryBlock) return countryBlock;
+
   try {
     const target = await resolvePlayerRouteRedirect(id);
     if (!target) {
