@@ -3,14 +3,14 @@
 import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 
 type ProfileStreamConversionOverlayProps = {
-  affiliateUrl: string;
+  profileSlug: string;
   posterUrl?: string;
   loading?: boolean;
   className?: string;
 };
 
 export function ProfileStreamConversionOverlay({
-  affiliateUrl,
+  profileSlug,
   loading = false,
   className = "",
 }: ProfileStreamConversionOverlayProps) {
@@ -42,7 +42,7 @@ export function ProfileStreamConversionOverlay({
           </p>
           <button
             type="button"
-            onClick={() => openAffiliateOutbound(affiliateUrl)}
+            onClick={() => openAffiliateOutbound(profileSlug)}
             className="mt-4 w-full rounded-full bg-gradient-to-r from-rose-600 to-orange-500 px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-lg shadow-rose-900/40 transition active:scale-[0.99]"
           >
             🔥 WATCH LIVE ON JERKMATE

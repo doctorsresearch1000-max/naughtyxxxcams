@@ -12,7 +12,7 @@ import {
 
 export type FeedBottomCtaPayload = {
   modelName: string;
-  affiliateUrl: string;
+  profileSlug: string;
   attentionPulse?: boolean;
 };
 
@@ -62,7 +62,7 @@ export function useFeedBottomChrome() {
 export function useRegisterFeedBottomCta(
   visible: boolean,
   modelName: string,
-  affiliateUrl: string,
+  profileSlug: string,
   attentionPulse = false,
 ) {
   const { setCta } = useFeedBottomChrome();
@@ -72,7 +72,7 @@ export function useRegisterFeedBottomCta(
       setCta(null);
       return;
     }
-    setCta({ modelName, affiliateUrl, attentionPulse });
+    setCta({ modelName, profileSlug, attentionPulse });
     return () => setCta(null);
-  }, [visible, modelName, affiliateUrl, attentionPulse, setCta]);
+  }, [visible, modelName, profileSlug, attentionPulse, setCta]);
 }

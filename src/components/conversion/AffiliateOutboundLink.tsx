@@ -1,40 +1,33 @@
 "use client";
 
-import type { MouseEvent, ReactNode } from "react";
-import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
-import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
+import type { ReactNode } from "react";
+import type { JerkmatePromoKey } from "@/lib/go/jerkmatePromoKeys";
+import { SecureAffiliateLink } from "@/components/conversion/SecureAffiliateLink";
 
 type AffiliateOutboundLinkProps = {
-  href: string;
+  profileSlug?: string;
+  promo?: JerkmatePromoKey;
   className?: string;
   children: ReactNode;
   onClick?: () => void;
 };
 
+/** @deprecated name kept for call sites — always routes through signed go-token flow. */
 export function AffiliateOutboundLink({
-  href,
+  profileSlug,
+  promo,
   className = "",
   children,
   onClick,
 }: AffiliateOutboundLinkProps) {
-  const outboundHref = ensureAffiliateSubid(href);
-
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    onClick?.();
-    openAffiliateOutbound(outboundHref);
-  };
-
   return (
-    <a
-      href={outboundHref}
-      onClick={handleClick}
-      target="_blank"
-      rel="nofollow noopener sponsored"
+    <SecureAffiliateLink
+      profileSlug={profileSlug}
+      promo={promo}
       className={className}
+      onClick={onClick}
     >
       {children}
-    </a>
+    </SecureAffiliateLink>
   );
 }

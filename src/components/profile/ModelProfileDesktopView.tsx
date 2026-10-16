@@ -15,19 +15,15 @@ import { ProfileInterestsSection } from "@/components/profile/desktop/ProfileInt
 import { ProfileRecommendedGrid } from "@/components/profile/desktop/ProfileRecommendedGrid";
 import { ProfileTipMenuSection } from "@/components/profile/desktop/ProfileTipMenuSection";
 import { ProfileWelcomeHero } from "@/components/profile/desktop/ProfileWelcomeHero";
-import {
-  performerDisplayTags,
-  performerShortBio,
-} from "@/lib/desktop/performerCatalogMeta";
 import { buildTipMenu } from "@/lib/profile/buildTipMenu";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
 
 type ModelProfileDesktopViewProps = {
-  model: ModelProfileView;
+  model: PublicModelProfileView;
   seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
   conversionAttentionPulse?: boolean;
@@ -47,19 +43,11 @@ export function ModelProfileDesktopView({
   const secondaryTitle = intent ? seo.landerH1 : null;
   const likeKey = `profile-${model.profileSlug}`;
 
-  const tags = model.performer
-    ? performerDisplayTags(model.performer)
-    : model.traits.slice(0, 12);
+  const tags = model.traits.slice(0, 12);
 
-  const welcomeText =
-    model.performer
-      ? performerShortBio(model.performer)
-      : model.bio;
+  const welcomeText = model.bio;
 
-  const tipMenu = useMemo(
-    () => buildTipMenu(model.performer),
-    [model.performer],
-  );
+  const tipMenu = useMemo(() => buildTipMenu(), []);
 
   return (
     <main className="hidden min-h-screen bg-zinc-950 pb-16 text-white lg:block">
@@ -73,13 +61,13 @@ export function ModelProfileDesktopView({
         >
           <ChatWithModelCta
             modelName={model.displayName}
-            affiliateUrl={model.affiliateUrl}
+            profileSlug={model.profileSlug}
             visible
             attentionPulse={conversionAttentionPulse}
             className="w-full !py-3.5 !text-sm"
           />
           <AffiliateOutboundLink
-            href={model.affiliateUrl}
+            profileSlug={model.profileSlug}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#39FF14]/50 bg-zinc-950 px-4 py-3.5 text-sm font-extrabold text-white transition hover:bg-[#39FF14]/10 hover:ring-1 hover:ring-[#39FF14]/40"
           >
             Go to private room
@@ -89,7 +77,7 @@ export function ModelProfileDesktopView({
 
         <div className="relative h-[min(72vh,820px)] min-h-[480px] overflow-hidden rounded-2xl border border-zinc-800 bg-black ring-1 ring-[#39FF14]/15">
           <ProfileConversionBadges
-            affiliateUrl={model.affiliateUrl}
+            profileSlug={model.profileSlug}
             className="absolute right-4 top-4 z-30"
           />
           <ProfileDesktopLivePanel model={model} />
@@ -105,7 +93,7 @@ export function ModelProfileDesktopView({
 
         <ProfileTipMenuSection
           items={tipMenu}
-          affiliateUrl={model.affiliateUrl}
+          profileSlug={model.profileSlug}
         />
 
         <ProfileRecommendedGrid recommended={recommended} />

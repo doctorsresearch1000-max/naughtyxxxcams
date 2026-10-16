@@ -8,6 +8,7 @@ import {
   modelViewToSeoInput,
 } from "@/lib/profile/seoContent";
 import { resolveModelProfile } from "@/lib/profile/modelProfile";
+import { toPublicModelProfile } from "@/lib/public/publicModelProfile";
 import { fetchRecommendedProfiles } from "@/lib/profile/recommendedModels";
 import { profileCanonicalUrl } from "@/lib/seo/canonical";
 import { buildModelProfileNextMetadata } from "@/lib/seo/model-profile-metadata";
@@ -56,7 +57,7 @@ export default async function ModelProfilePage({ params }: PageProps) {
         description={seoContent.longDescription}
       />
       <ModelProfileSlushyView
-        model={modelData}
+        model={toPublicModelProfile(modelData)}
         seo={seoContent}
         recommended={recommended}
       />

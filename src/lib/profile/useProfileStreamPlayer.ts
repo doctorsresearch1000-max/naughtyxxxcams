@@ -10,7 +10,7 @@ import {
   crackPerformerToFeedPerformer,
   type FeedPerformer,
 } from "@/lib/feed/filterPerformers";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
 import { injectStreamPreconnects } from "@/lib/feed/streamEmbedWarmup";
 import { logProfileStreamEmbedPipeline } from "@/lib/profile/profileStreamDebug";
 
@@ -18,7 +18,7 @@ type LiveStatus = "live" | "offline";
 
 function buildFeedPerformer(
   performer: CrackPerformer | undefined,
-  model: ModelProfileView,
+  model: PublicModelProfileView,
 ): FeedPerformer | null {
   if (!performer) return null;
   const row = crackPerformerToFeedPerformer(performer, {
@@ -45,12 +45,11 @@ type ProfileStreamPlayerState = {
 };
 
 export function useProfileStreamPlayer(
-  model: ModelProfileView,
+  model: PublicModelProfileView,
   surface: "mobile" | "desktop",
 ): ProfileStreamPlayerState {
-  const ssrPerformer = model.performer;
   const [livePerformer, setLivePerformer] = useState<CrackPerformer | undefined>(
-    ssrPerformer,
+    undefined,
   );
   const [disconnected, setDisconnected] = useState(false);
 

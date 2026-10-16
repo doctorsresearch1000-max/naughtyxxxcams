@@ -7,7 +7,7 @@ import { FeedViewportProvider } from "@/components/feed/FeedViewportContext";
 import { SessionAudioProvider } from "@/components/feed/SessionAudioProvider";
 import { ProfileConversionBadges } from "@/components/profile/ProfileConversionBadges";
 import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
 import { useProfileStreamPlayer } from "@/lib/profile/useProfileStreamPlayer";
 import { useMediaMinWidth } from "@/hooks/useMediaMinWidth";
 import {
@@ -19,7 +19,7 @@ import {
 const PROFILE_MOBILE_STAGE_FALLBACK_PX = 300;
 
 type ProfileMobileLiveHeaderProps = {
-  model: ModelProfileView;
+  model: PublicModelProfileView;
 };
 
 export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps) {
@@ -118,13 +118,13 @@ export function ProfileMobileLiveHeader({ model }: ProfileMobileLiveHeaderProps)
 
       {showConversionUi ? (
         <ProfileStreamConversionOverlay
-          affiliateUrl={model.affiliateUrl}
+          profileSlug={model.profileSlug}
           loading={false}
         />
       ) : null}
 
       <ProfileConversionBadges
-        affiliateUrl={model.affiliateUrl}
+        profileSlug={model.profileSlug}
         className="pointer-events-auto absolute right-2.5 top-2.5 z-30 max-w-[min(100%-5rem,200px)]"
       />
 

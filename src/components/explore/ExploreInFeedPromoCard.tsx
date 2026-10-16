@@ -7,7 +7,7 @@ import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
-import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
+import { SecureAffiliateLink } from "@/components/conversion/SecureAffiliateLink";
 
 type ExploreInFeedPromoCardProps = {
   promo: ExploreInFeedPromo;
@@ -15,16 +15,13 @@ type ExploreInFeedPromoCardProps = {
 
 export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
   const cover = pickJerkmateGridCreative(0);
-  const outboundHref = ensureAffiliateSubid(promo.affiliateUrl);
 
   return (
     <article
       className="group flex flex-col overflow-hidden rounded-lg bg-[#141416] ring-1 ring-pink-500/25 transition hover:ring-pink-400/45"
     >
-      <a
-        href={outboundHref}
-        target="_blank"
-        rel="noopener noreferrer"
+      <SecureAffiliateLink
+        promo={promo.promo}
         className="relative block aspect-[4/3] w-full overflow-hidden rounded-lg bg-zinc-900 text-left"
       >
         <Image
@@ -41,7 +38,7 @@ export function ExploreInFeedPromoCard({ promo }: ExploreInFeedPromoCardProps) {
         <span className="absolute inset-x-2 bottom-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 py-2 text-center text-[10px] font-extrabold uppercase tracking-wide text-white shadow-lg shadow-pink-500/30">
           {promo.ctaLabel}
         </span>
-      </a>
+      </SecureAffiliateLink>
 
       <div className="px-2 py-2">
         <p className="truncate text-sm font-extrabold text-white">

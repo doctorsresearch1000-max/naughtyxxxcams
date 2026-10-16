@@ -69,12 +69,10 @@ function LiveFeedCardInner({
   const profileHref = performerProfilePath(
     performer.nameClean || performer.name,
   );
-  const affiliateUrl = performer.embedPlan.roomAffiliateUrl;
-
   useRegisterFeedBottomCta(
     conversionCtaVisible,
     modelName,
-    affiliateUrl,
+    performer.profileSlug,
     conversionAttentionPulse,
   );
 
@@ -191,7 +189,7 @@ function LiveFeedCardInner({
           profileLabel={handleLabel}
           profilePath={profileHref}
           modelName={modelName}
-          affiliateUrl={affiliateUrl}
+          profileSlug={performer.profileSlug}
           isActive={isActive}
           muted={muted}
           onToggleMute={onToggleMute}

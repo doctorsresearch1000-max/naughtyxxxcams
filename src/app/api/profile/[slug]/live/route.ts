@@ -3,6 +3,7 @@ import { findPerformerByProfileSlug } from "@/lib/crackrevenue/performerLookup";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
 import { resolvePerformerEmbedPlan } from "@/lib/feed/performerEmbed";
 import { pickNativeIframeFeedUrl } from "@/lib/feed/nativeIframeFeed";
+import { toPublicCrackPerformer } from "@/lib/public/publicCrackPerformer";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -49,7 +50,7 @@ export async function GET(_request: Request, context: RouteContext) {
   return Response.json(
     {
       status: performer.live === false ? "offline" : "live",
-      performer,
+      performer: toPublicCrackPerformer(performer),
       ms,
       embedMode: embedPlan.mode,
       canMountInteractivePlayer: embedPlan.canMountInteractivePlayer,

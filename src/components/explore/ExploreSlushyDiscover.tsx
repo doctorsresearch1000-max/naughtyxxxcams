@@ -11,7 +11,6 @@ import {
 } from "react";
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import type { ExploreCategory } from "@/lib/crackrevenue/categories";
 import { ExploreCategoryPremiumGrid } from "@/components/explore/ExploreCategoryPremiumGrid";
 import { buildExploreCategoryHubCards } from "@/lib/explore/exploreCategoryHubCards";
@@ -230,7 +229,7 @@ export function ExploreSlushyDiscover({
   }, [displayedPerformers, liveStories]);
 
   const promoModel = liveStories[0] ?? basePerformers[0];
-  const promoUrl = promoModel ? buildModelAffiliateUrl(promoModel) : "";
+  const showJerkmatePromo = Boolean(promoModel);
   const promoImage = promoModel ? pickCoverUrl(promoModel) : null;
 
   const showSkeleton = loading || (poolLoading && basePerformers.length === 0);
@@ -403,12 +402,9 @@ export function ExploreSlushyDiscover({
         <ExploreLiveStoriesRow performers={liveStories} />
       </div>
 
-      {promoUrl ? (
+      {showJerkmatePromo ? (
         <div className="order-4 lg:order-4">
-          <ExploreJerkmatePromoBanner
-            affiliateUrl={promoUrl}
-            coverUrl={promoImage}
-          />
+          <ExploreJerkmatePromoBanner promo="jerkmate-explore-gif" />
         </div>
       ) : null}
 

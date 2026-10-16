@@ -19,19 +19,19 @@ import { ProfileStickyCta } from "@/components/profile/ProfileStickyCta";
 import { ProfileFaqSection } from "@/components/profile/ProfileFaqSection";
 import { ProfileSeoContentBlock } from "@/components/profile/ProfileSeoContentBlock";
 import { LiveBadge } from "@/components/cams/LiveBadge";
-import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 import { trackCtaClickOut, trackModelPageView } from "@/lib/analytics/track";
 import { affiliateClaims } from "@/copy/model-page";
 import { uiStrings } from "@/lib/i18n/uiStrings";
 import { profileFollowersLabel } from "@/lib/profile/followersDisplay";
 import { SaveToFavoritesButton } from "@/components/profile/SaveToFavoritesButton";
 import { savedModelRefFromProfile } from "@/lib/user/savedModelRef";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
+import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 import type { GeneratedProfileSEO } from "@/lib/profile/seoContent";
 import type { RecommendedProfile } from "@/lib/profile/profilePresentation";
 
 type ModelProfileSlushyViewProps = {
-  model: ModelProfileView;
+  model: PublicModelProfileView;
   seo: GeneratedProfileSEO;
   recommended: RecommendedProfile[];
 };
@@ -45,13 +45,13 @@ function countryFlag(code: string): string {
 }
 
 function PrimaryCta({
-  href,
+  profileSlug,
   live,
   label,
   attentionPulse = false,
   onTrack,
 }: {
-  href: string;
+  profileSlug: string;
   live: boolean;
   label: string;
   attentionPulse?: boolean;
@@ -65,7 +65,7 @@ function PrimaryCta({
   if (!live) {
     return (
       <AffiliateOutboundLink
-        href={href}
+        profileSlug={profileSlug}
         className="flex w-full items-center justify-between rounded-full border border-white/15 bg-[#1C1C1E] px-5 py-4 text-base font-bold text-zinc-200 ring-1 ring-white/5 transition active:scale-[0.99]"
       >
         <span>Notify me when she&apos;s live</span>
@@ -76,7 +76,7 @@ function PrimaryCta({
 
   return (
     <AffiliateOutboundLink
-      href={href}
+      profileSlug={profileSlug}
       onClick={onTrack}
       className={`flex w-full items-center justify-between rounded-full bg-[var(--nx-action)] px-5 py-4 text-base font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:bg-[var(--nx-action-hover)] active:scale-[0.99] ${pulseClass}`}
     >
@@ -147,7 +147,7 @@ export function ModelProfileSlushyView({
       <ConversionSlideSheet
         open={sheetOpen}
         modelName={model.displayName}
-        affiliateUrl={model.affiliateUrl}
+        profileSlug={model.profileSlug}
         onClose={() => setSheetOpen(false)}
       />
       <div className="mx-auto max-w-md">
@@ -191,7 +191,7 @@ export function ModelProfileSlushyView({
         <section className="space-y-2 px-4 pt-4">
           <div ref={primaryCtaRef}>
             <PrimaryCta
-              href={model.affiliateUrl}
+              profileSlug={model.profileSlug}
               live={isLive}
               label={liveCtaLabel}
               attentionPulse={conversionAttentionPulse}
@@ -268,7 +268,7 @@ export function ModelProfileSlushyView({
                 onClick={() =>
                   item.locked
                     ? openSheet()
-                    : openAffiliateOutbound(model.affiliateUrl)
+                    : openAffiliateOutbound(model.profileSlug)
                 }
                 className="relative aspect-[3/4] overflow-hidden rounded-[18px] bg-[#1C1C1E] ring-1 ring-white/5"
               >
@@ -381,7 +381,7 @@ export function ModelProfileSlushyView({
 
           <div className="mt-6 space-y-3">
             <PrimaryCta
-              href={model.affiliateUrl}
+              profileSlug={model.profileSlug}
               live={isLive}
               label={liveCtaLabel}
               onTrack={() => trackCtaClickOut("end_card", model.profileSlug)}
@@ -398,7 +398,6 @@ export function ModelProfileSlushyView({
       </div>
 
       <ProfileStickyCta
-        href={model.affiliateUrl}
         live={isLive}
         modelName={model.name}
         profileSlug={model.profileSlug}

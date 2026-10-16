@@ -1,4 +1,5 @@
 import { fetchHomeFeedPerformers } from "@/lib/crackrevenue/fetchHomeFeedPerformers";
+import { toPublicCrackPerformers } from "@/lib/public/publicCrackPerformer";
 import {
   HOME_BOOTSTRAP_TARGET,
   HOME_FEED_MAX_PAGES_CEILING,
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
       {
         count: capped.length,
         bootstrap,
-        performers: capped,
+        performers: toPublicCrackPerformers(capped),
       },
       {
         headers: {

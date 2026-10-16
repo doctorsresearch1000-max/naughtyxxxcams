@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ProfileStreamConversionOverlay } from "@/components/profile/ProfileStreamConversionOverlay";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
 import { useProfileStreamPlayer } from "@/lib/profile/useProfileStreamPlayer";
 import { LiveEmbed } from "@/components/feed/LiveEmbed";
 import { useMediaMinWidth } from "@/hooks/useMediaMinWidth";
 
 type ProfileDesktopLivePanelProps = {
-  model: ModelProfileView;
+  model: PublicModelProfileView;
 };
 
 export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps) {
@@ -51,7 +51,7 @@ export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps)
           />
         ) : null}
         <ProfileStreamConversionOverlay
-          affiliateUrl={model.affiliateUrl}
+          profileSlug={model.profileSlug}
           loading={false}
         />
       </div>
@@ -91,7 +91,7 @@ export function ProfileDesktopLivePanel({ model }: ProfileDesktopLivePanelProps)
 
       {showConversionUi ? (
         <ProfileStreamConversionOverlay
-          affiliateUrl={model.affiliateUrl}
+          profileSlug={model.profileSlug}
           loading={false}
         />
       ) : null}

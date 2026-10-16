@@ -1,6 +1,5 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { pickCoverUrl } from "@/lib/crackrevenue/api";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
 import { isLanguageMetaTag } from "@/lib/media/performerCardMeta";
 import { performerProfileSlug } from "@/lib/profile/performerHandle";
@@ -26,7 +25,6 @@ export type RecommendedProfile = {
   countryCode: string;
   live: boolean;
   profilePath: string;
-  affiliateUrl: string;
 };
 
 const ZODIAC_TAGS = [
@@ -169,6 +167,5 @@ export function toRecommendedProfile(
     countryCode: performer.characteristic?.country ?? "INT",
     live: performer.live !== false,
     profilePath: `/profile/${slug}`,
-    affiliateUrl: buildModelAffiliateUrl(performer),
   };
 }

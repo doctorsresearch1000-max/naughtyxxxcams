@@ -31,7 +31,7 @@ type FeedActionRailProps = {
   profileLabel?: string;
   profilePath?: string | null;
   modelName?: string;
-  affiliateUrl: string;
+  profileSlug: string;
   isActive: boolean;
   muted: boolean;
   onToggleMute: () => void;
@@ -44,7 +44,7 @@ export function FeedActionRail({
   profileLabel = "Model",
   profilePath = null,
   modelName = "Model",
-  affiliateUrl,
+  profileSlug,
   isActive,
   muted,
   onToggleMute,
@@ -147,8 +147,14 @@ export function FeedActionRail({
   const onShareTelegram = () => {
     const handle = modelRef.nameClean || modelRef.name || profileLabel;
     const text = `Watch ${handle} live on NaughtyXXXCams`;
+    const pageUrl =
+      typeof window !== "undefined" && profilePath
+        ? `${window.location.origin}${profilePath}`
+        : typeof window !== "undefined"
+          ? window.location.href
+          : "";
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
-      affiliateUrl,
+      pageUrl,
     )}&text=${encodeURIComponent(text)}`;
     window.open(shareUrl, "_blank", "noopener,noreferrer");
   };
@@ -274,7 +280,7 @@ export function FeedActionRail({
         <ConversionSlideSheet
           open
           modelName={displayName}
-          affiliateUrl={affiliateUrl}
+          profileSlug={profileSlug}
           onClose={() => setChatSheetOpen(false)}
           edgeAttached
           title={`Want to chat with ${displayName}?`}

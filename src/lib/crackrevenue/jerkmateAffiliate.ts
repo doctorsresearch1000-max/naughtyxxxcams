@@ -98,12 +98,11 @@ export function buildJerkmateAffiliateUrlByName(modelName: string): string {
   return buildJerkmateAffiliateUrl(stub);
 }
 
-/** Opens monetized room URL in a new tab — no modals or preventDefault blockers. */
-export function openAffiliateOutbound(url: string): void {
-  const target = ensureAffiliateSubid(url?.trim() ?? "");
-  if (!target) return;
-  const opened = window.open(target, "_blank", "noopener,noreferrer");
-  if (!opened) {
-    window.location.assign(target);
-  }
+/** Client exits must use signed go-token flow (never raw affiliate URLs). */
+export function openAffiliateOutbound(profileSlug: string): void {
+  const slug = profileSlug?.trim();
+  if (!slug || slug.includes("://")) return;
+  void import("@/lib/go/openSecureAffiliateGo").then(({ openSecureAffiliateGo }) =>
+    openSecureAffiliateGo({ profileSlug: slug }),
+  );
 }

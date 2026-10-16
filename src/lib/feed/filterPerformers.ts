@@ -5,9 +5,11 @@ import {
   resolvePerformerEmbedPlan,
   type PerformerEmbedPlan,
 } from "@/lib/feed/performerEmbed";
+import { performerProfileSlug } from "@/lib/profile/performerHandle";
 
 export type FeedPerformer = CrackPerformer & {
   feedKey: string;
+  profileSlug: string;
   posterUrl: string;
   embedPlan: PerformerEmbedPlan;
 };
@@ -62,6 +64,8 @@ export function crackPerformerToFeedPerformer(
   if (p.live === false) return null;
 
   const feedKey = getPerformerKey(p);
+  const profileSlug =
+    performerProfileSlug(p.nameClean || p.name || p.itemId) ?? feedKey;
   const embedPlan = resolvePerformerEmbedPlan(p, feedKey);
   if (!embedPlan.canMountInteractivePlayer) return null;
   if (embedPlan.mode !== "api-iframe" && embedPlan.mode !== "widget") {
@@ -71,7 +75,7 @@ export function crackPerformerToFeedPerformer(
   const posterUrl = pickFeedPosterUrl(p) ?? "";
   if (options?.requirePoster !== false && !posterUrl) return null;
 
-  return { ...p, feedKey, posterUrl, embedPlan };
+  return { ...p, feedKey, profileSlug, posterUrl, embedPlan };
 }
 
 /** Home feed: embed-capable live models + unique HTTPS poster per card. */
@@ -85,6 +89,8 @@ export function filterFeedPerformers(
   for (const p of performers) {
     if (p.live === false) continue;
     const feedKey = getPerformerKey(p);
+    const profileSlug =
+      performerProfileSlug(p.nameClean || p.name || p.itemId) ?? feedKey;
     if (seenKeys.has(feedKey)) continue;
 
     const posterUrl = pickFeedPosterUrl(p);
@@ -107,13 +113,13 @@ export function filterFeedPerformers(
       if (!onlySnap || seenPosterBases.has(posterBaseKey(onlySnap))) continue;
       seenPosterBases.add(posterBaseKey(onlySnap));
       seenKeys.add(feedKey);
-      out.push({ ...p, feedKey, posterUrl: onlySnap, embedPlan });
+      out.push({ ...p, feedKey, profileSlug, posterUrl: onlySnap, embedPlan });
       continue;
     }
 
     seenPosterBases.add(base);
     seenKeys.add(feedKey);
-    out.push({ ...p, feedKey, posterUrl, embedPlan });
+    out.push({ ...p, feedKey, profileSlug, posterUrl, embedPlan });
   }
 
   return out;

@@ -7,7 +7,6 @@ import { uiStrings } from "@/lib/i18n/uiStrings";
 import { Z_BOTTOM_CHROME } from "@/lib/layout/zIndexLayers";
 
 type ProfileStickyCtaProps = {
-  href: string;
   live: boolean;
   modelName: string;
   profileSlug: string;
@@ -15,7 +14,6 @@ type ProfileStickyCtaProps = {
 };
 
 export function ProfileStickyCta({
-  href,
   live,
   modelName,
   profileSlug,
@@ -50,7 +48,7 @@ export function ProfileStickyCta({
       style={{ zIndex: Z_BOTTOM_CHROME - 1 }}
     >
       <AffiliateOutboundLink
-        href={href}
+        profileSlug={profileSlug}
         onClick={() => trackCtaClickOut("sticky", profileSlug)}
         className={`pointer-events-auto flex w-full items-center justify-center rounded-full px-5 py-3.5 text-sm font-extrabold shadow-lg ${
           live

@@ -15,7 +15,6 @@ import {
   performerStarRating,
 } from "@/lib/desktop/desktopCatalogFilters";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
-import { buildJerkmateAffiliateUrl } from "@/lib/crackrevenue/jerkmateAffiliate";
 
 type DesktopImmersiveRoomDialogProps = {
   performer: FeedPerformer | null;
@@ -50,7 +49,7 @@ export function DesktopImmersiveRoomDialog({
   const name = performer.nameClean || performer.name || "Model";
   const age = performer.characteristic?.age;
   const profilePath = performerProfilePathFromPerformer(performer);
-  const affiliateUrl = buildJerkmateAffiliateUrl(performer);
+  const profileSlug = performer.profileSlug;
   const rating = performerStarRating(performer);
   const showToy = hasInteractiveToy(performer);
   const tags = performerDisplayTags(performer);
@@ -109,7 +108,7 @@ export function DesktopImmersiveRoomDialog({
 
           <div className="mt-6 flex flex-col gap-2.5">
             <AffiliateOutboundLink
-              href={affiliateUrl}
+              profileSlug={profileSlug}
               className="flex w-full items-center justify-between rounded-xl bg-[#39FF14] px-4 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition hover:brightness-110"
             >
               Open private chat
@@ -118,7 +117,7 @@ export function DesktopImmersiveRoomDialog({
 
             {showToy ? (
               <AffiliateOutboundLink
-                href={affiliateUrl}
+                profileSlug={profileSlug}
                 className="flex w-full items-center justify-between rounded-xl border border-[#39FF14]/35 bg-zinc-950 px-4 py-3.5 text-sm font-semibold text-zinc-100 transition hover:border-[#39FF14]"
               >
                 Interactive toy

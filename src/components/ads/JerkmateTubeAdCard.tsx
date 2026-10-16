@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
+import type { JerkmatePromoKey } from "@/lib/go/jerkmatePromoKeys";
 import { pickJerkmateGridCreative } from "@/lib/ads/jerkmateGridCreatives";
 import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
 import { getSyntheticViewsLabel } from "@/lib/media/getSyntheticViews";
+import { SecureAffiliateLink } from "@/components/conversion/SecureAffiliateLink";
 
 type JerkmateTubeAdCardProps = {
   adSlotIndex: number;
@@ -25,6 +26,7 @@ export function JerkmateTubeAdCard({
   priority = false,
   tileAspectClass = "aspect-[4/3]",
 }: JerkmateTubeAdCardProps) {
+  const promo = `jerkmate-grid-${adSlotIndex}` as JerkmatePromoKey;
   const [src, setSrc] = useState(() => pickJerkmateGridCreative(adSlotIndex));
   const [loaded, setLoaded] = useState(false);
   const [triedAlternate, setTriedAlternate] = useState(false);
@@ -49,57 +51,50 @@ export function JerkmateTubeAdCard({
 
   return (
     <article className="min-w-0">
-      <a
-        href={JERKMATE_TRACKING_URL}
-        target="_blank"
-        rel="nofollow noopener sponsored"
+      <SecureAffiliateLink
+        promo={promo}
         className="group block min-w-0"
-        aria-label="Sponsored Jerkmate offer"
       >
         <div
           className={`relative overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 p-[2px] shadow-[0_0_20px_rgba(236,72,153,0.28)] ring-2 ring-pink-500 ring-offset-1 ring-offset-black transition duration-300 group-hover:shadow-[0_0_26px_rgba(34,211,238,0.35)] group-hover:ring-cyan-400 ${tileAspectClass}`}
         >
-          <div
-            className="relative h-full w-full overflow-hidden rounded-[calc(var(--nx-radius-card)-3px)] bg-zinc-900"
-          >
+          <div className="relative h-full w-full overflow-hidden rounded-[calc(var(--nx-radius-card)-2px)] bg-zinc-900">
+            <img
+              src={src}
+              alt="Sponsored Jerkmate offer"
+              loading={loadingAttr}
+              fetchPriority={fetchPri}
+              decoding="async"
+              onLoad={() => setLoaded(true)}
+              onError={onError}
+              className={`h-full w-full object-cover transition duration-500 ${
+                loaded ? "opacity-100" : "opacity-0"
+              }`}
+            />
             {!loaded ? (
               <div
-                className="pointer-events-none absolute inset-0 -z-10 animate-pulse bg-zinc-800/90"
+                className="absolute inset-0 animate-pulse bg-zinc-800"
                 aria-hidden
               />
             ) : null}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt=""
-              width={320}
-              height={240}
-              decoding="async"
-              loading={loadingAttr}
-              fetchPriority={fetchPri}
-              onLoad={() => setLoaded(true)}
-              onError={onError}
-              className="absolute inset-0 z-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:group-hover:scale-100"
-            />
             <SponsoredAdOverlays badge="AD" />
           </div>
         </div>
-
-        <div className="space-y-0.5 px-0.5 pb-1 pt-1.5">
-          <p className="truncate font-bold text-white text-xs md:text-sm">
-            Jerkmate Live
+        <div className="mt-1.5 px-0.5">
+          <p className="truncate text-[13px] font-extrabold text-white">
+            Jerkmate
+            <span className="ml-1 text-[9px] font-black uppercase text-pink-300">
+              Partner
+            </span>
           </p>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-medium text-zinc-400">
+            <SponsoredFreePromoLine className="min-w-0 flex-1" />
+            <span className="shrink-0 text-[10px] font-semibold text-zinc-500">
               {getSyntheticViewsLabel(`jerkmate-ad-${adSlotIndex}`)}
             </span>
-            <span className="shrink-0 text-[11px] font-semibold uppercase text-zinc-400">
-              EN
-            </span>
           </div>
-          <SponsoredFreePromoLine />
         </div>
-      </a>
+      </SecureAffiliateLink>
     </article>
   );
 }

@@ -12,7 +12,6 @@ import {
   performerShortBio,
 } from "@/lib/desktop/performerCatalogMeta";
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { buildJerkmateAffiliateUrl } from "@/lib/crackrevenue/jerkmateAffiliate";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
 import {
   setFeedEmbedIframeAudible,
@@ -89,7 +88,7 @@ export function ExploreDesktopTheaterModal({
 
   const name = performer.nameClean || performer.name || "Model";
   const profilePath = performerProfilePathFromPerformer(performer);
-  const affiliateUrl = buildJerkmateAffiliateUrl(performer);
+  const profileSlug = performer.profileSlug;
   const tags = performerDisplayTags(performer);
   const related = performers
     .filter((p) => p.feedKey !== performer.feedKey)
@@ -150,7 +149,7 @@ export function ExploreDesktopTheaterModal({
           <div className="mt-5">
             <ChatWithModelCta
               modelName={name}
-              affiliateUrl={affiliateUrl}
+              profileSlug={profileSlug}
               visible
               attentionPulse={attentionPulse}
               className="w-full max-w-none"
@@ -158,7 +157,7 @@ export function ExploreDesktopTheaterModal({
           </div>
 
           <AffiliateOutboundLink
-            href={affiliateUrl}
+            profileSlug={profileSlug}
             className="mt-2 flex w-full items-center justify-between rounded-xl border border-[#39FF14]/40 bg-zinc-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-[#39FF14]/10"
           >
             Open private room

@@ -4,12 +4,12 @@ import { AffiliateOutboundLink } from "@/components/conversion/AffiliateOutbound
 
 type ProfileTipMenuSectionProps = {
   items: TipMenuItem[];
-  affiliateUrl: string;
+  profileSlug: string;
 };
 
 export function ProfileTipMenuSection({
   items,
-  affiliateUrl,
+  profileSlug,
 }: ProfileTipMenuSectionProps) {
   return (
     <ProfileSectionCard
@@ -20,7 +20,7 @@ export function ProfileTipMenuSection({
         {items.map((item) => (
           <li key={item.id}>
             <AffiliateOutboundLink
-              href={affiliateUrl}
+              profileSlug={profileSlug}
               className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-zinc-900/80"
             >
               <span className="text-sm font-semibold text-zinc-100">

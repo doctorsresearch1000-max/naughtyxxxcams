@@ -1,8 +1,8 @@
-import { JERKMATE_TRACKING_URL } from "@/lib/crackrevenue/jerkmateTracking";
 import { IN_FEED_AD_EVERY_N_CARDS } from "@/lib/cams/inFeedAdConfig";
+import type { JerkmatePromoKey } from "@/lib/go/jerkmatePromoKeys";
 
 export type ExploreInFeedPromo = {
-  affiliateUrl: string;
+  promo: JerkmatePromoKey;
   coverUrl: string | null;
   title: string;
   subtitle: string;
@@ -19,7 +19,7 @@ export function resolveInFeedPromoIndex(visibleCount: number): number | null {
 
 export function buildExploreInFeedPromo(): ExploreInFeedPromo {
   return {
-    affiliateUrl: JERKMATE_TRACKING_URL,
+    promo: "jerkmate-explore-in-feed",
     coverUrl: null,
     title: "Jerkmate",
     subtitle: "Free pass — top live models",

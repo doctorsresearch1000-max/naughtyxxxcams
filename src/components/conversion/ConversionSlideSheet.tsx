@@ -8,7 +8,7 @@ import { Z_MODAL_PANEL, Z_MODAL_SCRIM } from "@/lib/layout/zIndexLayers";
 type ConversionSlideSheetProps = {
   open: boolean;
   modelName: string;
-  affiliateUrl: string;
+  profileSlug: string;
   onClose: () => void;
   /** Flush to viewport bottom (feed rail chat). */
   edgeAttached?: boolean;
@@ -20,7 +20,7 @@ type ConversionSlideSheetProps = {
 export function ConversionSlideSheet({
   open,
   modelName,
-  affiliateUrl,
+  profileSlug,
   onClose,
   edgeAttached = false,
   title,
@@ -97,7 +97,7 @@ export function ConversionSlideSheet({
             {sheetDescription}
           </p>
           <AffiliateOutboundLink
-            href={affiliateUrl}
+            profileSlug={profileSlug}
             className="mt-4 flex w-full items-center justify-center rounded-full bg-[#39FF14] px-4 py-3.5 text-sm font-extrabold text-black shadow-[0_0_24px_rgba(57,255,20,0.35)] transition active:scale-[0.98]"
           >
             {sheetCta}

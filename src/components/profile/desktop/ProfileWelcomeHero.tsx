@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { ApiAvatar } from "@/components/media/ApiAvatar";
 import { LikeActionButton } from "@/components/feed/LikeActionButton";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
 
 type ProfileWelcomeHeroProps = {
-  model: ModelProfileView;
+  model: PublicModelProfileView;
   welcomeText: string;
   likeKey: string;
   pageTitle: string;

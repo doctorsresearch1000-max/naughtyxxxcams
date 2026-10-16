@@ -4,6 +4,7 @@ import {
   fetchExploreMasterPool,
 } from "@/lib/explore/fetchCategoryPerformers";
 import { EXPLORE_DISPLAY_LIMIT } from "@/lib/explore/exploreLimits";
+import { toPublicCrackPerformers } from "@/lib/public/publicCrackPerformer";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
     {
       cat: category?.slug ?? null,
       total,
-      performers,
+      performers: toPublicCrackPerformers(performers),
     },
     {
       headers: {

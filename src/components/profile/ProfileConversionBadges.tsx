@@ -3,15 +3,15 @@
 import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 
 type ProfileConversionBadgesProps = {
-  affiliateUrl: string;
+  profileSlug: string;
   className?: string;
 };
 
 export function ProfileConversionBadges({
-  affiliateUrl,
+  profileSlug,
   className = "",
 }: ProfileConversionBadgesProps) {
-  const openRoom = () => openAffiliateOutbound(affiliateUrl);
+  const openRoom = () => openAffiliateOutbound(profileSlug);
 
   return (
     <div

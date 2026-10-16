@@ -6,7 +6,7 @@ import { openAffiliateOutbound } from "@/lib/crackrevenue/jerkmateAffiliate";
 type ProfilePlayerPosterFallbackProps = {
   posterUrl: string;
   displayName: string;
-  affiliateUrl: string;
+  profileSlug: string;
   live?: boolean;
   className?: string;
 };
@@ -15,11 +15,11 @@ type ProfilePlayerPosterFallbackProps = {
 export function ProfilePlayerPosterFallback({
   posterUrl,
   displayName,
-  affiliateUrl,
+  profileSlug,
   live = false,
   className = "",
 }: ProfilePlayerPosterFallbackProps) {
-  const openRoom = () => openAffiliateOutbound(affiliateUrl);
+  const openRoom = () => openAffiliateOutbound(profileSlug);
 
   return (
     <button

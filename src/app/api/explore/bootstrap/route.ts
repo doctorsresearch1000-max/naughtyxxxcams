@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { fetchExploreMasterPool } from "@/lib/explore/fetchCategoryPerformers";
 import { EXPLORE_MASTER_POOL_PAGES } from "@/lib/explore/exploreLimits";
+import { toPublicCrackPerformers } from "@/lib/public/publicCrackPerformer";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        masterPool,
+        masterPool: toPublicCrackPerformers(masterPool),
         popularCategories: [],
       },
       {

@@ -1,6 +1,6 @@
 import type { FeedPerformer } from "@/lib/feed/filterPerformers";
-import { getPerformerKey, pickCoverUrl } from "@/lib/crackrevenue/api";
-import type { ModelProfileView } from "@/lib/profile/modelProfile";
+import { getPerformerKey } from "@/lib/crackrevenue/api";
+import type { PublicModelProfileView } from "@/lib/public/publicModelProfile";
 import { performerProfilePathFromPerformer } from "@/lib/profile/performerHandle";
 import type { SavedModelRef } from "@/lib/user/userLibrary";
 
@@ -22,16 +22,11 @@ export function savedModelRefFromPerformer(
   };
 }
 
-export function savedModelRefFromProfile(model: ModelProfileView): SavedModelRef {
-  const performer = model.performer;
-  const feedKey = performer
-    ? getPerformerKey(performer)
-    : `profile:${model.profileSlug}`;
-  const posterUrl =
-    model.avatar ||
-    model.bannerUrl ||
-    (performer ? pickCoverUrl(performer) : "") ||
-    "";
+export function savedModelRefFromProfile(
+  model: PublicModelProfileView,
+): SavedModelRef {
+  const feedKey = `profile:${model.profileSlug}`;
+  const posterUrl = model.avatar || model.bannerUrl || "";
   return {
     feedKey,
     nameClean: model.displayName,

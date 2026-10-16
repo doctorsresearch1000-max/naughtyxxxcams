@@ -161,7 +161,7 @@ export default function MobileBottomChrome() {
         >
           <ChatWithModelCta
             modelName={cta.modelName}
-            affiliateUrl={cta.affiliateUrl}
+            profileSlug={cta.profileSlug}
             visible
             attentionPulse={cta.attentionPulse}
           />

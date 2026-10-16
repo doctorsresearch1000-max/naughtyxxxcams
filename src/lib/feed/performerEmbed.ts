@@ -1,5 +1,4 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import {
   isNativeEmbeddableIframeFeedUrl,
   pickNativeIframeFeedUrl,
@@ -14,7 +13,6 @@ export type PerformerEmbedPlan = {
   outerEmbedSrc: string | null;
   playerSrcMuted: string | null;
   playerSrcUnmuted: string | null;
-  roomAffiliateUrl: string;
   canMountInteractivePlayer: boolean;
   /** @deprecated use playerSrcMuted */
   apiIframeFeedUrl: string | null;
@@ -59,7 +57,6 @@ export function resolvePerformerEmbedPlan(
   performer: CrackPerformer,
   feedKey: string,
 ): PerformerEmbedPlan {
-  const roomAffiliateUrl = buildModelAffiliateUrl(performer);
   const isLive = performer.live !== false;
   const rawFeed = pickNativeIframeFeedUrl(performer) ?? "";
 
@@ -69,7 +66,6 @@ export function resolvePerformerEmbedPlan(
       outerEmbedSrc: null,
       playerSrcMuted: null,
       playerSrcUnmuted: null,
-      roomAffiliateUrl,
       canMountInteractivePlayer: false,
       apiIframeFeedUrl: null,
     };
@@ -83,7 +79,6 @@ export function resolvePerformerEmbedPlan(
       outerEmbedSrc: playerSrcMuted,
       playerSrcMuted,
       playerSrcUnmuted,
-      roomAffiliateUrl,
       canMountInteractivePlayer: true,
       apiIframeFeedUrl: playerSrcMuted,
     };
@@ -96,7 +91,6 @@ export function resolvePerformerEmbedPlan(
       outerEmbedSrc: null,
       playerSrcMuted: null,
       playerSrcUnmuted: null,
-      roomAffiliateUrl,
       canMountInteractivePlayer: false,
       apiIframeFeedUrl: null,
     };
@@ -108,7 +102,6 @@ export function resolvePerformerEmbedPlan(
     outerEmbedSrc: widget.muted,
     playerSrcMuted: widget.muted,
     playerSrcUnmuted: widget.unmuted,
-    roomAffiliateUrl,
     canMountInteractivePlayer: true,
     apiIframeFeedUrl: null,
   };

@@ -1,15 +1,15 @@
 import Image from "next/image";
-import Link from "next/link";
+import type { JerkmatePromoKey } from "@/lib/go/jerkmatePromoKeys";
 import {
   SponsoredAdOverlays,
   SponsoredFreePromoLine,
 } from "@/components/ads/SponsoredAdOverlays";
-import { ensureAffiliateSubid } from "@/lib/crackrevenue/crak-subid";
+import { SecureAffiliateLink } from "@/components/conversion/SecureAffiliateLink";
 
 const BANNER_ASPECT = 300 / 100;
 
 type JerkmateNaturalBannerProps = {
-  href: string;
+  promo: JerkmatePromoKey;
   imageSrc: string;
   alt: string;
   className?: string;
@@ -17,19 +17,15 @@ type JerkmateNaturalBannerProps = {
 
 /** Full-width 300×100 style banner — natural aspect, sponsored labels. */
 export function JerkmateNaturalBanner({
-  href,
+  promo,
   imageSrc,
   alt,
   className = "",
 }: JerkmateNaturalBannerProps) {
-  const outboundHref = ensureAffiliateSubid(href);
-
   return (
     <div className={`w-full ${className}`} aria-label="Sponsored offer">
-      <Link
-        href={outboundHref}
-        target="_blank"
-        rel="nofollow noopener sponsored"
+      <SecureAffiliateLink
+        promo={promo}
         className="group block w-full overflow-hidden rounded-[var(--nx-radius-card)] bg-zinc-950 ring-1 ring-pink-500/40 transition hover:ring-pink-400/55"
       >
         <div
@@ -56,7 +52,7 @@ export function JerkmateNaturalBanner({
           </p>
           <SponsoredFreePromoLine className="mt-0.5" />
         </div>
-      </Link>
+      </SecureAffiliateLink>
     </div>
   );
 }

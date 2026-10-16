@@ -1,7 +1,6 @@
 import type { CrackPerformer } from "@/lib/crackrevenue/api";
 import { getPerformerKey, pickCoverUrl } from "@/lib/crackrevenue/api";
 import { imageUrlBaseKey } from "@/lib/media/imageDedupe";
-import { buildModelAffiliateUrl } from "@/lib/crackrevenue/affiliate";
 import { fetchExploreMasterPool } from "@/lib/explore/fetchCategoryPerformers";
 import {
   performerProfilePathFromPerformer,
@@ -13,14 +12,12 @@ export type FollowingNearbyItem = {
   image: string;
   isLive: boolean;
   profilePath: string | null;
-  affiliateUrl: string;
 };
 
 export type FollowingLiveCard = {
   id: string;
   username: string;
   image: string;
-  affiliateUrl: string;
   profilePath: string | null;
 };
 
@@ -120,7 +117,6 @@ export async function getFollowingPageData(): Promise<FollowingPageData> {
     image: performerImage(match),
     isLive: true,
     profilePath: performerProfilePathFromPerformer(match),
-    affiliateUrl: buildModelAffiliateUrl(match),
   }));
 
   const livePerformers = takeUniquePerformers(
@@ -137,7 +133,6 @@ export async function getFollowingPageData(): Promise<FollowingPageData> {
     id: getPerformerKey(p),
     username: p.nameClean || p.name || "Model",
     image: performerImage(p),
-    affiliateUrl: buildModelAffiliateUrl(p),
     profilePath: performerProfilePathFromPerformer(p),
   }));
 
